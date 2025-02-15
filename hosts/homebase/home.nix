@@ -67,7 +67,7 @@ let my_packages = with pkgs; if darwin then [
       # '')
 ]
 else [
-      # inputs.zb.default
+      inputs.zb.default
       git
       # c compilers
       gcc
