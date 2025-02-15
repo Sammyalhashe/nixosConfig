@@ -2,18 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, zb, ... }:
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
       ./nvidia.nix
-      ./desktop.nix
-      # ./networkmanager.nix
-      ./syncthing.nix
-      ./zsh.nix
       ./bluetooth.nix
+      inputs.home-manager.nixosModules.default
+      ./home-manager.nix
     ];
 
   # enable flakes
@@ -85,12 +83,10 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     home-manager
      neovim
      git
      nvidia-vaapi-driver
      kdePackages.kdeconnect-kde
-     citrix_workspace
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
   ];
