@@ -1,9 +1,9 @@
-{inputs, zb, ...}:
+{inputs, ...}:
 let user = "salhashemi2";
 in
 {
     home-manager = {
-        extraSpecialArgs = { inherit inputs; inherit zb; };
+        extraSpecialArgs = { inherit inputs; };
         users = {
             "${user}" = {
                 imports = [

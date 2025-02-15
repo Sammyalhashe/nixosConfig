@@ -9,14 +9,9 @@
   };
 
   outputs = { self, nixpkgs, zen-browser, ... }@inputs :
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-      zb = zen-browser.packages.${system};
-    in
   {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; inherit zb; };
+          specialArgs = { inherit inputs; };
           modules = [
               ./hosts/homebase/configuration.nix
               ./nixosModules

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }@inputs:
+{ config, pkgs, inputs, ... }:
 let darwin = pkgs.system == "x86_64-darwin";
 in
 let my_packages = with pkgs; if darwin then [
@@ -67,7 +67,7 @@ let my_packages = with pkgs; if darwin then [
       # '')
 ]
 else [
-      inputs.zb.default
+      inputs.zen-browser.packages."${pkgs.system}".default
       git
       # c compilers
       gcc
