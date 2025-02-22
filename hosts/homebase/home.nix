@@ -98,7 +98,8 @@ else [
 
       # terminal utilities
       alacritty
-      # wezterm
+      wezterm
+      ghostty
       tmux
       spotify-player
       gh

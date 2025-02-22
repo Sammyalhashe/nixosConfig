@@ -91,6 +91,13 @@
   #  wget
   ];
 
+  # xdg env variables
+  environment.sessionVariables = {
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME   = "$HOME/var/lib";
+    XDG_CACHE_HOME  = "$HOME/var/cache";
+  };
+
   fonts.packages = with pkgs; [
       monoid
       source-code-pro

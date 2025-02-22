@@ -17,15 +17,15 @@ in
         enable = true;
         plugins = with pkgs; [
         #     tmuxPlugins.sensible
-        #     {
-        #         plugin = tmuxPlugins.vim-tmux-navigator;
-        #         extraConfig = ''
-        #             # vim-tmux-navigator
-        #             # vim-tmux-navigator overrides the <C-l> clear screen, so add a <prefix>+<C-l>
-        #             # mapping to overcome it :/
-        #             bind C-l send-keys 'C-l'
-        #         '';
-        #     }
+            {
+                plugin = tmuxPlugins.vim-tmux-navigator;
+                extraConfig = ''
+                    # vim-tmux-navigator
+                    # vim-tmux-navigator overrides the <C-l> clear screen, so add a <prefix>+<C-l>
+                    # mapping to overcome it :/
+                    bind C-l send-keys 'C-l'
+                '';
+            }
         #     # {
         #     #     plugin = sessionx;
         #     #     extraConfig = ''
@@ -135,7 +135,7 @@ in
             set -g @plugin 'wfxr/tmux-fzf-url'
 
             # Navigation
-            set -g @plugin 'christoomey/vim-tmux-navigator'
+            # set -g @plugin 'christoomey/vim-tmux-navigator'
 
             # Session Management
             set -g @plugin 'tmux-plugins/tmux-resurrect'
@@ -192,6 +192,7 @@ in
 
             set -g @catppuccin_flavour $catpuccin_color # or frappe, macchiato, mocha
 
+            # set -g @catppuccin_window_left_separator " █"
             set -g @catppuccin_window_left_separator " █"
             set -g @catppuccin_window_right_separator "█ "
             set -g @catppuccin_window_number_position "left"
@@ -208,7 +209,7 @@ in
             set -g @catppuccin_date_time_text "%Y-%m-%d %H:%M:%S"
 
             # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-            run '~/.tmux/plugins/tpm/tpm'
+            run '${config.xdg.configHome}/tmux/plugins/tpm/tpm'
 
             # my own bindings
             bind i new-window ~/.dotfiles/self_scripts/choose_shell
