@@ -8,5 +8,6 @@
         ./tmux.nix
         ./direnv.nix
         ./desktop.nix
+        ./wezterm.nix
     ];
 }
