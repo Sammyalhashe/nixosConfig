@@ -1,6 +1,4 @@
-{inputs, ...}:
-let user = "salhashemi2";
-in
+{inputs, user, ...}:
 {
     home-manager = {
         extraSpecialArgs = { inherit inputs; };

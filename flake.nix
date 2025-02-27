@@ -10,7 +10,7 @@
 
   outputs = { self, nixpkgs, zen-browser, ... }@inputs :
   {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
               ./hosts/homebase/configuration.nix

@@ -3,7 +3,8 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, inputs, ... }:
-
+let user = "salhashemi2";
+in
 {
   imports =
     [
@@ -11,7 +12,11 @@
       ./nvidia.nix
       ./bluetooth.nix
       inputs.home-manager.nixosModules.default
-      ./home-manager.nix
+      (
+        import ./home-manager.nix (
+            { inherit inputs user; }
+        )
+      )
     ];
 
   # enable flakes
@@ -31,7 +36,7 @@
   boot.loader.systemd-boot.configurationLimit = 1;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "homebase"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -40,6 +45,10 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  networking.extraHosts = ''
+    192.168.1.98 picloud.local
+  '';
 
   # Set your time zone.
   time.timeZone = "America/New_York";
@@ -67,15 +76,23 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.salhashemi2 = {
+  users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
   };
 
+  systemd.user.services.neovim_server = {
+    description = "Neovim server to connect to for fast startup";
+    script = ''
+        nohup nvim --listen 127.0.0.1:8888 --headless </dev/null >/dev/null 2>&1 &
+    '';
+    wantedBy = [ "multi-user.target" ]; # starts after login
+  };
+
   # Enable automatic login for the user.
-  services.getty.autologinUser = "salhashemi2";
+  services.getty.autologinUser = "${user}";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -114,7 +131,8 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
+  services.avahi.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
