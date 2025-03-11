@@ -90,6 +90,7 @@ else [
       waybar
       mupdf
       plasma5Packages.kdeconnect-kde
+      nextcloud-client
 
       # unfree applications
       obsidian

@@ -17,6 +17,7 @@ in
             { inherit inputs user; }
         )
       )
+      # ./webdav.nix
     ];
 
   # enable flakes
@@ -46,9 +47,9 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
 
-  networking.extraHosts = ''
-    192.168.1.98 picloud.local
-  '';
+  # networking.extraHosts = ''
+  #   192.168.1.98 picloud.local
+  # '';
 
   # Set your time zone.
   time.timeZone = "America/New_York";
@@ -132,7 +133,17 @@ in
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.avahi.enable = true;
+  services.avahi = {
+      nssmdns = true;
+      enable = true;
+      ipv4 = true;
+      ipv6 = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

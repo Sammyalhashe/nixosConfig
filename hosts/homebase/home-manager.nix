@@ -10,5 +10,6 @@
                 ];
             };
         };
+        backupFileExtension = "backup";
     };
 }
