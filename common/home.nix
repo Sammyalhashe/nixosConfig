@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, user, ... }:
 let darwin = pkgs.system == "x86_64-darwin";
 in
 let my_packages = with pkgs; if darwin then [
@@ -144,8 +144,9 @@ in
     # imports = inputs.self.outputs.homeManagerModules.default;
     # Home Manager needs a bit of information about you and the paths it should
     # manage.
-    home.username = "salhashemi2";
-    home.homeDirectory = "/home/salhashemi2";
+    home.username = "${user}";
+    # TODO How to handle this?
+    home.homeDirectory = "/Users/${user}";
 
     # This value determines the Home Manager release that your configuration is
     # compatible with. This helps avoid breakage when a new Home Manager release

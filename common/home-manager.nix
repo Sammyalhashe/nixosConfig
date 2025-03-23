@@ -1,7 +1,7 @@
 {inputs, user, ...}:
 {
     home-manager = {
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = { inherit inputs user; };
         users = {
             "${user}" = {
                 imports = [

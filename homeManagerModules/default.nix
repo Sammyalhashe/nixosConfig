@@ -1,13 +1,14 @@
 {lib, ...}:
+let my_imports = [
+    ./nixpkgs.nix
+    ./alacritty.nix
+    ./zsh.nix
+    ./starship.nix
+    ./tmux.nix
+    ./direnv.nix
+    ./wezterm.nix
+];
+in
 {
-    imports = [
-        ./nixpkgs.nix
-        ./alacritty.nix
-        ./zsh.nix
-        ./starship.nix
-        ./tmux.nix
-        ./direnv.nix
-        ./desktop.nix
-        ./wezterm.nix
-    ];
+    imports = my_imports;
 }

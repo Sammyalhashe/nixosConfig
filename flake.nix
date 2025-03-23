@@ -21,6 +21,7 @@
       };
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
           specialArgs = { inherit inputs; };
+          system = "x86_64-darwin";
           modules = [
               ./hosts/Sammys-MacBook-Pro/configuration.nix
           ];
