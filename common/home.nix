@@ -145,7 +145,7 @@ in
     # Home Manager needs a bit of information about you and the paths it should
     # manage.
     home.username = "${user}";
-    # TODO How to handle this?
+    # TODO Gotta transfer this file to it's own copy for each system.
     home.homeDirectory = "/Users/${user}";
 
     # This value determines the Home Manager release that your configuration is
