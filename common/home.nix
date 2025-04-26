@@ -65,6 +65,10 @@ let my_packages = with pkgs; if darwin then [
       # (pkgs.writeShellScriptBin "my-hello" ''
       #   echo "Hello, ${config.home.username}!"
       # '')
+
+
+      (import ./scripts/test.nix { inherit pkgs; })
+      (import ./scripts/hgrep.nix { inherit pkgs; })
 ]
 else [
       inputs.zen-browser.packages."${pkgs.system}".default
