@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, user, ... }:
+{ config, pkgs, inputs, user, homeDir, ... }:
 let darwin = pkgs.system == "x86_64-darwin";
 in
 let my_packages = with pkgs; if darwin then [
@@ -67,8 +67,6 @@ let my_packages = with pkgs; if darwin then [
       # '')
 
 
-      (import ./scripts/test.nix { inherit pkgs; })
-      (import ./scripts/hgrep.nix { inherit pkgs; })
 ]
 else [
       inputs.zen-browser.packages."${pkgs.system}".default
@@ -144,13 +142,21 @@ else [
       # '')
 ];
 in
+let res = my_packages ++ [
+      (import ./scripts/test.nix { inherit pkgs; })
+      (import ./scripts/hgrep.nix { inherit pkgs; })
+      (import ./scripts/crypto.nix { inherit pkgs; })
+      (import ./scripts/tmux-cht.nix { inherit pkgs; })
+      (import ./scripts/fzf-man.nix { inherit pkgs; })
+];
+in
 {
     # imports = inputs.self.outputs.homeManagerModules.default;
     # Home Manager needs a bit of information about you and the paths it should
     # manage.
     home.username = "${user}";
     # TODO Gotta transfer this file to it's own copy for each system.
-    home.homeDirectory = "/Users/${user}";
+    home.homeDirectory = "${homeDir}/${user}";
 
     # This value determines the Home Manager release that your configuration is
     # compatible with. This helps avoid breakage when a new Home Manager release
@@ -163,7 +169,7 @@ in
 
     # The home.packages option allows you to install Nix packages into your
     # environment.
-    home.packages = my_packages;
+    home.packages = res;
 
     # Home Manager is pretty good at managing dotfiles. The primary way to manage
     # plain files is through 'home.file'.

@@ -1,13 +1,15 @@
 { pkgs, inputs, ... }:
 let user = "sammyalhashemi";
 in
+let homeDir = "/Users";
+in
 {
   imports =
     [
       inputs.home-manager.darwinModules.default
       (
         import ../../common/home-manager.nix (
-            { inherit inputs user; }
+            { inherit inputs user homeDir; }
         )
       )
     ];

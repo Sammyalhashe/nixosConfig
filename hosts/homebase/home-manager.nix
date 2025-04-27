@@ -5,7 +5,7 @@
         users = {
             "${user}" = {
                 imports = [
-                    ./home.nix
+                    ../../common/home.nix
                     inputs.self.outputs.homeManagerModules.default
                 ];
             };

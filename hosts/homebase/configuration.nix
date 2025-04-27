@@ -5,6 +5,8 @@
 { config, pkgs, lib, inputs, ... }:
 let user = "salhashemi2";
 in
+let homeDir = "/home";
+in
 {
   imports =
     [
@@ -13,8 +15,8 @@ in
       ./bluetooth.nix
       inputs.home-manager.nixosModules.default
       (
-        import ./home-manager.nix (
-            { inherit inputs user; }
+        import ../../common/home-manager.nix (
+            { inherit inputs user homeDir; }
         )
       )
       # ./webdav.nix
@@ -104,7 +106,12 @@ in
      neovim
      git
      nvidia-vaapi-driver
-     kdePackages.kdeconnect-kde
+     (vivaldi.overrideAttrs
+      (oldAttrs: {
+        dontWrapQtApps = false;
+        dontPatchELF = true;
+        nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [pkgs.kdePackages.wrapQtAppsHook];
+      }))
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
   ];
@@ -144,6 +151,11 @@ in
         workstation = true;
       };
   };
+
+  services.udev.packages = with pkgs; [
+      platformio-core.udev
+      openocd
+  ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
