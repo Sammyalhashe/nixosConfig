@@ -1,4 +1,4 @@
-{lib, ...}:
+{lib, inputs, ...}:
 {
     imports = [
         ./desktop.nix

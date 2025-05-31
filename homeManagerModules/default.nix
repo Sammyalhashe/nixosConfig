@@ -1,12 +1,15 @@
-{lib, ...}:
+{lib, inputs, ...}:
 let my_imports = [
-    ./nixpkgs.nix
     ./alacritty.nix
-    ./zsh.nix
+    ./desktop.nix
+    ./direnv.nix
+    ./nixpkgs.nix
     ./starship.nix
     ./tmux.nix
-    ./direnv.nix
     ./wezterm.nix
+    ./yazi.nix
+    ./zellij.nix
+    ./zsh.nix
 ];
 in
 {

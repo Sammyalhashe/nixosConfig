@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let sammy = "salhashemi2";
 in
-let ip = "192.168.1.99";
+let ip = "10.125.37.99";
 in
 {
     programs.zsh = {
@@ -13,6 +13,9 @@ in
             tm = "tmux";
             tm0 = "tmux a -t 0";
             tk0 = "tmux kill-session -t 0";
+            yz = "yazi";
+            z = "zellij";
+            du = "dua";
 
             # nixos aliases
             hms = "home-manager switch";
@@ -21,6 +24,7 @@ in
             nsp = "nix-shell -p";
             nb = "nix build";
             nd = "nix develop";
+            ns = "nix search nixpkgs";
 
             # git aliases
             grv = "git remote -v";

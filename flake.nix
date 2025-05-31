@@ -8,9 +8,19 @@
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    hyprlock = {
+        url = "github:hyprwm/hyprlock";
+        inputs = {
+          # hyprgraphics.follows = "hyprland/hyprgraphics";
+          # hyprlang.follows = "hyprland/hyprlang";
+          # hyprutils.follows = "hyprland/hyprutils";
+          # nixpkgs.follows = "hyprland/nixpkgs";
+          # systems.follows = "hyprland/systems";
+        };
+    };
   };
 
-  outputs = { self, nixpkgs, darwin, zen-browser, ... }@inputs:
+  outputs = { self, nixpkgs, darwin, zen-browser, hyprlock, ... }@inputs:
   {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
