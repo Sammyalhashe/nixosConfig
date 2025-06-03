@@ -8,14 +8,24 @@
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 
-  outputs = { self, nixpkgs, darwin, zen-browser, ... }@inputs:
+  outputs = { self, nixpkgs, darwin, zen-browser, nixos-wsl, ... }@inputs:
   {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
               ./hosts/homebase/configuration.nix
+              ./nixosModules
+          ];
+      };
+      nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          system = "x86_64-linux";
+          modules = [
+              ./hosts/homebase_wsl/configuration.nix
+              nixos-wsl.nixosModules.default
               ./nixosModules
           ];
       };
