@@ -2,7 +2,6 @@
 let my_imports = [
     ./alacritty.nix
     ./direnv.nix
-    ./neovim.nix
     ./nixpkgs.nix
     ./starship.nix
     ./tmux.nix

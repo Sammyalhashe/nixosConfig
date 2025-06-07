@@ -1,28 +1,10 @@
 { config, pkgs, inputs, user, homeDir, ... }:
 let my_packages = with pkgs; [
-      # # Adds the 'hello' command to your environment. It prints a friendly
-      # # "Hello, world!" when run.
-
       # c compilers
       gcc
 
-      # desktop
-      # wofi
-      # tofi
-
       # applications
-      neovim
-      # kitty
-      # waybar
-      # brave
-      # firefox
-      # zathura
-      # hyprpaper
-      # hyprlock
-      # kdeconnect
-      # thunderbird
-      # maestral-gui
-      syncthing
+      zellij
 
       # unfree applications
       # obsidian
@@ -42,10 +24,6 @@ let my_packages = with pkgs; [
       starship
       tmux
       yazi
-
-
-      # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
-      # wl-clipboard
 
       # fonts
       iosevka

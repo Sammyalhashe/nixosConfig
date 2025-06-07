@@ -1,12 +1,12 @@
 { config, pkgs, ... }:
 let sammy = "salhashemi2";
 in
-let ip = "10.125.37.99";
+let ip = "11.125.37.99";
 in
 {
     programs.zsh = {
         enable = true;
-        enableCompletion = true;
+        enableCompletion = false;
         shellAliases = {
             # common aliases
             nv = "nvim --remote-ui --server 127.0.0.1:8888";
