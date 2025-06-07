@@ -1,12 +1,12 @@
-{inputs, user, homeDir, ...}:
+{inputs, user, homeDir, hostname ? "default", ...}:
 {
     home-manager = {
         extraSpecialArgs = { inherit inputs user homeDir; };
         users = {
             "${user}" = {
                 imports = [
-                    ./home.nix
-                    inputs.self.outputs.homeManagerModules.default
+                    ./home-${hostname}.nix
+                    inputs.self.outputs.homeManagerModules.${hostname}
                 ];
             };
         };

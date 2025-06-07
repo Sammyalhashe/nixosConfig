@@ -37,5 +37,6 @@
           ];
       };
       homeManagerModules.default = ./homeManagerModules;
+      homeManagerModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
   };
 }

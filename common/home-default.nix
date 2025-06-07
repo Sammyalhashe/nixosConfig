@@ -1,73 +1,8 @@
 { config, pkgs, inputs, user, homeDir, ... }:
 let darwin = pkgs.system == "x86_64-darwin";
 in
-let my_packages = with pkgs; if darwin then [
-      # # Adds the 'hello' command to your environment. It prints a friendly
-      # # "Hello, world!" when run.
-
-      # c compilers
-      gcc
-
-      # desktop
-      # wofi
-      # tofi
-
-      # applications
-      neovim
-      # kitty
-      # waybar
-      # brave
-      # firefox
-      # zathura
-      # hyprpaper
-      # hyprlock
-      # kdeconnect
-      # thunderbird
-      # maestral-gui
-      syncthing
-
-      # unfree applications
-      # obsidian
-      # jetbrains-toolbox
-
-      # terminal utilities
-      alacritty
-      cowsay
-      fortune
-      fzf
-      gh
-      neofetch
-      neofetch
-      ripgrep
-      direnv
-      spotify-player
-      starship
-      tmux
-      yazi
-
-
-      # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
-      # wl-clipboard
-
-      # fonts
-      iosevka
-
-      # # It is sometimes useful to fine-tune packages, for example, by applying
-      # # overrides. You can do that directly here, just don't forget the
-      # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-      # # fonts?
-      # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-      # # You can also create simple shell scripts directly inside your
-      # # configuration. For example, this adds a command 'my-hello' to your
-      # # environment:
-      # (pkgs.writeShellScriptBin "my-hello" ''
-      #   echo "Hello, ${config.home.username}!"
-      # '')
-
-
-]
-else [
+let my_packages = with pkgs; 
+[
       inputs.zen-browser.packages."${pkgs.system}".default
       git
 

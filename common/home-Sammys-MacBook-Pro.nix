@@ -1,7 +1,5 @@
-{ config, pkgs, inputs, ... }:
-let darwin = pkgs.system == "x86_64-darwin";
-in
-let my_packages = with pkgs; if darwin then [
+{ config, pkgs, inputs, user, homeDir, ... }:
+let my_packages = with pkgs; [
       # # Adds the 'hello' command to your environment. It prints a friendly
       # # "Hello, world!" when run.
 
@@ -52,7 +50,6 @@ let my_packages = with pkgs; if darwin then [
       # fonts
       iosevka
 
-
       # # It is sometimes useful to fine-tune packages, for example, by applying
       # # overrides. You can do that directly here, just don't forget the
       # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -65,87 +62,25 @@ let my_packages = with pkgs; if darwin then [
       # (pkgs.writeShellScriptBin "my-hello" ''
       #   echo "Hello, ${config.home.username}!"
       # '')
-]
-else [
-      inputs.zen-browser.packages."${pkgs.system}".default
-      git
-      # c compilers
-      gcc
-
-      # desktop
-      wofi
-      # tofi
-
-      # applications
-      brave
-      emacs
-      firefox
-      hyprlock
-      hyprpaper
-      kitty
-      neovim
-      protonvpn-gui
-      syncthing
-      thunderbird
-      waybar
-      mupdf
-      plasma5Packages.kdeconnect-kde
-      nextcloud-client
-
-      # unfree applications
-      obsidian
-      jetbrains-toolbox
-      discord
-
-      # terminal utilities
-      alacritty
-      wezterm
-      ghostty
-      tmux
-      spotify-player
-      gh
-      neofetch
-      starship
-      cava
-      fortune
-      cowsay
-      neofetch
-      blesh
-      yazi
-      fzf
-      stow
-      ripgrep
-      pavucontrol
-      blueman
 
 
-      # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
-      wl-clipboard
-
-      # fonts
-      iosevka
-
-
-      # # It is sometimes useful to fine-tune packages, for example, by applying
-      # # overrides. You can do that directly here, just don't forget the
-      # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-      # # fonts?
-      # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-      # # You can also create simple shell scripts directly inside your
-      # # configuration. For example, this adds a command 'my-hello' to your
-      # # environment:
-      # (pkgs.writeShellScriptBin "my-hello" ''
-      #   echo "Hello, ${config.home.username}!"
-      # '')
+];
+in
+let res = my_packages ++ [
+      (import ./scripts/test.nix { inherit pkgs; })
+      (import ./scripts/hgrep.nix { inherit pkgs; })
+      (import ./scripts/crypto.nix { inherit pkgs; })
+      (import ./scripts/tmux-cht.nix { inherit pkgs; })
+      (import ./scripts/fzf-man.nix { inherit pkgs; })
 ];
 in
 {
     # imports = inputs.self.outputs.homeManagerModules.default;
     # Home Manager needs a bit of information about you and the paths it should
     # manage.
-    home.username = "salhashemi2";
-    home.homeDirectory = "/home/salhashemi2";
+    home.username = "${user}";
+    # TODO Gotta transfer this file to it's own copy for each system.
+    home.homeDirectory = "${homeDir}/${user}";
 
     # This value determines the Home Manager release that your configuration is
     # compatible with. This helps avoid breakage when a new Home Manager release
@@ -158,7 +93,7 @@ in
 
     # The home.packages option allows you to install Nix packages into your
     # environment.
-    home.packages = my_packages;
+    home.packages = res;
 
     # Home Manager is pretty good at managing dotfiles. The primary way to manage
     # plain files is through 'home.file'.
@@ -202,9 +137,6 @@ in
     home.sessionVariables = {
       EDITOR = "nvim";
       NIXOS_OZONE_WL = "1";
-      QT_QPA_PLATFORM = "wayland";
-      SDL_VIDEODRIVER = "wayland";
-      XDG_SESSION_TYPE = "wayland";
     };
 
     # syncthing

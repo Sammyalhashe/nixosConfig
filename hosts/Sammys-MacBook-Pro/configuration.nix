@@ -3,13 +3,15 @@ let user = "sammyalhashemi";
 in
 let homeDir = "/Users";
 in
+let hostname = "Sammys-MacBook-Pro";
+in
 {
   imports =
     [
       inputs.home-manager.darwinModules.default
       (
         import ../../common/home-manager.nix (
-            { inherit inputs user homeDir; }
+            { inherit inputs user homeDir hostname; }
         )
       )
     ];
