@@ -70,6 +70,7 @@ let my_packages = with pkgs; if darwin then [
 else [
       inputs.zen-browser.packages."${pkgs.system}".default
       git
+
       # c compilers
       gcc
 
@@ -84,40 +85,43 @@ else [
       hyprlock
       hyprpaper
       kitty
+      mupdf
       neovim
+      nextcloud-client
+      plasma5Packages.kdeconnect-kde
       protonvpn-gui
       syncthing
       thunderbird
-      waybar
-      mupdf
-      plasma5Packages.kdeconnect-kde
-      nextcloud-client
 
       # unfree applications
       obsidian
-      jetbrains-toolbox
       discord
 
       # terminal utilities
       alacritty
-      wezterm
-      ghostty
-      tmux
-      spotify-player
-      gh
-      neofetch
-      starship
-      cava
-      fortune
-      cowsay
-      neofetch
+      bat
       blesh
-      yazi
-      fzf
-      stow
-      ripgrep
-      pavucontrol
       blueman
+      cava
+      cowsay
+      delta
+      dua
+      fd
+      fortune
+      fzf
+      gh
+      ghostty
+      neofetch
+      neofetch
+      pavucontrol
+      ripgrep
+      spotify-player
+      starship
+      stow
+      tmux
+      wezterm
+      yazi
+      zellij
 
 
       # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
@@ -126,6 +130,8 @@ else [
       # fonts
       iosevka
 
+      # wayland stuff
+      xwayland
 
       # # It is sometimes useful to fine-tune packages, for example, by applying
       # # overrides. You can do that directly here, just don't forget the

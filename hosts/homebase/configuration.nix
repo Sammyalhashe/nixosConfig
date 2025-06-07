@@ -140,8 +140,9 @@ in
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.settings.X11Forwarding = true;
   services.avahi = {
-      nssmdns = true;
+      nssmdns4 = true;
       enable = true;
       ipv4 = true;
       ipv6 = true;

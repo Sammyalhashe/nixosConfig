@@ -161,9 +161,14 @@ if is_windows then
     table.insert(NVIM_COMMAND, "--")
 end
 
-table.insert(SSH_COMMAND, "ssh")
-table.insert(SSH_COMMAND, "-tt")
-table.insert(SSH_COMMAND, "v5dev")
+if is_windows then
+    table.insert(SSH_COMMAND, "ssh")
+    table.insert(SSH_COMMAND, "-tt")
+    table.insert(SSH_COMMAND, "v5dev")
+else
+    table.insert(SSH_COMMAND, "ssh")
+    table.insert(SSH_COMMAND, "salhashemi2@picloud.local")
+end
 
 table.insert(NVIM_COMMAND, "nvim")
 
@@ -173,7 +178,7 @@ table.insert(SPOTIFY_COMMAND, "spotify_player")
 -- keymappings
 -- references used:
 -- https://wezfurlong.org/wezterm/config/keys.html#configuring-key-assignments
-config.leader = { key = "z", mods = "CTRL", timeout_milliseconds = 1000 }
+config.leader = { key = "a", mods = "ALT", timeout_milliseconds = 1000 }
 config.keys = {
     { key = "phys:Space", mods = "LEADER",       action = wezterm.action.ActivateCommandPalette },
     { key = "-",          mods = "LEADER", action = wezterm.action.SplitVertical { domain = "CurrentPaneDomain" } },
@@ -223,7 +228,5 @@ end
 --   },
 -- })
 
-config.enable_wayland = false;
--- config.front_end = "WebGpu"
--- and finally, return the configuration to wezterm
+config.enable_wayland = true;
 return config

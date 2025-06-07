@@ -6,7 +6,7 @@ in
     programs.alacritty = {
         enable = true;
         settings = {
-            import = [
+            general.import = [
                 (pkgs.fetchFromGitHub {
                     owner = "alacritty";
                     repo = "alacritty-theme";
