@@ -6,6 +6,8 @@ let my_packages = with pkgs; [
       # applications
       zellij
 
+      inputs.zen-browser.packages."${pkgs.system}".default
+
       # unfree applications
       # obsidian
       # jetbrains-toolbox

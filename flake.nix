@@ -7,7 +7,12 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    zen-browser = {
+        url = "github:Sammyalhashe/zen-browser-flake";
+        # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+        # to have it up-to-date or simply don't specify the nixpkgs input  
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
     hyprlock = {
         url = "github:hyprwm/hyprlock";
         inputs = {
