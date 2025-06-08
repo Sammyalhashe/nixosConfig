@@ -31,7 +31,7 @@
           specialArgs = { inherit inputs; };
           modules = [
               ./hosts/homebase/configuration.nix
-              ./nixosModules
+              (import ./nixosModules { username = "salhashemi2"; })
           ];
       };
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
@@ -43,5 +43,7 @@
       };
       homeManagerModules.default = ./homeManagerModules;
       homeManagerModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
+
+      formatter.x86_64-linux = nixpkgs.legacyPackages."x86_64-linux".nixfmt-rfc-style;
   };
 }

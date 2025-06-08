@@ -14,12 +14,12 @@ in
                     sha256 = "sha256-Xwb7yiJ1yAEoMi+lHUg//PEe9LaAJbMg2aaIp2tX7jc=";
                 } + "/themes/kanagawa_wave.toml")
 
-                (pkgs.fetchFromGitHub {
-                    owner = "EdenEast";
-                    repo = "nightfox.nvim";
-                    rev = "595ffb8f291fc4a9bef3201a28b7c0379a41cdee";
-                    sha256 = "sha256-bVRI77ikBRECJ9Y6UVgZVO+SH46LBU3MtZUDgAYqXBc=";
-                } + "/extra/dayfox/alacritty.toml")
+                # (pkgs.fetchFromGitHub {
+                #     owner = "EdenEast";
+                #     repo = "nightfox.nvim";
+                #     rev = "595ffb8f291fc4a9bef3201a28b7c0379a41cdee";
+                #     sha256 = "sha256-bVRI77ikBRECJ9Y6UVgZVO+SH46LBU3MtZUDgAYqXBc=";
+                # } + "/extra/dayfox/alacritty.toml")
 
             ];
             env = {

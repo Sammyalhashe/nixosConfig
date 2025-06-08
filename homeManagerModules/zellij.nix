@@ -233,7 +233,7 @@ in {
           "session-manager"
           //...
       }
-      theme "dayfox"
+      theme "kanagawabones"
     '';
   home.file."${config.xdg.configHome}/zellij/layouts/default.kdl".text =
     /*
@@ -247,12 +247,12 @@ in {
                   }
                   pane size="40%" {
                       pane  focus=true size="50%"
-                      pane command="yazi" size="50%" cwd="/home/salhashemi2/.dotfiles/" {
+                      pane command="yazi" size="50%" cwd="/home/salhashemi2/" {
                       }
                   }
               }
           }
-          tab name="Scratchpad" hide_floating_panes=true {
+          tab name="Spotify" hide_floating_panes=true {
               pane command="zsh"
               floating_panes {
                 pane command="spotify_player" {

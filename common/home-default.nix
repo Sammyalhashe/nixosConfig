@@ -11,7 +11,8 @@ let my_packages = with pkgs;
 
       # desktop
       wofi
-      # tofi
+      rofi
+      tofi
 
       # applications
       brave
@@ -27,6 +28,7 @@ let my_packages = with pkgs;
       protonvpn-gui
       syncthing
       thunderbird
+      xfce.thunar
 
       # unfree applications
       obsidian
@@ -46,7 +48,6 @@ let my_packages = with pkgs;
       fzf
       gh
       ghostty
-      neofetch
       neofetch
       pavucontrol
       ripgrep

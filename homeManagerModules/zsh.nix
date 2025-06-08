@@ -55,7 +55,7 @@ in
             ];
         };
 
-        initExtra = ''
+        initContent = ''
             bindkey -v
             bindkey '^R' history-incremental-search-backward
 

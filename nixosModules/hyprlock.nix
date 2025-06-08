@@ -5,7 +5,6 @@
         enable = true;
         package = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
 
-
         # settings = {
         #     general = {
         #         disable_loading_bar = true;

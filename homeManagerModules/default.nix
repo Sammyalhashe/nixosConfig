@@ -8,6 +8,7 @@ let my_imports = [
     ./starship.nix
     ./tmux.nix
     ./wezterm.nix
+    ./wofi.nix
     ./yazi.nix
     ./zellij.nix
     ./zsh.nix
