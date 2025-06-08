@@ -7,8 +7,11 @@
         vt = 3;
         
         settings = {
-           user = username; 
-           command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+           default_session = {
+               user = username; 
+               # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+               command = "hyprland";
+           };
         };
     }; 
 }

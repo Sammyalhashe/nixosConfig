@@ -673,4 +673,17 @@ window#waybar {
     };
 
 
+    # hyprpaper
+    services.hyprpaper = {
+        enable = true;
+        settings = {
+            preload = [ "/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png" ];
+            wallpaper = [
+                ",/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png"
+            ];
+            ipc = "on";
+        };
+    };
+
+
 }
