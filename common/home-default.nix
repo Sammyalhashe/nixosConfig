@@ -26,7 +26,7 @@ let my_packages = with pkgs;
       nextcloud-client
       plasma5Packages.kdeconnect-kde
       protonvpn-gui
-      syncthing
+      # syncthing
       thunderbird
       xfce.thunar
 
@@ -157,7 +157,7 @@ in
     };
 
     # syncthing
-    services.syncthing.enable = true;
+    # services.syncthing.enable = true;
 
     # Let Home Manager install and manage itself.
     programs.home-manager.enable = true;

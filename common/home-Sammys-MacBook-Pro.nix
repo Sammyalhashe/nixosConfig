@@ -120,7 +120,7 @@ in
     };
 
     # syncthing
-    services.syncthing.enable = true;
+    # services.syncthing.enable = true;
 
     # Let Home Manager install and manage itself.
     programs.home-manager.enable = true;
