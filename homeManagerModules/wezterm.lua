@@ -52,7 +52,7 @@ config.font = wezterm.font 'Iosevka'
 config.audible_bell = "Disabled"
 
 -- no window border
-config.window_decorations = "RESIZE"
+-- config.window_decorations = "RESIZE"
 
 -- window opacity
 config.window_background_opacity = 0.96

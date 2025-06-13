@@ -32,7 +32,11 @@ in
   system.autoUpgrade.allowReboot = true;
 
   # enable garbage collection
-  nix.gc.automatic = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;

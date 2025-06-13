@@ -3,6 +3,7 @@
 {
     programs.starship = {
         enable = true;
+        enableNushellIntegration = true;
         settings = {
             # Get editor completions based on the config schema
             # "$schema" = "https://starship.rs/config-schema.json";

@@ -29,6 +29,7 @@ let my_packages = with pkgs;
       # syncthing
       thunderbird
       xfce.thunar
+      kdePackages.partitionmanager
 
       # unfree applications
       obsidian

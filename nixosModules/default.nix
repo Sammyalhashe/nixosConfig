@@ -4,7 +4,7 @@
     {
         imports = [
             ./desktop.nix
-            ./zsh.nix
+            ./shell.nix
             (import ./greetd.nix { inherit pkgs username inputs lib; })
         ];
     }

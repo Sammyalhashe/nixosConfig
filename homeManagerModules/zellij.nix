@@ -68,7 +68,7 @@ in {
     kdl
     */
     ''
-      default_shell "zsh"
+      default_shell "nu"
       keybinds {
           normal {
               bind "Enter" {  // Intercept `Enter`.

@@ -423,7 +423,7 @@ window#waybar {
         settings = {
             background = {
                 monitor = "";
-                path = "/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png";
+                path = "/home/salhashemi2/Pictures/wallpapers/nix-wallpaper-nineish-solarized-dark.png";
                 blur_passes = 2;
                 contrast = 1;
                 vibrancy = 0.2;
@@ -491,7 +491,7 @@ window#waybar {
             # Profile Picture
             image = {
                 monitor = "";
-                path = "/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png";
+                path = "/home/salhashemi2/Pictures/wallpapers/nix-wallpaper-nineish-solarized-dark.png";
                 size = 100;
                 border_size = 2;
                 border_color = "$foreground";
@@ -566,7 +566,8 @@ window#waybar {
             "ALT,mouse:273,resizewindow"
         ];
         bind = [
-            "$mod, B, exec, brave --ozone-platform-hint=x11"
+            # "$mod, B, exec, brave --ozone-platform-hint=x11"
+            "$mod, B, exec, zen"
             "$mod, T, exec, $term"
             "$mod, R, exec, tofi-run | xargs -I {} sh -c '{}'"
             # "$mod, D, exec, wofi --show drun"
@@ -677,9 +678,9 @@ window#waybar {
     services.hyprpaper = {
         enable = true;
         settings = {
-            preload = [ "/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png" ];
+            preload = [ "/home/salhashemi2/Pictures/wallpapers/nix-wallpaper-nineish-solarized-dark.png" ];
             wallpaper = [
-                ",/home/salhashemi2/Pictures/wallpapers/gruvbox_light_lines.png"
+                "/home/salhashemi2/Pictures/wallpapers/nix-wallpaper-nineish-solarized-dark.png"
             ];
             ipc = "on";
         };

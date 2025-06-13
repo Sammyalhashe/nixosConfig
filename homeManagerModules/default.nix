@@ -12,6 +12,7 @@ let my_imports = [
     ./yazi.nix
     ./zellij.nix
     ./zsh.nix
+    ./nushell.nix
 ];
 in
 {
