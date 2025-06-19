@@ -6,7 +6,7 @@ let my_packages = with pkgs; [
       # applications
       zellij
 
-      inputs.zen-browser.packages."${pkgs.system}".default
+      # inputs.zen-browser.packages."${pkgs.system}".default
 
       # unfree applications
       # obsidian
@@ -26,6 +26,8 @@ let my_packages = with pkgs; [
       starship
       tmux
       yazi
+      nushell
+      qownnotes
 
       # fonts
       iosevka

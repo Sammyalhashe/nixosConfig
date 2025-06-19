@@ -32,6 +32,7 @@ in
     # packages = with pkgs; [];
     name = "${user}";
     home = "/Users/${user}";
+    shell = pkgs.nushell;
   };
 
   # Allow unfree packages
