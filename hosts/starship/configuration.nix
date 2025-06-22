@@ -19,10 +19,28 @@ in
             { inherit inputs user homeDir; }
         )
       )
+      ./wireguard.nix
     ];
+
+  # enable flakes
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+  };
+
+  # auto upgrade
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.allowReboot = true;
+
+  # enable garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 1;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
@@ -79,6 +97,13 @@ in
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
   ];
+
+  fonts.packages = with pkgs; [
+      monoid
+      source-code-pro
+  ];
+
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

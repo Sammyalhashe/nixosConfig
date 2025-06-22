@@ -1,6 +1,4 @@
 { config, pkgs, inputs, user, homeDir, ... }:
-let darwin = pkgs.system == "x86_64-darwin";
-in
 let my_packages = with pkgs; 
 [
       inputs.zen-browser.packages."${pkgs.system}".default
@@ -20,16 +18,16 @@ let my_packages = with pkgs;
       firefox
       hyprlock
       hyprpaper
+      kdePackages.partitionmanager
       kitty
       mupdf
       neovim
       nextcloud-client
       plasma5Packages.kdeconnect-kde
       protonvpn-gui
-      # syncthing
       thunderbird
+      wireguard-ui
       xfce.thunar
-      kdePackages.partitionmanager
 
       # unfree applications
       obsidian
@@ -40,6 +38,7 @@ let my_packages = with pkgs;
       bat
       blesh
       blueman
+      cargo
       cava
       cowsay
       delta
@@ -90,6 +89,8 @@ let res = my_packages ++ [
       (import ./scripts/crypto.nix { inherit pkgs; })
       (import ./scripts/tmux-cht.nix { inherit pkgs; })
       (import ./scripts/fzf-man.nix { inherit pkgs; })
+      (import ./scripts/start_wireguard.nix { inherit pkgs; })
+      (import ./scripts/stop_wireguard.nix { inherit pkgs; })
 ];
 in
 {
