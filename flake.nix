@@ -34,6 +34,13 @@
               (import ./nixosModules { username = "salhashemi2"; })
           ];
       };
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+              ./hosts/starship/configuration.nix
+              (import ./nixosModules { username = "salhashemi2"; })
+          ];
+      };
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
           specialArgs = { inherit inputs; };
           system = "x86_64-darwin";
