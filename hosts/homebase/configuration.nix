@@ -162,6 +162,12 @@ in
       openocd
   ];
 
+  # suspend after some time inactive
+  services.logind.extraConfig = ''
+    IdleAction=suspend
+    IdleActionSec=600
+  '';
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
