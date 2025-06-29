@@ -23,15 +23,25 @@
           # systems.follows = "hyprland/systems";
         };
     };
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 
-  outputs = { self, nixpkgs, darwin, zen-browser, hyprlock, ... }@inputs:
+  outputs = { self, nixpkgs, darwin, zen-browser, hyprlock, nixos-wsl, ... }@inputs:
   {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
               ./hosts/homebase/configuration.nix
               (import ./nixosModules { username = "salhashemi2"; })
+          ];
+      };
+      nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          system = "x86_64-linux";
+          modules = [
+              nixos-wsl.nixosModules.default
+              ./hosts/starshipwsl/configuration.nix
+              (import ./nixosModules { username = "salhashemi2"; wsl = true; })
           ];
       };
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
@@ -50,6 +60,7 @@
       };
       homeManagerModules.default = ./homeManagerModules;
       homeManagerModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
+      homeManagerModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
 
       formatter.x86_64-linux = nixpkgs.legacyPackages."x86_64-linux".nixfmt-rfc-style;
   };
