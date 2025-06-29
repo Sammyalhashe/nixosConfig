@@ -39,6 +39,9 @@ in
   wsl.wslConf.network.hostname = "starship_wsl";
 
 
+  # makes wsl not generate the `/etc/hosts` file...
+  wsl.wslConf.network.generateHosts = false;
+  # ...so we can write to it.
   networking.extraHosts = ''
     11.125.37.235 picloud.local
     11.125.37.99  raspberrypi.local
