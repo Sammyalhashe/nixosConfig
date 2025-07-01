@@ -45,6 +45,7 @@ in
   networking.extraHosts = ''
     11.125.37.235 picloud.local
     11.125.37.99  raspberrypi.local
+    11.125.37.135 homebase
   '';
 
 
