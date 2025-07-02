@@ -1,7 +1,9 @@
 { config, pkgs, ... }:
-let sammy = "salhashemi2";
-in
-let ip = "11.125.37.99";
+let
+sammy = "salhashemi2";
+raspberrypi = "raspberrypi.local";
+picloud = "picloud.local";
+homebase = "homebase";
 in
 {
     programs.nushell = {
@@ -16,6 +18,7 @@ in
         };
         extraEnv = ''
             $env.EDITOR = "nvim"
+            $env.config.shell_integration.osc133 = false
         '';
         shellAliases = {
             # common aliases
@@ -49,7 +52,9 @@ in
             gsp = "git stash pop";
 
             # raspberry pi at home
-            rpi = "ssh -Y ${sammy}@${ip}";
+            rpi = "ssh -Y ${sammy}@${raspberrypi}";
+            picloud = "ssh -Y ${sammy}@${picloud}";
+            hb = "ssh -Y ${sammy}@${homebase}";
         };
     };
 }
