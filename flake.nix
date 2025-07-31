@@ -44,6 +44,15 @@
               (import ./nixosModules { username = "salhashemi2"; wsl = true; })
           ];
       };
+      nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          system = "x86_64-linux";
+          modules = [
+              nixos-wsl.nixosModules.default
+              ./hosts/homebasewsl/configuration.nix
+              (import ./nixosModules { username = "nixos"; wsl = true; })
+          ];
+      };
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
@@ -61,6 +70,7 @@
       homeManagerModules.default = ./homeManagerModules;
       homeManagerModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
       homeManagerModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
+      homeManagerModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
 
       formatter.x86_64-linux = nixpkgs.legacyPackages."x86_64-linux".nixfmt-rfc-style;
   };
