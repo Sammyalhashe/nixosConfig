@@ -23,7 +23,7 @@
         # systems.follows = "hyprland/systems";
       };
     };
-    nixvim.url = "github:Sammyalhashe/nixvim";
+    nixvim.url = "/mnt/c/Users/sammy/Nextcloud/programming/nix/nixvim/";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 
@@ -34,7 +34,7 @@
       darwin,
       zen-browser,
       hyprlock,
-      nixvim,
+      # nixvim,
       nixos-wsl,
       ...
     }@inputs:

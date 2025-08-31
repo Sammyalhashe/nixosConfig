@@ -21,6 +21,7 @@ let
     kitty
     mupdf
     inputs.nixvim.packages.x86_64-linux.default
+    # neovim
     xfce.thunar
     ghostty
 
