@@ -24,9 +24,9 @@
       };
     };
     omarchy-nix = {
-        url = "github:henrysipp/omarchy-nix";
-        inputs.nixpkgs.follows = "nixpkgs";
-        inputs.home-manager.follows = "home-manager";
+      url = "github:henrysipp/omarchy-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     nixvim.url = "github:Sammyalhashe/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";

@@ -1,9 +1,10 @@
-{lib, inputs, ...}:
-let my_imports = [
+{ lib, inputs, ... }:
+let
+  my_imports = [
     ./alacritty.nix
-    ./desktop.nix
+    # ./desktop.nix
     ./direnv.nix
-    ./neovim.nix
+    # ./neovim.nix
     ./nixpkgs.nix
     ./starship.nix
     ./tmux.nix
@@ -13,8 +14,8 @@ let my_imports = [
     ./zellij.nix
     ./zsh.nix
     ./nushell.nix
-];
+  ];
 in
 {
-    imports = my_imports;
+  imports = my_imports;
 }

@@ -2,55 +2,40 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ omarchy ? false }:
-{ config, pkgs, lib, inputs, ... }:
-let user = "salhashemi2";
+{
+  omarchy ? false,
+}:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+let
+  user = "salhashemi2";
 in
-let homeDir = "/home";
+let
+  homeDir = "/home";
 in
 {
-  imports = if omarchy then
-    [
-      ./hardware-configuration.nix
-      ./nvidia.nix
-      ./bluetooth.nix
-      inputs.home-manager.nixosModules.default
-      inputs.home-manager.nixosModules.home-manager #Add this import
-      {
-        # Configure omarchy
-        omarchy = {
-          full_name = "Sammy Al Hashemi";
-          email_address = "sammy@salh.xyz";
-          theme = "tokyo-night";
-        };
-        
-        home-manager = {
-          users.salhashemi2 = {
-            imports = [
-                inputs.omarchy-nix.homeManagerModules.default
-                ../../homeManagerModules/nixpkgs.nix
-            ]; # And this one
-            home.stateVersion = "24.05";
-          };
-        };
-      }
-      # ./webdav.nix
-    ] else [
-      ./hardware-configuration.nix
-      ./nvidia.nix
-      ./bluetooth.nix
-      inputs.home-manager.nixosModules.default
-      (
-        import ../../common/home-manager.nix (
-            { inherit inputs user homeDir; }
-        )
-      )
-      # ./webdav.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    ./nvidia.nix
+    ./bluetooth.nix
+    inputs.home-manager.nixosModules.default
+    inputs.home-manager.nixosModules.home-manager # Add this import
+    inputs.home-manager.nixosModules.default
+    (import ../../common/home-manager.nix { omarchy = omarchy; } ({ inherit inputs user homeDir; }))
+    # ./webdav.nix
+  ];
 
   # enable flakes
   nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # auto upgrade
@@ -112,14 +97,17 @@ in
   users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
   };
 
   systemd.user.services.neovim_server = {
     description = "Neovim server to connect to for fast startup";
     script = ''
-        nohup nvim --listen 127.0.0.1:8888 --headless </dev/null >/dev/null 2>&1 &
+      nohup nvim --listen 127.0.0.1:8888 --headless </dev/null >/dev/null 2>&1 &
     '';
     wantedBy = [ "multi-user.target" ]; # starts after login
   };
@@ -133,29 +121,28 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     neovim
-     git
-     nvidia-vaapi-driver
-     (vivaldi.overrideAttrs
-      (oldAttrs: {
-        dontWrapQtApps = false;
-        dontPatchELF = true;
-        nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [pkgs.kdePackages.wrapQtAppsHook];
-      }))
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    neovim
+    git
+    nvidia-vaapi-driver
+    (vivaldi.overrideAttrs (oldAttrs: {
+      dontWrapQtApps = false;
+      dontPatchELF = true;
+      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.kdePackages.wrapQtAppsHook ];
+    }))
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
   ];
 
   # xdg env variables
   environment.sessionVariables = {
     XDG_CONFIG_HOME = "$HOME/.config";
-    XDG_DATA_HOME   = "$HOME/var/lib";
-    XDG_CACHE_HOME  = "$HOME/var/cache";
+    XDG_DATA_HOME = "$HOME/var/lib";
+    XDG_CACHE_HOME = "$HOME/var/cache";
   };
 
   fonts.packages = with pkgs; [
-      monoid
-      source-code-pro
+    monoid
+    source-code-pro
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -172,20 +159,20 @@ in
   services.openssh.enable = true;
   services.openssh.settings.X11Forwarding = true;
   services.avahi = {
-      nssmdns4 = true;
+    nssmdns4 = true;
+    enable = true;
+    ipv4 = true;
+    ipv6 = true;
+    publish = {
       enable = true;
-      ipv4 = true;
-      ipv6 = true;
-      publish = {
-        enable = true;
-        addresses = true;
-        workstation = true;
-      };
+      addresses = true;
+      workstation = true;
+    };
   };
 
   services.udev.packages = with pkgs; [
-      platformio-core.udev
-      openocd
+    platformio-core.udev
+    openocd
   ];
 
   # Open ports in the firewall.
@@ -193,14 +180,20 @@ in
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-  networking.firewall = { 
+  networking.firewall = {
     enable = true;
-    allowedTCPPortRanges = [ 
-      { from = 1714; to = 1764; } # KDE Connect
-    ];  
-    allowedUDPPortRanges = [ 
-      { from = 1714; to = 1764; } # KDE Connect
-    ];  
+    allowedTCPPortRanges = [
+      {
+        from = 1714;
+        to = 1764;
+      } # KDE Connect
+    ];
+    allowedUDPPortRanges = [
+      {
+        from = 1714;
+        to = 1764;
+      } # KDE Connect
+    ];
   };
 
   # This value determines the NixOS release from which the default
