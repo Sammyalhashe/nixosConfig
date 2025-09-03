@@ -2,14 +2,40 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+{ omarchy ? false }:
 { config, pkgs, lib, inputs, ... }:
 let user = "salhashemi2";
 in
 let homeDir = "/home";
 in
 {
-  imports =
+  imports = if omarchy then
     [
+      ./hardware-configuration.nix
+      ./nvidia.nix
+      ./bluetooth.nix
+      inputs.home-manager.nixosModules.default
+      inputs.home-manager.nixosModules.home-manager #Add this import
+      {
+        # Configure omarchy
+        omarchy = {
+          full_name = "Sammy Al Hashemi";
+          email_address = "sammy@salh.xyz";
+          theme = "tokyo-night";
+        };
+        
+        home-manager = {
+          users.salhashemi2 = {
+            imports = [
+                inputs.omarchy-nix.homeManagerModules.default
+                ../../homeManagerModules/nixpkgs.nix
+            ]; # And this one
+            home.stateVersion = "24.05";
+          };
+        };
+      }
+      # ./webdav.nix
+    ] else [
       ./hardware-configuration.nix
       ./nvidia.nix
       ./bluetooth.nix
@@ -161,12 +187,6 @@ in
       platformio-core.udev
       openocd
   ];
-
-  # suspend after some time inactive
-  services.logind.extraConfig = ''
-    IdleAction=suspend
-    IdleActionSec=600
-  '';
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

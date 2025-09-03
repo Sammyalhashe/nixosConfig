@@ -23,7 +23,12 @@
         # systems.follows = "hyprland/systems";
       };
     };
-    nixvim.url = "/mnt/c/Users/sammy/Nextcloud/programming/nix/nixvim/";
+    omarchy-nix = {
+        url = "github:henrysipp/omarchy-nix";
+        inputs.nixpkgs.follows = "nixpkgs";
+        inputs.home-manager.follows = "home-manager";
+    };
+    nixvim.url = "github:Sammyalhashe/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 
@@ -31,10 +36,11 @@
     {
       self,
       nixpkgs,
+      home-manager,
       darwin,
       zen-browser,
       hyprlock,
-      # nixvim,
+      omarchy-nix,
       nixos-wsl,
       ...
     }@inputs:
@@ -44,6 +50,13 @@
         modules = [
           ./hosts/homebase/configuration.nix
           (import ./nixosModules { username = "salhashemi2"; })
+        ];
+      };
+      nixosConfigurations.homebase_omarchy = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          (import ./hosts/homebase/configuration.nix { omarchy = true; })
+          omarchy-nix.nixosModules.default
         ];
       };
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
