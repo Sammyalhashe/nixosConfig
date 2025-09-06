@@ -13,7 +13,11 @@
   omarchy = {
     full_name = "Sammy Al Hashemi";
     email_address = "sammy@salh.xyz";
-    theme = "tokyo-night";
+    # theme = "tokyo-night";
+    theme = "generated_dark";
+    theme_overrides = {
+      wallpaper_path = ./assets/BLACK_VII_desktop.jpg;
+    };
   };
 
   home-manager = {

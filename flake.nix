@@ -24,7 +24,7 @@
       };
     };
     omarchy-nix = {
-      url = "github:henrysipp/omarchy-nix";
+      url = "github:Sammyalhashe/omarchy-nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
@@ -56,6 +56,10 @@
         specialArgs = { inherit inputs; };
         modules = [
           (import ./hosts/homebase/configuration.nix { omarchy = true; })
+          (import ./nixosModules {
+            username = "salhashemi2";
+            wsl = true; # just to not import the desktop file.
+          })
           omarchy-nix.nixosModules.default
         ];
       };

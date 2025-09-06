@@ -20,15 +20,16 @@ let
     tofi
 
     # applications
+    anytype
     brave
     emacs
     firefox
     hyprlock
     hyprpaper
+    inputs.nixvim.packages.x86_64-linux.default
     kdePackages.partitionmanager
     kitty
     mupdf
-    neovim
     nextcloud-client
     protonvpn-gui
     thunderbird
