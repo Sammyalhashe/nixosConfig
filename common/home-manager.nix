@@ -16,7 +16,7 @@
     # theme = "tokyo-night";
     theme = "generated_dark";
     theme_overrides = {
-      wallpaper_path = ./assets/BLACK_I_desktop.jpg;
+      wallpaper_path = ./assets/BLACK_VII_desktop.jpg;
     };
   };
 
