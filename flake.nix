@@ -63,6 +63,17 @@
           omarchy-nix.nixosModules.default
         ];
       };
+      nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          (import ./hosts/oldboy/configuration.nix { omarchy = true; })
+          (import ./nixosModules {
+            username = "salhashemi2";
+            wsl = true; # just to not import the desktop file.
+          })
+          omarchy-nix.nixosModules.default
+        ];
+      };
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         system = "x86_64-linux";

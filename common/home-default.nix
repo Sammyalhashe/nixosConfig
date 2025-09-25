@@ -64,6 +64,7 @@ let
     tmux
     wezterm
     yazi
+    waypipe
     zellij
 
     # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
