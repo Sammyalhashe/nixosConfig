@@ -909,19 +909,10 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-<<<<<<< Updated upstream
-        "lastModified": 1758854154,
-        "narHash": "sha256-NQAxcmxiOnQQUQCKFaFy5bdO0MpJT6yJjJmpsSA7zR0=",
-        "owner": "Sammyalhashe",
-        "repo": "nixvim",
-        "rev": "faf2af3457cdd24bf30b264bc307b6fab2adbde6",
-        "type": "github"
-=======
-        "lastModified": 1758924403,
-        "narHash": "sha256-q0JLfct04lv+LHKSA9qvKTwshKkhusGzPu61z/OrvKA=",
+        "lastModified": 1758854169,
+        "narHash": "sha256-r9rcqxOC+TNlD4b+D0d/PaeTRvhIDqnAFWurRRCgfpw=",
         "path": "/home/salhashemi2/nixvim",
         "type": "path"
->>>>>>> Stashed changes
       },
       "original": {
         "path": "/home/salhashemi2/nixvim",
@@ -985,19 +976,11 @@
         ]
       },
       "locked": {
-<<<<<<< Updated upstream
         "lastModified": 1759092543,
         "narHash": "sha256-4imzBtUVOJki+mtwPG/ZyBwFnWJU5OOHIb94tX/+ceY=",
         "owner": "Sammyalhashe",
         "repo": "omarchy-nix",
         "rev": "2a3b3ca2a83cce967fd5f18d5110cafa41d726e2",
-=======
-        "lastModified": 1758855778,
-        "narHash": "sha256-7CPD9fKnbA3IeW+sDH09lzxi9MnQE0H7Pq2JEh5TYAk=",
-        "owner": "Sammyalhashe",
-        "repo": "omarchy-nix",
-        "rev": "107d4c9ce61ea04e19b3ddf21480c901e5bb7373",
->>>>>>> Stashed changes
         "type": "github"
       },
       "original": {
