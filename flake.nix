@@ -28,7 +28,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    nixvim.url = "github:Sammyalhashe/nixvim";
+    # nixvim.url = "github:Sammyalhashe/nixvim";
+    nixvim.url = "/home/salhashemi2/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 

@@ -98,8 +98,16 @@ in
     extraGroups = [
       "networkmanager"
       "wheel"
+      "docker"
     ];
     packages = with pkgs; [ ];
+  };
+
+  # prevent the laptop from hibernating when lid is closed
+  services.logind = {
+    lidSwitch = "ignore";
+    lidSwitchDocked = "ignore";
+    lidSwitchExternalPower = "ignore";
   };
 
   systemd.user.services.neovim_server = {

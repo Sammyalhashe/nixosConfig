@@ -101,6 +101,7 @@ in
       "networkmanager"
       "docker"
       "wheel"
+      "docker"
     ];
     packages = with pkgs; [ ];
   };
