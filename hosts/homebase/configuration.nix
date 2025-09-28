@@ -99,6 +99,7 @@ in
     description = "Sammy Al Hashemi";
     extraGroups = [
       "networkmanager"
+      "docker"
       "wheel"
     ];
     packages = with pkgs; [ ];
@@ -195,6 +196,12 @@ in
       } # KDE Connect
     ];
   };
+
+  # certificates
+  security.pki.certificateFiles = [
+    (builtins.toFile "wildcard.picloud.crt" (builtins.readFile ../../certs/wildcard.picloud.crt))
+    (builtins.toFile "wildcard.rpi.cripz.crt" (builtins.readFile ../../certs/wildcard.rpi.cripz.crt))
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
