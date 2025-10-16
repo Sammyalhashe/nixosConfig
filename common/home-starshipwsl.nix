@@ -9,9 +9,11 @@
 }:
 let
   # inherit (pkgs.stdenv.hostPlatform) system;
-  nixvim-package = inputs.nixvim.packages.x86_64-linux.wsl;
+  nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
+
+  nixvim-wsl = nixvim-package.extend { nixvim.wsl = true; };
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
-  extended-nixvim = nixvim-package.extend config.stylix.targets.nixvim.exportedModule;
+  extended-nixvim = nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule;
 in
 let
   my_packages = with pkgs; [
