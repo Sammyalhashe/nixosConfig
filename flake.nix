@@ -80,7 +80,7 @@
         system = "x86_64-linux";
         modules = [
           nixos-wsl.nixosModules.default
-          ./hosts/starshipwsl/configuration.nix
+          (import ./hosts/starshipwsl/configuration.nix {omarchy = false;})
           (import ./nixosModules {
             username = "salhashemi2";
             wsl = true;

@@ -5,25 +5,45 @@
 # NixOS-WSL specific options are documented on the NixOS-WSL repository:
 # https://github.com/nix-community/NixOS-WSL
 
-{ config, lib, pkgs, inputs, ... }:
+{
+  omarchy ? false,
+}:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
-hostname = "starshipwsl";
-user = "salhashemi2";
-homeDir = "/home";
+  hostname = "starshipwsl";
+  user = "salhashemi2";
+  homeDir = "/home";
 in
 {
   imports = [
     inputs.home-manager.nixosModules.default
     (
-      import ../../common/home-manager.nix (
-          { inherit inputs user homeDir hostname; }
-      )
+      # import ../../common/home-manager.nix (
+      #     { inherit inputs user homeDir hostname; }
+      # )
+      (import ../../common/home-manager.nix { omarchy = omarchy; } ({
+        inherit
+          inputs
+          user
+          homeDir
+          hostname
+          ;
+      }))
     )
   ];
 
   # enable flakes
   nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # enable garbage collection
@@ -38,7 +58,6 @@ in
 
   wsl.wslConf.network.hostname = "starship_wsl";
 
-
   # makes wsl not generate the `/etc/hosts` file...
   wsl.wslConf.network.generateHosts = false;
   # ...so we can write to it.
@@ -47,7 +66,6 @@ in
     11.125.37.99  raspberrypi.local
     11.125.37.135 homebase
   '';
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
