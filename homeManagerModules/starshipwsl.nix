@@ -13,6 +13,7 @@ let
     ./zellij.nix
     ./zsh.nix
     ./nushell.nix
+    ./stylix.nix
   ];
 in
 {

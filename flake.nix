@@ -28,9 +28,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    # nixvim.url = "github:Sammyalhashe/nixvim";
-    nixvim.url = "/home/salhashemi2/nixvim";
+    nixvim.url = "github:Sammyalhashe/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -43,6 +46,7 @@
       hyprlock,
       omarchy-nix,
       nixos-wsl,
+      stylix,
       ...
     }@inputs:
     {
@@ -80,11 +84,16 @@
         system = "x86_64-linux";
         modules = [
           nixos-wsl.nixosModules.default
-          (import ./hosts/starshipwsl/configuration.nix {omarchy = false;})
+          (import ./hosts/starshipwsl/configuration.nix { omarchy = false; })
           (import ./nixosModules {
             username = "salhashemi2";
             wsl = true;
           })
+          stylix.nixosModules.stylix
+          (import ./nixosModules/stylix.nix)
+          {
+            programs.stylix.enable = true;
+          }
         ];
       };
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
