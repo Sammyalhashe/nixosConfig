@@ -106,6 +106,11 @@
             username = "nixos";
             wsl = true;
           })
+          stylix.nixosModules.stylix
+          (import ./nixosModules/stylix.nix)
+          {
+            programs.stylix.enable = true;
+          }
         ];
       };
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {

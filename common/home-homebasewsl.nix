@@ -7,6 +7,14 @@
   ...
 }:
 let
+  # inherit (pkgs.stdenv.hostPlatform) system;
+  nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
+
+  nixvim-wsl = nixvim-package.extend { nixvim.wsl = true; };
+  # nixvim-package = inputs.nixvim-config.packages.${system}.default;
+  extended-nixvim = nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule;
+in
+let
   my_packages = with pkgs; [
     inputs.zen-browser.packages."${pkgs.system}".default
     git
@@ -20,8 +28,8 @@ let
     emacs
     kitty
     mupdf
-    inputs.nixvim.packages.x86_64-linux.default
     # neovim
+    extended-nixvim
     xfce.thunar
     ghostty
 
