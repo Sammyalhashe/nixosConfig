@@ -7,6 +7,13 @@
   ...
 }:
 let
+  # inherit (pkgs.stdenv.hostPlatform) system;
+  nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
+
+  # nixvim-package = inputs.nixvim-config.packages.${system}.default;
+  extended-nixvim = nixvim-package.extend config.stylix.targets.nixvim.exportedModule;
+in
+let
   my_packages = with pkgs; [
     inputs.zen-browser.packages."${pkgs.system}".default
     git
@@ -26,7 +33,7 @@ let
     firefox
     hyprlock
     hyprpaper
-    inputs.nixvim.packages.x86_64-linux.default
+    extended-nixvim
     kdePackages.partitionmanager
     kitty
     mupdf

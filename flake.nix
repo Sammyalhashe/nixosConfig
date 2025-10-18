@@ -66,6 +66,11 @@
             wsl = true; # just to not import the desktop file.
           })
           omarchy-nix.nixosModules.default
+          stylix.nixosModules.stylix
+          (import ./nixosModules/stylix.nix)
+          {
+            programs.stylix.enable = true;
+          }
         ];
       };
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
