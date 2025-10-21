@@ -19,6 +19,6 @@ in
     #   url = "https://c4.wallpaperflare.com/wallpaper/848/33/120/trees-path-dirt-road-fall-wallpaper-preview.jpg";
     #   hash = "sha256-xiPEpWNfNbBuX2REvEiw2LsRCFMfjU5vbfnbUQR/mTU=";
     # };
-    stylix.polarity = "light";
+    stylix.polarity = "dark";
   };
 }

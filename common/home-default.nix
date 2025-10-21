@@ -17,6 +17,7 @@ let
   my_packages = with pkgs; [
     inputs.zen-browser.packages."${pkgs.system}".default
     git
+    jujutsu
 
     # c compilers
     gcc

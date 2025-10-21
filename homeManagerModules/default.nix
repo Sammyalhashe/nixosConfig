@@ -16,10 +16,10 @@ let
     ./nushell.nix
     ./stylix.nix
     {
-      stylix.targets.gtk.enable = false;
+      # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;
-      stylix.targets.hyprland.enable = false;
-      stylix.targets.hyprlock.enable = false;
+      # stylix.targets.hyprland.enable = false;
+      # stylix.targets.hyprlock.enable = false;
       stylix.targets.mako.enable = false;
       stylix.targets.btop.enable = false;
     }
