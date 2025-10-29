@@ -20,5 +20,22 @@ in
     #   hash = "sha256-xiPEpWNfNbBuX2REvEiw2LsRCFMfjU5vbfnbUQR/mTU=";
     # };
     stylix.polarity = "dark";
+
+    stylix.fonts = {
+      serif = {
+        package = "${pkgs.nerd-fonts.victor-mono}";
+        name = "VictorMono Nerd Font Mono";
+      };
+
+      sansSerif = {
+        package = "${pkgs.nerd-fonts.victor-mono}";
+        name = "VictorMono Nerd Font Mono";
+      };
+
+      monospace = {
+        package = "${pkgs.nerd-fonts.victor-mono}";
+        name = "VictorMono Nerd Font Mono";
+      };
+    };
   };
 }

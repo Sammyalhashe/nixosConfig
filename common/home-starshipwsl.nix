@@ -46,6 +46,7 @@ let
     fortune
     fzf
     gh
+    lazygit
     neofetch
     pavucontrol
     ripgrep

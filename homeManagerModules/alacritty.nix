@@ -11,47 +11,11 @@ in
   programs.alacritty = {
     enable = true;
     settings = {
-      general.import = [
-        (
-          pkgs.fetchFromGitHub {
-            owner = "alacritty";
-            repo = "alacritty-theme";
-            rev = "5c90d86e6a9c95d47f8dbd1f8597136fa5556376";
-            sha256 = "sha256-Xwb7yiJ1yAEoMi+lHUg//PEe9LaAJbMg2aaIp2tX7jc=";
-          }
-          + "/themes/kanagawa_wave.toml"
-        )
-
-        # (pkgs.fetchFromGitHub {
-        #     owner = "EdenEast";
-        #     repo = "nightfox.nvim";
-        #     rev = "595ffb8f291fc4a9bef3201a28b7c0379a41cdee";
-        #     sha256 = "sha256-bVRI77ikBRECJ9Y6UVgZVO+SH46LBU3MtZUDgAYqXBc=";
-        # } + "/extra/dayfox/alacritty.toml")
-
-      ];
+      terminal.shell = {
+        program = "nu";
+      };
       env = {
         TERM = "xterm-256color";
-      };
-      font = {
-        size = 12.0;
-        bold = {
-          family = "${pkgs.nerd-fonts.victor-mono}";
-        };
-        italic = {
-          family = "${pkgs.nerd-fonts.victor-mono}";
-        };
-        normal = {
-          family = "${pkgs.nerd-fonts.victor-mono}";
-        };
-        offset = {
-          x = 0;
-          y = 0;
-        };
-        glyph_offset = {
-          x = 0;
-          y = 0;
-        };
       };
 
       keyboard.bindings = [
@@ -376,7 +340,7 @@ in
 
       window = {
         # decorations = "None";
-        opacity = 0.95;
+        # opacity = 0.95;
 
         dimensions = {
           columns = 110;

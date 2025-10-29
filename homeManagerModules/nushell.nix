@@ -41,6 +41,7 @@ in
       nb = "nix build";
       nd = "nix develop";
       ns = "nix search nixpkgs";
+      npkgs = "nix repl -f '<nixpkgs>'";
 
       # git aliases
       grv = "git remote -v";

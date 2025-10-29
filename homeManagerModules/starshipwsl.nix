@@ -14,6 +14,11 @@ let
     ./zsh.nix
     ./nushell.nix
     ./stylix.nix
+    ./wsl.nix
+    {
+      environments.wsl.enable = true;
+      environments.wsl.windowsUsername = "sammy";
+    }
   ];
 in
 {

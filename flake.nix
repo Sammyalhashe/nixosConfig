@@ -94,6 +94,10 @@
             username = "salhashemi2";
             wsl = true;
           })
+          (import ./nixosModules/wsl.nix)
+          {
+            environments.wsl.enable = true;
+          }
           stylix.nixosModules.stylix
           (import ./nixosModules/stylix.nix)
           {
