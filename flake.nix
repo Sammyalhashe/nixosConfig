@@ -109,12 +109,23 @@
         specialArgs = { inherit inputs; };
         system = "x86_64-linux";
         modules = [
+          {
+            nixpkgs.overlays = [
+              (final: prev: {
+                wrapGAppsHook = prev.wrapGAppsHook3;
+              })
+            ];
+          }
           nixos-wsl.nixosModules.default
           ./hosts/homebasewsl/configuration.nix
           (import ./nixosModules {
             username = "nixos";
             wsl = true;
           })
+          (import ./nixosModules/wsl.nix)
+          {
+            environments.wsl.enable = true;
+          }
           stylix.nixosModules.stylix
           (import ./nixosModules/stylix.nix)
           {

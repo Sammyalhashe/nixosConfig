@@ -30,7 +30,6 @@ let
     mupdf
     # neovim
     extended-nixvim
-    xfce.thunar
     ghostty
 
     # terminal utilities
