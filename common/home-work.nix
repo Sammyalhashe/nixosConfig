@@ -19,17 +19,12 @@ let
     git
     lazygit
 
-    # applications
-    emacs
-    mupdf
     # neovim
     extended-nixvim
 
     # terminal utilities
     bat
-    blesh
     cargo
-    cava
     cowsay
     delta
     dua
@@ -87,12 +82,6 @@ in
 
     # TODO: Figure this out somehow
     # ".clang-format".source = .dotfiles/language_configs/cpp/.clang-format;
-    ".latexmkrc".text = ''
-      $pdf_previewer = 'start mupdf';
-      $new_viewer_always = 0;
-      $pdf_update_method = 2;
-      $pdf_update_signal = 'SIGHUP'; 
-    '';
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
     #   org.gradle.console=verbose
@@ -118,7 +107,6 @@ in
   #
   home.sessionVariables = {
     EDITOR = "nvim";
-    NIXOS_OZONE_WL = "1";
   };
 
   # syncthing
