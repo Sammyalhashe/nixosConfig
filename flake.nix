@@ -169,8 +169,8 @@
           {
             programs.stylix.enable = true;
           }
-          ./homeManagerModules/homebasewsl.nix
-          ./common/home-homebasewsl.nix
+          ./homeManagerModules/work.nix
+          ./common/home-work.nix
         ];
       };
       homeManagerModules.default = ./homeManagerModules;
