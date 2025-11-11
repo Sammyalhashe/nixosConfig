@@ -49,6 +49,14 @@
       stylix,
       ...
     }@inputs:
+    let
+      system = "x86_64-linux";
+      overlays = [ ]; # add your overlays here if you have any
+      pkgs = import nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
+    in
     {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -86,7 +94,7 @@
       };
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           nixos-wsl.nixosModules.default
           (import ./hosts/starshipwsl/configuration.nix { omarchy = false; })
@@ -107,7 +115,7 @@
       };
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           {
             nixpkgs.overlays = [
@@ -145,6 +153,24 @@
         system = "x86_64-darwin";
         modules = [
           ./hosts/Sammys-MacBook-Pro/configuration.nix
+        ];
+      };
+      # Home-manager-only config for work
+      homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        extraSpecialArgs = rec {
+          inherit inputs;
+          user = "salhashemi2";
+          homeDir = "/home/${user}";
+        };
+        modules = [
+          stylix.homeModules.stylix
+          (import ./nixosModules/stylix.nix)
+          {
+            programs.stylix.enable = true;
+          }
+          ./homeManagerModules/homebasewsl.nix
+          ./common/home-homebasewsl.nix
         ];
       };
       homeManagerModules.default = ./homeManagerModules;

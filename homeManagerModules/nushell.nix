@@ -54,11 +54,35 @@ in
       gd = "git diff";
       gsa = "git stash";
       gsp = "git stash pop";
+      gp = "git push";
+      gP = "git pull";
 
       # raspberry pi at home
       rpi = "ssh -Y ${sammy}@${raspberrypi}";
       picloud = "ssh -Y ${sammy}@${picloud}";
       hb = "ssh -Y ${sammy}@${homebase}";
     };
+    extraConfig = ''
+      # grep history for pattern
+      def hgrep [pattern?: string] {
+        match $pattern {
+            null => { history }
+            _ => { history | where command =~ $pattern }
+        }
+      }
+
+      # grep on ls
+      def l [pattern?: string] {
+        match $pattern {
+            null => { ls }
+            _ => { ls | where name =~ $pattern }
+        }
+      }
+
+      # grep on file contents
+      def f [file: string, pattern?: string] {
+          open $file | where type == "file" | get name | each { |it| (open $it | where $it =~ $pattern) | if $it != [] { echo $it } }
+      }
+    '';
   };
 }

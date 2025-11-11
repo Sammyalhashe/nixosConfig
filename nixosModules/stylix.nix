@@ -15,9 +15,9 @@ in
   config = mkIf cfg.enable {
     stylix.enable = true;
     stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
-    # stylix.image = fetchurl {
-    #   url = "https://c4.wallpaperflare.com/wallpaper/848/33/120/trees-path-dirt-road-fall-wallpaper-preview.jpg";
-    #   hash = "sha256-xiPEpWNfNbBuX2REvEiw2LsRCFMfjU5vbfnbUQR/mTU=";
+    # stylix.image = pkgs.fetchurl {
+    #   url = "https://unsplash.com/photos/75xPHEQBmvA/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzYyNzAzMDM0fA&force=true&w=1920";
+    #   hash = "sha256-vWXPegjitJSEq5lFoSg6X6dRzqAQ8sGPMXNxuPNmXHA=";
     # };
     stylix.polarity = "dark";
 

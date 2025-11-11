@@ -16,7 +16,6 @@ let
 in
 let
   my_packages = with pkgs; [
-    inputs.zen-browser.packages."${pkgs.system}".default
     git
     lazygit
 
