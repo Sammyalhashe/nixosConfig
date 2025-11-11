@@ -161,7 +161,7 @@
         extraSpecialArgs = rec {
           inherit inputs;
           user = "salhashemi2";
-          homeDir = "/home/${user}";
+          homeDir = "/root";
         };
         modules = [
           stylix.homeModules.stylix

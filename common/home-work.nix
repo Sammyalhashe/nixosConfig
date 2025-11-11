@@ -62,7 +62,7 @@ in
   # manage.
   home.username = "${user}";
   # TODO: Gotta transfer this file to it's own copy for each system.
-  home.homeDirectory = "${homeDir}/${user}";
+  home.homeDirectory = "${homeDir}";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
