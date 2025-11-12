@@ -158,7 +158,7 @@
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        extraSpecialArgs = rec {
+        extraSpecialArgs = {
           inherit inputs;
           user = "salhashemi2";
           homeDir = "/root";

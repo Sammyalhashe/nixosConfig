@@ -1,4 +1,6 @@
-{ config, pkgs, ... }:
+{
+  ...
+}:
 let
   sammy = "salhashemi2";
   raspberrypi = "raspberrypi.local";
@@ -35,13 +37,14 @@ in
 
       # nixos aliases
       hms = "home-manager switch";
-      rb = "sudo nixos-rebuild switch";
+      rb = "sudo nixos-rebuild switch --flake .#";
       nix-shell = "nix-shell --command zsh";
       nsp = "nix-shell -p";
       nb = "nix build";
       nd = "nix develop";
       ns = "nix search nixpkgs";
       npkgs = "nix repl -f '<nixpkgs>'";
+      ncg = "nix-collect-garbage -d";
 
       # git aliases
       grv = "git remote -v";
@@ -82,6 +85,49 @@ in
       # grep on file contents
       def f [file: string, pattern?: string] {
           open $file | where type == "file" | get name | each { |it| (open $it | where $it =~ $pattern) | if $it != [] { echo $it } }
+      }
+
+      # fzf search on job unfreeze and unfreeze the selected one
+      def j [] {
+        job unfreeze (
+          job list
+          | where type == "frozen"
+          | each {|j| $"($j.id)\t($j.tag)\t($j.pids.0)" }
+          | str join "\n"
+          | fzf --height 40% --reverse --preview 'echo {} | split row '\t' | get 0 | split words | get 2 | into int | each { |x|  ^ps -fp $x }'
+          | split row "\t"
+          | get 0
+          | into int
+        )
+      }
+
+      # similar to the `j` command above, list all aliases in `fzf` and then set the prompt as the selected alias
+      def a [] {
+          let alias_name = (
+          help aliases
+          | each {|a| $"($a.name)\t($a.expansion)\t($a.description)" }
+          | str join "\n"
+          | fzf --height 40% --reverse --preview 'echo {} | split row "\t" | get 1'
+          | split row "\t"
+          | get 0
+          );
+          if $alias_name != "" {
+          echo "Setting prompt to alias: $alias_name";
+          prompt $alias_name;
+          } else {
+          echo "No alias selected.";
+          }
+      }
+
+      # given a url to a tarball, download and extract it to a folder named after the tarball
+      def untar [url: string] {
+          let filename = ($url | str split "/" | last);
+          let foldername = ($filename | str replace ".tar.gz" "" | str replace ".tgz" "" | str replace ".tar" "");
+          ^mkdir $foldername;
+          ^curl -L $url -o $filename;
+          ^tar -xf $filename -C $foldername;
+          ^rm $filename;
+          echo "Extracted to $foldername"
       }
     '';
   };
