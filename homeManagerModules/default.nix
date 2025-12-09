@@ -15,6 +15,8 @@ let
     ./zsh.nix
     ./nushell.nix
     ./stylix.nix
+    ./crush.nix
+    ./gemini-cli.nix
     {
       # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;

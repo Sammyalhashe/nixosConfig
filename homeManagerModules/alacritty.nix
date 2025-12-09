@@ -12,7 +12,11 @@ in
     enable = true;
     settings = {
       terminal.shell = {
-        program = "nu";
+        program = "zellij";
+        args = [
+          "-l"
+          "welcome"
+        ];
       };
       env = {
         TERM = "xterm-256color";

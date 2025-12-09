@@ -114,6 +114,19 @@ in
     wantedBy = [ "multi-user.target" ]; # starts after login
   };
 
+  services.ollama = {
+    package = pkgs.ollama-cuda;
+    enable = true;
+    loadModels = [
+      "qwen3:8b"
+      "deepseek-coder-v2:16b"
+    ];
+  };
+
+  services.open-webui = {
+    enable = true;
+  };
+
   # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
 
@@ -125,6 +138,7 @@ in
   environment.systemPackages = with pkgs; [
     neovim
     git
+    pkgs.crush
     nvidia-vaapi-driver
     (vivaldi.overrideAttrs (oldAttrs: {
       dontWrapQtApps = false;
