@@ -55,6 +55,7 @@ in
 
   wsl.enable = true;
   wsl.defaultUser = "salhashemi2";
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   wsl.wslConf.network.hostname = "starship_wsl";
 

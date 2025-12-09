@@ -36,6 +36,10 @@
       inputs.home-manager.follows = "home-manager";
     };
     nur.url = "github:nix-community/NUR";
+    colmena = {
+      url = "github:zhaofengli/colmena";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -50,6 +54,7 @@
       nixos-wsl,
       stylix,
       nur,
+      colmena,
       ...
     }@inputs:
     let
@@ -155,6 +160,29 @@
           ./hosts/starship/configuration.nix
           (import ./nixosModules { username = "salhashemi2"; })
         ];
+      };
+      colmena = {
+        meta = {
+          nixpkgs = import nixpkgs {
+            inherit system;
+            inherit overlays;
+          };
+          specialArgs = { inherit inputs; };
+        };
+        pi1 = {
+          deployment.targetHost = "11.125.37.99";
+          deployment.targetUser = "root";
+          nixpkgs.system = "aarch64-linux";
+          nixpkgs.overlays = overlays;
+          imports = [ ./hosts/pi1/default.nix ];
+        };
+        pi2 = {
+          deployment.targetHost = "11.125.37.235";
+          deployment.targetUser = "root";
+          nixpkgs.system = "aarch64-linux";
+          nixpkgs.overlays = overlays;
+          imports = [ ./hosts/pi2/default.nix ];
+        };
       };
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs; };
