@@ -21,6 +21,62 @@ in
     # };
     stylix.polarity = "dark";
 
+    environment.etc."current-theme".text = "dark";
+
+    specialisation.light.configuration = {
+      stylix.polarity = "light";
+      stylix.base16Scheme = mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-light-hard.yaml";
+      environment.etc."current-theme".text = mkForce "light";
+    };
+
+    environment.systemPackages = [
+      (pkgs.writeShellScriptBin "switch-theme" ''
+        if [ -f /etc/current-theme ]; then
+          CURRENT=$(cat /etc/current-theme)
+        else
+          CURRENT="dark"
+        fi
+
+        if [ "$CURRENT" == "dark" ]; then
+           echo "Switching to Light Theme..."
+           sudo /nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration test
+        else
+           echo "Switching to Dark Theme..."
+           sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test
+        fi
+      '')
+    ];
+
+    security.sudo.extraRules = [{
+      users = [ "salhashemi2" ];
+      commands = [
+        { command = "/nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
+        { command = "/nix/var/nix/profiles/system/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
+      ];
+    }];
+
+    systemd.timers.theme-light = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "06:00";
+      };
+    };
+    systemd.services.theme-light = {
+      serviceConfig.Type = "oneshot";
+      script = "/nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration test";
+    };
+
+    systemd.timers.theme-dark = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "17:30";
+      };
+    };
+    systemd.services.theme-dark = {
+      serviceConfig.Type = "oneshot";
+      script = "/nix/var/nix/profiles/system/bin/switch-to-configuration test";
+    };
+
     stylix.fonts = {
       serif = {
         package = "${pkgs.nerd-fonts.victor-mono}";
