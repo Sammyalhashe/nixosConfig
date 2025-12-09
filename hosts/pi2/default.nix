@@ -1,7 +1,18 @@
-{ pkgs, ... }:
+{ pkgs, inputs, config, ... }:
 
 {
-  imports = [ ];
+  imports = [
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/var/lib/sops-nix/key.txt";
+    secrets.nextcloud_admin_pass = {
+      owner = "nextcloud";
+    };
+  };
 
   boot.loader.generic-extlinux-compatible.enable = true;
 
@@ -55,9 +66,7 @@
 
     # Initial Admin Setup
     config.adminuser = "admin";
-    config.adminpassFile = "/etc/nextcloud-admin-pass";
-    # Note: You must create /etc/nextcloud-admin-pass on the target machine
-    # or use deployment secrets to provide it.
+    config.adminpassFile = config.sops.secrets.nextcloud_admin_pass.path;
   };
 
   environment.systemPackages = with pkgs; [

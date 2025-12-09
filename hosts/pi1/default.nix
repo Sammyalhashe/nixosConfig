@@ -1,7 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, inputs, config, ... }:
 
 {
-  imports = [ ];
+  imports = [
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/var/lib/sops-nix/key.txt";
+    secrets.wireguard_private_key = { };
+  };
 
   boot.loader.generic-extlinux-compatible.enable = true;
 
@@ -23,7 +32,8 @@
       listenPort = 51820;
 
       # Use `wg genkey` to generate a private key
-      privateKey = "INSERT_PRIVATE_KEY_HERE";
+      # privateKey = "INSERT_PRIVATE_KEY_HERE";
+      privateKeyFile = config.sops.secrets.wireguard_private_key.path;
 
       peers = [
         # Example Peer

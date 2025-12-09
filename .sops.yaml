@@ -1,0 +1,21 @@
+keys:
+  - &admin_user:
+    # Run `age-keygen -o key.txt` to get your public key and replace below
+    - age1...INSERT_YOUR_USER_PUBLIC_KEY_HERE...
+
+  - &pi1_host:
+    # SSH keys can be converted to age keys using ssh-to-age
+    # or you can generate a dedicated age key for the host.
+    # For now, we use a placeholder.
+    - age1...INSERT_PI1_PUBLIC_KEY_HERE...
+
+  - &pi2_host:
+    - age1...INSERT_PI2_PUBLIC_KEY_HERE...
+
+creation_rules:
+  - path_regex: secrets/secrets.yaml$
+    key_groups:
+    - age:
+      - *admin_user
+      - *pi1_host
+      - *pi2_host
