@@ -9,52 +9,63 @@
     defaultSopsFile = ../../secrets/secrets.yaml;
     defaultSopsFormat = "yaml";
     age.keyFile = "/var/lib/sops-nix/key.txt";
-    secrets.wireguard_private_key = { };
+    secrets.wg_easy_env = { }; # Contains PASSWORD=...
   };
 
   boot.loader.generic-extlinux-compatible.enable = true;
 
+  # Kernel modules and settings for WireGuard/Container
+  boot.kernelModules = [ "wireguard" ];
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+
   networking.hostName = "pi1";
-  networking.firewall.allowedTCPPorts = [ 53 3000 ];
-  networking.firewall.allowedUDPPorts = [ 53 51820 ];
 
-  # Enable NAT for WireGuard
-  networking.nat = {
-    enable = true;
-    externalInterface = "eth0";
-    internalInterfaces = [ "wg0" ];
-  };
+  # Open Firewall ports
+  networking.firewall.allowedTCPPorts = [ 53 3000 51821 ]; # DNS, AdGuard UI, Wg-Easy UI
+  networking.firewall.allowedUDPPorts = [ 53 51820 ];      # DNS, WireGuard
 
-  # WireGuard Server
-  networking.wireguard.interfaces = {
-    wg0 = {
-      ips = [ "10.100.0.1/24" ];
-      listenPort = 51820;
-
-      # Use `wg genkey` to generate a private key
-      # privateKey = "INSERT_PRIVATE_KEY_HERE";
-      privateKeyFile = config.sops.secrets.wireguard_private_key.path;
-
-      peers = [
-        # Example Peer
-        {
-          publicKey = "INSERT_CLIENT_PUBLIC_KEY_HERE";
-          allowedIPs = [ "10.100.0.2/32" ];
-        }
-      ];
-    };
-  };
-
+  # AdGuard Home
   services.adguardhome = {
     enable = true;
     port = 3000;
-    # By default, AdGuard Home will try to bind to port 53 for DNS.
-    # Ensure no other service (like systemd-resolved) is using it.
   };
 
-  # Disable systemd-resolved to avoid port 53 conflicts with AdGuard Home
+  # Disable systemd-resolved to avoid port 53 conflicts
   services.resolved.enable = false;
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+
+  # Container Engine (Podman)
+  virtualisation.podman.enable = true;
+  virtualisation.oci-containers.backend = "podman";
+
+  # Wg-Easy Container
+  virtualisation.oci-containers.containers.wg-easy = {
+    image = "ghcr.io/wg-easy/wg-easy";
+    imageFile = null; # Pull from registry
+    environment = {
+      WG_HOST = "11.125.37.99"; # Public IP of the Pi
+      WG_DEFAULT_ADDRESS = "10.100.0.x";
+      WG_DEFAULT_DNS = "11.125.37.99"; # Use Pi's AdGuard for DNS
+      WG_AllowedIPs = "0.0.0.0/0, ::/0";
+      # PASSWORD is provided via environmentFile from SOPS
+    };
+    environmentFiles = [
+      config.sops.secrets.wg_easy_env.path
+    ];
+    volumes = [
+      "/var/lib/wg-easy:/etc/wireguard"
+    ];
+    ports = [
+      "51820:51820/udp"
+      "51821:51821/tcp"
+    ];
+    extraOptions = [
+      "--cap-add=NET_ADMIN"
+      "--cap-add=SYS_MODULE"
+      "--sysctl=net.ipv4.ip_forward=1"
+      "--sysctl=net.ipv4.conf.all.src_valid_mark=1"
+    ];
+  };
 
   environment.systemPackages = with pkgs; [
     neovim
@@ -62,9 +73,8 @@
   ];
 
   services.openssh.enable = true;
-
   users.users.root.openssh.authorizedKeys.keys = [
-    # "ssh-ed25519 ..." # Add your SSH public key here to allow Colmena deployment
+    # "ssh-ed25519 ..."
   ];
 
   system.stateVersion = "24.11";
