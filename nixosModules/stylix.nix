@@ -24,7 +24,7 @@ in
     environment.etc."current-theme".text = "dark";
 
     specialisation.light.configuration = {
-      stylix.polarity = "light";
+      stylix.polarity = mkForce "light";
       stylix.base16Scheme = mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-light-hard.yaml";
       environment.etc."current-theme".text = mkForce "light";
     };
