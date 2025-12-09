@@ -17,6 +17,7 @@ let
     ./stylix.nix
     ./crush.nix
     ./gemini-cli.nix
+    ./startup-fix.nix
     {
       # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;
