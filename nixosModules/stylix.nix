@@ -24,7 +24,7 @@ in
     environment.etc."current-theme".text = "dark";
 
     specialisation.light.configuration = {
-      stylix.polarity = "light";
+      stylix.polarity = mkForce "light";
       stylix.base16Scheme = mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-light-hard.yaml";
       environment.etc."current-theme".text = mkForce "light";
     };
@@ -47,18 +47,28 @@ in
       '')
     ];
 
-    security.sudo.extraRules = [{
-      users = [ "salhashemi2" ];
-      commands = [
-        { command = "/nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
-        { command = "/nix/var/nix/profiles/system/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
-      ];
-    }];
+    security.sudo.extraRules = [
+      {
+        users = [ "salhashemi2" ];
+        commands = [
+          {
+            command = "/nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/nix/var/nix/profiles/system/bin/switch-to-configuration";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
 
     systemd.timers.theme-light = {
       wantedBy = [ "timers.target" ];
       partOf = [ "theme-light.service" ];
-      onCalendar = "06:00";
+      timerConfig = {
+        onCalendar = "06:00";
+      };
     };
     systemd.services.theme-light = {
       serviceConfig.Type = "oneshot";
@@ -68,7 +78,10 @@ in
     systemd.timers.theme-dark = {
       wantedBy = [ "timers.target" ];
       partOf = [ "theme-dark.service" ];
-      onCalendar = "17:30";
+      timerConfig = {
+
+        onCalendar = "17:30";
+      };
     };
     systemd.services.theme-dark = {
       serviceConfig.Type = "oneshot";
