@@ -121,7 +121,7 @@ in
 
       # given a url to a tarball, download and extract it to a folder named after the tarball
       def untar [url: string] {
-          let filename = ($url | str split "/" | last);
+          let filename = ($url | split row "/" | last);
           let foldername = ($filename | str replace ".tar.gz" "" | str replace ".tgz" "" | str replace ".tar" "");
           ^mkdir $foldername;
           ^curl -L $url -o $filename;

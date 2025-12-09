@@ -34,6 +34,7 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur.url = "github:nix-community/NUR";
   };
 
   outputs =
@@ -47,11 +48,17 @@
       omarchy-nix,
       nixos-wsl,
       stylix,
+      nur,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      overlays = [ ]; # add your overlays here if you have any
+      nur-crush-overlay = final: prev: {
+        crush = inputs.nur.repos.charmbracelet.crush;
+      };
+      overlays = [
+        nur-crush-overlay
+      ];
       pkgs = import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
