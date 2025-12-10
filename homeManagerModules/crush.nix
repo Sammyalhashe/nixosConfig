@@ -12,7 +12,7 @@
         google = {
             name = "Google";
             type = "google";
-            api_key = "AIzaSyAGKZBK8YYige6p8bn2hHTw8sZampcf-v0";
+            api_key = "";
             models = [
               {
                 name = "Gemini 2.0 Flash";
