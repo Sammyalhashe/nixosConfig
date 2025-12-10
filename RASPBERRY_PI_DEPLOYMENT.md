@@ -110,6 +110,21 @@ nix run nixpkgs#colmena -- apply --on pi2
 | **Syncthing** | pi2 | `http://11.125.37.235:8384` | User: `sammy` |
 | **Nextcloud** | pi2 | `http://11.125.37.235` | Admin user: `admin`, Password: (from secrets) |
 
+---
+
+## 5. Connecting a New VPN Client
+
+Since we are using **Wg-Easy**, managing VPN clients does **not** require redeploying NixOS.
+
+1.  Open the WireGuard Web UI: `http://11.125.37.99:51821`.
+2.  Log in with the password you defined in `secrets/secrets.yaml` (`wg_easy_env`).
+3.  Click **"New Client"**.
+4.  Enter a name (e.g., "iPhone", "Laptop").
+5.  Click **Create**.
+6.  Click the **QR Code icon** to scan it with your phone, or download the `.conf` file for your desktop.
+
+---
+
 ## Troubleshooting
 
 *   **`colmena: command not found`**: Use `nix run nixpkgs#colmena -- ...` or install it.
