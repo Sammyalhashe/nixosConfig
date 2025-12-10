@@ -61,9 +61,9 @@ Save and exit. The file will be encrypted on disk.
 
 ---
 
-## 2. Bootstrapping the Nodes
+## 2. Bootstrapping (Scenario A: Manual Install)
 
-Before Colmena can deploy, the Pis must be accessible via SSH and have the decryption key.
+Use this method if you have already flashed a NixOS SD card image and the Pi is running, but you need to set up the keys for Colmena deployment.
 
 ### Step 1: Install NixOS
 Install NixOS on the Raspberry Pis (e.g., using an SD card image).
@@ -71,17 +71,21 @@ Install NixOS on the Raspberry Pis (e.g., using an SD card image).
 *   Verify you can `ssh root@<pi-ip>` without a password.
 
 ### Step 2: Provision the Age Key
-Copy your Age private key to the Pi so it can decrypt secrets.
+The Age private key is required for the Pi to decrypt secrets (like VPN passwords) at boot time. Since we cannot store this private key in the public Git repository, it must be copied to the device manually.
 
 **Option A: Helper Script (Recommended)**
+This script checks if the key exists on your desktop and securely copies it to the correct location on the Pi with the right permissions.
 ```bash
-# Make script executable first: chmod +x scripts/provision-keys.sh
+# Make script executable first
+chmod +x scripts/provision-keys.sh
+
+# Run script
 ./scripts/provision-keys.sh root@11.125.37.99
 ```
 
 **Option B: Manual Copy**
+If you prefer to see exactly what is happening:
 ```bash
-# Example for pi1
 ssh root@11.125.37.99 "mkdir -p /var/lib/sops-nix"
 scp ~/.config/sops/age/keys.txt root@11.125.37.99:/var/lib/sops-nix/key.txt
 ssh root@11.125.37.99 "chmod 600 /var/lib/sops-nix/key.txt"
@@ -92,7 +96,7 @@ ssh root@11.125.37.99 "chmod 600 /var/lib/sops-nix/key.txt"
 
 ## 3. Deployment
 
-Deploy the configurations from your desktop.
+Once keys are provisioned, deploy the configurations from your desktop using Colmena.
 
 ```bash
 # Deploy to all nodes
@@ -131,24 +135,41 @@ Since we are using **Wg-Easy**, managing VPN clients does **not** require redepl
 
 ---
 
-## 6. Fresh Install with NixOS-Anywhere (Advanced)
+## 6. Fresh Install with NixOS-Anywhere (Scenario B: Nuclear Option)
 
-If you wish to wipe the SD card and start fresh (and use `disko` to manage partitions):
+Use this method if you want to **completely wipe the SD card**, re-partition it, and install NixOS from scratch using your configuration. This is useful for disaster recovery or starting fresh without manually flashing an SD card image.
 
-1.  **Uncomment Disko Config**: Edit `hosts/pi1/default.nix` (or `pi2`) and uncomment the line `# ../../common/pi-sd-card.nix`.
-2.  **Prepare Keys**: Create a temporary directory structure for the keys to be copied.
+**Prerequisites**:
+*   The Pi must be accessible via SSH (from any Linux distro).
+*   You must be willing to lose ALL data on the SD card.
+
+**Steps:**
+
+1.  **Enable Partition Management**:
+    By default, we disable partition management to prevent accidental data loss. To enable it:
+    *   Edit `hosts/pi1/default.nix` (or `pi2`).
+    *   Uncomment the line `# ../../common/pi-sd-card.nix`.
+    *   *Tip: Remember to comment it out again after installation if you want to be safe.*
+
+2.  **Run the Installation**:
+    We use `nixos-anywhere` to drive the installation. We pass the keys via `--extra-files` so they are copied during the install, ensuring the new system boots up ready to decrypt secrets.
+
     ```bash
+    # 1. Create a temporary directory for keys
     mkdir -p /tmp/keys/var/lib/sops-nix
+
+    # 2. Copy your age key into that structure
     cp ~/.config/sops/age/keys.txt /tmp/keys/var/lib/sops-nix/key.txt
-    ```
-3.  **Run NixOS-Anywhere**:
-    ```bash
+
+    # 3. Run the installer (REPLACE IP ADDRESS)
     nix run github:nix-community/nixos-anywhere -- \
       --extra-files /tmp/keys \
       --flake .#pi1 \
       root@11.125.37.99
     ```
-    *Warning: This wipes the disk.*
+
+**Important Caveat**:
+Standard `nixos-anywhere` installations might wipe the firmware partition needed to boot the Pi. If the system fails to boot after this, you may need to manually mount the SD card on your computer and copy the Raspberry Pi firmware files (`start4.elf`, `fixup4.dat`, etc.) to the first partition (`/boot`).
 
 ---
 
