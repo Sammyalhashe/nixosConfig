@@ -1,15 +1,15 @@
 # Raspberry Pi Cluster Deployment Guide
 
-This repository uses **Colmena** to manage and deploy two Raspberry Pi 4 nodes (`pi1`, `pi2`) running NixOS. It uses **SOPS-Nix** for secure secret management.
+This repository uses **Colmena** to manage and deploy two Raspberry Pi nodes (`pi1`, `pi2`) running NixOS. It uses **SOPS-Nix** for secure secret management.
 
 ## Architecture
 
-| Node | IP Address | Role | Services |
-| :--- | :--- | :--- | :--- |
-| **pi1** | `11.125.37.99` | Network/Privacy | AdGuard Home, WireGuard VPN (via Wg-Easy) |
-| **pi2** | `11.125.37.235` | Services/Storage | Gitea, Syncthing, Nextcloud (PostgreSQL) |
+| Node | IP Address | Hardware | Role | Services |
+| :--- | :--- | :--- | :--- | :--- |
+| **pi1** | `11.125.37.99` | RPi 3B | Network/Privacy | AdGuard Home, WireGuard VPN (via Wg-Easy) |
+| **pi2** | `11.125.37.235` | RPi 4 | Services/Storage | Gitea, Syncthing, Nextcloud (PostgreSQL) |
 
-Your desktop (`homebase` / `starshipwsl`) is configured to cross-compile these configurations (x86_64 -> aarch64).
+Your desktop (`homebase` / `starshipwsl`) is configured to cross-compile these configurations (x86_64 -> aarch64). Note that RPi 3B and RPi 4 both use `aarch64-linux` architecture.
 
 ---
 
@@ -65,10 +65,17 @@ Save and exit. The file will be encrypted on disk.
 
 Use this method if you have already flashed a NixOS SD card image and the Pi is running, but you need to set up the keys for Colmena deployment.
 
-### Step 1: Install NixOS
+### Step 1: Install NixOS & Configure SSH
 Install NixOS on the Raspberry Pis (e.g., using an SD card image).
 *   Ensure the user `root` has your SSH public key in `/root/.ssh/authorized_keys`.
 *   Verify you can `ssh root@<pi-ip>` without a password.
+
+    **Quick Tip: Setting up Root SSH Keys**
+    If you are logged into the Pi as a user (e.g., `salhashemi2`) and can't SSH as root, run this from your **desktop** to copy your key to the root user (via the user):
+
+    ```bash
+    cat ~/.ssh/id_ed25519.pub | ssh salhashemi2@<pi-ip> "sudo mkdir -p /root/.ssh && sudo tee -a /root/.ssh/authorized_keys"
+    ```
 
 ### Step 2: Provision the Age Key
 The Age private key is required for the Pi to decrypt secrets (like VPN passwords) at boot time. Since we cannot store this private key in the public Git repository, it must be copied to the device manually.
