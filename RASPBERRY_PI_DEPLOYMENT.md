@@ -31,7 +31,7 @@ We use **SOPS** with **Age** encryption to store secrets like VPN passwords and 
 If you don't have an age key yet:
 ```bash
 mkdir -p ~/.config/sops/age
-nix run nixpkgs#age -- -o ~/.config/sops/age/keys.txt keygen
+nix shell nixpkgs#age -c age-keygen -o ~/.config/sops/age/keys.txt
 ```
 *   **Public Key**: Starts with `age1...`. You will need this for `.sops.yaml`.
 *   **Private Key**: Kept in `keys.txt`. **Never commit this.**
