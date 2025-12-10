@@ -3,6 +3,8 @@
 {
   imports = [
     inputs.sops-nix.nixosModules.sops
+    inputs.disko.nixosModules.disko
+    # ../../common/pi-sd-card.nix
   ];
 
   sops = {

@@ -73,7 +73,13 @@ Install NixOS on the Raspberry Pis (e.g., using an SD card image).
 ### Step 2: Provision the Age Key
 Copy your Age private key to the Pi so it can decrypt secrets.
 
-**On your desktop:**
+**Option A: Helper Script (Recommended)**
+```bash
+# Make script executable first: chmod +x scripts/provision-keys.sh
+./scripts/provision-keys.sh root@11.125.37.99
+```
+
+**Option B: Manual Copy**
 ```bash
 # Example for pi1
 ssh root@11.125.37.99 "mkdir -p /var/lib/sops-nix"
@@ -122,6 +128,27 @@ Since we are using **Wg-Easy**, managing VPN clients does **not** require redepl
 4.  Enter a name (e.g., "iPhone", "Laptop").
 5.  Click **Create**.
 6.  Click the **QR Code icon** to scan it with your phone, or download the `.conf` file for your desktop.
+
+---
+
+## 6. Fresh Install with NixOS-Anywhere (Advanced)
+
+If you wish to wipe the SD card and start fresh (and use `disko` to manage partitions):
+
+1.  **Uncomment Disko Config**: Edit `hosts/pi1/default.nix` (or `pi2`) and uncomment the line `# ../../common/pi-sd-card.nix`.
+2.  **Prepare Keys**: Create a temporary directory structure for the keys to be copied.
+    ```bash
+    mkdir -p /tmp/keys/var/lib/sops-nix
+    cp ~/.config/sops/age/keys.txt /tmp/keys/var/lib/sops-nix/key.txt
+    ```
+3.  **Run NixOS-Anywhere**:
+    ```bash
+    nix run github:nix-community/nixos-anywhere -- \
+      --extra-files /tmp/keys \
+      --flake .#pi1 \
+      root@11.125.37.99
+    ```
+    *Warning: This wipes the disk.*
 
 ---
 
