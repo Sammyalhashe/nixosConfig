@@ -144,6 +144,11 @@ Since we are using **Wg-Easy**, managing VPN clients does **not** require redepl
 
 ## 6. Fresh Install with NixOS-Anywhere (Scenario B: Nuclear Option)
 
+**WARNING: Kexec Compatibility**
+`nixos-anywhere` relies on `kexec` to reboot into a temporary installer environment. **Raspberry Pis often have issues with kexec**, causing the installation to abort with "kexec_load failed".
+**If this happens, you cannot use `nixos-anywhere`.**
+Instead, follow **Scenario A**: Flash the SD card manually, provision keys, and use `colmena apply`.
+
 Use this method if you want to **completely wipe the SD card**, re-partition it, and install NixOS from scratch using your configuration. This is useful for disaster recovery or starting fresh without manually flashing an SD card image.
 
 **Prerequisites**:
