@@ -4,6 +4,7 @@
   imports = [
     inputs.sops-nix.nixosModules.sops
     inputs.disko.nixosModules.disko
+    inputs.nixos-raspberrypi.nixosModules.raspberry-pi-4.base
     # ../../common/pi-sd-card.nix
   ];
 
@@ -16,7 +17,7 @@
     };
   };
 
-  boot.loader.generic-extlinux-compatible.enable = true;
+  # boot.loader.generic-extlinux-compatible.enable = true; # Managed by nixos-raspberrypi
 
   networking.hostName = "pi2";
 

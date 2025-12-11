@@ -1,6 +1,6 @@
 # Raspberry Pi Cluster Deployment Guide
 
-This repository uses **Colmena** to manage and deploy two Raspberry Pi nodes (`pi1`, `pi2`) running NixOS. It uses **SOPS-Nix** for secure secret management.
+This repository uses **Colmena** to manage and deploy two Raspberry Pi nodes (`pi1`, `pi2`) running NixOS. It uses **SOPS-Nix** for secure secret management and the **`nvmd/nixos-raspberrypi`** flake for hardware support.
 
 ## Architecture
 
@@ -176,7 +176,7 @@ Use this method if you want to **completely wipe the SD card**, re-partition it,
     ```
 
 **Important Caveat**:
-Standard `nixos-anywhere` installations might wipe the firmware partition needed to boot the Pi. If the system fails to boot after this, you may need to manually mount the SD card on your computer and copy the Raspberry Pi firmware files (`start4.elf`, `fixup4.dat`, etc.) to the first partition (`/boot`).
+Standard `nixos-anywhere` installations might wipe the firmware partition needed to boot the Pi. If the system fails to boot after this, you may need to manually mount the SD card on your computer and copy the Raspberry Pi firmware files (`start4.elf`, `fixup4.dat`, etc.) to the first partition (`/boot/firmware`).
 
 ---
 

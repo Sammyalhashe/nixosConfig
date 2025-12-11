@@ -4,6 +4,7 @@
   imports = [
     inputs.sops-nix.nixosModules.sops
     inputs.disko.nixosModules.disko
+    inputs.nixos-raspberrypi.nixosModules.raspberry-pi-3.base
     # ../../common/pi-sd-card.nix
   ];
 
@@ -14,7 +15,7 @@
     secrets.wg_easy_env = { }; # Contains PASSWORD=...
   };
 
-  boot.loader.generic-extlinux-compatible.enable = true;
+  # boot.loader.generic-extlinux-compatible.enable = true; # Managed by nixos-raspberrypi
 
   # Kernel modules and settings for WireGuard/Container
   boot.kernelModules = [ "wireguard" ];
