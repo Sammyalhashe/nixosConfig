@@ -168,6 +168,14 @@ in
             bind "w" { SearchToggleOption "Wrap"; }
         }
         session {
+            bind "t" {
+                Run "pomo" {
+                    floating true
+                    name "Pomodoro"
+                    close_on_exit true
+                }
+                SwitchToMode "normal"
+            }
             bind "a" {
                 LaunchOrFocusPlugin "zellij:about" {
                     floating true
