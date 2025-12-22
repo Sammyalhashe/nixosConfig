@@ -17,6 +17,7 @@ let
     ./stylix.nix
     ./crush.nix
     ./gemini-cli.nix
+    ./pomodoro.nix
     ./startup-fix.nix
     {
       # stylix.targets.gtk.enable = false;
