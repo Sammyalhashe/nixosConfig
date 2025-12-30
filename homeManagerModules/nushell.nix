@@ -1,6 +1,4 @@
-{
-  ...
-}:
+{ pkgs, ... }:
 let
   sammy = "salhashemi2";
   raspberrypi = "raspberrypi.local";
@@ -129,6 +127,8 @@ in
           ^rm $filename;
           echo "Extracted to $foldername"
       }
+
+      source ${pkgs.nu_scripts}/share/nu_scripts/custom-completions/git/git-completions.nu
     '';
   };
 }
