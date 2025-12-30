@@ -12,8 +12,14 @@
             package.disabled = true;
         
             format = ''
-              $directory $git_branch$git_commit$git_state$git_status $character
+              $directory $git_branch$git_commit$git_state$git_status$git_metrics $character
             '';
+
+            git_metrics = {
+              disabled = false;
+              added_style = "bold green";
+              deleted_style = "bold red";
+            };
         
             character = {
               success_symbol = "[➜](bold green) ";
