@@ -19,6 +19,10 @@ let
         program = "nu";
       };
     };
+    window = (alacrittySettings.window or {}) // {
+      startup_mode = "Maximized";
+      decorations = "None";
+    };
   };
 
   tomlFormat = pkgs.formats.toml {};
