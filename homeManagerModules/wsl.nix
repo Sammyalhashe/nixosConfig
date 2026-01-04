@@ -11,10 +11,14 @@ let
   weztermConfigPathWsl = "/home/${config.home.username}/.config/wezterm/wezterm.lua";
   windowsAlacrittyPath = "/mnt/c/Users/${cfg.windowsUsername}/AppData/Roaming/alacritty/alacritty.toml";
 
-  # Remove the shell configuration from the Alacritty settings for Windows
+  # Set the shell configuration to nu for Windows
   alacrittySettings = config.programs.alacritty.settings;
   windowsAlacrittySettings = alacrittySettings // {
-    terminal = removeAttrs (alacrittySettings.terminal or {}) [ "shell" ];
+    terminal = (alacrittySettings.terminal or {}) // {
+      shell = {
+        program = "nu";
+      };
+    };
   };
 
   tomlFormat = pkgs.formats.toml {};
