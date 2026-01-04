@@ -1,10 +1,21 @@
 { config, pkgs, inputs, user, homeDir, ... }:
-let my_packages = with pkgs; [
+
+{
+    imports = [ ./home-common.nix ];
+
+    home.username = "${user}";
+    # TODO Gotta transfer this file to it's own copy for each system.
+    home.homeDirectory = "${homeDir}/${user}";
+
+    home.stateVersion = "24.05"; # Please read the comment before changing.
+
+    # The home.packages option allows you to install Nix packages into your
+    # environment.
+    home.packages = with pkgs; [
       # c compilers
       gcc
 
       # applications
-      zellij
 
       # inputs.zen-browser.packages."${pkgs.system}".default
 
@@ -13,24 +24,12 @@ let my_packages = with pkgs; [
       # jetbrains-toolbox
 
       # terminal utilities
-      alacritty
-      cowsay
-      fortune
-      fzf
-      gh
-      neofetch
-      neofetch
-      ripgrep
       direnv
       spotify-player
-      starship
-      tmux
-      yazi
       nushell
       qownnotes
 
       # fonts
-      iosevka
 
       # # It is sometimes useful to fine-tune packages, for example, by applying
       # # overrides. You can do that directly here, just don't forget the
@@ -44,38 +43,7 @@ let my_packages = with pkgs; [
       # (pkgs.writeShellScriptBin "my-hello" ''
       #   echo "Hello, ${config.home.username}!"
       # '')
-
-
-];
-in
-let res = my_packages ++ [
-      (import ./scripts/test.nix { inherit pkgs; })
-      (import ./scripts/hgrep.nix { inherit pkgs; })
-      (import ./scripts/crypto.nix { inherit pkgs; })
-      (import ./scripts/tmux-cht.nix { inherit pkgs; })
-      (import ./scripts/fzf-man.nix { inherit pkgs; })
-];
-in
-{
-    # imports = inputs.self.outputs.homeManagerModules.default;
-    # Home Manager needs a bit of information about you and the paths it should
-    # manage.
-    home.username = "${user}";
-    # TODO Gotta transfer this file to it's own copy for each system.
-    home.homeDirectory = "${homeDir}/${user}";
-
-    # This value determines the Home Manager release that your configuration is
-    # compatible with. This helps avoid breakage when a new Home Manager release
-    # introduces backwards incompatible changes.
-    #
-    # You should not change this value, even if you update Home Manager. If you do
-    # want to update the value, then make sure to first check the Home Manager
-    # release notes.
-    home.stateVersion = "24.05"; # Please read the comment before changing.
-
-    # The home.packages option allows you to install Nix packages into your
-    # environment.
-    home.packages = res;
+    ];
 
     # Home Manager is pretty good at managing dotfiles. The primary way to manage
     # plain files is through 'home.file'.
