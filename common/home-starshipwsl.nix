@@ -44,7 +44,6 @@ in
     blueman
     cargo
     cava
-    gemini-cli
     lazygit
     pavucontrol
     spotify-player
