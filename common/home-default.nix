@@ -24,7 +24,6 @@ in
 
   home.packages = with pkgs; [
     inputs.zen-browser.packages."${pkgs.system}".default
-    # git (in common)
     jujutsu
 
     # c compilers
@@ -57,31 +56,16 @@ in
     discord
 
     # terminal utilities
-    # alacritty (in common)
-    # bat (in common)
     blesh
     blueman
     cargo
     cava
-    # cowsay (in common)
-    # delta (in common)
-    # dua (in common)
-    # fd (in common)
-    # fortune (in common)
-    # fzf (in common)
-    # gh (in common)
     ghostty
-    # neofetch (in common)
     pavucontrol
-    # ripgrep (in common)
     spotify-player
-    # starship (in common)
     stow
-    # tmux (in common)
     wezterm
-    # yazi (in common)
     waypipe
-    # zellij (in common)
 
     # jupyter
     python3
@@ -92,7 +76,6 @@ in
     wl-clipboard
 
     # fonts
-    # iosevka (in common)
 
     # wayland stuff
     xwayland

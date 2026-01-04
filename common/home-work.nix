@@ -24,28 +24,13 @@ in
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    # git (in common)
     lazygit
 
     # neovim
     extended-nixvim
 
     # terminal utilities
-    # bat (in common)
     cargo
-    # cowsay (in common)
-    # delta (in common)
-    # dua (in common)
-    # fd (in common)
-    # fortune (in common)
-    # fzf (in common)
-    # gh (in common)
-    # neofetch (in common)
-    # ripgrep (in common)
-    # starship (in common)
-    # tmux (in common)
-    # yazi (in common)
-    # zellij (in common)
 
     (import ./scripts/start_wireguard.nix { inherit pkgs; })
     (import ./scripts/stop_wireguard.nix { inherit pkgs; })
