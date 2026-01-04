@@ -25,307 +25,307 @@ in
       keyboard.bindings = [
 
         {
-          chars = "\\u001B[4~";
+          chars = "\u001B[4~";
           key = "End";
           mode = "~AppCursor";
         }
 
         {
-          chars = "\\u001B[5;2~";
+          chars = "\u001B[5;2~";
           key = "PageUp";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[5;5~";
+          chars = "\u001B[5;5~";
           key = "PageUp";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[5~";
+          chars = "\u001B[5~";
           key = "PageUp";
 
         }
 
         {
-          chars = "\\u001B[6;2~";
+          chars = "\u001B[6;2~";
           key = "PageDown";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[6;5~";
+          chars = "\u001B[6;5~";
           key = "PageDown";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[6~";
+          chars = "\u001B[6~";
           key = "PageDown";
 
         }
 
         {
-          chars = "\\u001B[1;2D";
+          chars = "\u001B[1;2D";
           key = "Left";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[1;5D";
+          chars = "\u001B[1;5D";
           key = "Left";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[1;3D";
+          chars = "\u001B[1;3D";
           key = "Left";
           mods = "Alt";
         }
 
         {
-          chars = "\\u001B[D";
+          chars = "\u001B[D";
           key = "Left";
           mode = "~AppCursor";
         }
 
         {
-          chars = "\\u001BOD";
+          chars = "\u001BOD";
           key = "Left";
           mode = "AppCursor";
         }
 
         {
-          chars = "\\u001B[1;2C";
+          chars = "\u001B[1;2C";
           key = "Right";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[1;5C";
+          chars = "\u001B[1;5C";
           key = "Right";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[1;3C";
+          chars = "\u001B[1;3C";
           key = "Right";
           mods = "Alt";
         }
 
         {
-          chars = "\\u001B[C";
+          chars = "\u001B[C";
           key = "Right";
           mode = "~AppCursor";
         }
 
         {
-          chars = "\\u001BOC";
+          chars = "\u001BOC";
           key = "Right";
           mode = "AppCursor";
         }
 
         {
-          chars = "\\u001B[1;2A";
+          chars = "\u001B[1;2A";
           key = "Up";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[1;5A";
+          chars = "\u001B[1;5A";
           key = "Up";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[1;3A";
+          chars = "\u001B[1;3A";
           key = "Up";
           mods = "Alt";
         }
 
         {
-          chars = "\\u001B[A";
+          chars = "\u001B[A";
           key = "Up";
           mode = "~AppCursor";
         }
 
         {
-          chars = "\\u001BOA";
+          chars = "\u001BOA";
           key = "Up";
           mode = "AppCursor";
         }
 
         {
-          chars = "\\u001B[1;2B";
+          chars = "\u001B[1;2B";
           key = "Down";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001B[1;5B";
+          chars = "\u001B[1;5B";
           key = "Down";
           mods = "Control";
         }
 
         {
-          chars = "\\u001B[1;3B";
+          chars = "\u001B[1;3B";
           key = "Down";
           mods = "Alt";
         }
 
         {
-          chars = "\\u001B[B";
+          chars = "\u001B[B";
           key = "Down";
           mode = "~AppCursor";
         }
 
         {
-          chars = "\\u001BOB";
+          chars = "\u001BOB";
           key = "Down";
           mode = "AppCursor";
         }
 
         {
-          chars = "\\u001B[Z";
+          chars = "\u001B[Z";
           key = "Tab";
           mods = "Shift";
         }
 
         {
-          chars = "\\u001BOP";
+          chars = "\u001BOP";
           key = "F1";
 
         }
 
         {
-          chars = "\\u001BOQ";
+          chars = "\u001BOQ";
           key = "F2";
 
         }
 
         {
-          chars = "\\u001BOR";
+          chars = "\u001BOR";
           key = "F3";
 
         }
 
         {
-          chars = "\\u001BOS";
+          chars = "\u001BOS";
           key = "F4";
 
         }
 
         {
-          chars = "\\u001B[15~";
+          chars = "\u001B[15~";
           key = "F5";
 
         }
 
         {
-          chars = "\\u001B[17~";
+          chars = "\u001B[17~";
           key = "F6";
 
         }
 
         {
-          chars = "\\u001B[18~";
+          chars = "\u001B[18~";
           key = "F7";
 
         }
 
         {
-          chars = "\\u001B[19~";
+          chars = "\u001B[19~";
           key = "F8";
 
         }
 
         {
-          chars = "\\u001B[20~";
+          chars = "\u001B[20~";
           key = "F9";
 
         }
 
         {
-          chars = "\\u001B[21~";
+          chars = "\u001B[21~";
           key = "F10";
 
         }
 
         {
-          chars = "\\u001B[23~";
+          chars = "\u001B[23~";
           key = "F11";
 
         }
 
         {
-          chars = "\\u001B[24~";
+          chars = "\u001B[24~";
           key = "F12";
 
         }
 
         {
-          chars = "\\u007F";
+          chars = "\u007F";
           key = "Back";
 
         }
 
         {
-          chars = "\\u001B\u007F";
+          chars = "\u001B\u007F";
           key = "Back";
           mods = "Alt";
         }
 
         {
-          chars = "\\u001B[2~";
+          chars = "\u001B[2~";
           key = "Insert";
 
         }
 
         {
-          chars = "\\u001B[3~";
+          chars = "\u001B[3~";
           key = "Delete";
 
         }
 
         {
-          chars = "\\u0002&";
+          chars = "\u0002&";
           key = "W";
           mods = "Command";
         }
 
         {
-          chars = "\\u0002c";
+          chars = "\u0002c";
           key = "T";
           mods = "Command";
         }
 
         {
-          chars = "\\u0002n";
+          chars = "\u0002n";
           key = "RBracket";
           mods = "Command|Shift";
         }
 
         {
-          chars = "\\u0002p";
+          chars = "\u0002p";
           key = "LBracket";
           mods = "Command|Shift";
         }
 
         {
-          chars = "\\u0002o";
+          chars = "\u0002o";
           key = "RBracket";
           mods = "Command";
         }
 
         {
-          chars = "\\u0002;";
+          chars = "\u0002;";
           key = "LBracket";
           mods = "Command";
         }
 
         {
-          chars = "\\u0002/";
+          chars = "\u0002/";
           key = "F";
           mods = "Command";
         }
