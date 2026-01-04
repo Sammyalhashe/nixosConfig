@@ -45,6 +45,7 @@ let
     fd
     fortune
     fzf
+    gemini-cli
     gh
     lazygit
     neofetch
