@@ -13,6 +13,7 @@
     fd
     fortune
     fzf
+    gemini-cli
     gh
     neofetch
     ripgrep
