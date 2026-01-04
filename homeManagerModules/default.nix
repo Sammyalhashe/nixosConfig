@@ -1,19 +1,10 @@
 { lib, inputs, ... }:
 let
   my_imports = [
-    ./alacritty.nix
+    ./home-common.nix
     # ./desktop.nix
-    ./direnv.nix
     # ./neovim.nix
-    ./nixpkgs.nix
-    ./starship.nix
-    ./tmux.nix
-    ./wezterm.nix
     ./wofi.nix
-    ./yazi.nix
-    ./zellij.nix
-    ./zsh.nix
-    ./nushell.nix
     ./stylix.nix
     ./crush.nix
     ./gemini-cli.nix
