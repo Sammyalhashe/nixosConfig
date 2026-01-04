@@ -25,7 +25,6 @@ in
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    # git (in common)
 
     # c compilers
     gcc
@@ -41,30 +40,15 @@ in
     ghostty
 
     # terminal utilities
-    # alacritty (in common)
-    # bat (in common)
     blesh
     blueman
     cargo
     cava
-    # cowsay (in common)
-    # delta (in common)
-    # dua (in common)
-    # fd (in common)
-    # fortune (in common)
-    # fzf (in common)
-    # gh (in common)
     lazygit
-    # neofetch (in common)
     pavucontrol
-    # ripgrep (in common)
     spotify-player
-    # starship (in common)
     stow
-    # tmux (in common)
     wezterm
-    # yazi (in common)
-    # zellij (in common)
 
     (import ./scripts/start_wireguard.nix { inherit pkgs; })
     (import ./scripts/stop_wireguard.nix { inherit pkgs; })

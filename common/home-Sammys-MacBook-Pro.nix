@@ -16,7 +16,6 @@
       gcc
 
       # applications
-      # zellij (in common)
 
       # inputs.zen-browser.packages."${pkgs.system}".default
 
@@ -25,23 +24,12 @@
       # jetbrains-toolbox
 
       # terminal utilities
-      # alacritty (in common)
-      # cowsay (in common)
-      # fortune (in common)
-      # fzf (in common)
-      # gh (in common)
-      # neofetch (in common)
-      # ripgrep (in common)
       direnv
       spotify-player
-      # starship (in common)
-      # tmux (in common)
-      # yazi (in common)
       nushell
       qownnotes
 
       # fonts
-      # iosevka (in common)
 
       # # It is sometimes useful to fine-tune packages, for example, by applying
       # # overrides. You can do that directly here, just don't forget the
