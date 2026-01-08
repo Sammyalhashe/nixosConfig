@@ -134,7 +134,6 @@ in
   environment.systemPackages = with pkgs; [
     neovim
     git
-    pkgs.crush
     nvidia-vaapi-driver
     (vivaldi.overrideAttrs (oldAttrs: {
       dontWrapQtApps = false;
