@@ -11,7 +11,9 @@ let
   nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
 
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
-  extended-nixvim = nixvim-package.extend config.stylix.targets.nixvim.exportedModule;
+  extended-nixvim = if config.stylix.enable
+    then nixvim-package.extend config.stylix.targets.nixvim.exportedModule
+    else nixvim-package;
 in
 {
   imports = [ ./home-common.nix ];
