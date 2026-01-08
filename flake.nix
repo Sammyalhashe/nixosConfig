@@ -181,10 +181,14 @@
         };
         modules = [
           stylix.homeModules.stylix
-          (import ./nixosModules/stylix.nix)
-          {
-            programs.stylix.enable = true;
-          }
+          ({pkgs, ...}:
+            let theme = import ./common/stylix-values.nix { inherit pkgs; };
+            in {
+              stylix.enable = true;
+              stylix.base16Scheme = theme.base16Scheme;
+              stylix.polarity = theme.polarity;
+              stylix.fonts = theme.fonts;
+          })
           ./homeManagerModules/work.nix
           ./common/home-work.nix
         ];
