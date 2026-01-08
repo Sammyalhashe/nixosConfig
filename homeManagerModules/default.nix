@@ -6,7 +6,6 @@ let
     # ./neovim.nix
     ./wofi.nix
     ./stylix.nix
-    ./crush.nix
     ./gemini-cli.nix
     ./pomodoro.nix
     ./startup-fix.nix
