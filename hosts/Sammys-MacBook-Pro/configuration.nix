@@ -1,20 +1,15 @@
-{ pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 let user = "sammyalhashemi";
-in
-let homeDir = "/Users";
-in
-let hostname = "Sammys-MacBook-Pro";
 in
 {
   imports =
     [
       inputs.home-manager.darwinModules.default
-      (
-        import ../../common/home-manager.nix (
-            { inherit inputs user homeDir hostname; }
-        )
-      )
+      ../../common/home-manager-config.nix
     ];
+
+  host.username = user;
+  host.homeManagerHostname = "Sammys-MacBook-Pro";
 
   # enable flakes
   nix.settings = {

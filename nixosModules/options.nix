@@ -1,0 +1,23 @@
+{ config, lib, ... }:
+
+{
+  options.host = {
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = "salhashemi2";
+      description = "The username of the primary user.";
+    };
+
+    isWsl = lib.mkEnableOption "Whether the host is running in WSL.";
+
+    useOmarchy = lib.mkEnableOption "Whether to use Omarchy configuration.";
+
+    greetd = lib.mkEnableOption "Whether to use Greetd.";
+
+    homeManagerHostname = lib.mkOption {
+      type = lib.types.str;
+      default = config.networking.hostName;
+      description = "The hostname to use for Home Manager configuration files.";
+    };
+  };
+}

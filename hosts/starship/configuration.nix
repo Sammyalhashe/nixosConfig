@@ -2,10 +2,8 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 let user = "salhashemi2";
-in
-let homeDir = "/home";
 in
 {
   imports =
@@ -14,13 +12,12 @@ in
       ./bluetooth.nix
       ./graphics.nix
       inputs.home-manager.nixosModules.default
-      (
-        import ../../common/home-manager.nix (
-            { inherit inputs user homeDir; }
-        )
-      )
+      ../../common/home-manager-config.nix
       ./wireguard.nix
     ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "default";
 
   # enable flakes
   nix.settings = {
