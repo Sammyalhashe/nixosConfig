@@ -332,7 +332,7 @@ in
         strider location="zellij:strider"
         tab-bar location="zellij:tab-bar"
         welcome-screen location="zellij:session-manager" {
-            welcome_screen true
+            welcome_screen false
         }
     }
 
@@ -527,12 +527,12 @@ in
     // Whether to show tips on startup
     // Default: true
     // 
-    // show_startup_tips false
+    show_startup_tips false
      
     // Whether to show release notes on first version run
     // Default: true
     // 
-    // show_release_notes false
+    show_release_notes false
           theme "kanagawabones"
   '';
   # home.file."${config.xdg.configHome}/zellij/layouts/default.kdl".text =
