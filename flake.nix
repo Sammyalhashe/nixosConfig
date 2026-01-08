@@ -46,7 +46,7 @@
     let
       system = "x86_64-linux";
       nur-crush-overlay = final: prev: {
-        crush = inputs.nur.repos.charmbracelet.crush;
+        crush = inputs.nur.legacyPackages.${prev.system}.repos.charmbracelet.crush;
       };
       overlays = [
         nur-crush-overlay
