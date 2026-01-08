@@ -22,7 +22,7 @@ in
           omarchy = {
             full_name = "Sammy Al Hashemi";
             email_address = "sammy@salh.xyz";
-            theme = "generated_dark";
+            theme = lib.mkForce "generated_dark";
             theme_overrides = {
               wallpaper_path = ./assets/BLACK_VII_desktop.jpg;
             };
