@@ -186,6 +186,7 @@
             in {
               stylix.enable = true;
               stylix.base16Scheme = theme.base16Scheme;
+              stylix.image = theme.image;
               stylix.polarity = theme.polarity;
               stylix.fonts = theme.fonts;
           })
