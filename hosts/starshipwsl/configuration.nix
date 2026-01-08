@@ -6,9 +6,6 @@
 # https://github.com/nix-community/NixOS-WSL
 
 {
-  omarchy ? false,
-}:
-{
   config,
   lib,
   pkgs,
@@ -16,27 +13,17 @@
   ...
 }:
 let
-  hostname = "starshipwsl";
   user = "salhashemi2";
-  homeDir = "/home";
 in
 {
   imports = [
     inputs.home-manager.nixosModules.default
-    (
-      # import ../../common/home-manager.nix (
-      #     { inherit inputs user homeDir hostname; }
-      # )
-      (import ../../common/home-manager.nix { omarchy = omarchy; } ({
-        inherit
-          inputs
-          user
-          homeDir
-          hostname
-          ;
-      }))
-    )
+    ../../common/home-manager-config.nix
   ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "starshipwsl";
+  host.isWsl = true;
 
   # enable flakes
   nix.settings = {

@@ -3,9 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
-  omarchy ? false,
-}:
-{
   config,
   pkgs,
   lib,
@@ -15,9 +12,6 @@
 let
   user = "salhashemi2";
 in
-let
-  homeDir = "/home";
-in
 {
   imports = [
     ./hardware-configuration.nix
@@ -25,10 +19,12 @@ in
     ./bluetooth.nix
     inputs.home-manager.nixosModules.default
     inputs.home-manager.nixosModules.home-manager # Add this import
-    inputs.home-manager.nixosModules.default
-    (import ../../common/home-manager.nix { omarchy = omarchy; } ({ inherit inputs user homeDir; }))
+    ../../common/home-manager-config.nix
     # ./webdav.nix
   ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "default";
 
   # enable flakes
   nix.settings = {

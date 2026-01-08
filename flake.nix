@@ -9,19 +9,10 @@
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     zen-browser = {
       url = "github:Sammyalhashe/zen-browser-flake";
-      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-      # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprlock = {
       url = "github:hyprwm/hyprlock";
-      inputs = {
-        # hyprgraphics.follows = "hyprland/hyprgraphics";
-        # hyprlang.follows = "hyprland/hyprlang";
-        # hyprutils.follows = "hyprland/hyprutils";
-        # nixpkgs.follows = "hyprland/nixpkgs";
-        # systems.follows = "hyprland/systems";
-      };
     };
     omarchy-nix = {
       url = "github:Sammyalhashe/omarchy-nix";
@@ -64,67 +55,82 @@
         inherit system overlays;
         config.allowUnfree = true;
       };
+
+      # Shared base configuration
+      baseConfig = {
+        nixpkgs = {
+           inherit overlays;
+           config.allowUnfree = true;
+        };
+      };
     in
     {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
+          baseConfig
           ./hosts/homebase/configuration.nix
-          (import ./nixosModules { username = "salhashemi2"; })
+          ./nixosModules
         ];
       };
+
       nixosConfigurations.homebase_omarchy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          (import ./hosts/homebase/configuration.nix { omarchy = true; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true; # just to not import the desktop file.
-          })
+          baseConfig
+          ./hosts/homebase/configuration.nix
+          ./nixosModules
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
-            programs.stylix.enable = true;
+             host.useOmarchy = true;
+             host.isWsl = true; # As per original config comment "just to not import the desktop file"
+             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          (import ./hosts/oldboy/configuration.nix { omarchy = true; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true; # just to not import the desktop file.
-          })
+          baseConfig
+          ./hosts/oldboy/configuration.nix
+          ./nixosModules
           omarchy-nix.nixosModules.default
+          {
+             host.useOmarchy = true;
+             host.isWsl = true;
+          }
         ];
       };
+
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         inherit system;
         modules = [
+          baseConfig
           nixos-wsl.nixosModules.default
-          (import ./hosts/starshipwsl/configuration.nix { omarchy = false; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true;
-          })
-          (import ./nixosModules/wsl.nix)
+          ./hosts/starshipwsl/configuration.nix
+          ./nixosModules
+          ./nixosModules/wsl.nix
           {
             environments.wsl.enable = true;
+            host.useOmarchy = false; # Explicitly set
           }
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         inherit system;
         modules = [
+          baseConfig
           {
             nixpkgs.overlays = [
               (final: prev: {
@@ -134,35 +140,37 @@
           }
           nixos-wsl.nixosModules.default
           ./hosts/homebasewsl/configuration.nix
-          (import ./nixosModules {
-            username = "nixos";
-            wsl = true;
-          })
-          (import ./nixosModules/wsl.nix)
+          ./nixosModules
+          ./nixosModules/wsl.nix
           {
             environments.wsl.enable = true;
           }
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
+          baseConfig
           ./hosts/starship/configuration.nix
-          (import ./nixosModules { username = "salhashemi2"; })
+          ./nixosModules
         ];
       };
+
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs; };
         system = "x86_64-darwin";
         modules = [
           ./hosts/Sammys-MacBook-Pro/configuration.nix
+          ./nixosModules/options.nix
         ];
       };
+
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
