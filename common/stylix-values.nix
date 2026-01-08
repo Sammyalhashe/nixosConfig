@@ -1,6 +1,7 @@
 { pkgs }:
 {
   base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
+  image = ./assets/BLACK_VII_desktop.jpg;
   polarity = "dark";
   fonts = {
     serif = {
