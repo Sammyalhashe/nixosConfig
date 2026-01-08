@@ -3,7 +3,7 @@
   imports = [ inputs.stylix.homeManagerModules.stylix ];
 
   # Disable stylix by default in Home Manager unless enabled by NixOS module or explicit config
-  stylix.enable = lib.mkDefault false;
+  stylix.enable = lib.mkOverride 1100 false;
 
   # disable things that are enabled by default
   stylix.targets.alacritty.enable = true;
