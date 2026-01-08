@@ -15,10 +15,10 @@ in
   };
   config = mkIf cfg.enable {
     stylix.enable = true;
-    stylix.base16Scheme = theme.base16Scheme;
-    stylix.image = theme.image;
-    stylix.polarity = theme.polarity;
-    stylix.fonts = theme.fonts;
+    stylix.base16Scheme = lib.mkDefault theme.base16Scheme;
+    stylix.image = lib.mkDefault theme.image;
+    stylix.polarity = lib.mkDefault theme.polarity;
+    stylix.fonts = lib.mkDefault theme.fonts;
 
     environment.etc."current-theme".text = "dark";
 
