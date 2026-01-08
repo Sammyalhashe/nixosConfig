@@ -24,7 +24,7 @@ in
             email_address = "sammy@salh.xyz";
             theme = lib.mkForce "generated_dark";
             theme_overrides = {
-              wallpaper_path = ./assets/BLACK_VII_desktop.jpg;
+              wallpaper_path = lib.mkForce ./assets/BLACK_VII_desktop.jpg;
             };
           };
         })
