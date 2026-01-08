@@ -7,6 +7,7 @@
 with lib;
 let
   cfg = config.programs.stylix;
+  theme = import ../common/stylix-values.nix { inherit pkgs; };
 in
 {
   options = {
@@ -14,12 +15,9 @@ in
   };
   config = mkIf cfg.enable {
     stylix.enable = true;
-    stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
-    # stylix.image = pkgs.fetchurl {
-    #   url = "https://unsplash.com/photos/75xPHEQBmvA/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzYyNzAzMDM0fA&force=true&w=1920";
-    #   hash = "sha256-vWXPegjitJSEq5lFoSg6X6dRzqAQ8sGPMXNxuPNmXHA=";
-    # };
-    stylix.polarity = "dark";
+    stylix.base16Scheme = theme.base16Scheme;
+    stylix.polarity = theme.polarity;
+    stylix.fonts = theme.fonts;
 
     environment.etc."current-theme".text = "dark";
 
@@ -86,23 +84,6 @@ in
     systemd.services.theme-dark = {
       serviceConfig.Type = "oneshot";
       script = "/nix/var/nix/profiles/system/bin/switch-to-configuration test";
-    };
-
-    stylix.fonts = {
-      serif = {
-        package = "${pkgs.nerd-fonts.victor-mono}";
-        name = "VictorMono Nerd Font Mono";
-      };
-
-      sansSerif = {
-        package = "${pkgs.nerd-fonts.victor-mono}";
-        name = "VictorMono Nerd Font Mono";
-      };
-
-      monospace = {
-        package = "${pkgs.nerd-fonts.victor-mono}";
-        name = "VictorMono Nerd Font Mono";
-      };
     };
   };
 }
