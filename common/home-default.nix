@@ -17,8 +17,6 @@ in
   imports = [ ./home-common.nix ];
 
   home.username = "${user}";
-  # TODO Gotta transfer this file to it's own copy for each system.
-  home.homeDirectory = "${homeDir}/${user}";
 
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
