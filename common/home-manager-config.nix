@@ -1,7 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, options, ... }:
 
 let
   cfg = config.host;
+  # Conditionally import Stylix HM module if not already present in NixOS/Darwin options
+  # to avoid "read-only option set multiple times" error.
+  stylixModule = if (options ? stylix) then [] else [ inputs.stylix.homeManagerModules.stylix ];
 in
 {
   config = {
@@ -15,6 +18,9 @@ in
       };
 
       users.${cfg.username} = lib.mkMerge [
+        {
+          imports = stylixModule;
+        }
         (lib.mkIf cfg.useOmarchy {
           imports = [ inputs.omarchy-nix.homeManagerModules.default ];
 
