@@ -1,7 +1,5 @@
 { config, lib, inputs, ... }:
 {
-  imports = [ inputs.stylix.homeManagerModules.stylix ];
-
   # Disable stylix by default in Home Manager unless enabled by NixOS module or explicit config
   stylix.enable = lib.mkOverride 1100 false;
 
