@@ -16,38 +16,43 @@ let
   };
 in
 {
-  config = {
-    # Configure omarchy in NixOS/Darwin system config if enabled
-    omarchy = lib.mkIf cfg.useOmarchy omarchyConfig;
+  config = lib.mkMerge [
+    # Configure omarchy in NixOS/Darwin system config only if enabled
+    # Use mkIf inside mkMerge to avoid defining the attribute 'omarchy' if option doesn't exist
+    (lib.mkIf cfg.useOmarchy {
+      omarchy = omarchyConfig;
+    })
 
     # Standard home-manager setup
-    home-manager = {
-      extraSpecialArgs = {
-        inherit inputs;
-        user = cfg.username;
-        homeDir = if pkgs.stdenv.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
-        hostname = cfg.homeManagerHostname;
+    {
+      home-manager = {
+        extraSpecialArgs = {
+          inherit inputs;
+          user = cfg.username;
+          homeDir = if pkgs.stdenv.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
+          hostname = cfg.homeManagerHostname;
+        };
+
+        users.${cfg.username} = lib.mkMerge [
+          {
+            imports = stylixModule;
+          }
+          (lib.mkIf cfg.useOmarchy {
+            imports = [ inputs.omarchy-nix.homeManagerModules.default ];
+
+            # Configure omarchy in Home Manager
+            omarchy = omarchyConfig;
+          })
+          {
+            imports = [
+              (./. + "/home-${cfg.homeManagerHostname}.nix")
+              inputs.self.outputs.homeManagerModules.${cfg.homeManagerHostname} or {}
+            ];
+          }
+        ];
+
+        backupFileExtension = "backup";
       };
-
-      users.${cfg.username} = lib.mkMerge [
-        {
-          imports = stylixModule;
-        }
-        (lib.mkIf cfg.useOmarchy {
-          imports = [ inputs.omarchy-nix.homeManagerModules.default ];
-
-          # Configure omarchy in Home Manager
-          omarchy = omarchyConfig;
-        })
-        {
-          imports = [
-            (./. + "/home-${cfg.homeManagerHostname}.nix")
-            inputs.self.outputs.homeManagerModules.${cfg.homeManagerHostname} or {}
-          ];
-        }
-      ];
-
-      backupFileExtension = "backup";
-    };
-  };
+    }
+  ];
 }
