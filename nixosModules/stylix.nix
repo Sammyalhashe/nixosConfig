@@ -8,8 +8,6 @@ with lib;
 let
   cfg = config.programs.stylix;
   theme = import ../common/stylix-values.nix { inherit pkgs; };
-  # Use defaults only if omarchy is not enabled, assuming omarchy handles theming if enabled.
-  useDefaults = !config.host.useOmarchy;
 in
 {
   options = {
@@ -17,10 +15,14 @@ in
   };
   config = mkIf cfg.enable {
     stylix.enable = true;
-    stylix.base16Scheme = mkIf useDefaults (mkDefault theme.base16Scheme);
-    stylix.image = mkIf useDefaults (mkDefault theme.image);
-    stylix.polarity = mkIf useDefaults (mkDefault theme.polarity);
-    stylix.fonts = mkIf useDefaults (mkDefault theme.fonts);
+
+    # Provide fallback configuration using weak priority (1100).
+    # This allows other modules (like omarchy-nix) to override them using mkDefault (1000) or standard priority (100).
+    # But ensures that if no other module sets them, we have a valid configuration.
+    stylix.base16Scheme = mkOverride 1100 theme.base16Scheme;
+    stylix.image = mkOverride 1100 theme.image;
+    stylix.polarity = mkOverride 1100 theme.polarity;
+    stylix.fonts = mkOverride 1100 theme.fonts;
 
     environment.etc."current-theme".text = "dark";
 
