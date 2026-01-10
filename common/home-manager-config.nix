@@ -10,7 +10,7 @@ in
   imports = [
     # Conditionally import omarchy config only if enabled.
     # This prevents the "option omarchy does not exist" error on systems that don't import omarchy-nix.
-    (lib.mkIf cfg.useOmarchy ./omarchy-config.nix)
+    (lib.mkIf cfg.useOmarchy { imports = [ ./omarchy-config.nix ]; })
   ];
 
   config = {
