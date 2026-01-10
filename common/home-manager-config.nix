@@ -19,7 +19,7 @@ in
   config = lib.mkMerge [
     # Configure omarchy in NixOS/Darwin system config only if enabled
     # Use mkIf inside mkMerge to avoid defining the attribute 'omarchy' if option doesn't exist
-    (lib.mkIf cfg.useOmarchy {
+    (lib.mkIf (cfg.useOmarchy && (options ? omarchy)) {
       omarchy = omarchyConfig;
     })
 
