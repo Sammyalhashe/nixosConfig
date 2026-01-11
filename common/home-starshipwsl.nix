@@ -13,9 +13,11 @@ let
 
   nixvim-wsl = nixvim-package.extend { nixvim.wsl = true; };
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
-  extended-nixvim = if config.stylix.enable
-    then nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
-    else nixvim-wsl;
+  extended-nixvim =
+    if config.stylix.enable then
+      nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
+    else
+      nixvim-wsl;
 in
 {
   imports = [ ./home-common.nix ];
@@ -36,7 +38,7 @@ in
     mupdf
     # neovim
     extended-nixvim
-    xfce.thunar
+    thunar
     ghostty
 
     # terminal utilities

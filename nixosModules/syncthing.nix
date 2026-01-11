@@ -1,6 +1,6 @@
 { config, ... }:
-let 
-  user="salhashemi2";
+let
+  user = "salhashemi2";
 in
 {
   services = {

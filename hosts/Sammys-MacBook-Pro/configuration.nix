@@ -1,19 +1,28 @@
-{ config, pkgs, inputs, lib, ... }:
-let user = "sammyalhashemi";
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
+let
+  user = "sammyalhashemi";
 in
 {
-  imports =
-    [
-      inputs.home-manager.darwinModules.default
-      ../../common/home-manager-config.nix
-    ];
+  imports = [
+    inputs.home-manager.darwinModules.default
+    ../../common/home-manager-config.nix
+  ];
 
   host.username = user;
   host.homeManagerHostname = "Sammys-MacBook-Pro";
 
   # enable flakes
   nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # enable garbage collection
@@ -36,7 +45,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     neovim
+    neovim
   ];
 
   # xdg env variables
@@ -47,8 +56,8 @@ in
   # };
 
   fonts.packages = with pkgs; [
-      monoid
-      source-code-pro
+    monoid
+    source-code-pro
   ];
 
   system.stateVersion = 6;

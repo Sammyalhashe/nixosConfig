@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -7,5 +12,6 @@
     ./shell.nix
     ./kdestuff.nix
     ./greetd.nix
+    ./networking.nix
   ];
 }
