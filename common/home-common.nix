@@ -7,7 +7,9 @@
       git
 
       # nur repos
-      inputs.nur.legacyPackages."${pkgs.stdenv.hostPlatform.system}".repos.mic92.hello-nur
+      inputs.nur.legacyPackages."${pkgs.stdenv.hostPlatform.system}".repos.charmbracelet.glow
+      inputs.nur.legacyPackages."${pkgs.stdenv.hostPlatform.system}".repos.charmbracelet.mods
+      inputs.nur.legacyPackages."${pkgs.stdenv.hostPlatform.system}".repos.charmbracelet.skate
 
       # terminal utilities
       alacritty

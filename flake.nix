@@ -53,6 +53,15 @@
     let
       system = "x86_64-linux";
       overlays = [
+        (final: prev: {
+          # Overlay to explicitly set allowUnfree for NUR packages
+          nur = prev.nur // {
+            pkgs = import prev.nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          };
+        })
       ];
       pkgs = import nixpkgs {
         inherit system overlays;
