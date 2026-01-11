@@ -30,6 +30,7 @@ in
       };
 
       users.${cfg.username} = {
+        nixpkgs.config.allowUnfree = true;
         imports = stylixModule ++ [
           (./. + "/home-${cfg.homeManagerHostname}.nix")
           inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
