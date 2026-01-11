@@ -19,5 +19,13 @@
       default = config.networking.hostName;
       description = "The hostname to use for Home Manager configuration files.";
     };
+
+    setNameservers = lib.mkEnableOption "Whether to explicitly set nameservers via networking.nameservers.";
+
+    fallbackNameservers = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "A list of additional nameservers to append as fallbacks.";
+    };
   };
 }

@@ -25,6 +25,7 @@ in
 
   host.useOmarchy = lib.mkDefault false;
   host.homeManagerHostname = "default";
+  host.fallbackNameservers = [ "11.125.37.1" ];
 
   # enable flakes
   nix.settings = {
@@ -128,6 +129,9 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
