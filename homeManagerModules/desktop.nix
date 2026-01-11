@@ -587,7 +587,7 @@
       "$mod, V, togglefloating"
       "$mod, J, togglesplit"
       "$mod, S, togglespecialworkspace, magic"
-      "$mod, F, fullscreen"
+      "$mod, F, fullscreen, 1"
       "$mod SHIFT, S, movetoworkspace, special:magic"
       "$mod, left, movefocus, l"
       "$mod, h, movefocus, l"

@@ -1,10 +1,15 @@
-{ config, pkgs, stdenv, ... }:
+{
+  config,
+  pkgs,
+  stdenv,
+  ...
+}:
 let
-    font = "";
+  font = "";
 in
 {
-    programs.wezterm = {
-        enable = true;
-        extraConfig = builtins.readFile ./wezterm.lua;
-    };
+  programs.wezterm = {
+    enable = true;
+    extraConfig = builtins.readFile ./wezterm.lua;
+  };
 }

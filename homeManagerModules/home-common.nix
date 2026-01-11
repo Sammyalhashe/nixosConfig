@@ -1,9 +1,9 @@
 { ... }:
 {
   imports = [
+    # ./desktop.nix
     ./alacritty.nix
     ./direnv.nix
-    ./nixpkgs.nix
     ./nushell.nix
     ./starship.nix
     ./tmux.nix
