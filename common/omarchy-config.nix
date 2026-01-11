@@ -1,4 +1,4 @@
-{ config, lib, inputs, ... }:
+{ config, lib, inputs, options, ... }:
 
 let
   cfg = config.host;
@@ -13,12 +13,18 @@ let
   };
 in
 {
-  # Configure omarchy in NixOS/Darwin system config
-  omarchy = omarchyConfig;
+  config = lib.mkMerge [
+    # Configure omarchy in NixOS/Darwin system config if option exists and enabled
+    (if (options ? omarchy) then {
+      omarchy = lib.mkIf cfg.useOmarchy omarchyConfig;
+    } else {})
 
-  # Configure omarchy in Home Manager
-  home-manager.users.${cfg.username} = {
-    imports = [ inputs.omarchy-nix.homeManagerModules.default ];
-    omarchy = omarchyConfig;
-  };
+    # Configure omarchy in Home Manager if enabled
+    (lib.mkIf cfg.useOmarchy {
+      home-manager.users.${cfg.username} = {
+        imports = [ inputs.omarchy-nix.homeManagerModules.default ];
+        omarchy = omarchyConfig;
+      };
+    })
+  ];
 }
