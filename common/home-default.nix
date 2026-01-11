@@ -11,19 +11,21 @@ let
   nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
 
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
-  extended-nixvim = nixvim-package.extend config.stylix.targets.nixvim.exportedModule;
+  extended-nixvim =
+    if config.stylix.enable then
+      nixvim-package.extend config.stylix.targets.nixvim.exportedModule
+    else
+      nixvim-package;
 in
 {
   imports = [ ./home-common.nix ];
 
   home.username = "${user}";
-  # TODO Gotta transfer this file to it's own copy for each system.
-  home.homeDirectory = "${homeDir}/${user}";
 
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    inputs.zen-browser.packages."${pkgs.system}".default
+    inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
     jujutsu
 
     # c compilers
@@ -35,7 +37,6 @@ in
     tofi
 
     # applications
-    anytype
     brave
     emacs
     firefox
@@ -49,7 +50,7 @@ in
     protonvpn-gui
     thunderbird
     wireguard-ui
-    xfce.thunar
+    thunar
 
     # unfree applications
     obsidian

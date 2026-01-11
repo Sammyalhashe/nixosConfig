@@ -3,9 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
-  omarchy ? false,
-}:
-{
   config,
   pkgs,
   lib,
@@ -15,18 +12,17 @@
 let
   user = "salhashemi2";
 in
-let
-  homeDir = "/home";
-in
 {
   imports = [
     ./hardware-configuration.nix
     ./bluetooth.nix
     inputs.home-manager.nixosModules.default
-    inputs.home-manager.nixosModules.home-manager # Add this import
-    inputs.home-manager.nixosModules.default
-    (import ../../common/home-manager.nix { omarchy = omarchy; } ({ inherit inputs user homeDir; }))
+    ../../common/home-manager-config.nix
   ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "default";
+  host.isWsl = lib.mkDefault false;
 
   # enable flakes
   nix.settings = {
@@ -104,10 +100,10 @@ in
   };
 
   # prevent the laptop from hibernating when lid is closed
-  services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
   };
 
   systemd.user.services.neovim_server = {
@@ -123,6 +119,9 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

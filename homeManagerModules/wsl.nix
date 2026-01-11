@@ -14,18 +14,18 @@ let
   # Set the shell configuration to nu for Windows
   alacrittySettings = config.programs.alacritty.settings;
   windowsAlacrittySettings = alacrittySettings // {
-    terminal = (alacrittySettings.terminal or {}) // {
+    terminal = (alacrittySettings.terminal or { }) // {
       shell = {
         program = "nu";
       };
     };
-    window = (alacrittySettings.window or {}) // {
+    window = (alacrittySettings.window or { }) // {
       startup_mode = "Maximized";
       decorations = "None";
     };
   };
 
-  tomlFormat = pkgs.formats.toml {};
+  tomlFormat = pkgs.formats.toml { };
   windowsAlacrittyConfigFile = tomlFormat.generate "alacritty-windows.toml" windowsAlacrittySettings;
 in
 {
