@@ -13,22 +13,19 @@
   ...
 }:
 let
-  hostname = "homebasewsl";
   user = "nixos";
-  homeDir = "/home";
 in
 {
   imports = [
     inputs.home-manager.nixosModules.default
-    (import ../../common/home-manager.nix { omarchy = false; } ({
-      inherit
-        inputs
-        user
-        homeDir
-        hostname
-        ;
-    }))
+    ../../common/home-manager-config.nix
   ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "homebasewsl";
+  host.username = user;
+  host.isWsl = true;
+  host.setNameservers = false;
 
   # enable flakes
   nix.settings = {
@@ -46,18 +43,9 @@ in
   };
 
   wsl.enable = true;
-  wsl.defaultUser = "nixos";
+  wsl.defaultUser = user;
 
-  wsl.wslConf.network.hostname = "homebasewsl";
-
-  # makes wsl not generate the `/etc/hosts` file...
-  wsl.wslConf.network.generateHosts = false;
-  # ...so we can write to it.
-  networking.extraHosts = ''
-    11.125.37.235 picloud.local
-    11.125.37.99  raspberrypi.local
-    11.125.37.135 homebase
-  '';
+  wsl.wslConf.network.hostname = "nixos";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

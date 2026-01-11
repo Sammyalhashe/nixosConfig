@@ -1,17 +1,21 @@
-
-{ pkgs, lib, inputs, username, ... }:
 {
-    services.greetd = {
-        enable = true;
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
-        vt = 3;
-        
-        settings = {
-           default_session = {
-               user = username; 
-               # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-               command = "hyprland";
-           };
+{
+  config = lib.mkIf (config.host.greetd && !config.host.isWsl) {
+    services.greetd = {
+      enable = true;
+      vt = 3;
+      settings = {
+        default_session = {
+          user = config.host.username;
+          command = "hyprland";
         };
-    }; 
+      };
+    };
+  };
 }

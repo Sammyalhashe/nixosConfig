@@ -9,19 +9,10 @@
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     zen-browser = {
       url = "github:Sammyalhashe/zen-browser-flake";
-      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-      # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprlock = {
       url = "github:hyprwm/hyprlock";
-      inputs = {
-        # hyprgraphics.follows = "hyprland/hyprgraphics";
-        # hyprlang.follows = "hyprland/hyprlang";
-        # hyprutils.follows = "hyprland/hyprutils";
-        # nixpkgs.follows = "hyprland/nixpkgs";
-        # systems.follows = "hyprland/systems";
-      };
     };
     omarchy-nix = {
       url = "github:Sammyalhashe/omarchy-nix";
@@ -33,9 +24,11 @@
     stylix = {
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
-    nur.url = "github:nix-community/NUR";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -49,82 +42,104 @@
       omarchy-nix,
       nixos-wsl,
       stylix,
-      nur,
+      treefmt-nix,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      nur-crush-overlay = final: prev: {
-        crush = inputs.nur.repos.charmbracelet.crush;
-      };
       overlays = [
-        nur-crush-overlay
       ];
       pkgs = import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
+      };
+
+      treefmtEval = treefmt-nix.lib.evalModule pkgs {
+        projectRootFile = "flake.nix";
+        programs.nixfmt.enable = true;
+      };
+
+      # Shared base configuration
+      baseConfig = {
+        nixpkgs = {
+          inherit overlays;
+          config.allowUnfree = true;
+        };
       };
     in
     {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
+          baseConfig
           ./hosts/homebase/configuration.nix
-          (import ./nixosModules { username = "salhashemi2"; })
+          ./nixosModules
+          stylix.nixosModules.stylix
+          ./nixosModules/stylix.nix
+          { programs.stylix.enable = true; }
         ];
       };
+
       nixosConfigurations.homebase_omarchy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          (import ./hosts/homebase/configuration.nix { omarchy = true; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true; # just to not import the desktop file.
-          })
+          baseConfig
+          ./hosts/homebase/configuration.nix
+          ./nixosModules
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
+            host.useOmarchy = true;
+            host.isWsl = true; # As per original config comment "just to not import the desktop file"
             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          (import ./hosts/oldboy/configuration.nix { omarchy = true; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true; # just to not import the desktop file.
-          })
+          baseConfig
+          ./hosts/oldboy/configuration.nix
+          ./nixosModules
           omarchy-nix.nixosModules.default
+          stylix.nixosModules.stylix
+          ./nixosModules/stylix.nix
+          {
+            host.useOmarchy = true;
+            host.isWsl = true;
+            programs.stylix.enable = true;
+          }
         ];
       };
+
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         inherit system;
         modules = [
+          baseConfig
           nixos-wsl.nixosModules.default
-          (import ./hosts/starshipwsl/configuration.nix { omarchy = false; })
-          (import ./nixosModules {
-            username = "salhashemi2";
-            wsl = true;
-          })
-          (import ./nixosModules/wsl.nix)
+          ./hosts/starshipwsl/configuration.nix
+          ./nixosModules
+          ./nixosModules/wsl.nix
           {
             environments.wsl.enable = true;
+            host.useOmarchy = false; # Explicitly set
           }
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         inherit system;
         modules = [
+          baseConfig
           {
             nixpkgs.overlays = [
               (final: prev: {
@@ -134,38 +149,45 @@
           }
           nixos-wsl.nixosModules.default
           ./hosts/homebasewsl/configuration.nix
-          (import ./nixosModules {
-            username = "nixos";
-            wsl = true;
-          })
-          (import ./nixosModules/wsl.nix)
+          ./nixosModules
+          ./nixosModules/wsl.nix
           {
             environments.wsl.enable = true;
           }
           stylix.nixosModules.stylix
-          (import ./nixosModules/stylix.nix)
+          ./nixosModules/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
+
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
+          baseConfig
           ./hosts/starship/configuration.nix
-          (import ./nixosModules { username = "salhashemi2"; })
+          ./nixosModules
+          stylix.nixosModules.stylix
+          ./nixosModules/stylix.nix
+          { programs.stylix.enable = true; }
         ];
       };
+
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs; };
         system = "x86_64-darwin";
         modules = [
           ./hosts/Sammys-MacBook-Pro/configuration.nix
+          ./nixosModules/options.nix
         ];
       };
+
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+        # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
+        nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+        nixpkgs.config.allowUnfree = true;
         extraSpecialArgs = {
           inherit inputs;
           user = "salhashemi2";
@@ -173,19 +195,88 @@
         };
         modules = [
           stylix.homeModules.stylix
-          (import ./nixosModules/stylix.nix)
-          {
-            programs.stylix.enable = true;
-          }
+          (
+            { pkgs, ... }:
+            let
+              theme = import ./common/stylix-values.nix { inherit pkgs; };
+            in
+            {
+              stylix.enable = true;
+              stylix.base16Scheme = theme.base16Scheme;
+              stylix.image = theme.image;
+              stylix.polarity = theme.polarity;
+              stylix.fonts = theme.fonts;
+            }
+          )
           ./homeManagerModules/work.nix
           ./common/home-work.nix
         ];
       };
-      homeManagerModules.default = ./homeManagerModules;
-      homeManagerModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
-      homeManagerModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
-      homeManagerModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
+      homeModules.default = ./homeManagerModules;
+      homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
+      homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
+      homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
 
-      formatter.x86_64-linux = nixpkgs.legacyPackages."x86_64-linux".nixfmt-rfc-style;
+      formatter.x86_64-linux = treefmtEval.config.build.wrapper;
+
+      checks.x86_64-linux = {
+        formatting = treefmtEval.config.build.check self;
+      };
+
+      devShells.x86_64-linux.default =
+        let
+          mkScript =
+            name: script:
+            pkgs.writeScriptBin name ''
+              #!/bin/sh
+              ${script}
+            '';
+
+          scripts = [
+            (mkScript "check" "nix flake check")
+            (mkScript "fmt" "nix fmt")
+
+            # Host switch/test scripts
+            (mkScript "switch-homebase" "sudo nixos-rebuild switch --flake .#homebase")
+            (mkScript "test-homebase" "sudo nixos-rebuild test --flake .#homebase")
+
+            (mkScript "switch-homebase-omarchy" "sudo nixos-rebuild switch --flake .#homebase_omarchy")
+            (mkScript "test-homebase-omarchy" "sudo nixos-rebuild test --flake .#homebase_omarchy")
+
+            (mkScript "switch-oldboy" "sudo nixos-rebuild switch --flake .#oldboy")
+            (mkScript "test-oldboy" "sudo nixos-rebuild test --flake .#oldboy")
+
+            (mkScript "switch-starshipwsl" "sudo nixos-rebuild switch --flake .#starshipwsl")
+            (mkScript "test-starshipwsl" "sudo nixos-rebuild test --flake .#starshipwsl")
+
+            (mkScript "switch-homebasewsl" "sudo nixos-rebuild switch --flake .#homebasewsl")
+            (mkScript "test-homebasewsl" "sudo nixos-rebuild test --flake .#homebasewsl")
+
+            (mkScript "switch-nixos" "sudo nixos-rebuild switch --flake .#nixos")
+            (mkScript "test-nixos" "sudo nixos-rebuild test --flake .#nixos")
+
+            # Home manager scripts
+            (mkScript "switch-home-work" "home-manager switch --flake .#work")
+          ];
+        in
+        pkgs.mkShell {
+          nativeBuildInputs = [
+            pkgs.nixfmt
+            pkgs.treefmt
+          ]
+          ++ scripts;
+
+          shellHook = ''
+            echo "Welcome to the NixOS Config DevShell!"
+            echo "Available commands:"
+            echo "  check         - Run nix flake check"
+            echo "  fmt           - Run nix fmt"
+            echo "  switch-<host> - Switch NixOS configuration"
+            echo "  test-<host>   - Test NixOS configuration"
+            echo ""
+            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, nixos"
+            echo "Home Configs: work"
+          '';
+        };
     };
 }
