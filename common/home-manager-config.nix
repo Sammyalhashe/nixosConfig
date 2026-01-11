@@ -8,9 +8,8 @@ let
 in
 {
   imports = [
-    # Conditionally import omarchy config only if enabled.
-    # This prevents the "option omarchy does not exist" error on systems that don't import omarchy-nix.
-    (lib.mkIf cfg.useOmarchy { imports = [ ./omarchy-config.nix ]; })
+    # Import omarchy config (which handles conditional logic internally)
+    ./omarchy-config.nix
   ];
 
   config = {
