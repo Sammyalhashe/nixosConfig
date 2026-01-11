@@ -1,10 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   home.packages =
     with pkgs;
     [
       # common applications
       git
+
+      # nur repos
+      inputs.nur.legacyPackages."${pkgs.stdenv.hostPlatform.system}".repos.mic92.hello-nur
 
       # terminal utilities
       alacritty

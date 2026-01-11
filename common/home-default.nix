@@ -8,7 +8,7 @@
 }:
 let
   # inherit (pkgs.stdenv.hostPlatform) system;
-  nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
+  nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
 
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
   extended-nixvim =
