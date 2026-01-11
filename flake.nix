@@ -29,6 +29,10 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -43,6 +47,7 @@
       nixos-wsl,
       stylix,
       treefmt-nix,
+      nur,
       ...
     }@inputs:
     let
