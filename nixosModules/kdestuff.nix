@@ -1,9 +1,12 @@
 {
-  lib,
-  inputs,
+  config,
   pkgs,
+  lib,
   ...
-}@args:
+}:
+
 {
-  programs.kdeconnect.enable = true;
+  config = lib.mkIf (config.host.isWsl || !config.host.greetd) {
+    programs.kdeconnect.enable = true;
+  };
 }

@@ -2,29 +2,36 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
-let user = "salhashemi2";
-in
-let homeDir = "/home";
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
+let
+  user = "salhashemi2";
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./bluetooth.nix
-      ./graphics.nix
-      inputs.home-manager.nixosModules.default
-      (
-        import ../../common/home-manager.nix (
-            { inherit inputs user homeDir; }
-        )
-      )
-      ./wireguard.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./bluetooth.nix
+    ./graphics.nix
+    inputs.home-manager.nixosModules.default
+    ../../common/home-manager-config.nix
+    ./wireguard.nix
+  ];
+
+  host.useOmarchy = lib.mkDefault false;
+  host.homeManagerHostname = "default";
 
   # enable flakes
   nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # auto upgrade
@@ -84,26 +91,30 @@ in
   users.users.salhashemi2 = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
   ];
 
   fonts.packages = with pkgs; [
-      monoid
-      source-code-pro
+    monoid
+    source-code-pro
   ];
-
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
