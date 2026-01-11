@@ -1,4 +1,11 @@
-{ config, lib, pkgs, inputs, osConfig ? null, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  osConfig ? null,
+  ...
+}:
 let
   # Enable Stylix if omarchy is enabled in the system config.
   # If osConfig is null (standalone HM), default to false (can be overridden).
@@ -15,13 +22,32 @@ in
       # disable things that are enabled by default
       stylix.targets.alacritty.enable = true;
       stylix.targets.tofi.enable = false;
+      stylix.targets.wofi.enable = lib.mkForce false;
+
+      programs.wofi.enable = lib.mkForce false;
+
+      # Divert targets to avoid conflict, and disable generation
+      xdg.configFile."wofi/style.css" = {
+        enable = lib.mkOverride 0 false;
+        target = lib.mkForce "wofi/style.css.disabled-1";
+      };
+      home.file.".config/wofi/style.css" = {
+        enable = lib.mkOverride 0 false;
+        target = lib.mkForce "wofi/style.css.disabled-2";
+      };
+      home.file."${config.home.homeDirectory}/.config/wofi/style.css" = {
+        enable = lib.mkOverride 0 false;
+        target = lib.mkForce "wofi/style.css.disabled-3";
+      };
 
       # enable the ones I want
       stylix.targets.zellij.enable = true;
 
-      wayland.windowManager.hyprland.settings.bind = lib.mkIf config.wayland.windowManager.hyprland.enable [
-        "SUPER SHIFT, T, exec, switch-theme"
-      ];
+      wayland.windowManager.hyprland.settings.bind =
+        lib.mkIf config.wayland.windowManager.hyprland.enable
+          [
+            "SUPER SHIFT, T, exec, switch-theme"
+          ];
     }
     # Provide fallback configuration if Stylix is enabled but not configured.
     # Use priority 1100 (weaker than mkDefault) so other modules (like omarchy-nix or Stylix NixOS propagation) take precedence.

@@ -1,4 +1,10 @@
-{ config, lib, inputs, options, ... }:
+{
+  config,
+  lib,
+  inputs,
+  options,
+  ...
+}:
 
 let
   cfg = config.host;
@@ -17,21 +23,28 @@ in
 {
   config = lib.mkMerge [
     # Configure omarchy in NixOS/Darwin system config if option exists and enabled
-    (if (options ? omarchy) then {
-      omarchy = lib.mkIf cfg.useOmarchy omarchyConfig;
-    } else {})
+    (
+      if (options ? omarchy) then
+        {
+          omarchy = lib.mkIf cfg.useOmarchy omarchyConfig;
+        }
+      else
+        { }
+    )
 
     # Configure omarchy in Home Manager if enabled
     (lib.mkIf cfg.useOmarchy {
       home-manager.users.${cfg.username} = {
         imports = [ inputs.omarchy-nix.homeManagerModules.default ];
         omarchy = omarchyConfig;
-        
+
         # Explicitly set the Hyprlock background path with higher priority (30) to override the
         # conflicting definition from omarchy-nix/stylix.
         # Must be converted to a string using toString because the Hyprlock module expects a string,
         # and passing a path object triggers a 'generators.mkValueStringDefault' error.
-        programs.hyprlock.settings.background.path = lib.mkOverride 30 (toString ./assets/BLACK_VII_desktop.jpg);
+        programs.hyprlock.settings.background.path = lib.mkOverride 30 (
+          toString ./assets/BLACK_VII_desktop.jpg
+        );
       };
     })
   ];

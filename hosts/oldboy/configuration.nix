@@ -22,7 +22,7 @@ in
 
   host.useOmarchy = lib.mkDefault false;
   host.homeManagerHostname = "default";
-  host.isWsl = false;
+  host.isWsl = lib.mkDefault false;
 
   # enable flakes
   nix.settings = {
@@ -100,10 +100,10 @@ in
   };
 
   # prevent the laptop from hibernating when lid is closed
-  services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
   };
 
   systemd.user.services.neovim_server = {
@@ -119,6 +119,9 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

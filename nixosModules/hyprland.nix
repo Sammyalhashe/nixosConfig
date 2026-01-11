@@ -1,14 +1,20 @@
-{ config, pkgs, lib, inputs, ... }:
 {
-    imports = [
-        ./hyprlock.nix
-    ];
-    
-    programs.hyprland = {
-        enable = true;
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
+  imports = [
+    ./hyprlock.nix
+  ];
 
-        xwayland.enable = true;
+  programs.hyprland = {
+    enable = true;
 
-        withUWSM = true;
-    }; 
+    xwayland.enable = true;
+
+    withUWSM = true;
+  };
 }

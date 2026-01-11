@@ -1,10 +1,17 @@
-{ config, lib, pkgs, inputs, options, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  options,
+  ...
+}:
 
 let
   cfg = config.host;
   # Conditionally import Stylix HM module if not already present in NixOS/Darwin options
   # to avoid "read-only option set multiple times" error.
-  stylixModule = if (options ? stylix) then [] else [ inputs.stylix.homeManagerModules.stylix ];
+  stylixModule = if (options ? stylix) then [ ] else [ inputs.stylix.homeModules.stylix ];
 in
 {
   imports = [
@@ -25,7 +32,7 @@ in
       users.${cfg.username} = {
         imports = stylixModule ++ [
           (./. + "/home-${cfg.homeManagerHostname}.nix")
-          inputs.self.outputs.homeManagerModules.${cfg.homeManagerHostname} or {}
+          inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
         ];
       };
 

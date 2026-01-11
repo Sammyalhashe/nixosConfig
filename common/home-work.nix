@@ -12,9 +12,11 @@ let
 
   nixvim-wsl = nixvim-package.extend { nixvim.wsl = false; };
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
-  extended-nixvim = if config.stylix.enable
-    then nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
-    else nixvim-wsl;
+  extended-nixvim =
+    if config.stylix.enable then
+      nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
+    else
+      nixvim-wsl;
 in
 {
   imports = [ ./home-common.nix ];
