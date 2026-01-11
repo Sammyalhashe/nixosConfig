@@ -53,7 +53,7 @@
     let
       system = "x86_64-linux";
       overlays = [
-        nur.overlay
+        nur.overlays.default
       ];
       pkgs = import nixpkgs {
         inherit system overlays;
