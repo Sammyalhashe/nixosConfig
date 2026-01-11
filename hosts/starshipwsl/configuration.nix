@@ -24,6 +24,7 @@ in
   host.useOmarchy = lib.mkDefault false;
   host.homeManagerHostname = "starshipwsl";
   host.isWsl = true;
+  host.setNameservers = false;
 
   # enable flakes
   nix.settings = {

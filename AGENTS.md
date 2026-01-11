@@ -1,4 +1,33 @@
-# Agent Commands and Derivation Management
+# Session State - January 11, 2026
+
+## Status Report
+**Current Task:** Fix CI/CD pipeline failures (`nix flake check` and configuration builds).
+**Status:** ✅ Completed. All checks and builds are passing.
+
+## Changes Made
+1.  **Resolved `hyprlock` background conflict in `common/omarchy-config.nix`**:
+    *   **Problem:** Conflict between `omarchy-nix` (Stylix) and local configuration for the Hyprlock background. Stylix required a path object, while Hyprlock required a string path.
+    *   **Fix:**
+        *   Used `lib.mkOverride 40` for `wallpaper_path` (kept as path object) for Stylix.
+        *   Added a direct override `programs.hyprlock.settings.background.path` with `lib.mkOverride 30` (high priority) and `toString` conversion to satisfy Hyprlock's type requirement.
+
+2.  **Resolved `host.isWsl` conflict in `hosts/oldboy/configuration.nix`**:
+    *   **Problem:** Conflicting definitions for `host.isWsl` between `flake.nix` (set to `true`) and `oldboy`'s local config (set to `false`).
+    *   **Fix:** Changed `hosts/oldboy/configuration.nix` to use `lib.mkDefault false`, allowing the flake configuration to take precedence.
+
+## Verification
+The following commands were successfully executed:
+- `nix flake check`
+- `nix build .#nixosConfigurations.homebase.config.system.build.toplevel`
+- `nix build .#nixosConfigurations.homebase_omarchy.config.system.build.toplevel`
+- `nix build .#nixosConfigurations.starshipwsl.config.system.build.toplevel`
+- `nix build .#nixosConfigurations.homebasewsl.config.system.build.toplevel`
+- `nix build .#nixosConfigurations.nixos.config.system.build.toplevel`
+- `nix build .#nixosConfigurations.oldboy.config.system.build.toplevel`
+- `nix build .#homeConfigurations.work.activationPackage`
+
+---
+# Agent Commands and Derivation Management (Reference)
 
 This document outlines the commands that the agent is permitted to execute within this flake, and demonstrates how to build and test derivations.
 

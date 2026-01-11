@@ -25,6 +25,7 @@ in
   host.homeManagerHostname = "homebasewsl";
   host.username = user;
   host.isWsl = true;
+  host.setNameservers = false;
 
   # enable flakes
   nix.settings = {
