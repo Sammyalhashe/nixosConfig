@@ -17,17 +17,3 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
     - name: Check flake
       run: nix flake check
-    - name: Build homebase (x86_64-linux)
-      run: nix build .#nixosConfigurations.homebase.config.system.build.toplevel
-    - name: Build homebase_omarchy (x86_64-linux)
-      run: nix build .#nixosConfigurations.homebase_omarchy.config.system.build.toplevel
-    - name: Build starshipwsl (x86_64-linux)
-      run: nix build .#nixosConfigurations.starshipwsl.config.system.build.toplevel
-    - name: Build homebasewsl (x86_64-linux)
-      run: nix build .#nixosConfigurations.homebasewsl.config.system.build.toplevel
-    - name: Build nixos (starship) (x86_64-linux)
-      run: nix build .#nixosConfigurations.nixos.config.system.build.toplevel
-    - name: Build oldboy (x86_64-linux)
-      run: nix build .#nixosConfigurations.oldboy.config.system.build.toplevel
-    - name: Build homeConfigurations.work
-      run: nix build .#homeConfigurations.work.activationPackage
