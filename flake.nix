@@ -194,6 +194,7 @@
         specialArgs = { inherit inputs; };
         system = "x86_64-darwin";
         modules = [
+          baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
           ./nixosModules/options.nix
         ];
@@ -202,14 +203,15 @@
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
         # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
-        nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-        nixpkgs.config.allowUnfree = true;
+        # nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable"; # baseConfig provides nixpkgs config
+        # nixpkgs.config.allowUnfree = true; # baseConfig provides this
         extraSpecialArgs = {
           inherit inputs;
           user = "salhashemi2";
           homeDir = "/root";
         };
         modules = [
+          baseConfig
           stylix.homeModules.stylix
           (
             { pkgs, ... }:
