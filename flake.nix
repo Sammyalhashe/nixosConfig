@@ -202,7 +202,7 @@
 
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
-        # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
+        inherit pkgs; # <--- Removing this to define nixpkgs explicitly
         # nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable"; # baseConfig provides nixpkgs config
         # nixpkgs.config.allowUnfree = true; # baseConfig provides this
         extraSpecialArgs = {
