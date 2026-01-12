@@ -53,12 +53,14 @@
     let
       system = "x86_64-linux";
       overlays = [
+        nur.overlays.default
         (final: prev: {
-          # Overlay to explicitly set allowUnfree for NUR packages
           nur = prev.nur // {
-            pkgs = import prev.nixpkgs {
-              inherit system;
-              config.allowUnfree = true;
+            repos = prev.nur.repos // {
+              charmbracelet = import (builtins.fetchTarball {
+                url = "https://github.com/charmbracelet/nur/archive/b4263e153b30ccdd7b12d485b18adc7db1dfe11a.zip";
+                sha256 = "0j2hc8fs00kc8hdiw5vl072xa1b0c4hd3dir56dr1bp6x1cm370x";
+              }) { pkgs = prev; };
             };
           };
         })
@@ -192,6 +194,7 @@
         specialArgs = { inherit inputs; };
         system = "x86_64-darwin";
         modules = [
+          baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
           ./nixosModules/options.nix
         ];
@@ -200,14 +203,17 @@
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
         # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
-        nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-        nixpkgs.config.allowUnfree = true;
+        pkgs = import nixpkgs {
+          inherit system overlays;
+          config.allowUnfree = true;
+        };
         extraSpecialArgs = {
           inherit inputs;
           user = "salhashemi2";
           homeDir = "/root";
         };
         modules = [
+          baseConfig
           stylix.homeModules.stylix
           (
             { pkgs, ... }:
