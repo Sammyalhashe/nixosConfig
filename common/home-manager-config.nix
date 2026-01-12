@@ -22,6 +22,8 @@ in
   config = {
     # Standard home-manager setup
     home-manager = {
+      useGlobalPkgs = true;
+      useUserPackages = true;
       extraSpecialArgs = {
         inherit inputs;
         user = cfg.username;
@@ -30,7 +32,6 @@ in
       };
 
       users.${cfg.username} = {
-        nixpkgs.config.allowUnfree = true;
         imports = stylixModule ++ [
           (./. + "/home-${cfg.homeManagerHostname}.nix")
           inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
