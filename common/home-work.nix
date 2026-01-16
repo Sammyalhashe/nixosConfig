@@ -59,6 +59,8 @@ in
     EDITOR = "nvim";
   };
 
+  targets.genericLinux.enable = true;
+
   # syncthing
   # services.syncthing.enable = true;
 
