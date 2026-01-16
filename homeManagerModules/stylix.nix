@@ -23,6 +23,7 @@ in
       stylix.targets.alacritty.enable = true;
       stylix.targets.tofi.enable = false;
       stylix.targets.wofi.enable = lib.mkForce false;
+      stylix.targets.gnome.enable = false;
 
       programs.wofi.enable = lib.mkForce false;
 

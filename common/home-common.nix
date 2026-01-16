@@ -7,10 +7,6 @@
       git
 
       # nur repos
-      pkgs.nur.repos.charmbracelet.glow
-      pkgs.nur.repos.charmbracelet.mods
-      pkgs.nur.repos.charmbracelet.skate
-      pkgs.nur.repos.charmbracelet.crush
 
       # terminal utilities
       alacritty
