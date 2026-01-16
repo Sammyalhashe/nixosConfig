@@ -54,16 +54,6 @@
       system = "x86_64-linux";
       overlays = [
         nur.overlays.default
-				(final: prev: {
-          nur = prev.nur // {
-            repos = prev.nur.repos // {
-              charmbracelet = import (builtins.fetchTarball {
-                url = "https://github.com/charmbracelet/nur/archive/b4263e153b30ccdd7b12d485b18adc7db1dfe11a.zip";
-                sha256 = "0j2hc8fs00kc8hdiw5vl072xa1b0c4hd3dir56dr1bp6x1cm370x";
-              }) { pkgs = prev; };
-            };
-          };
-        })
       ];
       pkgs = import nixpkgs {
         inherit system overlays;
