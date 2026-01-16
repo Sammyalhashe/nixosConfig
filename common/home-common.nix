@@ -5,6 +5,7 @@
     [
       # common applications
       git
+      nodejs
 
       # nur repos
 
