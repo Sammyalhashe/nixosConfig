@@ -35,6 +35,8 @@ in
 
     # terminal utilities
     cargo
+    rustc
+    gcc
 
     (import ./scripts/start_wireguard.nix { inherit pkgs; })
     (import ./scripts/stop_wireguard.nix { inherit pkgs; })
