@@ -200,7 +200,7 @@
         extraSpecialArgs = {
           inherit inputs;
           user = "salhashemi2";
-          homeDir = "/root";
+          homeDir = "/home/salhashemi2";
         };
         modules = [
           baseConfig
