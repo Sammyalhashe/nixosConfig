@@ -27,6 +27,7 @@
       gh
       neofetch
       ripgrep
+      russ
       starship
       tmux
       yazi
