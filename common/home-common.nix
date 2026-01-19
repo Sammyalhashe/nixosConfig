@@ -27,6 +27,7 @@
       gh
       neofetch
       pandoc
+      texliveSmall
       ripgrep
       russ
       starship
