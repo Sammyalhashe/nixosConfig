@@ -1,9 +1,15 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   sammy = "salhashemi2";
   raspberrypi = "raspberrypi.local";
   picloud = "picloud.local";
   homebase = "homebase";
+  wslCfg = config.environments.wsl;
 in
 {
   programs.nushell = {
@@ -29,6 +35,7 @@ in
       yz = "yazi";
       z = "zellij";
       du = "dua";
+      pop = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { pop }";
 
       # nushell specifics
       fg = "job unfreeze";
@@ -62,7 +69,10 @@ in
       rpi = "ssh -Y ${sammy}@${raspberrypi}";
       picloud = "ssh -Y ${sammy}@${picloud}";
       hb = "ssh -Y ${sammy}@${homebase}";
-    };
+    }
+    // (lib.optionalAttrs wslCfg.enable {
+      windows = "cd /mnt/c/Users/${wslCfg.windowsUsername}";
+    });
     extraConfig = ''
       # grep history for pattern
       def hgrep [pattern?: string] {

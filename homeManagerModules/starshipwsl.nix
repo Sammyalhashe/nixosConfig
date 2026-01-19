@@ -5,7 +5,6 @@ let
     ./neovim.nix
     ./wofi.nix
     ./stylix.nix
-    ./wsl.nix
     {
       environments.wsl.enable = true;
       environments.wsl.windowsUsername = "sammy";

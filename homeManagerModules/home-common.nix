@@ -8,6 +8,7 @@
     ./starship.nix
     ./tmux.nix
     ./wezterm.nix
+    ./wsl.nix
     ./yazi.nix
     ./zellij.nix
     ./zsh.nix

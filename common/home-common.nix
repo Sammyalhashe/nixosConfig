@@ -26,6 +26,7 @@
       gemini-cli
       gh
       neofetch
+      pandoc
       ripgrep
       russ
       starship
