@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   xdg.configFile."mods/mods.yml".text = ''
     default-api: perplexity

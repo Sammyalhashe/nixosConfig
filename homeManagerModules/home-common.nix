@@ -4,6 +4,7 @@
     # ./desktop.nix
     ./alacritty.nix
     ./direnv.nix
+    ./mods.nix
     ./nushell.nix
     ./starship.nix
     ./tmux.nix
