@@ -42,6 +42,8 @@ This config derives age keys from the host's SSH ED25519 key.
 1.  **Get Host Public Key:**
     Run this on the target machine (or SSH into it):
     ```bash
+    # If this file doesn't exist (common on WSL), generate it first:
+    # sudo ssh-keygen -A
     cat /etc/ssh/ssh_host_ed25519_key.pub
     ```
 2.  **Convert to Age:**
