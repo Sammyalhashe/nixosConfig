@@ -35,6 +35,14 @@ You need a personal age key to manage secrets.
 3.  **Register Admin Key:**
     Add this public key to the `.sops.yaml` file under `key_groups` -> `age`.
 
+## What are Age Keys?
+
+[Age](https://github.com/FiloSottile/age) is a modern, simple, and secure file encryption tool. Unlike GPG, it is designed to be easy to use and automate.
+
+In this setup, we use two types of Age identities:
+1.  **Personal Admin Key:** A dedicated keypair (stored in `~/.config/sops/age/keys.txt`) that belongs to **you**. It allows you to encrypt and decrypt secrets on any machine where you have this key.
+2.  **Derived Host Keys:** Instead of managing separate key files for every server, we convert the server's existing **SSH Host Key** (its identity) into an Age key. This means the server can decrypt secrets using its SSH private key, without needing a separate key file managed manually.
+
 ## Host Setup
 
 This config derives age keys from the host's SSH ED25519 key.
