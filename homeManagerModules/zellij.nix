@@ -232,10 +232,17 @@ in
                 }
             }
             bind "Ctrl o" {
-                Run "bash" "-c" "export PERPLEXITY_API_KEY=$(skate get perplexity-api-key@api-keys | tr -d '\n') && echo 'Enter prompt for mods:' && read prompt && echo \"$prompt\" | mods" {
+                Run "bash" "-c" "export PERPLEXITY_API_KEY=$(skate get perplexity-api-key@api-keys | tr -d '\n') && echo \"$(gum input --placeholder 'enter prompt for mods...')\" | mods" {
                     floating true
                     name "Mods"
                     close_on_exit false
+                }
+            }
+            bind "Ctrl s" {
+                Run "bash" "-c" "skate list @api-keys | gum filter | awk '{print $1}' | xargs -I{} skate get {}@api-keys | tr -d '\n' | system-copy" {
+                    floating true
+                    name "Skate"
+                    close_on_exit true
                 }
             }
             bind "Ctrl y" {

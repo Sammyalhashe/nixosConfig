@@ -13,8 +13,11 @@
       pkgs.nur.repos.charmbracelet.skate
       pkgs.nur.repos.charmbracelet.crush
       pkgs.nur.repos.charmbracelet.pop
+      pkgs.nur.repos.charmbracelet.gum
 
       # terminal utilities
+      wl-clipboard
+      xclip
       alacritty
       bat
       cowsay
@@ -45,5 +48,6 @@
       (import ./scripts/crypto.nix { inherit pkgs; })
       (import ./scripts/tmux-cht.nix { inherit pkgs; })
       (import ./scripts/fzf-man.nix { inherit pkgs; })
+      (import ./scripts/system-copy.nix { inherit pkgs; })
     ];
 }
