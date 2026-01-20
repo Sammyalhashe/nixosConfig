@@ -27,10 +27,11 @@
       gh
       neofetch
       pandoc
-      texliveSmall
       ripgrep
       russ
+      sops
       starship
+      texliveSmall
       tmux
       yazi
       zellij

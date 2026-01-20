@@ -12,6 +12,18 @@ let
   wslCfg = config.environments.wsl;
 in
 {
+  home.activation.syncSkateKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    SKATE_BIN="${pkgs.nur.repos.charmbracelet.skate}/bin/skate"
+    SECRET_FILE="/run/secrets/pop_resend_key"
+    if [ -f "$SECRET_FILE" ]; then
+      SECRET_VAL=$(cat "$SECRET_FILE")
+      CURRENT_VAL=$($SKATE_BIN get pop-resend-key@api-keys 2>/dev/null || echo "")
+      if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
+        run $SKATE_BIN set pop-resend-key@api-keys "$SECRET_VAL"
+      fi
+    fi
+  '';
+
   programs.nushell = {
     enable = true;
     settings = {
@@ -25,6 +37,7 @@ in
     extraEnv = ''
       $env.EDITOR = "nvim"
       $env.config.shell_integration.osc133 = false
+      $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
     '';
     shellAliases = {
       # common aliases
@@ -35,7 +48,8 @@ in
       yz = "yazi";
       z = "zellij";
       du = "dua";
-      pop = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { pop }";
+      pop = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { ^pop }";
+      pops = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { ^pop --from sammy@salh.xyz}";
 
       # nushell specifics
       fg = "job unfreeze";

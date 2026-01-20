@@ -9,6 +9,7 @@ let
     ./gemini-cli.nix
     ./pomodoro.nix
     ./startup-fix.nix
+    ./mods.nix
     {
       # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;

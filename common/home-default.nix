@@ -4,6 +4,7 @@
   inputs,
   user,
   homeDir,
+  lib,
   ...
 }:
 let

@@ -1145,11 +1145,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768165771,
-        "narHash": "sha256-ygmeBpuSNvourz1c3pPfAZzjCaRkRR/CbWDkjvLdti8=",
+        "lastModified": 1768263851,
+        "narHash": "sha256-SmwKJSn08J0WyDOe3NdfQnYZVVGEjhkLC+QNVqHYm08=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "4fca82d7fbbcaef05b5f8b4be6f2d99d6ef11970",
+        "rev": "9047e95cc3564c0b6ee8be03787d7f9294a6147e",
         "type": "github"
       },
       "original": {
@@ -1220,11 +1220,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768161228,
-        "narHash": "sha256-+c6FuIQ3th2XzTKAlLXJmzYvPCHzj4O79Z77us1miQ0=",
+        "lastModified": 1768855338,
+        "narHash": "sha256-E4J4NOpgcyoHP1qpZ8Z2YbYaKXDpdsEv+uWvolHkmik=",
         "owner": "Sammyalhashe",
         "repo": "omarchy-nix",
-        "rev": "40bfcce3485ad6148ff4ce8995be734f4f218a23",
+        "rev": "2d1189ccc2ab05ae58d7d0fb675d5f49f1fd151c",
         "type": "github"
       },
       "original": {
@@ -1287,9 +1287,30 @@
         "nixvim": "nixvim",
         "nur": "nur",
         "omarchy-nix": "omarchy-nix",
+        "sops-nix": "sops-nix",
         "stylix": "stylix",
         "treefmt-nix": "treefmt-nix",
         "zen-browser": "zen-browser"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768271704,
+        "narHash": "sha256-jJqlW8A3OZ5tYbXphF7U8P8g/3Cn8PPwPa4YlJ/9agg=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "691b8b6713855d0fe463993867291c158472fc6f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
       }
     },
     "stylix": {

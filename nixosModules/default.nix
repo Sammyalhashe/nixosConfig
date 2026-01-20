@@ -13,5 +13,6 @@
     ./kdestuff.nix
     ./greetd.nix
     ./networking.nix
+    ./sops.nix
   ];
 }

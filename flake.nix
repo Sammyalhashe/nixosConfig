@@ -33,6 +33,10 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -48,6 +52,7 @@
       stylix,
       treefmt-nix,
       nur,
+      sops-nix,
       ...
     }@inputs:
     let
@@ -75,19 +80,20 @@
     in
     {
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
           ./hosts/homebase/configuration.nix
           ./nixosModules
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          sops-nix.nixosModules.sops
           { programs.stylix.enable = true; }
         ];
       };
 
       nixosConfigurations.homebase_omarchy = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
           ./hosts/homebase/configuration.nix
@@ -95,6 +101,7 @@
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          sops-nix.nixosModules.sops
           {
             host.useOmarchy = true;
             host.isWsl = true; # As per original config comment "just to not import the desktop file"
@@ -104,7 +111,7 @@
       };
 
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
@@ -112,6 +119,7 @@
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          sops-nix.nixosModules.sops
           {
             host.useOmarchy = true;
             host.isWsl = true;
@@ -121,7 +129,7 @@
       };
 
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         inherit system;
         modules = [
           baseConfig
@@ -129,6 +137,7 @@
           ./hosts/starshipwsl/configuration.nix
           ./nixosModules
           ./nixosModules/wsl.nix
+          sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
             host.useOmarchy = false; # Explicitly set
@@ -142,7 +151,7 @@
       };
 
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         inherit system;
         modules = [
           baseConfig
@@ -157,6 +166,7 @@
           ./hosts/homebasewsl/configuration.nix
           ./nixosModules
           ./nixosModules/wsl.nix
+          sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
           }
@@ -169,24 +179,26 @@
       };
 
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
           ./hosts/starship/configuration.nix
           ./nixosModules
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          sops-nix.nixosModules.sops
           { programs.stylix.enable = true; }
         ];
       };
 
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-darwin";
         modules = [
           baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
           ./nixosModules/options.nix
+          sops-nix.darwinModules.sops
         ];
       };
 
@@ -198,13 +210,14 @@
           config.allowUnfree = true;
         };
         extraSpecialArgs = {
-          inherit inputs;
+          inherit inputs sops-nix;
           user = "salhashemi2";
           homeDir = "/root";
         };
         modules = [
           baseConfig
           stylix.homeModules.stylix
+          sops-nix.homeManagerModules.sops
           (
             { pkgs, ... }:
             let
@@ -273,6 +286,9 @@
           nativeBuildInputs = [
             pkgs.nixfmt
             pkgs.treefmt
+            pkgs.sops
+            pkgs.age
+            pkgs.ssh-to-age
           ]
           ++ scripts;
 

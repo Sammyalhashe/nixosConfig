@@ -85,6 +85,7 @@ in
             bind "p" { SwitchFocus; }
             bind "Alt p" { SwitchToMode "normal"; }
             bind "r" { NewPane "right"; SwitchToMode "normal"; }
+            bind "s" { NewPane "stacked"; SwitchToMode "normal"; }
             bind "w" { ToggleFloatingPanes; SwitchToMode "normal"; }
             bind "z" { TogglePaneFrames; SwitchToMode "normal"; }
         }
@@ -218,9 +219,27 @@ in
             bind "Ctrl n" { NewPane; }
             bind "Alt o" { MoveTab "right"; }
             bind "Alt q" { Quit; }
+            bind "Ctrl f" {
+                LaunchPlugin "filepicker" {
+                    close_on_selection true
+                }
+            }
+            bind "Ctrl p" {
+                Run "bash" "-c" "RESEND_API_KEY=$(skate get pop-resend-key@api-keys | tr -d '\n') pop" {
+                    floating true
+                    name "Pop"
+                    close_on_exit true
+                }
+            }
+            bind "Ctrl y" {
+                LaunchOrFocusPlugin "file:~/zellij-plugins/zellij_forgot.wasm" {
+                    // "LOAD_ZELLIJ_BINDINGS" "false"
+                    floating true
+                }
+            }
         }
         shared_except "locked" "move" {
-            bind "Alt h" { SwitchToMode "move"; }
+            bind "Alt m" { SwitchToMode "move"; }
         }
         shared_except "locked" "session" {
             bind "Alt o" { SwitchToMode "session"; }
@@ -340,6 +359,8 @@ in
     // eg. "file:/path/to/my-plugin.wasm"
     // eg. "https://example.com/my-plugin.wasm"
     load_plugins {
+      https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm
+      https://github.com/imsnif/monocle/releases/latest/download/monocle.wasm
     }
      
     // Use a simplified UI without special fonts (arrow glyphs)
