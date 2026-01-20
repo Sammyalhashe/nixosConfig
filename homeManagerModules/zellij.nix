@@ -225,10 +225,17 @@ in
                 }
             }
             bind "Ctrl p" {
-                Run "bash" "-c" "RESEND_API_KEY=$(skate get pop-resend-key@api-keys | tr -d '\n') pop" {
+                Run "bash" "-c" "RESEND_API_KEY=$(skate get pop-resend-key@api-keys | tr -d '\n') pop --from sammy@salh.xyz" {
                     floating true
                     name "Pop"
                     close_on_exit true
+                }
+            }
+            bind "Ctrl o" {
+                Run "bash" "-c" "echo 'Enter prompt for mods:' && read prompt && echo \"$prompt\" | mods" {
+                    floating true
+                    name "Mods"
+                    close_on_exit false
                 }
             }
             bind "Ctrl y" {
