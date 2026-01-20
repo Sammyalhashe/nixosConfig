@@ -14,12 +14,24 @@ in
 {
   home.activation.syncSkateKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     SKATE_BIN="${pkgs.nur.repos.charmbracelet.skate}/bin/skate"
+    
+    # Sync pop-resend-key
     SECRET_FILE="/run/secrets/pop_resend_key"
     if [ -f "$SECRET_FILE" ]; then
       SECRET_VAL=$(cat "$SECRET_FILE")
       CURRENT_VAL=$($SKATE_BIN get pop-resend-key@api-keys 2>/dev/null || echo "")
       if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
         run $SKATE_BIN set pop-resend-key@api-keys "$SECRET_VAL"
+      fi
+    fi
+
+    # Sync perplexity-api-key
+    SECRET_FILE="/run/secrets/perplexity_api_key"
+    if [ -f "$SECRET_FILE" ]; then
+      SECRET_VAL=$(cat "$SECRET_FILE")
+      CURRENT_VAL=$($SKATE_BIN get perplexity-api-key@api-keys 2>/dev/null || echo "")
+      if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
+        run $SKATE_BIN set perplexity-api-key@api-keys "$SECRET_VAL"
       fi
     fi
   '';

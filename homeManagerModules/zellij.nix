@@ -232,7 +232,7 @@ in
                 }
             }
             bind "Ctrl o" {
-                Run "bash" "-c" "echo 'Enter prompt for mods:' && read prompt && echo \"$prompt\" | mods" {
+                Run "bash" "-c" "export PERPLEXITY_API_KEY=$(skate get perplexity-api-key@api-keys | tr -d '\n') && echo 'Enter prompt for mods:' && read prompt && echo \"$prompt\" | mods" {
                     floating true
                     name "Mods"
                     close_on_exit false
