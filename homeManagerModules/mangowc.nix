@@ -15,14 +15,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ inputs.mangowc.packages.${pkgs.system}.default ];
+    home.packages = [
+      inputs.mangowc.packages.${pkgs.system}.default
+      pkgs.swaybg
+    ];
 
     xdg.configFile."mango/config.conf".text = ''
       # General Configuration
       border_width=2
       border_color_active=0x33ccff
       border_color_inactive=0x595959
-      exec=hyprpaper
+      exec=sh -c "swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} & waybar"
 
       # Keybindings (Translated from Hyprland)
 
