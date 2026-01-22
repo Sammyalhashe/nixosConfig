@@ -25,7 +25,14 @@ in
       border_width=2
       border_color_active=0x33ccff
       border_color_inactive=0x595959
-      exec=sh -c "swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} & waybar"
+      
+      # Input
+      xkb_options=caps:swapescape
+
+      exec=${pkgs.writeShellScript "mango-startup" ''
+        ${pkgs.swaybg}/bin/swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} &
+        ${pkgs.waybar}/bin/waybar &
+      ''}
 
       # Keybindings (Translated from Hyprland)
 
