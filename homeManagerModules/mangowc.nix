@@ -27,7 +27,7 @@ in
       border_color_inactive=0x595959
       
       # Input
-      xkb_options=caps:swapescape
+      xkb_rules_options=caps:swapescape
 
       exec=${pkgs.writeShellScript "mango-startup" ''
         ${pkgs.swaybg}/bin/swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} &
