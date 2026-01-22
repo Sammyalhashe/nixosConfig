@@ -22,6 +22,7 @@ in
       border_width=2
       border_color_active=0x33ccff
       border_color_inactive=0x595959
+      exec=waybar
 
       # Keybindings (Translated from Hyprland)
 

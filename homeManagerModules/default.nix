@@ -11,6 +11,7 @@ let
     ./startup-fix.nix
     ./mods.nix
     ./mangowc.nix
+    ./waybar.nix
     {
       # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;
