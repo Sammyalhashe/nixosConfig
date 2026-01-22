@@ -25,22 +25,6 @@ in
       stylix.targets.wofi.enable = lib.mkForce false;
       stylix.targets.gnome.enable = false;
 
-      programs.wofi.enable = lib.mkForce false;
-
-      # Divert targets to avoid conflict, and disable generation
-      xdg.configFile."wofi/style.css" = {
-        enable = lib.mkOverride 0 false;
-        target = lib.mkForce "wofi/style.css.disabled-1";
-      };
-      home.file.".config/wofi/style.css" = {
-        enable = lib.mkOverride 0 false;
-        target = lib.mkForce "wofi/style.css.disabled-2";
-      };
-      home.file."${config.home.homeDirectory}/.config/wofi/style.css" = {
-        enable = lib.mkOverride 0 false;
-        target = lib.mkForce "wofi/style.css.disabled-3";
-      };
-
       # enable the ones I want
       stylix.targets.zellij.enable = true;
 

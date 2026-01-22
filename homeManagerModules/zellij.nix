@@ -360,6 +360,9 @@ in
         welcome-screen location="zellij:session-manager" {
             welcome_screen false
         }
+        zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
+            pipe_name "zjstatus_hints"
+        }
     }
 
     // Plugins to load in the background when a new session starts
@@ -368,6 +371,7 @@ in
     load_plugins {
       https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm
       https://github.com/imsnif/monocle/releases/latest/download/monocle.wasm
+      zjstatus-hints
     }
      
     // Use a simplified UI without special fonts (arrow glyphs)
@@ -563,35 +567,71 @@ in
     show_release_notes false
           theme "kanagawabones"
   '';
-  # home.file."${config.xdg.configHome}/zellij/layouts/default.kdl".text =
-  #   /*
-  #   kdl
-  #   */
-  #   ''
-  #     /-layout {
-  #         tab name="Main" focus=true hide_floating_panes=true {
-  #             pane split_direction="vertical" {
-  #                 pane command="nvim" size="60%" {
-  #                 }
-  #                 pane size="40%" {
-  #                     pane  focus=true size="50%"
-  #                     pane command="yazi" size="50%" cwd="/home/salhashemi2/" {
-  #                     }
-  #                 }
-  #             }
-  #         }
-  #         /-tab name="Spotify" hide_floating_panes=true {
-  #             pane command="zsh"
-  #             floating_panes {
-  #               pane command="spotify_player" {
-  #                   height 35
-  #                   width 175
-  #                   x 19
-  #                   y 6
-  #               }
-  #           }
-  #         }
-  #         ${plug_bar}
-  #     }
-  #   '';
+  home.file."${config.xdg.configHome}/zellij/layouts/default.kdl".text = /* kdl */ ''
+    layout {
+        default_tab_template {
+            children
+            pane size=1 borderless=true {
+                plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                    format_left   "{mode} #[fg=bright_black]󰇘 {tabs} #[fg=bright_black]󰇘 #[fg=green]{swap_layout}"
+                    format_center "#[fg=bright_black]󰇘 #[fg=cyan]{session} #[fg=bright_black]󰇘"
+                    format_right  "#[fg=bright_black]󰇘 {command_git_branch} #[fg=bright_black]󰇘 {pipe_zjstatus_hints} #[fg=bright_black]󰇘 #[fg=blue]{datetime}"
+                    format_space  "#[fg=yellow] "
+
+                    border_enabled  "false"
+                    hide_frame_for_single_pane "false"
+
+                    mode_normal        "#[fg=yellow]NORMAL"
+                    mode_locked        "#[fg=red]LOCKED"
+                    mode_tmux          "#[fg=cyan]TMUX"
+                    mode_resize        "#[fg=red]RESIZE"
+                    mode_pane          "#[fg=cyan]PANE"
+                    mode_tab           "#[fg=cyan]TAB"
+                    mode_scroll        "#[fg=green]SCROLL"
+                    mode_enter_search  "#[fg=blue]{name}"
+                    mode_search        "#[fg=blue]SEARCH"
+                    mode_rename_tab    "#[fg=red]{name}"
+                    mode_rename_pane   "#[fg=red]{name}"
+                    mode_session       "#[fg=green]SESSION"
+                    mode_move          "#[fg=red]MOVE"
+                    mode_prompt        "#[fg=green]PROMPT"
+
+                    tab_normal                 "#[fg=#6e7a99]{name}"
+                    tab_normal_fullscreen      "#[fg=#6e7a99]{name}"
+                    tab_normal_sync            "#[fg=#6e7a99]{name}"
+
+                    tab_active                 "#[fg=cyan]{name}#[fg=yellow]{floating_indicator}"
+                    tab_active_fullscreen      "#[fg=yellow]{name}#[fg=yellow]{fullscreen_indicator}"
+                    tab_active_sync            "#[fg=green]{name}#[fg=yellow]{sync_indicator}"
+
+                    tab_separator              "#[fg=bright_black]:"
+
+                    tab_sync_indicator         "  "
+                    tab_fullscreen_indicator   "  "
+                    tab_floating_indicator     " 󰉧 "
+
+                    command_git_branch_command     "git branch --show-current"
+                    command_git_branch_format      "#[fg=green]{stdout} #[fg=green]"
+                    command_git_branch_interval    "10"
+                    command_git_branch_rendermode  "static"
+
+                    datetime        "#[fg=blue]{format}"
+                    datetime_format "%A, %d %b %Y %H:%M"
+                    datetime_timezone "America/New_York"
+                    
+                    pipe_zjstatus_hints_format "{output}"
+
+                    // limit tab display count
+                    tab_display_count          "3"
+                    tab_truncate_start_format  "#[fg=red,bg=black] < + {count} ..."
+                    tab_truncate_end_format    "#[fg=red,bg=black] ... + {count} >"
+
+                    // responsiveness
+                    format_hide_on_overlength "true"
+                    format_precedence         "lrc"
+                }
+            }
+        }
+    }
+  '';
 }

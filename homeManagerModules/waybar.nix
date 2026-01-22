@@ -9,8 +9,24 @@ let
   betterTransition = "all 0.3s cubic-bezier(.55,-0.68,.48,1.682)";
 in
 {
+  # Disable omarchy-nix waybar config files to avoid conflicts
+  home.file.".config/waybar/" = {
+    enable = lib.mkForce false;
+  };
+  home.file.".config/waybar/theme.css" = {
+    enable = lib.mkForce false;
+  };
+
+  # Prevent Hyprland from starting waybar manually (conflicts with systemd)
+  wayland.windowManager.hyprland.settings.exec = lib.mkForce [ ];
+
+  home.packages = with pkgs; [
+    wlogout
+  ];
+
   programs.waybar = {
     enable = lib.mkForce true;
+    systemd.enable = true;
     package = pkgs.waybar;
     settings = lib.mkForce {
       mainBar = {
@@ -20,7 +36,7 @@ in
         margin-top = 6;
         margin-left = 10;
         margin-right = 10;
-        spacing = 4;
+        spacing = 8;
 
         modules-left = [
           "custom/launcher"
@@ -164,7 +180,7 @@ in
       };
     };
 
-    style = ''
+    style = lib.mkForce ''
       * {
         border: none;
         border-radius: 0;
@@ -182,8 +198,8 @@ in
       .modules-left, .modules-center, .modules-right {
         background: alpha(@base00, 0.9);
         border: 2px solid @base0E;
-        border-radius: 12px;
-        padding: 4px 6px;
+        border-radius: 24px;
+        padding: 4px 16px;
       }
 
       #custom-launcher {
@@ -270,7 +286,8 @@ in
 
       #custom-power {
         color: @base08;
-        padding-right: 15px;
+        padding-right: 10px;
+        margin-right: 5px;
         margin-left: 10px;
         font-size: 16px;
         transition: ${betterTransition};

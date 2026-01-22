@@ -24,6 +24,7 @@ in
   ];
 
   host.useOmarchy = lib.mkDefault false;
+  host.greetd = true;
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 

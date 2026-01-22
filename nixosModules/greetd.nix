@@ -6,14 +6,13 @@
 }:
 
 {
-  config = lib.mkIf (config.host.greetd && !config.host.isWsl) {
+  config = lib.mkIf config.host.greetd {
     services.greetd = {
       enable = true;
-      vt = 3;
       settings = {
         default_session = {
-          user = config.host.username;
-          command = "hyprland";
+          command = lib.mkForce "${pkgs.greetd.tuigreet}/bin/tuigreet --time --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions --remember --remember-user-session";
+          user = "greeter";
         };
       };
     };
