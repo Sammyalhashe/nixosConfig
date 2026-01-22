@@ -71,12 +71,24 @@ in
           on-click = "activate";
           all-outputs = true;
           sort-by-number = true;
+          format-icons = {
+            "1" = "1";
+            "2" = "2";
+            "3" = "3";
+            "4" = "4";
+            "5" = "5";
+            "6" = "6";
+            "7" = "7";
+            "8" = "8";
+            "9" = "9";
+            "10" = "10";
+          };
         };
 
         "hyprland/workspaces" = {
           active-only = false;
           all-outputs = true;
-          format = "{icon}";
+          format = "{name}";
           on-click = "activate";
           format-icons = {
             "1" = "1";
@@ -89,9 +101,6 @@ in
             "8" = "8";
             "9" = "9";
             "10" = "10";
-            "urgent" = "";
-            "focused" = "";
-            "default" = "";
           };
         };
 
