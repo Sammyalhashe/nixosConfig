@@ -50,6 +50,7 @@ in
       bind=SUPER,Backspace,killclient,
       bind=SUPER,V,togglefloating,
       bind=SUPER+SHIFT,Return,fullscreen,
+      bind=SUPER+SHIFT,f,fullscreen,
 
       # Session Management
       bind=SUPER,Escape,spawn,hyprlock
