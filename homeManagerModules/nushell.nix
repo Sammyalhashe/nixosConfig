@@ -14,7 +14,7 @@ in
 {
   home.activation.syncSkateKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     SKATE_BIN="${pkgs.nur.repos.charmbracelet.skate}/bin/skate"
-    
+
     # Sync pop-resend-key
     SECRET_FILE="/run/secrets/pop_resend_key"
     if [ -f "$SECRET_FILE" ]; then
@@ -76,6 +76,7 @@ in
       ns = "nix search nixpkgs";
       npkgs = "nix repl -f '<nixpkgs>'";
       ncg = "nix-collect-garbage -d";
+      cleanup = "sudo nix-collect-garbage -d";
 
       # git aliases
       grv = "git remote -v";
