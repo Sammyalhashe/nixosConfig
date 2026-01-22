@@ -125,6 +125,8 @@ in
     enable = true;
   };
 
+  programs.mango.enable = true;
+
   # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
 

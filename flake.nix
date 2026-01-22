@@ -19,6 +19,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    mangowc = {
+      url = "github:DreamMaoMao/mangowc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixvim.url = "github:Sammyalhashe/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
     stylix = {
@@ -48,6 +52,7 @@
       zen-browser,
       hyprlock,
       omarchy-nix,
+      mangowc,
       nixos-wsl,
       stylix,
       treefmt-nix,
@@ -87,6 +92,7 @@
           ./nixosModules
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           { programs.stylix.enable = true; }
         ];
@@ -101,6 +107,7 @@
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           {
             host.useOmarchy = true;

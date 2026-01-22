@@ -10,6 +10,7 @@ let
     ./pomodoro.nix
     ./startup-fix.nix
     ./mods.nix
+    ./mangowc.nix
     {
       # stylix.targets.gtk.enable = false;
       stylix.targets.wofi.enable = false;
