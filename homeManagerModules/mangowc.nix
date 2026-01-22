@@ -22,6 +22,7 @@ in
 
     xdg.configFile."mango/config.conf".text = ''
       # General Configuration
+      mfact=0.7
       border_width=2
       border_color_active=0x33ccff
       border_color_inactive=0x595959
