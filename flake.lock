@@ -1220,11 +1220,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768855338,
-        "narHash": "sha256-E4J4NOpgcyoHP1qpZ8Z2YbYaKXDpdsEv+uWvolHkmik=",
+        "lastModified": 1768965649,
+        "narHash": "sha256-+c6FuIQ3th2XzTKAlLXJmzYvPCHzj4O79Z77us1miQ0=",
         "owner": "Sammyalhashe",
         "repo": "omarchy-nix",
-        "rev": "2d1189ccc2ab05ae58d7d0fb675d5f49f1fd151c",
+        "rev": "ea7ece29948fad6b1a10be08dedc2338ba8fac97",
         "type": "github"
       },
       "original": {
