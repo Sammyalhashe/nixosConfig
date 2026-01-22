@@ -576,8 +576,9 @@
       "ALT,mouse:273,resizewindow"
     ];
     bind = [
-      # "$mod, B, exec, brave --ozone-platform-hint=x11"
-      "$mod, B, exec, zen"
+      "$mod, B, exec, brave"
+      "$mod, A, exec, brave --app=https://perplexity.ai"
+      "$mod CTRL, K, exec, hyprctl binds | wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500"
       "$mod, T, exec, $term"
       "$mod, R, exec, tofi-run | xargs -I {} sh -c '{}'"
       # "$mod, D, exec, wofi --show drun"

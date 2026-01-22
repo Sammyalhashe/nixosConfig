@@ -38,6 +38,9 @@ in
 
       # App Launchers
       bind=SUPER,space,spawn,wofi --show drun --sort-order=alphabetical
+      bind=SUPER,B,spawn,brave --new-window --ozone-platform=wayland
+      bind=SUPER,A,spawn,brave --new-window --ozone-platform=wayland --app=https://perplexity.ai
+      bind=SUPER+CTRL,K,spawn,grep '^bind=' ~/.config/mango/config.conf | sed 's/^bind=//' | awk -F, '{printf \"%-15s + %-10s  ->  \", $1, $2; for(i=3;i<=NF;i++) printf \"%s \", $i; print \"\"}' | wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500
       bind=SUPER,T,spawn,alacritty
       bind=SUPER,Return,spawn,alacritty
 
