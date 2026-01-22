@@ -403,7 +403,7 @@ in
     // The name of the default layout to load on startup
     // Default: "default"
     // 
-    // default_layout "compact"
+    default_layout "default"
      
     // The folder in which Zellij will look for layouts
     // (Requires restart)
