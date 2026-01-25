@@ -3,6 +3,7 @@ keys:
   # homebase ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINStROzIuV602aUEv76dLfGxghpxehBZtkA4m0Cft9nS
   - &homebase "age1n5ae2d56qh8kns4t3z8dzgvf0wgkgu6q8hynzpshp9jwde37lpyqm35rqp"
   - &starshipwsl "age16h85hqjxeuykd8gwt536vegax0734wux6gqtwywhmeglwvxw533qg458pl"
+  - &starship "age1yzlxa6stqedvgpa0sxq4gxq9gdu25ymhaw9aq4qh5grtu5rrw4nsphakej"
 
 creation_rules:
   - path_regex: secrets.yaml
@@ -11,3 +12,4 @@ creation_rules:
           - *admin
           - *homebase
           - *starshipwsl
+          - *starship

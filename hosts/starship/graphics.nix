@@ -5,6 +5,7 @@
   ...
 }:
 {
-  # Load nvidia driver for Xorg and Wayland
+  # Fix for Intel Graphics (Lunar Lake)
+  hardware.graphics.enable = true;
   services.xserver.videoDrivers = [ "modesetting" ];
 }

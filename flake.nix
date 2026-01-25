@@ -191,10 +191,16 @@
           baseConfig
           ./hosts/starship/configuration.nix
           ./nixosModules
+          omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
+          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
-          { programs.stylix.enable = true; }
+          {
+            host.useOmarchy = true;
+            host.isWsl = true; # As per original config comment "just to not import the desktop file"
+            programs.stylix.enable = true;
+          }
         ];
       };
 
