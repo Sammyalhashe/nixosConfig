@@ -293,8 +293,8 @@
             (mkScript "switch-homebasewsl" "sudo nixos-rebuild switch --flake .#homebasewsl")
             (mkScript "test-homebasewsl" "sudo nixos-rebuild test --flake .#homebasewsl")
 
-            (mkScript "switch-nixos" "sudo nixos-rebuild switch --flake .#nixos")
-            (mkScript "test-nixos" "sudo nixos-rebuild test --flake .#nixos")
+            (mkScript "switch-starship" "sudo nixos-rebuild switch --flake .#starship")
+            (mkScript "test-starship" "sudo nixos-rebuild test --flake .#starship")
 
             # Home manager scripts
             (mkScript "switch-home-work" "home-manager switch --flake .#work")
@@ -318,7 +318,7 @@
             echo "  switch-<host> - Switch NixOS configuration"
             echo "  test-<host>   - Test NixOS configuration"
             echo ""
-            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, nixos"
+            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship"
             echo "Home Configs: work"
           '';
         };
