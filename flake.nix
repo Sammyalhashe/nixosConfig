@@ -23,6 +23,10 @@
       url = "github:DreamMaoMao/mangowc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    fromscratch = {
+      url = "github:Sammyalhashe/fromscratch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixvim.url = "github:Sammyalhashe/nixvim";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
     stylix = {
@@ -53,6 +57,7 @@
       hyprlock,
       omarchy-nix,
       mangowc,
+      fromscratch,
       nixos-wsl,
       stylix,
       treefmt-nix,
@@ -185,7 +190,7 @@
         ];
       };
 
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig

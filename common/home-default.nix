@@ -28,6 +28,7 @@ in
   home.packages = with pkgs; [
     inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
     jujutsu
+    inputs.fromscratch.packages."${pkgs.stdenv.hostPlatform.system}".default
 
     # c compilers
     gcc
@@ -52,6 +53,7 @@ in
     thunderbird
     wireguard-ui
     thunar
+    zoom
 
     # unfree applications
     obsidian
