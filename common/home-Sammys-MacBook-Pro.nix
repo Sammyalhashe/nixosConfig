@@ -8,7 +8,10 @@
 }:
 
 {
-  imports = [ ./home-common.nix ];
+  imports = [
+    ./home-common.nix
+    ./home-entertainment.nix
+  ];
 
   home.username = "${user}";
 

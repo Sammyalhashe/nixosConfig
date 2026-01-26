@@ -19,7 +19,10 @@ let
       nixvim-package;
 in
 {
-  imports = [ ./home-common.nix ];
+  imports = [
+    ./home-common.nix
+    ./home-entertainment.nix
+  ];
 
   home.username = "${user}";
 
@@ -53,7 +56,7 @@ in
     thunderbird
     wireguard-ui
     thunar
-    zoom
+    zoom-us
 
     # unfree applications
     obsidian
