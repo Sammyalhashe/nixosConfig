@@ -268,6 +268,7 @@ in
       bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
       bind=SUPER,T,spawn,alacritty
       bind=SUPER,Return,spawn,alacritty
+      bind=SUPER+CTRL,T,spawn,theme-switcher
 
       # Window Management
       bind=SUPER,I,setlayout,tile

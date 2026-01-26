@@ -17,9 +17,21 @@ let
     FLAKE_PATH="${toString inputs.self}" # Dynamically get the flake path
 
     THEME="$1"
+    
+    # If no theme provided, open wofi menu
     if [[ -z "$THEME" ]]; then
-        echo "Usage: $0 <theme-name>"
-        echo "Available themes: dark, light" # Update with your theme names
+        THEME=$(echo -e "dark\nlight" | ${pkgs.wofi}/bin/wofi --dmenu --prompt "Choose Theme" --width 300 --height 200 --cache-file /dev/null)
+        
+        if [[ -z "$THEME" ]]; then
+            echo "No theme selected."
+            exit 1
+        fi
+    fi
+
+    # Validate theme
+    if [[ "$THEME" != "dark" && "$THEME" != "light" ]]; then
+        echo "Invalid theme: $THEME"
+        echo "Available themes: dark, light"
         exit 1
     fi
 
@@ -60,13 +72,26 @@ let
 
     # --- 3. Apply theme settings using command-line tools ---
 
-    # GTK Theme (assuming Adw-gtk3 variants are used)
+    # Wallpaper paths
+    WALLPAPER_DARK="${./../common/assets/kanagawa.png}"
+    WALLPAPER_LIGHT="${./../common/assets/BLACK_VII_desktop.jpg}"
+
+    # GTK Theme & Wallpaper
     if [ "$THEME" == "dark" ]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Adw-gtk3-dark"
         gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" # For libadwaita/GTK4 apps
+        
+        # Switch Wallpaper
+        pkill swaybg || true
+        ${pkgs.swaybg}/bin/swaybg -i "$WALLPAPER_DARK" &
+
     elif [ "$THEME" == "light" ]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Adw-gtk3"
         gsettings set org.gnome.desktop.interface color-scheme "prefer-light" # For libadwaita/GTK4 apps
+
+        # Switch Wallpaper
+        pkill swaybg || true
+        ${pkgs.swaybg}/bin/swaybg -i "$WALLPAPER_LIGHT" &
     fi
     # Optional: Set icon theme if Stylix manages a specific one
     # gsettings set org.gnome.desktop.interface icon-theme "hicolor" # Assuming hicolor is the generated icon theme
