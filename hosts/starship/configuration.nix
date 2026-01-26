@@ -16,6 +16,7 @@ in
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./asus.nix
     ./bluetooth.nix
     ./graphics.nix
     inputs.home-manager.nixosModules.default

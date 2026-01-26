@@ -243,6 +243,11 @@ in
       border_color_active=0x33ccff
       border_color_inactive=0x595959
 
+      # Window corner radius in pixels
+      border_radius=6
+      # Disable radius if only one window is visible
+      no_radius_when_single=0
+
       # Input
       xkb_rules_options=caps:swapescape
 
@@ -362,18 +367,32 @@ in
       bind=CTRL,Print,spawn,hyprshot -m output
       bind=SUPER,Print,spawn,hyprpicker -a
 
-      # Volume / Brightness
-      bind=,XF86AudioRaiseVolume,spawn,wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
-      bind=,XF86AudioLowerVolume,spawn,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-      bind=,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-      bind=,XF86AudioMicMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-      bind=,XF86MonBrightnessUp,spawn,brightnessctl -e4 -n2 set 5%+
-      bind=,XF86MonBrightnessDown,spawn,brightnessctl -e4 -n2 set 5%-
+      # Volume Control
+      bind = NONE, XF86AudioRaiseVolume, spawn_shell, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+      bind=NONE,XF86AudioLowerVolume,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+      bind=NONE,XF86AudioMute,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ toggle
+      bind=NONE,XF86AudioMicMute,spawn_shell,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+      # Brightness Control
+      bind=NONE,XF86MonBrightnessUp,spawn_shell,brightnessctl -e4 -n2 set 5%+
+      bind=NONE,XF86MonBrightnessDown,spawn_shell,brightnessctl -e4 -n2 set 5%-
 
       # Media Control
       bind=,XF86AudioNext,spawn,playerctl next
       bind=,XF86AudioPlay,spawn,playerctl play-pause
       bind=,XF86AudioPrev,spawn,playerctl previous
+
+      # 3-finger: Window focus
+      gesturebind=none,left,3,focusdir,left
+      gesturebind=none,right,3,focusdir,right
+      gesturebind=none,up,3,focusdir,up
+      gesturebind=none,down,3,focusdir,down
+
+      # 4-finger: Workspace navigation
+      gesturebind=none,left,4,viewtoleft_have_client
+      gesturebind=none,right,4,viewtoright_have_client
+      gesturebind=none,up,4,toggleoverview
+      gesturebind=none,down,4,toggleovervie
     '';
   };
 }

@@ -30,6 +30,7 @@ in
     specialisation.light.configuration = {
       stylix.polarity = mkForce "light";
       stylix.base16Scheme = mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-light-hard.yaml";
+      stylix.image = ../common/assets/kanagawa.png;
       environment.etc."current-theme".text = mkForce "light";
     };
 
@@ -44,9 +45,11 @@ in
         if [ "$CURRENT" == "dark" ]; then
            echo "Switching to Light Theme..."
            sudo /nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration test
+           ${pkgs.swaybg}/bin/swaybg -i ${../common/assets/kanagawa.png} &
         else
            echo "Switching to Dark Theme..."
            sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test
+           ${pkgs.swaybg}/bin/swaybg -i ${../common/assets/BLACK_VII_desktop.jpg}&
         fi
       '')
     ];
