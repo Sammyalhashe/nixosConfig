@@ -288,9 +288,9 @@ in
       bind=SUPER,W,killclient,
       bind=SUPER,Backspace,killclient,
       bind=SUPER+SHIFT,V,togglefloating,
-      bind=SUPER+SHIFT,Return,fullscreen,
-      bind=SUPER+SHIFT,f,fullscreen,
-      bind=SUPER,f,fullscreen,
+      bind=SUPER+SHIFT,Return,togglefullscreen,
+      bind=SUPER+SHIFT,f,togglefullscreen,
+      bind=SUPER,f,togglefullscreen,
 
       # Session Management
       bind=SUPER,Escape,spawn,hyprlock
@@ -298,6 +298,7 @@ in
       bind=SUPER+CTRL,Escape,spawn,reboot
       bind=SUPER+SHIFT+CTRL,Escape,spawn,systemctl poweroff
       bind=SUPER+SHIFT,P,spawn,wlogout
+      bind=SUPER+CTRL,R,reload,
       ${lib.optionalString (
         !config.environments.wsl.enable
       ) "bind=SUPER+SHIFT,r,spawn,${rebuildScript}/bin/rebuild-nixos-notify"}
@@ -311,6 +312,21 @@ in
       bind=SUPER,l,focusdir,right
       bind=SUPER,k,focusdir,up
       bind=SUPER,j,focusdir,down
+
+      # Window Movement (Swapping)
+      bind=SUPER+SHIFT,left,exchange_client,left
+      bind=SUPER+SHIFT,right,exchange_client,right
+      bind=SUPER+SHIFT,up,exchange_client,up
+      bind=SUPER+SHIFT,down,exchange_client,down
+      bind=SUPER+SHIFT,h,exchange_client,left
+      bind=SUPER+SHIFT,l,exchange_client,right
+      bind=SUPER+SHIFT,k,exchange_client,up
+      bind=SUPER+SHIFT,j,exchange_client,down
+
+      # Layout Orientation / Master Management
+      bind=SUPER,comma,incnmaster,-1
+      bind=SUPER,period,incnmaster,+1
+      bind=SUPER,Tab,switch_layout,next
 
       # Window Resizing
       bind=SUPER+CTRL,h,setmfact,-0.05
