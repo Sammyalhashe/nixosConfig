@@ -41,6 +41,7 @@ in
       stylix.image = lib.mkOverride 1100 theme.image;
       stylix.polarity = lib.mkOverride 1100 theme.polarity;
       stylix.fonts = lib.mkOverride 1100 theme.fonts;
+      stylix.cursor = lib.mkOverride 1100 theme.cursor;
     })
   ];
 }

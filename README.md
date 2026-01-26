@@ -12,6 +12,7 @@
 | `Super` + `Shift` + `Return` | Toggle Fullscreen |
 | **Navigation** | |
 | `Super` + `Arrows` / `h/j/k/l` | Move Focus |
+| `Super` + `Ctrl` + `h/l` | Resize Master Area (Shrink/Grow) |
 | `Super` + `1-0` | Switch Workspace |
 | `Super` + `Shift` + `1-0` | Move Window to Workspace |
 | **Session** | |

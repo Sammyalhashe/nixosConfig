@@ -23,6 +23,7 @@ in
     stylix.image = mkOverride 1100 theme.image;
     stylix.polarity = mkOverride 1100 theme.polarity;
     stylix.fonts = mkOverride 1100 theme.fonts;
+    stylix.cursor = mkOverride 1100 theme.cursor;
 
     environment.etc."current-theme".text = "dark";
 

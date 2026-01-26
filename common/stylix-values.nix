@@ -19,4 +19,10 @@
       name = "VictorMono Nerd Font Mono";
     };
   };
+
+  cursor = {
+    package = pkgs.catppuccin-cursors.mochaDark;
+    name = "catppuccin-mocha-dark-cursors";
+    size = 64;
+  };
 }

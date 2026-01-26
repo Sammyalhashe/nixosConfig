@@ -39,6 +39,8 @@
       yazi
       zellij
 
+      zoxide
+
       # fonts
       iosevka
     ]

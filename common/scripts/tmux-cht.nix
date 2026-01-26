@@ -22,5 +22,5 @@ pkgs.writeShellScriptBin "tmux-cht" ''
   fi
 
   # add the hook back (this is defined in my ~/.tmux.conf)
-  ${pkgs.tmux}/bin/tmux set-hook -g after-new-window 'command-prompt -I "#{window_name}" "rename-window '%%'"'
+  ${pkgs.tmux}/bin/tmux set-hook -g after-new-window "command-prompt -I '#{window_name}' 'rename-window \"%%\"'"
 ''

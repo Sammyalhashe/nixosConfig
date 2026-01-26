@@ -1,3 +1,11 @@
+# Instructions for Agents
+
+**CRITICAL:** After *every* set of changes (file edits, creations, deletions), you MUST run:
+```bash
+nix flake check
+```
+This ensures that your changes haven't introduced any syntax errors or evaluation issues in the flake. Do not consider a task complete until this command passes successfully.
+
 # Session State - January 11, 2026
 
 ## Status Report

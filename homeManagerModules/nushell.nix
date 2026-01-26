@@ -47,6 +47,7 @@ in
       edit_mode = "vi";
     };
     extraEnv = ''
+      $env.PATH = ($env.PATH | prepend "${pkgs.zoxide}/bin")
       $env.EDITOR = "nvim"
       $env.config.shell_integration.osc133 = false
       $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
@@ -58,7 +59,7 @@ in
       tm0 = "tmux a -t 0";
       tk0 = "tmux kill-session -t 0";
       yz = "yazi";
-      z = "zellij";
+      zj = "zellij";
       du = "dua";
       pop = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { ^pop }";
       pops = "with-env { RESEND_API_KEY: (skate get pop-resend-key@api-keys | str trim) } { ^pop --from sammy@salh.xyz}";

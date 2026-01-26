@@ -273,28 +273,53 @@
               ${script}
             '';
 
+          mkHostScript =
+            name: flakeAttr: hostname: action:
+            pkgs.writeScriptBin name ''
+              #!/bin/sh
+              CURRENT_HOST=$(hostname)
+              TARGET_HOST="${hostname}"
+
+              if [ "$CURRENT_HOST" != "$TARGET_HOST" ]; then
+                echo "⚠️  WARNING: Current host ($CURRENT_HOST) does not match target host ($TARGET_HOST)."
+                printf "Are you sure you want to proceed? [y/N] "
+                read -r response
+                case "$response" in
+                  [yY][eE][sS]|[yY])
+                      ;;
+                  *)
+                      echo "Aborted."
+                      exit 1
+                      ;;
+                esac
+              fi
+
+              echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
+              sudo nixos-rebuild ${action} --flake .#${flakeAttr}
+            '';
+
           scripts = [
             (mkScript "check" "nix flake check")
             (mkScript "fmt" "nix fmt")
 
             # Host switch/test scripts
-            (mkScript "switch-homebase" "sudo nixos-rebuild switch --flake .#homebase")
-            (mkScript "test-homebase" "sudo nixos-rebuild test --flake .#homebase")
+            (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
+            (mkHostScript "test-homebase" "homebase" "homebase" "test")
 
-            (mkScript "switch-homebase-omarchy" "sudo nixos-rebuild switch --flake .#homebase_omarchy")
-            (mkScript "test-homebase-omarchy" "sudo nixos-rebuild test --flake .#homebase_omarchy")
+            (mkHostScript "switch-homebase-omarchy" "homebase_omarchy" "homebase" "switch")
+            (mkHostScript "test-homebase-omarchy" "homebase_omarchy" "homebase" "test")
 
-            (mkScript "switch-oldboy" "sudo nixos-rebuild switch --flake .#oldboy")
-            (mkScript "test-oldboy" "sudo nixos-rebuild test --flake .#oldboy")
+            (mkHostScript "switch-oldboy" "oldboy" "oldboy" "switch")
+            (mkHostScript "test-oldboy" "oldboy" "oldboy" "test")
 
-            (mkScript "switch-starshipwsl" "sudo nixos-rebuild switch --flake .#starshipwsl")
-            (mkScript "test-starshipwsl" "sudo nixos-rebuild test --flake .#starshipwsl")
+            (mkHostScript "switch-starshipwsl" "starshipwsl" "starship_wsl" "switch")
+            (mkHostScript "test-starshipwsl" "starshipwsl" "starship_wsl" "test")
 
-            (mkScript "switch-homebasewsl" "sudo nixos-rebuild switch --flake .#homebasewsl")
-            (mkScript "test-homebasewsl" "sudo nixos-rebuild test --flake .#homebasewsl")
+            (mkHostScript "switch-homebasewsl" "homebasewsl" "nixos" "switch")
+            (mkHostScript "test-homebasewsl" "homebasewsl" "nixos" "test")
 
-            (mkScript "switch-starship" "sudo nixos-rebuild switch --flake .#starship")
-            (mkScript "test-starship" "sudo nixos-rebuild test --flake .#starship")
+            (mkHostScript "switch-starship" "starship" "starship" "switch")
+            (mkHostScript "test-starship" "starship" "starship" "test")
 
             # Home manager scripts
             (mkScript "switch-home-work" "home-manager switch --flake .#work")

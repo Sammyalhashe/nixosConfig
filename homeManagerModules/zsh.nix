@@ -16,7 +16,7 @@ in
       tm0 = "tmux a -t 0";
       tk0 = "tmux kill-session -t 0";
       yz = "yazi";
-      z = "zellij";
+      zj = "zellij";
       du = "dua";
 
       # nixos aliases
