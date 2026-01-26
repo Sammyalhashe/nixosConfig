@@ -42,6 +42,7 @@ in
     tofi
 
     # applications
+    bottles
     brave
     emacs
     firefox

@@ -265,6 +265,8 @@ in
         ${pkgs.waybar}/bin/waybar -s $HOME/.config/waybar/mango-style.css &
       ''}
 
+      focus_follows_mouse=false
+
       # Keybindings (Translated from Hyprland)
 
       # App Launchers
@@ -372,6 +374,9 @@ in
       bind=NONE,XF86AudioLowerVolume,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
       bind=NONE,XF86AudioMute,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ toggle
       bind=NONE,XF86AudioMicMute,spawn_shell,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+      # Mute Toggle
+      bind=NONE,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
       # Brightness Control
       bind=NONE,XF86MonBrightnessUp,spawn_shell,brightnessctl -e4 -n2 set 5%+
