@@ -63,7 +63,7 @@ in
 
         # Modules configuration
         "custom/mangolayout" = {
-          exec = "mmsg -g -l | awk '{print $NF}' | sed 's/tile/Tiling/;s/scroller/Scroller/'";
+          exec = "mmsg -g -l | awk '{print $NF}' | sed 's/tile/Tiling/;s/scroller/Scroller/;s/monocle/Monocle/;s/grid/Grid/;s/deck/Deck/;s/center_tile/Center Tile/;s/right_tile/Right Tile/;s/vertical_tile/Vert Tile/;s/vertical_scroller/Vert Scroll/;s/vertical_grid/Vert Grid/;s/vertical_spiral/Vert Spiral/;s/vertical_deck/Vert Deck/;s/tgmix/TG Mix/'";
           interval = 1;
           format = "󰕰 {}";
           tooltip = false;

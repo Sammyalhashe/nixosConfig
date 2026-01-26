@@ -273,9 +273,21 @@ in
       # Window Management
       bind=SUPER,I,setlayout,tile
       bind=SUPER,S,setlayout,scroller
+      bind=SUPER,M,setlayout,monocle
+      bind=SUPER,G,setlayout,grid
+      bind=SUPER,D,setlayout,deck
+      bind=SUPER,C,setlayout,center_tile
+      bind=SUPER,R,setlayout,right_tile
+      bind=SUPER,V,setlayout,vertical_tile
+      bind=SUPER,Z,setlayout,vertical_scroller
+      bind=SUPER,X,setlayout,vertical_grid
+      bind=SUPER,Y,setlayout,vertical_spiral
+      bind=SUPER,U,setlayout,vertical_deck
+      bind=SUPER,O,setlayout,tgmix
+
       bind=SUPER,W,killclient,
       bind=SUPER,Backspace,killclient,
-      bind=SUPER,V,togglefloating,
+      bind=SUPER+SHIFT,V,togglefloating,
       bind=SUPER+SHIFT,Return,fullscreen,
       bind=SUPER+SHIFT,f,fullscreen,
 
