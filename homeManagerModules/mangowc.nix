@@ -8,6 +8,176 @@
 
 let
   cfg = config.programs.mangowc;
+
+  rebuildScript = pkgs.writeShellScriptBin "rebuild-nixos-notify" ''
+    # Ask for password
+    PASSWORD=$(${pkgs.zenity}/bin/zenity --password --title="NixOS Rebuild" --text="Enter sudo password:") || exit 1
+
+    # Send initial notification
+    NOTIFY_ID=$(${pkgs.libnotify}/bin/notify-send -p -t 0 -i system-software-update "System Update" "Rebuilding NixOS... ⏳")
+
+    # Run rebuild in background
+    (echo "$PASSWORD" | sudo -S nixos-rebuild switch --flake $HOME/nixosConfig#$(hostname) > /tmp/nixos-rebuild.log 2>&1) &
+    PID=$!
+
+    wait $PID
+    EXIT_CODE=$?
+
+    # Final notification
+    if [ $EXIT_CODE -eq 0 ]; then
+       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -i software-update-available "System Update" "Rebuild Complete! ✅"
+    else
+       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -i dialog-error "System Update" "Rebuild Failed! ❌\nCheck /tmp/nixos-rebuild.log"
+    fi
+  '';
+
+  hotkeysScript = pkgs.writeShellScriptBin "show-hotkeys" ''
+    ${pkgs.gnugrep}/bin/grep 'bind=' ~/.config/mango/config.conf \
+      | ${pkgs.gnused}/bin/sed 's/^[[:space:]]*bind=//' \
+      | ${pkgs.gawk}/bin/awk -F, '{printf "%-15s + %-10s  ->  ", $1, $2; for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' \
+      | ${pkgs.wofi}/bin/wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500
+  '';
+
+  betterTransition = "all 0.3s cubic-bezier(.55,-0.68,.48,1.682)";
+
+  mangoWaybarStyle = ''
+    * {
+      border: none;
+      border-radius: 0;
+      font-family: "JetBrainsMono Nerd Font", "Roboto Mono", sans-serif;
+      font-weight: bold;
+      font-size: 20px;
+      min-height: 0;
+    }
+
+    window#waybar {
+      background: transparent;
+    }
+
+    /* Bar Modules */
+    .modules-left, .modules-center, .modules-right {
+      background: alpha(@base00, 0.9);
+      border: 2px solid @base0E;
+      border-radius: 24px;
+      padding: 4px 16px;
+    }
+
+    #custom-launcher {
+      font-size: 24px;
+      color: @base0D;
+      margin-right: 15px;
+      padding-left: 10px;
+      transition: ${betterTransition};
+    }
+
+    #custom-launcher:hover {
+      color: @base0E;
+    }
+
+    #workspaces button {
+      padding: 0 5px;
+      color: @base05;
+      border-radius: 6px;
+      transition: ${betterTransition};
+    }
+
+    #workspaces button:hover {
+      background: @base02;
+      color: @base0E;
+    }
+
+    #workspaces button.active {
+      background: @base0E;
+      color: @base00;
+      padding: 0 12px;
+    }
+
+    #workspaces button.focused {
+      background: @base0E;
+      color: @base00;
+    }
+
+    #clock, #custom-mangolayout, #pulseaudio, #network, #cpu, #memory, #battery, #tray {
+      padding: 0 10px;
+      color: @base05;
+      transition: ${betterTransition};
+    }
+
+    #clock {
+      color: @base0B;
+    }
+
+    #custom-mangolayout {
+      color: @base0E;
+    }
+
+    #pulseaudio {
+      color: @base0D;
+    }
+
+    #network {
+      color: @base0C;
+    }
+
+    #cpu {
+      color: @base08;
+    }
+
+    #memory {
+      color: @base09;
+    }
+
+    #battery {
+      color: @base0A;
+    }
+
+    #battery.charging {
+      color: @base0B;
+    }
+
+    #battery.warning:not(.charging) {
+      color: @base09;
+    }
+
+    #battery.critical:not(.charging) {
+      color: @base08;
+      animation-name: blink;
+      animation-duration: 0.5s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+    }
+
+    #custom-power {
+      color: @base08;
+      padding-right: 10px;
+      margin-right: 5px;
+      margin-left: 10px;
+      font-size: 22px;
+      transition: ${betterTransition};
+    }
+
+    #custom-power:hover {
+      color: @base0E;
+    }
+
+    @keyframes blink {
+      to {
+        color: @base00;
+        background-color: @base08;
+      }
+    }
+
+    tooltip {
+      background: @base00;
+      border: 2px solid @base0E;
+      border-radius: 12px;
+    }
+
+    tooltip label {
+      color: @base05;
+    }
+  '';
 in
 {
   options.programs.mangowc = {
@@ -15,10 +185,56 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    services.fnott = {
+      enable = !config.environments.wsl.enable;
+      settings = lib.mkForce {
+        main = {
+          anchor = "top-right";
+          stacking-order = "top-down";
+          min-width = 400;
+          title-font = "JetBrainsMono Nerd Font:size=14";
+          summary-font = "JetBrainsMono Nerd Font:size=14";
+          body-font = "JetBrainsMono Nerd Font:size=12";
+          border-size = 2;
+          border-radius = 24;
+          background = "${config.lib.stylix.colors.base00}e6";
+          border-color = "${config.lib.stylix.colors.base0E}ff";
+          padding-vertical = 20;
+          padding-horizontal = 20;
+        };
+        low = {
+          background = "${config.lib.stylix.colors.base00}e6";
+          title-color = "${config.lib.stylix.colors.base05}ff";
+          summary-color = "${config.lib.stylix.colors.base05}ff";
+          body-color = "${config.lib.stylix.colors.base05}ff";
+        };
+        normal = {
+          background = "${config.lib.stylix.colors.base00}e6";
+          title-color = "${config.lib.stylix.colors.base0D}ff";
+          summary-color = "${config.lib.stylix.colors.base05}ff";
+          body-color = "${config.lib.stylix.colors.base05}ff";
+        };
+        critical = {
+          background = "${config.lib.stylix.colors.base00}e6";
+          border-color = "${config.lib.stylix.colors.base08}ff";
+          title-color = "${config.lib.stylix.colors.base08}ff";
+          summary-color = "${config.lib.stylix.colors.base08}ff";
+          body-color = "${config.lib.stylix.colors.base08}ff";
+        };
+      };
+    };
+
     home.packages = [
       inputs.mangowc.packages.${pkgs.system}.default
       pkgs.swaybg
+      pkgs.wlr-randr
+      pkgs.zenity
+      pkgs.libnotify
+      rebuildScript
+      hotkeysScript
     ];
+
+    xdg.configFile."waybar/mango-style.css".text = mangoWaybarStyle;
 
     xdg.configFile."mango/config.conf".text = ''
       # General Configuration
@@ -26,13 +242,21 @@ in
       border_width=2
       border_color_active=0x33ccff
       border_color_inactive=0x595959
-      
+
       # Input
       xkb_rules_options=caps:swapescape
 
       exec=${pkgs.writeShellScript "mango-startup" ''
+        # Import environment variables to systemd (crucial for services like fnott)
+        ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+        ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
+        # Set scaling for all connected outputs
+        for output in $(${pkgs.wlr-randr}/bin/wlr-randr | ${pkgs.gnugrep}/bin/grep "^[^ ]" | ${pkgs.gawk}/bin/awk '{print $1}'); do
+            ${pkgs.wlr-randr}/bin/wlr-randr --output $output --scale 1.5
+        done
         ${pkgs.swaybg}/bin/swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} &
-        ${pkgs.waybar}/bin/waybar &
+        ${pkgs.waybar}/bin/waybar -s $HOME/.config/waybar/mango-style.css &
       ''}
 
       # Keybindings (Translated from Hyprland)
@@ -41,11 +265,13 @@ in
       bind=SUPER,space,spawn,wofi --show drun --sort-order=alphabetical
       bind=SUPER,B,spawn,brave --new-window --ozone-platform=wayland
       bind=SUPER,A,spawn,brave --new-window --ozone-platform=wayland --app=https://perplexity.ai
-      bind=SUPER+CTRL,K,spawn,grep '^bind=' ~/.config/mango/config.conf | sed 's/^bind=//' | awk -F, '{printf \"%-15s + %-10s  ->  \", $1, $2; for(i=3;i<=NF;i++) printf \"%s \", $i; print \"\"}' | wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500
+      bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
       bind=SUPER,T,spawn,alacritty
       bind=SUPER,Return,spawn,alacritty
 
       # Window Management
+      bind=SUPER,I,setlayout,tile
+      bind=SUPER,S,setlayout,scroller
       bind=SUPER,W,killclient,
       bind=SUPER,Backspace,killclient,
       bind=SUPER,V,togglefloating,
@@ -57,6 +283,10 @@ in
       bind=SUPER+SHIFT,Escape,quit,
       bind=SUPER+CTRL,Escape,spawn,reboot
       bind=SUPER+SHIFT+CTRL,Escape,spawn,systemctl poweroff
+      bind=SUPER+SHIFT,P,spawn,wlogout
+      ${lib.optionalString (
+        !config.environments.wsl.enable
+      ) "bind=SUPER+SHIFT,r,spawn,${rebuildScript}/bin/rebuild-nixos-notify"}
 
       # Focus Movement
       bind=SUPER,left,focusdir,left

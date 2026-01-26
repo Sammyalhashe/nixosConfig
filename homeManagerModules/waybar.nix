@@ -40,8 +40,9 @@ in
 
         modules-left = [
           "custom/launcher"
-          "wlr/workspaces" # Works with mangowc (dwl-based)
-          "hyprland/workspaces" # Keep for hyprland
+          "ext/workspaces"
+          "hyprland/workspaces"
+          "wlr/workspaces" # Fallback
           "custom/media"
         ];
 
@@ -50,6 +51,7 @@ in
         ];
 
         modules-right = [
+          "custom/mangolayout"
           "pulseaudio"
           "network"
           "cpu"
@@ -60,29 +62,23 @@ in
         ];
 
         # Modules configuration
+        "custom/mangolayout" = {
+          exec = "mmsg -g -l | awk '{print $NF}' | sed 's/tile/Tiling/;s/scroller/Scroller/'";
+          interval = 1;
+          format = "󰕰 {}";
+          tooltip = false;
+        };
         "custom/launcher" = {
           format = "";
           on-click = "wofi --show drun";
           tooltip = false;
         };
 
-        "wlr/workspaces" = {
+        "ext/workspaces" = {
           format = "{name}";
           on-click = "activate";
           all-outputs = true;
-          sort-by-number = true;
-          format-icons = {
-            "1" = "1";
-            "2" = "2";
-            "3" = "3";
-            "4" = "4";
-            "5" = "5";
-            "6" = "6";
-            "7" = "7";
-            "8" = "8";
-            "9" = "9";
-            "10" = "10";
-          };
+          ignore-hidden = false;
         };
 
         "hyprland/workspaces" = {
@@ -101,6 +97,38 @@ in
             "8" = "8";
             "9" = "9";
             "10" = "10";
+          };
+          persistent-workspaces = {
+            "1" = [ ];
+            "2" = [ ];
+            "3" = [ ];
+            "4" = [ ];
+            "5" = [ ];
+            "6" = [ ];
+            "7" = [ ];
+            "8" = [ ];
+            "9" = [ ];
+            "10" = [ ];
+          };
+        };
+
+        "wlr/workspaces" = {
+          format = "{icon}";
+          on-click = "activate";
+          all-outputs = true;
+          sort-by-number = true;
+          format-icons = {
+            "1" = "1";
+            "2" = "2";
+            "3" = "3";
+            "4" = "4";
+            "5" = "5";
+            "6" = "6";
+            "7" = "7";
+            "8" = "8";
+            "9" = "9";
+            "10" = "10";
+            "default" = "";
           };
         };
 
@@ -246,7 +274,7 @@ in
         color: @base00;
       }
 
-      #clock, #pulseaudio, #network, #cpu, #memory, #battery, #tray {
+      #clock, #custom-mangolayout, #pulseaudio, #network, #cpu, #memory, #battery, #tray {
         padding: 0 10px;
         color: @base05;
         transition: ${betterTransition};
@@ -254,6 +282,10 @@ in
 
       #clock {
         color: @base0B;
+      }
+
+      #custom-mangolayout {
+        color: @base0E;
       }
 
       #pulseaudio {
