@@ -25,9 +25,9 @@ let
 
     # Final notification
     if [ $EXIT_CODE -eq 0 ]; then
-       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -i software-update-available "System Update" "Rebuild Complete! ✅"
+       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -t 5000 -i software-update-available "System Update" "Rebuild Complete! ✅"
     else
-       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -i dialog-error "System Update" "Rebuild Failed! ❌\nCheck /tmp/nixos-rebuild.log"
+       ${pkgs.libnotify}/bin/notify-send -r "$NOTIFY_ID" -t 5000 -i dialog-error "System Update" "Rebuild Failed! ❌\nCheck /tmp/nixos-rebuild.log"
     fi
   '';
 
@@ -192,30 +192,30 @@ in
           anchor = "top-right";
           stacking-order = "top-down";
           min-width = 400;
-          title-font = "JetBrainsMono Nerd Font:size=14";
-          summary-font = "JetBrainsMono Nerd Font:size=14";
-          body-font = "JetBrainsMono Nerd Font:size=12";
+          title-font = "JetBrainsMono Nerd Font:style=Bold:size=16";
+          summary-font = "JetBrainsMono Nerd Font:style=Bold:size=16";
+          body-font = "JetBrainsMono Nerd Font:style=Bold:size=14";
           border-size = 2;
           border-radius = 24;
-          background = "${config.lib.stylix.colors.base00}e6";
-          border-color = "${config.lib.stylix.colors.base0E}ff";
+          background = "00000000";
+          border-color = "${config.lib.stylix.colors.base05}ff";
           padding-vertical = 20;
           padding-horizontal = 20;
         };
         low = {
-          background = "${config.lib.stylix.colors.base00}e6";
+          background = "00000000";
           title-color = "${config.lib.stylix.colors.base05}ff";
           summary-color = "${config.lib.stylix.colors.base05}ff";
           body-color = "${config.lib.stylix.colors.base05}ff";
         };
         normal = {
-          background = "${config.lib.stylix.colors.base00}e6";
+          background = "00000000";
           title-color = "${config.lib.stylix.colors.base0D}ff";
           summary-color = "${config.lib.stylix.colors.base05}ff";
           body-color = "${config.lib.stylix.colors.base05}ff";
         };
         critical = {
-          background = "${config.lib.stylix.colors.base00}e6";
+          background = "00000000";
           border-color = "${config.lib.stylix.colors.base08}ff";
           title-color = "${config.lib.stylix.colors.base08}ff";
           summary-color = "${config.lib.stylix.colors.base08}ff";
@@ -255,7 +255,8 @@ in
         for output in $(${pkgs.wlr-randr}/bin/wlr-randr | ${pkgs.gnugrep}/bin/grep "^[^ ]" | ${pkgs.gawk}/bin/awk '{print $1}'); do
             ${pkgs.wlr-randr}/bin/wlr-randr --output $output --scale 1.5
         done
-        ${pkgs.swaybg}/bin/swaybg -i ${./../common/assets/BLACK_VII_desktop.jpg} &
+        ${pkgs.procps}/bin/pkill swaybg || true
+        ${pkgs.swaybg}/bin/swaybg -i ${config.stylix.image} &
         ${pkgs.waybar}/bin/waybar -s $HOME/.config/waybar/mango-style.css &
       ''}
 
@@ -268,7 +269,6 @@ in
       bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
       bind=SUPER,T,spawn,alacritty
       bind=SUPER,Return,spawn,alacritty
-      bind=SUPER+CTRL,T,spawn,theme-switcher
 
       # Window Management
       bind=SUPER,I,setlayout,tile
@@ -290,6 +290,7 @@ in
       bind=SUPER+SHIFT,V,togglefloating,
       bind=SUPER+SHIFT,Return,fullscreen,
       bind=SUPER+SHIFT,f,fullscreen,
+      bind=SUPER,f,fullscreen,
 
       # Session Management
       bind=SUPER,Escape,spawn,hyprlock
@@ -310,6 +311,10 @@ in
       bind=SUPER,l,focusdir,right
       bind=SUPER,k,focusdir,up
       bind=SUPER,j,focusdir,down
+
+      # Window Resizing
+      bind=SUPER+CTRL,h,setmfact,-0.05
+      bind=SUPER+CTRL,l,setmfact,+0.05
 
       # Workspace (Tag) Switching
       bind=SUPER,1,view,1
