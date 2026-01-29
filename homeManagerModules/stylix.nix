@@ -9,7 +9,8 @@
 let
   # Enable Stylix if omarchy or my custom stylix option is enabled in the system config.
   # If osConfig is null (standalone HM), default to false (can be overridden).
-  systemStylixEnabled = if osConfig != null then (osConfig.programs.stylix.enable or false) else false;
+  systemStylixEnabled =
+    if osConfig != null then (osConfig.programs.stylix.enable or false) else false;
   omarchyEnabled = if osConfig != null then osConfig.host.useOmarchy else false;
   shouldEnable = systemStylixEnabled || omarchyEnabled;
   theme = import ../common/stylix-values.nix { inherit pkgs; };
