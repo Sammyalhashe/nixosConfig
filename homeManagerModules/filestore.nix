@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ./neovim.nix
     ./zellij.nix
     ./nushell.nix
     ./wsl.nix
@@ -17,7 +16,6 @@
   ];
 
   # programs.moltbot.enable = true;
-  programs.neovim.enable = true;
   programs.starship.enable = true;
   programs.git = {
     enable = true;

@@ -27,14 +27,14 @@ in
 
     environment.etc."current-theme".text = "dark";
 
-    specialisation.light.configuration = {
+    specialisation.light.configuration = mkIf (!config.host.isHeadless) {
       stylix.polarity = mkForce "light";
       stylix.base16Scheme = mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-light-hard.yaml";
       stylix.image = ../common/assets/kanagawa.png;
       environment.etc."current-theme".text = mkForce "light";
     };
 
-    environment.systemPackages = [
+    environment.systemPackages = mkIf (!config.host.isHeadless) [
       (pkgs.writeShellScriptBin "switch-theme" ''
         if [ -f /etc/current-theme ]; then
           CURRENT=$(cat /etc/current-theme)
@@ -54,7 +54,7 @@ in
       '')
     ];
 
-    security.sudo.extraRules = [
+    security.sudo.extraRules = mkIf (!config.host.isHeadless) [
       {
         users = [ "salhashemi2" ];
         commands = [
@@ -70,19 +70,19 @@ in
       }
     ];
 
-    systemd.timers.theme-light = {
+    systemd.timers.theme-light = mkIf (!config.host.isHeadless) {
       wantedBy = [ "timers.target" ];
       partOf = [ "theme-light.service" ];
       timerConfig = {
         onCalendar = "06:00";
       };
     };
-    systemd.services.theme-light = {
+    systemd.services.theme-light = mkIf (!config.host.isHeadless) {
       serviceConfig.Type = "oneshot";
       script = "/nix/var/nix/profiles/system/specialisation/light/bin/switch-to-configuration test";
     };
 
-    systemd.timers.theme-dark = {
+    systemd.timers.theme-dark = mkIf (!config.host.isHeadless) {
       wantedBy = [ "timers.target" ];
       partOf = [ "theme-dark.service" ];
       timerConfig = {
@@ -90,7 +90,7 @@ in
         onCalendar = "17:30";
       };
     };
-    systemd.services.theme-dark = {
+    systemd.services.theme-dark = mkIf (!config.host.isHeadless) {
       serviceConfig.Type = "oneshot";
       script = "/nix/var/nix/profiles/system/bin/switch-to-configuration test";
     };
