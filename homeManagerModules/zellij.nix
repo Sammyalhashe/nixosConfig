@@ -55,7 +55,7 @@ let
         }
         children
     }
-  ''
+  '';
 in
 {
   programs.zellij = {
@@ -610,5 +610,5 @@ in
             }
         }
     }
-  ''
+  '';
 }
