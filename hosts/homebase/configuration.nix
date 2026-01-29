@@ -105,14 +105,6 @@ in
     packages = with pkgs; [ ];
   };
 
-  systemd.user.services.neovim_server = {
-    description = "Neovim server to connect to for fast startup";
-    script = ''
-      nohup nvim --listen 127.0.0.1:8888 --headless </dev/null >/dev/null 2>&1 &
-    '';
-    wantedBy = [ "multi-user.target" ]; # starts after login
-  };
-
   services.ollama = {
     package = pkgs.ollama-cuda;
     enable = true;
@@ -140,7 +132,6 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim
     git
     nvidia-vaapi-driver
     (vivaldi.overrideAttrs (oldAttrs: {

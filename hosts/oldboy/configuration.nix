@@ -100,21 +100,6 @@ in
   };
 
   # prevent the laptop from hibernating when lid is closed
-  services.logind.settings.Login = {
-    HandleLidSwitch = "ignore";
-    HandleLidSwitchDocked = "ignore";
-    HandleLidSwitchExternalPower = "ignore";
-  };
-
-  systemd.user.services.neovim_server = {
-    description = "Neovim server to connect to for fast startup";
-    script = ''
-      nohup nvim --listen 127.0.0.1:8888 --headless </dev/null >/dev/null 2>&1 &
-    '';
-    wantedBy = [ "multi-user.target" ]; # starts after login
-  };
-
-  # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
 
   # Allow unfree packages
@@ -126,7 +111,6 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim
     git
     pulseaudio
     pavucontrol

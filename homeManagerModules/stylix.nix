@@ -7,17 +7,19 @@
   ...
 }:
 let
-  # Enable Stylix if omarchy is enabled in the system config.
+  # Enable Stylix if omarchy or my custom stylix option is enabled in the system config.
   # If osConfig is null (standalone HM), default to false (can be overridden).
-  shouldEnable = if osConfig != null then osConfig.host.useOmarchy else false;
+  systemStylixEnabled = if osConfig != null then (osConfig.programs.stylix.enable or false) else false;
+  omarchyEnabled = if osConfig != null then osConfig.host.useOmarchy else false;
+  shouldEnable = systemStylixEnabled || omarchyEnabled;
   theme = import ../common/stylix-values.nix { inherit pkgs; };
 in
 {
   config = lib.mkMerge [
     {
-      # Disable stylix by default in Home Manager unless enabled by NixOS module or explicit config
-      # Priority 900 is stronger than mkDefault (1000) but weaker than standard definitions (100).
-      stylix.enable = lib.mkOverride 900 shouldEnable;
+      # Enable stylix by default in Home Manager if enabled by NixOS module.
+      # Use mkDefault (1000) so it's easily overridden.
+      stylix.enable = lib.mkDefault shouldEnable;
 
       # disable things that are enabled by default
       stylix.targets.alacritty.enable = true;
