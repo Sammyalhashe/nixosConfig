@@ -7,12 +7,12 @@
     fzf
     bat
     gemini-cli
-    
+
     # minimal charmbracelet
     nur.repos.charmbracelet.gum
     nur.repos.charmbracelet.glow
     nur.repos.charmbracelet.mods
-    
+
     # system tools
     btop
     htop
@@ -20,7 +20,7 @@
     zip
     jq
     yq-go
-    
+
     # networking
     dig
     bind

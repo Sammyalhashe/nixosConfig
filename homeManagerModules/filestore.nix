@@ -1,16 +1,22 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./neovim.nix
     ./zellij.nix
     ./nushell.nix
+    ./wsl.nix
     ./starship.nix
     ./gemini-cli.nix
     ./direnv.nix
     inputs.nix-moltbot.homeManagerModules.moltbot
   ];
 
-  programs.moltbot.enable = true;
+  # programs.moltbot.enable = true;
   programs.neovim.enable = true;
   programs.starship.enable = true;
   programs.git = {

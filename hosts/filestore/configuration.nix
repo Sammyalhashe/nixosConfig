@@ -14,7 +14,7 @@ let
   interface = "wlan0";
   hostname = "filestore";
   # You should move these to an environmentFile for production!
-  authentik_secret = "***REMOVED***=="; 
+  authentik_secret = "***REMOVED***==";
   postgres_password = "***REMOVED***";
 
   health-check = pkgs.writeShellScriptBin "sys-health" ''
@@ -42,7 +42,7 @@ let
       echo -e "\n--- Container/Pod Health ---"
       podman ps --format "{{.Names}}: {{.Status}}" | sed 's/^/📦 /'
     fi
-    
+
     echo -e "\n--- Storage Health ---"
     df -h /mnt/logseq-data | grep -v Filesystem
 
@@ -51,11 +51,13 @@ let
   '';
 
   # 1. Define the Python environment (Pinned to 3.12 for pysn-digest compatibility)
-  pysnEnv = pkgs.python312.withPackages (ps: with ps; [
-    pillow
-    setuptools
-    # We will install pysn-digest via the shell script since it's not in nixpkgs
-  ]);
+  pysnEnv = pkgs.python312.withPackages (
+    ps: with ps; [
+      pillow
+      setuptools
+      # We will install pysn-digest via the shell script since it's not in nixpkgs
+    ]
+  );
 
   # 2. The Extraction Script (Embedded Python)
   # This script pulls TODOs from your Logseq Journals on your SSD
@@ -124,20 +126,22 @@ in
   host.homeManagerHostname = "filestore";
 
   # Stylix Configuration (Headless/Minimal)
-  stylix = let
-    theme = import ../../common/stylix-values.nix { inherit pkgs; };
-  in {
-    enable = true;
-    base16Scheme = theme.base16Scheme;
-    image = theme.image;
-    polarity = theme.polarity;
-    fonts = theme.fonts;
-    
-    # Disable graphical targets to save space/dependencies
-    targets.gtk.enable = false;
-    targets.gnome.enable = false;
-    targets.lightdm.enable = false;
-  };
+  stylix =
+    let
+      theme = import ../../common/stylix-values.nix { inherit pkgs; };
+    in
+    {
+      enable = true;
+      base16Scheme = theme.base16Scheme;
+      image = theme.image;
+      polarity = theme.polarity;
+      fonts = theme.fonts;
+
+      # Disable graphical targets to save space/dependencies
+      targets.gtk.enable = false;
+      targets.gnome.enable = false;
+      targets.lightdm.enable = false;
+    };
 
   # Add a safety cushion (Swap File)
   # swapDevices = [{
@@ -175,13 +179,26 @@ in
     };
     # Static IP on wlan0
     interfaces.${interface} = {
-      ipv4.addresses = [ { address = "11.125.37.98"; prefixLength = 24; } ];
+      ipv4.addresses = [
+        {
+          address = "11.125.37.98";
+          prefixLength = 24;
+        }
+      ];
       ipv4.routes = [
-        { address = "10.139.112.0"; prefixLength = 24; via = "11.125.37.99"; }
+        {
+          address = "10.139.112.0";
+          prefixLength = 24;
+          via = "11.125.37.99";
+        }
       ];
     };
-    defaultGateway = "11.125.37.1";  # Your router IP
-    nameservers = [ "11.125.37.99" "11.125.37.1" "1.1.1.1" ];
+    defaultGateway = "11.125.37.1"; # Your router IP
+    nameservers = [
+      "11.125.37.99"
+      "11.125.37.1"
+      "1.1.1.1"
+    ];
   };
 
   # Add this to move container data to the SSD
@@ -195,8 +212,8 @@ in
   virtualisation = {
     podman = {
       enable = true;
-      dockerCompat = true;  # Enables `docker` alias → podman
-      defaultNetwork.settings.dns_enabled = true;  # Container DNS
+      dockerCompat = true; # Enables `docker` alias → podman
+      defaultNetwork.settings.dns_enabled = true; # Container DNS
     };
     oci-containers = {
       backend = "podman";
@@ -204,35 +221,35 @@ in
         image = "docker.io/portainer/portainer-ce:latest";
         ports = [
           "9443:9443"
-          "9000:9000" 
+          "9000:9000"
           "8000:8000"
-	  "8080:80"
+          "8080:80"
         ];
         volumes = [
           "portainer_data:/data"
-	  "/run/podman/podman.sock:/run/podman/podman.sock"  # ← Socket for control
-	  "/run/podman/podman.sock:/var/run/docker.sock"
+          "/run/podman/podman.sock:/run/podman/podman.sock" # ← Socket for control
+          "/run/podman/podman.sock:/var/run/docker.sock"
         ];
       };
       containers.nginx-proxy-manager = {
-         image = "jc21/nginx-proxy-manager:latest";
-         ports = [
-           "80:80"    # HTTP → HTTPS redirect
-           "443:443"  # HTTPS
-           "81:81"    # NPM admin UI
-         ];
-         volumes = [
-           "npm-app:/data"
-           "npm-ssl:/etc/letsencrypt"
-           "npm-db:/data/database"
-         ];
-	 # extraOptions = [ "--network=host" ];
+        image = "jc21/nginx-proxy-manager:latest";
+        ports = [
+          "80:80" # HTTP → HTTPS redirect
+          "443:443" # HTTPS
+          "81:81" # NPM admin UI
+        ];
+        volumes = [
+          "npm-app:/data"
+          "npm-ssl:/etc/letsencrypt"
+          "npm-db:/data/database"
+        ];
+        # extraOptions = [ "--network=host" ];
       };
       containers.vaultwarden = {
         image = "vaultwarden/server:latest";
-        ports = ["8090:80"];  # Vaultwarden internal 80 → host 8090
-        volumes = ["vw-data:/data"];
-	environment = {
+        ports = [ "8090:80" ]; # Vaultwarden internal 80 → host 8090
+        volumes = [ "vw-data:/data" ];
+        environment = {
           # Required for SSO
           DOMAIN = "https://vaultwarden.salh.xyz";
           SSO_ENABLED = "true";
@@ -244,15 +261,15 @@ in
           SSO_ROLES_ENABLED = "true";
           SSO_ROLES_DEFAULT_TO_USER = "true";
 
-	  ADMIN_TOKEN = "***REMOVED***";
-          
+          ADMIN_TOKEN = "***REMOVED***";
+
           # Optional: allow new users to sign up via SSO even if SIGNUPS_ALLOWED is false
-          SSO_SIGNUPS_MATCH_EMAIL = "true"; 
+          SSO_SIGNUPS_MATCH_EMAIL = "true";
         };
       };
     };
   };
-  
+
   virtualisation.oci-containers.containers = {
     # Nextcloud App
     nextcloud-app = {
@@ -271,9 +288,9 @@ in
         NEXTCLOUD_ADMIN_USER = "salhashemi2";
         NEXTCLOUD_ADMIN_PASSWORD = "***REMOVED***"; # Set this once
         NEXTCLOUD_TRUSTED_DOMAINS = "cloud.salh.xyz";
-	OVERWRITEPROTOCOL = "https";
-	OVERWRITEHOST = "cloud.salh.xyz";
-	TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
+        OVERWRITEPROTOCOL = "https";
+        OVERWRITEHOST = "cloud.salh.xyz";
+        TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
 
       };
       extraOptions = [ "--network=nextcloud-net" ];
@@ -292,7 +309,6 @@ in
     };
   };
 
-
   virtualisation.oci-containers.containers = {
     # 1. PostgreSQL Database
     authentik-db = {
@@ -303,19 +319,28 @@ in
         POSTGRES_DB = "authentik";
       };
       volumes = [ "authentik-db:/var/lib/postgresql/data" ];
-      extraOptions = [ "--network=authentik-net" "--name=authentik-db" ];
+      extraOptions = [
+        "--network=authentik-net"
+        "--name=authentik-db"
+      ];
     };
 
     # 2. Redis Cache
     authentik-redis = {
       image = "docker.io/library/redis:alpine";
-      extraOptions = [ "--network=authentik-net" "--name=authentik-redis" ];
+      extraOptions = [
+        "--network=authentik-net"
+        "--name=authentik-redis"
+      ];
     };
 
     # 3. Authentik Server
     authentik-server = {
       image = "ghcr.io/goauthentik/server:latest";
-      ports = [ "9080:9000" "9444:9443" ];
+      ports = [
+        "9080:9000"
+        "9444:9443"
+      ];
       environment = {
         AUTHENTIK_REDIS__HOST = "authentik-redis";
         AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
@@ -324,9 +349,15 @@ in
         AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
         AUTHENTIK_SECRET_KEY = authentik_secret;
       };
-      volumes = [ "authentik-media:/media" "authentik-certs:/certs" ];
+      volumes = [
+        "authentik-media:/media"
+        "authentik-certs:/certs"
+      ];
       cmd = [ "server" ];
-      extraOptions = [ "--network=authentik-net" "--name=authentik-server" ];
+      extraOptions = [
+        "--network=authentik-net"
+        "--name=authentik-server"
+      ];
     };
 
     # 4. Authentik Worker (Handles background tasks)
@@ -340,13 +371,17 @@ in
         AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
         AUTHENTIK_SECRET_KEY = authentik_secret;
       };
-      volumes = [ 
+      volumes = [
         "/var/run/podman/podman.sock:/var/run/docker.sock"
         "authentik-media:/media"
         "authentik-certs:/certs"
       ];
       cmd = [ "worker" ];
-      extraOptions = [ "--network=authentik-net" "--name=authentik-worker" "--user=root" ];
+      extraOptions = [
+        "--network=authentik-net"
+        "--name=authentik-worker"
+        "--user=root"
+      ];
     };
   };
 
@@ -372,8 +407,8 @@ in
       TZ = "America/New_York"; # Set your timezone
     };
     ports = [ "8123:8123" ];
-    extraOptions = [ 
-      "--network=hass-net" 
+    extraOptions = [
+      "--network=hass-net"
       "--device=/dev/ttyUSB0:/dev/ttyUSB0" # Optional: For Zigbee/Z-Wave sticks
     ];
   };
@@ -400,20 +435,36 @@ in
     '';
   };
 
-  networking.firewall.allowedTCPPorts = [ 9443 9000 8000 80 81 443 8384 3000 22000];
-  networking.firewall.allowedUDPPorts = [ 22000 21027 ];
+  networking.firewall.allowedTCPPorts = [
+    9443
+    9000
+    8000
+    80
+    81
+    443
+    8384
+    3000
+    22000
+  ];
+  networking.firewall.allowedUDPPorts = [
+    22000
+    21027
+  ];
   networking.firewall.extraCommands = ''
     iptables -t filter -I INPUT 1 -p tcp --dport 443 -j ACCEPT
     iptables -t filter -I INPUT 2 -p tcp --dport 80 -j ACCEPT
     iptables -t filter -I INPUT 3 -p tcp --dport 81 -j ACCEPT
   '';
 
-   fileSystems."/mnt/logseq-data" = {
+  fileSystems."/mnt/logseq-data" = {
     device = "/dev/disk/by-uuid/7e2d381d-32cc-46c1-96fa-c4f2d4b7b4fc";
     fsType = "ext4";
-    options = [ "defaults" "nofail" ]; # 'nofail' prevents boot hang if drive is missing
+    options = [
+      "defaults"
+      "nofail"
+    ]; # 'nofail' prevents boot hang if drive is missing
   };
-  
+
   systemd.tmpfiles.rules = [
     # Type | Path             | Mode | User         | Group | Age | Argument
     "d /mnt/logseq-data 0755 salhashemi2 users - -"
@@ -428,12 +479,12 @@ in
     "d /mnt/logseq-data/nextcloud/html 0755 33 33 - -" # 33 is the standard 'www-data' user in containers
     "d /mnt/logseq-data/nextcloud/data 0755 33 33 - -"
     "d /mnt/logseq-data/nextcloud/config 0755 33 33 - -"
-    
+
     "d /mnt/logseq-data/nextcloud 0755 salhashemi2 users - -"
     "z /mnt/logseq-data/nextcloud/html 0755 33 33 - -"
     "z /mnt/logseq-data/nextcloud/data 0755 33 33 - -"
     "z /mnt/logseq-data/nextcloud/config 0755 33 33 - -"
-    
+
     # Database Folder (UID 999 is postgres inside the container)
     # 'd' creates it if missing; 'z' ensures the 999:999 ownership recursively
     "d /mnt/logseq-data/nextcloud/db 0700 999 999 - -"
@@ -464,17 +515,20 @@ in
 
   systemd.services.supernote-digest = {
     description = "Generate Daily Task Digest for Supernote";
-    after = [ "network.target" "mnt-logseq-data.mount" ];
+    after = [
+      "network.target"
+      "mnt-logseq-data.mount"
+    ];
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";
       # This runs the extraction, installs pysn-digest in a temp venv, and generates the PDF
       ExecStart = pkgs.writeShellScript "run-pysn-digest" ''
         export PATH="${pysnEnv}/bin:$PATH"
-        
+
         # 1. Run our embedded python extractor
         ${extractTodos}/bin/extract-logseq-todos
-        
+
         # 2. Setup a temporary environment for pysn-digest
         # We do this because pysn-digest is not in Nixpkgs yet
         TEMP_VENV="/tmp/pysn_venv"
@@ -500,7 +554,6 @@ in
     };
   };
 
-
   systemd.user.services.logseq-digest = {
     description = "Sync Logseq Daily Journal to Supernote";
     serviceConfig = {
@@ -508,7 +561,10 @@ in
       ExecStart = "${logseq-supernote-sync}/bin/logseq-sync";
     };
     # Ensure the script has the tools it needs in its PATH
-    path = [ pkgs.bash pkgs.coreutils ]; 
+    path = [
+      pkgs.bash
+      pkgs.coreutils
+    ];
   };
 
   systemd.user.timers.logseq-digest = {
@@ -529,7 +585,7 @@ in
 
     overrideDevices = false;
     overrideFolders = false;
-    
+
     # Open default ports (22000 for sync, 21027 for discovery)
     openDefaultPorts = true;
 
@@ -544,9 +600,9 @@ in
         "Logseq-Notes" = {
           # This points directly to your new SSD
           path = "/mnt/logseq-data/Logseq";
-          # Once you add your phone/laptop in the Web UI, 
+          # Once you add your phone/laptop in the Web UI,
           # you can add their Device IDs here later.
-          devices = [ ]; 
+          devices = [ ];
           versioning = {
             type = "staggered";
             params = {
@@ -581,7 +637,7 @@ in
 
   # Override Systemd sandboxing to allow access to /mnt
   systemd.services.postgresql.serviceConfig = {
-    ProtectHome = lib.mkForce "tmpfs"; 
+    ProtectHome = lib.mkForce "tmpfs";
     ReadWritePaths = [ "/mnt/logseq-data/postgresql" ];
   };
 
@@ -599,7 +655,10 @@ in
     users."${user}" = {
       isNormalUser = true;
       password = password;
-      extraGroups = [ "wheel" "podman" ];
+      extraGroups = [
+        "wheel"
+        "podman"
+      ];
     };
   };
 
@@ -616,7 +675,11 @@ in
     };
     passwordFile = "/etc/nixos/restic-password";
     # Keep 7 daily, 4 weekly, and 6 monthly backups
-    pruneOpts = [ "--keep-daily 7" "--keep-weekly 4" "--keep-monthly 6" ];
+    pruneOpts = [
+      "--keep-daily 7"
+      "--keep-weekly 4"
+      "--keep-monthly 6"
+    ];
 
     # This ensures the init script runs first
     extraOptions = [ "--network=host" ]; # If you eventually move to cloud backups

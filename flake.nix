@@ -109,6 +109,7 @@
           sops-nix.nixosModules.sops
           {
             programs.stylix.enable = true;
+            host.isHeadless = true;
           }
         ];
       };

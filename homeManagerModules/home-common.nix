@@ -20,4 +20,6 @@
     enableNushellIntegration = true;
     enableZshIntegration = true;
   };
+
+  programs.neovim.enable = true;
 }

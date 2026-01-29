@@ -10,6 +10,8 @@
 
     isWsl = lib.mkEnableOption "Whether the host is running in WSL.";
 
+    isHeadless = lib.mkEnableOption "Whether the host is headless (no GUI/Steam).";
+
     useOmarchy = lib.mkEnableOption "Whether to use Omarchy configuration.";
 
     greetd = lib.mkEnableOption "Whether to use Greetd.";
