@@ -45,6 +45,11 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nix-moltbot = {
+      url = "github:moltbot/nix-moltbot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -63,6 +68,8 @@
       treefmt-nix,
       nur,
       sops-nix,
+      nixos-hardware,
+      nix-moltbot,
       ...
     }@inputs:
     let
@@ -89,6 +96,23 @@
       };
     in
     {
+      nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs sops-nix; };
+        system = "aarch64-linux";
+        modules = [
+          baseConfig
+          nixos-hardware.nixosModules.raspberry-pi-4
+          ./hosts/filestore/configuration.nix
+          ./nixosModules
+          stylix.nixosModules.stylix
+          ./nixosModules/stylix.nix
+          sops-nix.nixosModules.sops
+          {
+            programs.stylix.enable = true;
+          }
+        ];
+      };
+
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         modules = [
@@ -257,6 +281,7 @@
       homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
+      homeModules.filestore = ./homeManagerModules/filestore.nix;
 
       formatter.x86_64-linux = treefmtEval.config.build.wrapper;
 
@@ -321,6 +346,9 @@
             (mkHostScript "switch-starship" "starship" "starship" "switch")
             (mkHostScript "test-starship" "starship" "starship" "test")
 
+            (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
+            (mkHostScript "test-filestore" "filestore" "filestore" "test")
+
             # Home manager scripts
             (mkScript "switch-home-work" "home-manager switch --flake .#work")
           ];
@@ -343,7 +371,7 @@
             echo "  switch-<host> - Switch NixOS configuration"
             echo "  test-<host>   - Test NixOS configuration"
             echo ""
-            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship"
+            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore"
             echo "Home Configs: work"
           '';
         };

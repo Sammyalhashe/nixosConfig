@@ -398,6 +398,10 @@ in
       gesturebind=none,right,4,viewtoright_have_client
       gesturebind=none,up,4,toggleoverview
       gesturebind=none,down,4,toggleovervie
+
+      # Take a screenshot of a region and copy to clipboard
+      bind=SUPER,p,spawn,bash -c 'grim -g "$(slurp)" - | wl-copy'
+      bind=SUPER_SHIFT,s,spawn,bash -c 'grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y-%m-%d_%H-%M-%S).png'
     '';
   };
 }

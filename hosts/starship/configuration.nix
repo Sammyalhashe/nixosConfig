@@ -21,6 +21,7 @@ in
     ./graphics.nix
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
+    ./wireguard.nix
   ];
 
   host.useOmarchy = lib.mkDefault false;

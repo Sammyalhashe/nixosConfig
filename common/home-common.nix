@@ -16,8 +16,6 @@
       pkgs.nur.repos.charmbracelet.gum
 
       # terminal utilities
-      wl-clipboard
-      xclip
       alacritty
       bat
       cowsay
@@ -28,17 +26,21 @@
       fzf
       gemini-cli
       gh
+      grim
       neofetch
+      notejot
       pandoc
       ripgrep
       russ
+      slurp
       sops
       starship
       texliveSmall
       tmux
+      wl-clipboard
+      xclip
       yazi
       zellij
-
       zoxide
 
       # fonts
