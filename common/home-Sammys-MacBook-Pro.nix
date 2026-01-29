@@ -4,9 +4,13 @@
   inputs,
   user,
   homeDir,
+  inputs,
   ...
 }:
-
+let
+  nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
+  extended-nixvim = nixvim-package; # No stylix target for nixvim on darwin yet? 
+in
 {
   imports = [
     ./home-common.nix
@@ -20,6 +24,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    extended-nixvim
     # c compilers
     gcc
 

@@ -38,17 +38,4 @@ in
     # networking
     dig
   ];
-
-  systemd.user.services.neovim_server = {
-    Unit = {
-      Description = "Neovim server to connect to for fast startup";
-    };
-    Service = {
-      ExecStart = "${extended-nixvim}/bin/nvim --listen 127.0.0.1:8888 --headless";
-      Restart = "always";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
 }
