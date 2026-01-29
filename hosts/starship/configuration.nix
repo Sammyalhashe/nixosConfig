@@ -22,6 +22,7 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     ./wireguard.nix
+    ../../nixosModules/sops.nix
   ];
 
   host.useOmarchy = lib.mkDefault false;
