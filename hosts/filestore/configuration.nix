@@ -144,6 +144,7 @@ in
 
   # This deduplicates files that are identical across different packages
   nix.settings.auto-optimise-store = true;
+  nix.settings.trusted-users = [ "root" "salhashemi2" ];
 
   imports = [
     inputs.home-manager.nixosModules.default
