@@ -55,7 +55,7 @@ let
         }
         children
     }
-  '';
+  ''
 in
 {
   programs.zellij = {
@@ -573,65 +573,42 @@ in
             children
             pane size=1 borderless=true {
                 plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-                    format_left   "{mode} #[fg=bright_black]󰇘 {tabs} #[fg=bright_black]󰇘 #[fg=green]{swap_layout}"
-                    format_center "#[fg=bright_black]󰇘 #[fg=cyan]{session} #[fg=bright_black]󰇘"
-                    format_right  "#[fg=bright_black]󰇘 {command_git_branch} #[fg=bright_black]󰇘 {pipe_zjstatus_hints} #[fg=bright_black]󰇘 #[fg=blue]{datetime}"
-                    format_space  "#[fg=yellow] "
+                    format_left   "#[fg=#89b4fa,bg=#11111b]#[fg=#11111b,bg=#89b4fa,bold]{mode}#[fg=#89b4fa,bg=#11111b]"
+                    format_center "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{tabs}#[fg=#25253a,bg=#11111b]"
+                    format_right  "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{command_git_branch}#[fg=#89b4fa,bg=#25253a] {datetime}#[fg=#25253a,bg=#11111b]"
+                    format_space  "#[bg=#11111b]"
 
                     border_enabled  "false"
-                    hide_frame_for_single_pane "false"
 
-                    mode_normal        "#[fg=yellow]NORMAL"
-                    mode_locked        "#[fg=red]LOCKED"
-                    mode_tmux          "#[fg=cyan]TMUX"
-                    mode_resize        "#[fg=red]RESIZE"
-                    mode_pane          "#[fg=cyan]PANE"
-                    mode_tab           "#[fg=cyan]TAB"
-                    mode_scroll        "#[fg=green]SCROLL"
-                    mode_enter_search  "#[fg=blue]{name}"
-                    mode_search        "#[fg=blue]SEARCH"
-                    mode_rename_tab    "#[fg=red]{name}"
-                    mode_rename_pane   "#[fg=red]{name}"
-                    mode_session       "#[fg=green]SESSION"
-                    mode_move          "#[fg=red]MOVE"
-                    mode_prompt        "#[fg=green]PROMPT"
+                    mode_normal        " NORMAL "
+                    mode_locked        " LOCKED "
+                    mode_resize        " RESIZE "
+                    mode_pane          " PANE "
+                    mode_tab           " TAB "
+                    mode_scroll        " SCROLL "
+                    mode_enter_search  " ENT-SEARCH "
+                    mode_search        " SEARCH "
+                    mode_rename_tab    " RENAME-TAB "
+                    mode_rename_pane   " RENAME-PANE "
+                    mode_session       " SESSION "
+                    mode_move          " MOVE "
+                    mode_prompt        " PROMPT "
+                    mode_tmux          " TMUX "
 
-                    tab_normal                 "#[fg=#6e7a99]{name}"
-                    tab_normal_fullscreen      "#[fg=#6e7a99]{name}"
-                    tab_normal_sync            "#[fg=#6e7a99]{name}"
-
-                    tab_active                 "#[fg=cyan]{name}#[fg=yellow]{floating_indicator}"
-                    tab_active_fullscreen      "#[fg=yellow]{name}#[fg=yellow]{fullscreen_indicator}"
-                    tab_active_sync            "#[fg=green]{name}#[fg=yellow]{sync_indicator}"
-
-                    tab_separator              "#[fg=bright_black]:"
-
-                    tab_sync_indicator         "  "
-                    tab_fullscreen_indicator   "  "
-                    tab_floating_indicator     " 󰉧 "
+                    tab_normal                 "#[fg=#6c7086,bg=#25253a] {name} "
+                    tab_active                 "#[fg=#89b4fa,bg=#25253a,bold] {name} "
 
                     command_git_branch_command     "git branch --show-current"
-                    command_git_branch_format      "#[fg=green]{stdout} #[fg=green]"
+                    command_git_branch_format      "#[fg=#a6e3a1,bg=#25253a] {stdout}  "
                     command_git_branch_interval    "10"
                     command_git_branch_rendermode  "static"
 
-                    datetime        "#[fg=blue]{format}"
-                    datetime_format "%A, %d %b %Y %H:%M"
+                    datetime        "#[fg=#cba6f7,bg=#25253a,bold] {format} "
+                    datetime_format "%H:%M"
                     datetime_timezone "America/New_York"
-                    
-                    pipe_zjstatus_hints_format "{output}"
-
-                    // limit tab display count
-                    tab_display_count          "3"
-                    tab_truncate_start_format  "#[fg=red,bg=black] < + {count} ..."
-                    tab_truncate_end_format    "#[fg=red,bg=black] ... + {count} >"
-
-                    // responsiveness
-                    format_hide_on_overlength "true"
-                    format_precedence         "lrc"
                 }
             }
         }
     }
-  '';
+  ''
 }
