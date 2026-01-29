@@ -149,6 +149,7 @@ in
   imports = [
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
+    ../../nixosModules/sops.nix
   ];
 
   documentation.enable = false;
