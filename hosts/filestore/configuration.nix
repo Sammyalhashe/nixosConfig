@@ -123,6 +123,10 @@ in
     ../../common/home-manager-config.nix
   ];
 
+  documentation.enable = false;
+  documentation.man.enable = false;
+  documentation.nixos.enable = false;
+
   host.homeManagerHostname = "filestore";
 
   # Stylix Configuration (Headless/Minimal)
