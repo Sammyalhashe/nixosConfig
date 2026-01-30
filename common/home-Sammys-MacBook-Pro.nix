@@ -9,7 +9,7 @@
 }:
 let
   nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
-  extended-nixvim = nixvim-package; # No stylix target for nixvim on darwin yet? 
+  extended-nixvim = nixvim-package; # No stylix target for nixvim on darwin yet?
 in
 {
   imports = [
