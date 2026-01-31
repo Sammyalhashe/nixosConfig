@@ -1,6 +1,4 @@
 {
-  config,
-  pkgs,
   inputs,
   ...
 }:
@@ -9,9 +7,6 @@
     ./zellij.nix
     ./nushell.nix
     ./wsl.nix
-    ./starship.nix
-    ./gemini-cli.nix
-    ./direnv.nix
     inputs.nix-moltbot.homeManagerModules.moltbot
   ];
 
