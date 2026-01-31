@@ -46,8 +46,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nix-moltbot = {
-      url = "github:moltbot/nix-moltbot";
+    nix-openclaw = {
+      url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -69,13 +69,14 @@
       nur,
       sops-nix,
       nixos-hardware,
-      nix-moltbot,
+      nix-openclaw,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
       overlays = [
         nur.overlays.default
+        nix-openclaw.overlays.default
       ];
       pkgs = import nixpkgs {
         inherit system overlays;

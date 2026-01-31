@@ -421,6 +421,7 @@ in
     health-check
     nodejs_25
     btop
+    pkgs.openclaw
   ];
 
   # Enable zRam swap
@@ -580,6 +581,9 @@ in
       extraGroups = [
         "wheel"
         "podman"
+      ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUptk+nhbHYTfUJvGT3/X4vkKWRotT5ckw8BiQuADml sammy@salh.xyz"
       ];
     };
   };

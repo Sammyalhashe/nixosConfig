@@ -501,7 +501,7 @@
     "home-manager_2": {
       "inputs": {
         "nixpkgs": [
-          "nix-moltbot",
+          "nix-openclaw",
           "nixpkgs"
         ]
       },
@@ -1035,7 +1035,7 @@
         "type": "github"
       }
     },
-    "nix-moltbot": {
+    "nix-openclaw": {
       "inputs": {
         "flake-utils": "flake-utils_2",
         "home-manager": "home-manager_2",
@@ -1045,16 +1045,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1769709249,
-        "narHash": "sha256-4/j9WCGqlxdXxxOx3AaewH+HYMDvxkSjg3OkTX6W0Sw=",
-        "owner": "moltbot",
-        "repo": "nix-moltbot",
-        "rev": "b8625be32194bf8b80ed9239a0d646ceccdf792f",
+        "lastModified": 1769881069,
+        "narHash": "sha256-lqdPsDJaGAVH07+hVef6nLAByI6YKyFkYL/yPAfEcXc=",
+        "owner": "openclaw",
+        "repo": "nix-openclaw",
+        "rev": "6a7ce39d31f3c574ba87d7dbaf5e82ecea42721e",
         "type": "github"
       },
       "original": {
-        "owner": "moltbot",
-        "repo": "nix-moltbot",
+        "owner": "openclaw",
+        "repo": "nix-openclaw",
         "type": "github"
       }
     },
@@ -1063,15 +1063,15 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1769632524,
-        "narHash": "sha256-lDGYIwZUPXF+FoqE9fATn8sqDjfpM7Iy81KhHvqFjyw=",
-        "owner": "moltbot",
+        "lastModified": 1769863704,
+        "narHash": "sha256-3EaknO793/3rOlGyiJcc4b+wBVFt9JkoqlNU7J5va2M=",
+        "owner": "openclaw",
         "repo": "nix-steipete-tools",
-        "rev": "53ead4d5fd722020dddaede861745a32e39d284e",
+        "rev": "562e9b6e6aceb72970724c5c62b943feaab51974",
         "type": "github"
       },
       "original": {
-        "owner": "moltbot",
+        "owner": "openclaw",
         "repo": "nix-steipete-tools",
         "type": "github"
       }
@@ -1490,7 +1490,7 @@
         "home-manager": "home-manager",
         "hyprlock": "hyprlock",
         "mangowc": "mangowc",
-        "nix-moltbot": "nix-moltbot",
+        "nix-openclaw": "nix-openclaw",
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_4",
