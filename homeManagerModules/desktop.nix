@@ -427,6 +427,11 @@
   #   }];
   # };
 
+  services.mako = {
+    enable = true;
+    backgroundColor = "#11111b";
+  };
+
   # hyprlock
   programs.hyprlock = {
     enable = true;

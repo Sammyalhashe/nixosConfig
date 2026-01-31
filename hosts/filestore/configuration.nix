@@ -14,7 +14,7 @@ let
   interface = "wlan0";
   hostname = "filestore";
   # You should move these to an environmentFile for production!
-  authentik_secret = "***REMOVED***==";
+  # authentik_secret = "***REMOVED***==";
   postgres_password = "***REMOVED***";
 
   health-check = pkgs.writeShellScriptBin "sys-health" ''
@@ -44,7 +44,7 @@ let
     fi
 
     echo -e "\n--- Storage Health ---"
-    df -h /mnt/logseq-data | grep -v Filesystem
+    df -h / | grep -v Filesystem
 
     echo -e "\n--- Last Logseq Sync ---"
     systemctl --user list-timers logseq-digest.timer --no-legend
@@ -67,7 +67,7 @@ let
     from datetime import date
     from pathlib import Path
 
-    LOGSEQ_JOURNALS = Path("/mnt/logseq-data/Logseq/journals")
+    LOGSEQ_JOURNALS = Path("/Logseq/journals")
     OUTPUT_MD = Path("/tmp/daily_focus.md")
 
     def extract():
@@ -92,8 +92,8 @@ let
   # Define the sync script
   logseq-supernote-sync = pkgs.writeShellScriptBin "logseq-sync" ''
     # Paths (Using environment variables or hardcoded Nix paths)
-    LOGSEQ_DIR="/mnt/logseq-data/Logseq/journals"
-    OUTPUT_DIR="/mnt/logseq-data/SupernoteSync/Digests"
+    LOGSEQ_DIR="/Logseq/journals"
+    OUTPUT_DIR="/SupernoteSync/Digests"
     TODAY=$(date +%Y_%m_%d)
     TARGET_NOTE="$LOGSEQ_DIR/$TODAY.md"
 
@@ -113,6 +113,14 @@ in
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 14d";
+  };
+
+  # enable flakes
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # This deduplicates files that are identical across different packages
@@ -213,7 +221,7 @@ in
   virtualisation.containers.storage.settings = {
     storage = {
       driver = "overlay";
-      graphroot = "/mnt/logseq-data/podman-storage";
+      graphroot = "/podman-storage";
     };
   };
 
@@ -284,9 +292,9 @@ in
       image = "docker.io/library/nextcloud:latest";
       ports = [ "8082:80" ]; # Maps container port 80 to host port 8082
       volumes = [
-        "/mnt/logseq-data/nextcloud/html:/var/www/html"
-        "/mnt/logseq-data/nextcloud/data:/var/www/html/data"
-        "/mnt/logseq-data/nextcloud/config:/var/www/html/config"
+        "/nextcloud/html:/var/www/html"
+        "/nextcloud/data:/var/www/html/data"
+        "/nextcloud/config:/var/www/html/config"
       ];
       environment = {
         POSTGRES_HOST = "nextcloud-db";
@@ -312,103 +320,15 @@ in
         POSTGRES_USER = "nextcloud";
         POSTGRES_PASSWORD = postgres_password;
       };
-      volumes = [ "/mnt/logseq-data/nextcloud/db:/var/lib/postgresql/data" ];
+      volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
   };
 
-  # virtualisation.oci-containers.containers = {
-  #   # 1. PostgreSQL Database
-  #   authentik-db = {
-  #     image = "docker.io/library/postgres:16-alpine";
-  #     environment = {
-  #       POSTGRES_PASSWORD = postgres_password;
-  #       POSTGRES_USER = "authentik";
-  #       POSTGRES_DB = "authentik";
-  #     };
-  #     volumes = [ "authentik-db:/var/lib/postgresql/data" ];
-  #     extraOptions = [
-  #       "--network=authentik-net"
-  #       "--name=authentik-db"
-  #     ];
-  #   };
-  #
-  #   # 2. Redis Cache
-  #   authentik-redis = {
-  #     image = "docker.io/library/redis:alpine";
-  #     extraOptions = [
-  #       "--network=authentik-net"
-  #       "--name=authentik-redis"
-  #     ];
-  #   };
-  #
-  #   # 3. Authentik Server
-  #   authentik-server = {
-  #     image = "ghcr.io/goauthentik/server:latest";
-  #     ports = [
-  #       "9080:9000"
-  #       "9444:9443"
-  #     ];
-  #     environment = {
-  #       AUTHENTIK_REDIS__HOST = "authentik-redis";
-  #       AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
-  #       AUTHENTIK_POSTGRESQL__USER = "authentik";
-  #       AUTHENTIK_POSTGRESQL__NAME = "authentik";
-  #       AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
-  #       AUTHENTIK_SECRET_KEY = authentik_secret;
-  #     };
-  #     volumes = [
-  #       "authentik-media:/media"
-  #       "authentik-certs:/certs"
-  #     ];
-  #     cmd = [ "server" ];
-  #     extraOptions = [
-  #       "--network=authentik-net"
-  #       "--name=authentik-server"
-  #     ];
-  #   };
-  #
-  #   # 4. Authentik Worker (Handles background tasks)
-  #   authentik-worker = {
-  #     image = "ghcr.io/goauthentik/server:latest";
-  #     environment = {
-  #       AUTHENTIK_REDIS__HOST = "authentik-redis";
-  #       AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
-  #       AUTHENTIK_POSTGRESQL__USER = "authentik";
-  #       AUTHENTIK_POSTGRESQL__NAME = "authentik";
-  #       AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
-  #       AUTHENTIK_SECRET_KEY = authentik_secret;
-  #     };
-  #     volumes = [
-  #       "/var/run/podman/podman.sock:/var/run/docker.sock"
-  #       "authentik-media:/media"
-  #       "authentik-certs:/certs"
-  #     ];
-  #     cmd = [ "worker" ];
-  #     extraOptions = [
-  #       "--network=authentik-net"
-  #       "--name=authentik-worker"
-  #       "--user=root"
-  #     ];
-  #   };
-  # };
-  #
-  # # Create the internal podman network if it doesn't exist
-  # systemd.services.init-authentik-network = {
-  #   description = "Create the internal network for Authentik";
-  #   after = [ "network.target" ];
-  #   wantedBy = [ "multi-user.target" ];
-  #   serviceConfig.Type = "oneshot";
-  #   script = ''
-  #     ${pkgs.podman}/bin/podman network exists authentik-net || \
-  #     ${pkgs.podman}/bin/podman network create authentik-net
-  #   '';
-  # };
-
   virtualisation.oci-containers.containers.homeassistant = {
     image = "ghcr.io/home-assistant/home-assistant:stable";
     volumes = [
-      "/mnt/logseq-data/homeassistant:/config"
+      "/homeassistant:/config"
       "/etc/localtime:/etc/localtime:ro"
     ];
     environment = {
@@ -464,41 +384,31 @@ in
     iptables -t filter -I INPUT 3 -p tcp --dport 81 -j ACCEPT
   '';
 
-  fileSystems."/mnt/logseq-data" = {
-    device = "/dev/disk/by-uuid/7e2d381d-32cc-46c1-96fa-c4f2d4b7b4fc";
-    fsType = "ext4";
-    options = [
-      "defaults"
-      "nofail"
-    ]; # 'nofail' prevents boot hang if drive is missing
-  };
-
   systemd.tmpfiles.rules = [
     # Type | Path             | Mode | User         | Group | Age | Argument
-    "d /mnt/logseq-data 0755 salhashemi2 users - -"
-    "d /mnt/logseq-data/SupernoteSync/Digests 0755 salhashemi2 users - -"
-    "d /mnt/logseq-data/postgresql 0700 postgres postgres -"
+    "d /SupernoteSync/Digests 0755 salhashemi2 users - -"
+    "d /postgresql 0700 postgres postgres -"
     # Explicitly creating the deep path Forgejo needs for its keys
-    "d /mnt/logseq-data/forgejo 0750 forgejo forgejo -"
-    "d /mnt/logseq-data/forgejo/custom 0750 forgejo forgejo -"
-    "d /mnt/logseq-data/forgejo/custom/conf 0770 forgejo forgejo -" # Slightly looser for the bootstrap
+    "d /forgejo 0750 forgejo forgejo -"
+    "d /forgejo/custom 0750 forgejo forgejo -"
+    "d /forgejo/custom/conf 0770 forgejo forgejo -" # Slightly looser for the bootstrap
 
-    "d /mnt/logseq-data/nextcloud 0755 salhashemi2 users - -"
-    "d /mnt/logseq-data/nextcloud/html 0755 33 33 - -" # 33 is the standard 'www-data' user in containers
-    "d /mnt/logseq-data/nextcloud/data 0755 33 33 - -"
-    "d /mnt/logseq-data/nextcloud/config 0755 33 33 - -"
+    "d /nextcloud 0755 salhashemi2 users - -"
+    "d /nextcloud/html 0755 33 33 - -" # 33 is the standard 'www-data' user in containers
+    "d /nextcloud/data 0755 33 33 - -"
+    "d /nextcloud/config 0755 33 33 - -"
 
-    "d /mnt/logseq-data/nextcloud 0755 salhashemi2 users - -"
-    "z /mnt/logseq-data/nextcloud/html 0755 33 33 - -"
-    "z /mnt/logseq-data/nextcloud/data 0755 33 33 - -"
-    "z /mnt/logseq-data/nextcloud/config 0755 33 33 - -"
+    "d /nextcloud 0755 salhashemi2 users - -"
+    "z /nextcloud/html 0755 33 33 - -"
+    "z /nextcloud/data 0755 33 33 - -"
+    "z /nextcloud/config 0755 33 33 - -"
 
     # Database Folder (UID 999 is postgres inside the container)
     # 'd' creates it if missing; 'z' ensures the 999:999 ownership recursively
-    "d /mnt/logseq-data/nextcloud/db 0700 999 999 - -"
-    "z /mnt/logseq-data/nextcloud/db 0700 999 999 - -"
+    "d /nextcloud/db 0700 999 999 - -"
+    "z /nextcloud/db 0700 999 999 - -"
 
-    "d /mnt/logseq-data/homeassistant 0755 salhashemi2 users - -"
+    "d /homeassistant 0755 salhashemi2 users - -"
 
     # Purge files in /tmp older than 1 day
     "q /tmp 1777 root root 1d -"
@@ -517,7 +427,7 @@ in
   zramSwap = {
     enable = true;
     algorithm = "zstd"; # High compression ratio, great for C++ devs
-    memoryPercent = 50;  # Use up to 4GB of your 8GB RAM as a compressed swap
+    memoryPercent = 50; # Use up to 4GB of your 8GB RAM as a compressed swap
   };
 
   # Help the kernel decide when to swap
@@ -539,7 +449,6 @@ in
     description = "Generate Daily Task Digest for Supernote";
     after = [
       "network.target"
-      "mnt-logseq-data.mount"
     ];
     serviceConfig = {
       Type = "oneshot";
@@ -562,7 +471,7 @@ in
         # 3. Generate the PDF onto the SSD
         "$TEMP_VENV/bin/pysn-digest" \
           --input /tmp/daily_focus.md \
-          --output /mnt/logseq-data/SupernoteSync/Digests/Daily_Focus.pdf
+          --output /SupernoteSync/Digests/Daily_Focus.pdf
       '';
     };
   };
@@ -601,7 +510,7 @@ in
   services.syncthing = {
     enable = true;
     user = "salhashemi2";
-    dataDir = "/mnt/logseq-data"; # Default directory for new folders
+    dataDir = "/home/salhashemi2"; # Default directory for new folders
     configDir = "/home/salhashemi2/.config/syncthing"; # Settings storage
     guiAddress = "0.0.0.0:8384"; # Web UI accessible on your network
 
@@ -620,8 +529,8 @@ in
       # Folders to sync
       folders = {
         "Logseq-Notes" = {
-          # This points directly to your new SSD
-          path = "/mnt/logseq-data/Logseq";
+          # This points directly to your new SSD folder
+          path = "/Logseq";
           # Once you add your phone/laptop in the Web UI,
           # you can add their Device IDs here later.
           devices = [ ];
@@ -639,13 +548,28 @@ in
 
   services.forgejo = {
     enable = true;
-    stateDir = "/mnt/logseq-data/forgejo";
+    stateDir = "/forgejo";
     database.type = "postgres";
     settings.server = {
       DOMAIN = "git.salh.xyz";
       ROOT_URL = "https://git.salh.xyz/";
       HTTP_PORT = 3000;
     };
+  };
+
+  services.postgresql = {
+    enable = true;
+    # Ensure the path is exactly what Postgres expects
+    dataDir = "/postgresql/${config.services.postgresql.package.psqlSchema}";
+    authentication = lib.mkOverride 10 ''
+      local all all trust
+    '';
+  };
+
+  # Override Systemd sandboxing to allow access to /mnt
+  systemd.services.postgresql.serviceConfig = {
+    ProtectHome = lib.mkForce "tmpfs";
+    ReadWritePaths = [ "/postgresql" ];
   };
 
   users = {
@@ -660,16 +584,61 @@ in
     };
   };
 
+  programs.bash.interactiveShellInit = ''
+    ${health-check}/bin/sys-health
+  '';
+
+  # services.restic.backups.logseq = {
+  #   paths = [ "/logseq-data" ];
+  #   repository = "/home/salhashemi2/logseq_backup";
+  #   timerConfig = {
+  #     OnCalendar = "daily";
+  #     Persistent = true;
+  #   };
+  #   passwordFile = "/etc/nixos/restic-password";
+  #   # Keep 7 daily, 4 weekly, and 6 monthly backups
+  #   pruneOpts = [
+  #     "--keep-daily 7"
+  #     "--keep-weekly 4"
+  #     "--keep-monthly 6"
+  #   ];
+  #
+  #   # This ensures the init script runs first
+  #   extraOptions = [ "--network=host" ]; # If you eventually move to cloud backups
+  # };
+  #
+  # systemd.services.restic-backups-logseq.after = [ "restic-repo-init.service" ];
+  # systemd.services.restic-backups-logseq.requires = [ "restic-repo-init.service" ];
+
   systemd.services.forgejo-secrets = {
     preStart = ''
-      mkdir -p /mnt/logseq-data/forgejo/custom/conf
-      chown -R forgejo:forgejo /mnt/logseq-data/forgejo
-      chmod -R 750 /mnt/logseq-data/forgejo
+      mkdir -p /forgejo/custom/conf
+      chown -R forgejo:forgejo /forgejo
+      chmod -R 750 /forgejo
     '';
-    # This makes the service wait until the SSD is actually mounted
-    unitConfig.RequiresMountsFor = "/mnt/logseq-data";
   };
 
+  # systemd.services.restic-repo-init = {
+  #   description = "Initialize Restic repository if it doesn't exist";
+  #   before = [ "restic-backups-logseq.service" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     RemainAfterExit = true;
+  #   };
+  #   script = ''
+  #     if [ ! -f /home/salhashemi2/logseq_backup/config ]; then
+  #       echo "Repository not found. Initializing..."
+  #       mkdir -p /home/salhashemi2/logseq_backup
+  #       # Use the password file defined in your main restic config
+  #       ${pkgs.restic}/bin/restic init \
+  #         --repo /home/salhashemi2/logseq_backup \
+  #         --password-file /etc/nixos/restic-password
+  #     else
+  #       echo "Repository already initialized."
+  #     fi
+  #   '';
+  # };
   hardware.enableRedistributableFirmware = true;
   system.stateVersion = "23.11";
 }

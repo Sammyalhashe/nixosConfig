@@ -14,8 +14,10 @@
   programs.starship.enable = true;
   programs.git = {
     enable = true;
-    userName = "Sammy Al Hashemi";
-    userEmail = "sammy@salh.xyz";
+    settings = {
+      user.name = "Sammy Al Hashemi";
+      user.email = "sammy@salh.xyz";
+    };
   };
   home.stateVersion = "23.11";
 }

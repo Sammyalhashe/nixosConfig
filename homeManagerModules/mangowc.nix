@@ -225,7 +225,7 @@ in
     };
 
     home.packages = [
-      inputs.mangowc.packages.${pkgs.system}.default
+      inputs.mangowc.packages.${pkgs.stdenv.hostPlatform.system}.default
       pkgs.swaybg
       pkgs.wlr-randr
       pkgs.zenity
