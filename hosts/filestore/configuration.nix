@@ -317,93 +317,93 @@ in
     };
   };
 
-  virtualisation.oci-containers.containers = {
-    # 1. PostgreSQL Database
-    authentik-db = {
-      image = "docker.io/library/postgres:16-alpine";
-      environment = {
-        POSTGRES_PASSWORD = postgres_password;
-        POSTGRES_USER = "authentik";
-        POSTGRES_DB = "authentik";
-      };
-      volumes = [ "authentik-db:/var/lib/postgresql/data" ];
-      extraOptions = [
-        "--network=authentik-net"
-        "--name=authentik-db"
-      ];
-    };
-
-    # 2. Redis Cache
-    authentik-redis = {
-      image = "docker.io/library/redis:alpine";
-      extraOptions = [
-        "--network=authentik-net"
-        "--name=authentik-redis"
-      ];
-    };
-
-    # 3. Authentik Server
-    authentik-server = {
-      image = "ghcr.io/goauthentik/server:latest";
-      ports = [
-        "9080:9000"
-        "9444:9443"
-      ];
-      environment = {
-        AUTHENTIK_REDIS__HOST = "authentik-redis";
-        AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
-        AUTHENTIK_POSTGRESQL__USER = "authentik";
-        AUTHENTIK_POSTGRESQL__NAME = "authentik";
-        AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
-        AUTHENTIK_SECRET_KEY = authentik_secret;
-      };
-      volumes = [
-        "authentik-media:/media"
-        "authentik-certs:/certs"
-      ];
-      cmd = [ "server" ];
-      extraOptions = [
-        "--network=authentik-net"
-        "--name=authentik-server"
-      ];
-    };
-
-    # 4. Authentik Worker (Handles background tasks)
-    authentik-worker = {
-      image = "ghcr.io/goauthentik/server:latest";
-      environment = {
-        AUTHENTIK_REDIS__HOST = "authentik-redis";
-        AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
-        AUTHENTIK_POSTGRESQL__USER = "authentik";
-        AUTHENTIK_POSTGRESQL__NAME = "authentik";
-        AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
-        AUTHENTIK_SECRET_KEY = authentik_secret;
-      };
-      volumes = [
-        "/var/run/podman/podman.sock:/var/run/docker.sock"
-        "authentik-media:/media"
-        "authentik-certs:/certs"
-      ];
-      cmd = [ "worker" ];
-      extraOptions = [
-        "--network=authentik-net"
-        "--name=authentik-worker"
-        "--user=root"
-      ];
-    };
-  };
-
-  # Create the internal podman network if it doesn't exist
-  systemd.services.init-authentik-network = {
-    description = "Create the internal network for Authentik";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig.Type = "oneshot";
-    script = ''
-      ${pkgs.podman}/bin/podman network exists authentik-net || \
-      ${pkgs.podman}/bin/podman network create authentik-net
-    '';
-  };
+  # virtualisation.oci-containers.containers = {
+  #   # 1. PostgreSQL Database
+  #   authentik-db = {
+  #     image = "docker.io/library/postgres:16-alpine";
+  #     environment = {
+  #       POSTGRES_PASSWORD = postgres_password;
+  #       POSTGRES_USER = "authentik";
+  #       POSTGRES_DB = "authentik";
+  #     };
+  #     volumes = [ "authentik-db:/var/lib/postgresql/data" ];
+  #     extraOptions = [
+  #       "--network=authentik-net"
+  #       "--name=authentik-db"
+  #     ];
+  #   };
+  #
+  #   # 2. Redis Cache
+  #   authentik-redis = {
+  #     image = "docker.io/library/redis:alpine";
+  #     extraOptions = [
+  #       "--network=authentik-net"
+  #       "--name=authentik-redis"
+  #     ];
+  #   };
+  #
+  #   # 3. Authentik Server
+  #   authentik-server = {
+  #     image = "ghcr.io/goauthentik/server:latest";
+  #     ports = [
+  #       "9080:9000"
+  #       "9444:9443"
+  #     ];
+  #     environment = {
+  #       AUTHENTIK_REDIS__HOST = "authentik-redis";
+  #       AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
+  #       AUTHENTIK_POSTGRESQL__USER = "authentik";
+  #       AUTHENTIK_POSTGRESQL__NAME = "authentik";
+  #       AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
+  #       AUTHENTIK_SECRET_KEY = authentik_secret;
+  #     };
+  #     volumes = [
+  #       "authentik-media:/media"
+  #       "authentik-certs:/certs"
+  #     ];
+  #     cmd = [ "server" ];
+  #     extraOptions = [
+  #       "--network=authentik-net"
+  #       "--name=authentik-server"
+  #     ];
+  #   };
+  #
+  #   # 4. Authentik Worker (Handles background tasks)
+  #   authentik-worker = {
+  #     image = "ghcr.io/goauthentik/server:latest";
+  #     environment = {
+  #       AUTHENTIK_REDIS__HOST = "authentik-redis";
+  #       AUTHENTIK_POSTGRESQL__HOST = "authentik-db";
+  #       AUTHENTIK_POSTGRESQL__USER = "authentik";
+  #       AUTHENTIK_POSTGRESQL__NAME = "authentik";
+  #       AUTHENTIK_POSTGRESQL__PASSWORD = postgres_password;
+  #       AUTHENTIK_SECRET_KEY = authentik_secret;
+  #     };
+  #     volumes = [
+  #       "/var/run/podman/podman.sock:/var/run/docker.sock"
+  #       "authentik-media:/media"
+  #       "authentik-certs:/certs"
+  #     ];
+  #     cmd = [ "worker" ];
+  #     extraOptions = [
+  #       "--network=authentik-net"
+  #       "--name=authentik-worker"
+  #       "--user=root"
+  #     ];
+  #   };
+  # };
+  #
+  # # Create the internal podman network if it doesn't exist
+  # systemd.services.init-authentik-network = {
+  #   description = "Create the internal network for Authentik";
+  #   after = [ "network.target" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig.Type = "oneshot";
+  #   script = ''
+  #     ${pkgs.podman}/bin/podman network exists authentik-net || \
+  #     ${pkgs.podman}/bin/podman network create authentik-net
+  #   '';
+  # };
 
   virtualisation.oci-containers.containers.homeassistant = {
     image = "ghcr.io/home-assistant/home-assistant:stable";
@@ -510,8 +510,22 @@ in
     logseq-supernote-sync
     health-check
     nodejs_25
-    gotop
+    btop
   ];
+
+  # Enable zRam swap
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd"; # High compression ratio, great for C++ devs
+    memoryPercent = 50;  # Use up to 4GB of your 8GB RAM as a compressed swap
+  };
+
+  # Help the kernel decide when to swap
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 100; # With zRam, you WANT the kernel to swap early and often
+    "vm.dirty_ratio" = 10; # Force writes to the SD card to happen in smaller, more frequent bursts
+    "vm.dirty_background_ratio" = 5;
+  };
 
   services.openssh = {
     enable = true;
@@ -634,30 +648,6 @@ in
     };
   };
 
-  services.postgresql = {
-    enable = true;
-    # Ensure the path is exactly what Postgres expects
-    dataDir = "/mnt/logseq-data/postgresql/${config.services.postgresql.package.psqlSchema}";
-    authentication = lib.mkOverride 10 ''
-      local all all trust
-    '';
-  };
-
-  # Override Systemd sandboxing to allow access to /mnt
-  systemd.services.postgresql.serviceConfig = {
-    ProtectHome = lib.mkForce "tmpfs";
-    ReadWritePaths = [ "/mnt/logseq-data/postgresql" ];
-  };
-
-  # Nginx Reverse Proxy (as before)
-  # services.nginx.virtualHosts."git.salh.xyz" = {
-  #   enableACME = true;
-  #   forceSSL = true;
-  #   locations."/" = {
-  #     proxyPass = "http://127.0.0.1:3000";
-  #   };
-  # };
-
   users = {
     mutableUsers = false;
     users."${user}" = {
@@ -670,32 +660,6 @@ in
     };
   };
 
-  programs.bash.interactiveShellInit = ''
-    ${health-check}/bin/sys-health
-  '';
-
-  services.restic.backups.logseq = {
-    paths = [ "/mnt/logseq-data" ];
-    repository = "/home/salhashemi2/logseq_backup";
-    timerConfig = {
-      OnCalendar = "daily";
-      Persistent = true;
-    };
-    passwordFile = "/etc/nixos/restic-password";
-    # Keep 7 daily, 4 weekly, and 6 monthly backups
-    pruneOpts = [
-      "--keep-daily 7"
-      "--keep-weekly 4"
-      "--keep-monthly 6"
-    ];
-
-    # This ensures the init script runs first
-    extraOptions = [ "--network=host" ]; # If you eventually move to cloud backups
-  };
-
-  systemd.services.restic-backups-logseq.after = [ "restic-repo-init.service" ];
-  systemd.services.restic-backups-logseq.requires = [ "restic-repo-init.service" ];
-
   systemd.services.forgejo-secrets = {
     preStart = ''
       mkdir -p /mnt/logseq-data/forgejo/custom/conf
@@ -704,28 +668,6 @@ in
     '';
     # This makes the service wait until the SSD is actually mounted
     unitConfig.RequiresMountsFor = "/mnt/logseq-data";
-  };
-
-  systemd.services.restic-repo-init = {
-    description = "Initialize Restic repository if it doesn't exist";
-    before = [ "restic-backups-logseq.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      if [ ! -f /home/salhashemi2/logseq_backup/config ]; then
-        echo "Repository not found. Initializing..."
-      mkdir -p /home/salhashemi2/logseq_backup
-        # Use the password file defined in your main restic config
-        ${pkgs.restic}/bin/restic init \
-          --repo /home/salhashemi2/logseq_backup \
-          --password-file /etc/nixos/restic-password
-      else
-        echo "Repository already initialized."
-      fi
-    '';
   };
 
   hardware.enableRedistributableFirmware = true;
