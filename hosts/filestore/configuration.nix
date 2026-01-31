@@ -109,6 +109,7 @@ let
   '';
 in
 {
+  time.timeZone = "America/New_York";
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -337,7 +338,6 @@ in
     ports = [ "8123:8123" ];
     extraOptions = [
       "--network=hass-net"
-      "--device=/dev/ttyUSB0:/dev/ttyUSB0" # Optional: For Zigbee/Z-Wave sticks
     ];
   };
 
@@ -639,6 +639,8 @@ in
   #     fi
   #   '';
   # };
+
+  programs.dconf.enable = true;
   hardware.enableRedistributableFirmware = true;
   system.stateVersion = "23.11";
 }
