@@ -30,6 +30,8 @@
             gemini = {
               api = "google-generative-ai";
               apiKey = "YOUR_GEMINI_API_KEY"; # TODO: Use sops or env var
+              baseUrl = "https://generativelanguage.googleapis.com";
+              auth = "api-key";
             };
           };
         };
