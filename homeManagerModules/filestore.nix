@@ -29,7 +29,7 @@
           providers = {
             gemini = {
               api = "google-generative-ai";
-              apiKey = "YOUR_GEMINI_API_KEY"; # TODO: Use sops or env var
+              apiKey = "***REMOVED***";
               baseUrl = "https://generativelanguage.googleapis.com";
               auth = "api-key";
               models = [
