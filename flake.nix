@@ -77,6 +77,21 @@
       overlays = [
         nur.overlays.default
         nix-openclaw.overlays.default
+        (final: prev: {
+          # Ensure this name matches the one in your environment.systemPackages
+          openclaw = prev.openclaw.overrideAttrs (oldAttrs: {
+            postInstall = (oldAttrs.postInstall or "") + ''
+              # Using -p to ensure the full path exists
+              mkdir -p $out/lib/openclaw/docs/reference/templates/
+
+              # Create the missing template file
+              cat <<EOF > $out/lib/openclaw/docs/reference/templates/AGENTS.md
+              # Default Agent Template
+              This is a fallback template created via Nix overlay to fix the 2026.1.8 package bug.
+              EOF
+            '';
+          });
+        })
       ];
       pkgs = import nixpkgs {
         inherit system overlays;
