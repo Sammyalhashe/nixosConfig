@@ -110,9 +110,7 @@ in
     enable = true;
     host = "0.0.0.0";
     loadModels = [
-      "qwen3:8b"
-      "deepseek-coder-v2:16b"
-      "MFDoom/deepseek-coder-v2-tool-calling:16b"
+      "qwen2.5-coder:14b"
     ];
   };
 

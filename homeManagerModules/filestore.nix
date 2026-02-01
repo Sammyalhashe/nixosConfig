@@ -45,16 +45,8 @@
               apiKey = "ollama"; # placeholder
               models = [
                 {
-                  id = "deepseek-coder-v2:16b";
-                  name = "DeepSeek Coder V2 (Ollama)";
-                }
-                {
-                  id = "qwen3:8b";
-                  name = "Qwen 3 (Ollama)";
-                }
-                {
-                  id = "MFDoom/deepseek-coder-v2-tool-calling:16b";
-                  name = "DeepSeek Coder V2 Tool Calling (Ollama)";
+                  id = "qwen2.5-coder:14b";
+                  name = "Qwen 2.5 Coder 14B (Ollama)";
                 }
               ];
             };
