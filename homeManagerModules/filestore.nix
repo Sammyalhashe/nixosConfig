@@ -32,6 +32,12 @@
               apiKey = "YOUR_GEMINI_API_KEY"; # TODO: Use sops or env var
               baseUrl = "https://generativelanguage.googleapis.com";
               auth = "api-key";
+              models = [
+                {
+                  id = "gemini-1.5-pro";
+                  name = "Gemini 1.5 Pro";
+                }
+              ];
             };
           };
         };
