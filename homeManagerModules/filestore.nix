@@ -22,6 +22,14 @@
           mode = lib.mkForce "local";
           auth.token = "temporary-token-123456";
         };
+        models = {
+          providers = {
+            gemini = {
+              api = "google-generative-ai";
+              apiKey = "YOUR_GEMINI_API_KEY"; # TODO: Use sops or env var
+            };
+          };
+        };
       };
     };
   };
