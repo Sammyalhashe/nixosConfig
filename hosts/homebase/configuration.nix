@@ -108,6 +108,7 @@ in
   services.ollama = {
     package = pkgs.ollama-cuda;
     enable = true;
+    host = "0.0.0.0";
     loadModels = [
       "qwen3:8b"
       "deepseek-coder-v2:16b"
@@ -196,6 +197,7 @@ in
   # networking.firewall.enable = false;
   networking.firewall = {
     enable = true;
+    allowedTCPPorts = [ 11434 ];
     allowedTCPPortRanges = [
       {
         from = 1714;

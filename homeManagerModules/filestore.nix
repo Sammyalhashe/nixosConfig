@@ -39,6 +39,21 @@
                 }
               ];
             };
+            ollama = {
+              api = "openai-responses";
+              baseUrl = "http://11.125.37.135:11434/v1";
+              apiKey = "ollama"; # placeholder
+              models = [
+                {
+                  id = "deepseek-coder-v2:16b";
+                  name = "DeepSeek Coder V2 (Ollama)";
+                }
+                {
+                  id = "qwen3:8b";
+                  name = "Qwen 3 (Ollama)";
+                }
+              ];
+            };
           };
         };
       };
