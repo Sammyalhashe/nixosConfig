@@ -7,7 +7,16 @@
     ./zellij.nix
     ./nushell.nix
     ./wsl.nix
+    inputs.nix-openclaw.homeManagerModules.openclaw
   ];
+
+  programs.openclaw = {
+    enable = true;
+    documents = ../.;
+    instances.default = {
+      enable = true;
+    };
+  };
 
   programs.starship.enable = true;
   programs.git = {

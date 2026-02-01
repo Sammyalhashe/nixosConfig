@@ -78,19 +78,15 @@
         nur.overlays.default
         nix-openclaw.overlays.default
         (final: prev: {
-          # Ensure this name matches the one in your environment.systemPackages
-          openclaw = prev.openclaw.overrideAttrs (oldAttrs: {
-            postInstall = (oldAttrs.postInstall or "") + ''
-              # Using -p to ensure the full path exists
-              mkdir -p $out/lib/openclaw/docs/reference/templates/
-
-              # Create the missing template file
-              cat <<EOF > $out/lib/openclaw/docs/reference/templates/AGENTS.md
-              # Default Agent Template
-              This is a fallback template created via Nix overlay to fix the 2026.1.8 package bug.
-              EOF
+          openclaw-gateway = prev.openclaw-gateway.overrideAttrs (old: {
+            installPhase = ''
+              ${old.installPhase}
+              cp -r docs $out/lib/openclaw/
             '';
           });
+          openclaw = prev.openclaw.override {
+            openclaw-gateway = final.openclaw-gateway;
+          };
         })
       ];
       pkgs = import nixpkgs {
