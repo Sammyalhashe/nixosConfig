@@ -19,7 +19,7 @@
       config = {
         agents.defaults = {
           skipBootstrap = true;
-          model.primary = "gemini/gemini-1.5-pro";
+          model.primary = "ollama/qwen2.5-coder:14b";
         };
         gateway = {
           mode = lib.mkForce "local";
