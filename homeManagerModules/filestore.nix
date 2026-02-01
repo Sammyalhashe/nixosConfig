@@ -16,6 +16,9 @@
     documents = ../.;
     instances.default = {
       enable = true;
+      config = {
+        agents.defaults.skipBootstrap = true;
+      };
     };
   };
 
