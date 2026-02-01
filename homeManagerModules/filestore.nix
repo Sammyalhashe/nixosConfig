@@ -18,6 +18,7 @@
       enable = true;
       config = {
         agents.defaults.skipBootstrap = true;
+        gateway.mode = "local";
       };
     };
   };
