@@ -17,7 +17,10 @@
     instances.default = {
       enable = true;
       config = {
-        agents.defaults.skipBootstrap = true;
+        agents.defaults = {
+          skipBootstrap = true;
+          model.primary = "gemini/gemini-1.5-pro";
+        };
         gateway = {
           mode = lib.mkForce "local";
           auth.token = "temporary-token-123456";
