@@ -18,7 +18,10 @@
       enable = true;
       config = {
         agents.defaults.skipBootstrap = true;
-        gateway.mode = lib.mkForce "local";
+        gateway = {
+          mode = lib.mkForce "local";
+          auth.token = "temporary-token-123456";
+        };
       };
     };
   };
