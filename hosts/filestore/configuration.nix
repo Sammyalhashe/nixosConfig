@@ -363,22 +363,6 @@ in
     '';
   };
 
-  systemd.user.services.openclaw-gateway = {
-    description = "OpenClaw Gateway";
-    wantedBy = [ "default.target" ];
-    serviceConfig = {
-      # Environment variables go inside serviceConfig
-      Environment = [
-        "HOST=0.0.0.0"
-        "PORT=18789"
-        "OPENCLAW_ASSETS_PATH=/home/salhashemi2/.openclaw/assets"
-      ];
-      # Ensure it restarts if it crashes
-      Restart = "always";
-      RestartSec = "5s";
-    };
-  };
-
   networking.firewall.allowedTCPPorts = [
     9443
     9000
