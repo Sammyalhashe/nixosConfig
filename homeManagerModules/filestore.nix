@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   ...
 }:
 {
@@ -17,6 +18,9 @@
       enable = true;
     };
   };
+
+  # Disable the document guard to allow overwriting existing files
+  home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
   programs.starship.enable = true;
   programs.git = {
