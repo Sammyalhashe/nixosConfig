@@ -112,6 +112,7 @@ in
     loadModels = [
       "qwen3:8b"
       "deepseek-coder-v2:16b"
+      "MFDoom/deepseek-coder-v2-tool-calling:16b"
     ];
   };
 

@@ -52,6 +52,10 @@
                   id = "qwen3:8b";
                   name = "Qwen 3 (Ollama)";
                 }
+                {
+                  id = "MFDoom/deepseek-coder-v2-tool-calling:16b";
+                  name = "DeepSeek Coder V2 Tool Calling (Ollama)";
+                }
               ];
             };
           };
