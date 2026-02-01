@@ -30,6 +30,9 @@
     ''
   );
 
+  # Disable openclawConfigFiles as it uses /bin/ln and seems redundant with home.file
+  home.activation.openclawConfigFiles = lib.mkForce (lib.hm.dag.entryAfter [ "openclawDirs" ] "");
+
   programs.starship.enable = true;
   programs.git = {
     enable = true;
