@@ -34,6 +34,19 @@
       sonoscli.enable = false; # Sonos control
       imsg.enable = false; # iMessage
     };
+    # NOTE: This is the 'proper' declarative way to add skills. 
+    # It is currently commented out because it often collides with existing directories
+    # or fails to create them during first-time activation. We use manual home.file 
+    # links (at the bottom of this file) to guarantee reliability on this server.
+    #
+    # skills = [
+    #   { name = "coding-agent"; mode = "copy"; source = inputs.plugin-coding; }
+    #   { name = "git-essentials"; mode = "copy"; source = inputs.plugin-git; }
+    #   { name = "docker-essentials"; mode = "copy"; source = inputs.plugin-docker; }
+    #   { name = "system-monitor"; mode = "copy"; source = inputs.plugin-system; }
+    #   { name = "filesystem"; mode = "copy"; source = inputs.plugin-filesystem; }
+    #   { name = "process-watch"; mode = "copy"; source = inputs.plugin-process; }
+    # ];
     skills = [ ];
     documents = ../openclaw;
     config = {
