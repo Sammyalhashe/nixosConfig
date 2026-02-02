@@ -147,6 +147,15 @@
   # Disable the document guard to allow overwriting existing files
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
+  # Inject system and user profile paths into the OpenClaw gateway service
+  systemd.user.services.openclaw-gateway.Service.Environment = lib.mkForce [
+    "HOME=/home/salhashemi2"
+    "OPENCLAW_CONFIG_PATH=/home/salhashemi2/.openclaw/openclaw.json"
+    "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
+    "OPENCLAW_NIX_MODE=1"
+    "PATH=${lib.makeBinPath [ pkgs.python3 pkgs.nix pkgs.podman pkgs.coreutils pkgs.bash ]}:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
+  ];
+
   programs.starship.enable = true;
   programs.git = {
     enable = true;
