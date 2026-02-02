@@ -34,14 +34,8 @@
       sonoscli.enable = false; # Sonos control
       imsg.enable = false; # iMessage
     };
-    skills = [
-      {
-        name = "coding-agent";
-        mode = "copy";
-        source = "${inputs.plugin-coding}";
-      }
-    ];
-    documents = ../.;
+    skills = [ ];
+    documents = ../openclaw;
     config = {
       channels.telegram = {
         tokenFile = "/run/agenix/telegram-bot-token";
@@ -66,7 +60,7 @@
       config = {
         agents.defaults = {
           skipBootstrap = true;
-          model.primary = "google/gemini-3.0-pro";
+          model.primary = "google/gemini-3-pro-preview";
           # model.primary = "ollama/qwen2.5-coder:14b";
         };
         gateway = {
@@ -82,8 +76,12 @@
               auth = "api-key";
               models = [
                 {
-                  id = "gemini-3.0-pro";
-                  name = "Gemini 3.0 Pro";
+                  id = "gemini-3-pro-preview";
+                  name = "Gemini 3.0 Pro (Preview)";
+                }
+                {
+                  id = "gemini-2.5-pro";
+                  name = "Gemini 2.5 Pro";
                 }
               ];
             };
@@ -102,6 +100,34 @@
           };
         };
       };
+    };
+  };
+
+  # Manually link skills since the module's declarative skills feature is not working as expected
+  home.file = {
+    ".openclaw/workspace/skills/coding-agent" = {
+      source = inputs.plugin-coding;
+      recursive = true;
+    };
+    ".openclaw/workspace/skills/git-essentials" = {
+      source = inputs.plugin-git;
+      recursive = true;
+    };
+    ".openclaw/workspace/skills/docker-essentials" = {
+      source = inputs.plugin-docker;
+      recursive = true;
+    };
+    ".openclaw/workspace/skills/system-monitor" = {
+      source = inputs.plugin-system;
+      recursive = true;
+    };
+    ".openclaw/workspace/skills/filesystem" = {
+      source = inputs.plugin-filesystem;
+      recursive = true;
+    };
+    ".openclaw/workspace/skills/process-watch" = {
+      source = inputs.plugin-process;
+      recursive = true;
     };
   };
 

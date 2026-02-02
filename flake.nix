@@ -54,6 +54,26 @@
       url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
       flake = false;
     };
+    plugin-git = {
+      url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials";
+      flake = false;
+    };
+    plugin-docker = {
+      url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials";
+      flake = false;
+    };
+    plugin-system = {
+      url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor";
+      flake = false;
+    };
+    plugin-filesystem = {
+      url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem";
+      flake = false;
+    };
+    plugin-process = {
+      url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
+      flake = false;
+    };
   };
 
   outputs =
@@ -75,6 +95,11 @@
       nixos-hardware,
       nix-openclaw,
       plugin-coding,
+      plugin-git,
+      plugin-docker,
+      plugin-system,
+      plugin-filesystem,
+      plugin-process,
       ...
     }@inputs:
     let

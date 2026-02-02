@@ -1457,6 +1457,96 @@
         "type": "github"
       }
     },
+    "plugin-docker": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/arnarsson/docker-essentials",
+        "lastModified": 1770065847,
+        "narHash": "sha256-ZwwqgpjiEz5VGe83wStJxOIz3oRfOjfSS9v9dGGEUbU=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "9c03cae52a8b61c862c031f7df86a1fe4cf1cd4f",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/arnarsson/docker-essentials",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
+    "plugin-filesystem": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/gtrusler/clawdbot-filesystem",
+        "lastModified": 1770065847,
+        "narHash": "sha256-ZwwqgpjiEz5VGe83wStJxOIz3oRfOjfSS9v9dGGEUbU=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "9c03cae52a8b61c862c031f7df86a1fe4cf1cd4f",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/gtrusler/clawdbot-filesystem",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
+    "plugin-git": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/arnarsson/git-essentials",
+        "lastModified": 1770065847,
+        "narHash": "sha256-ZwwqgpjiEz5VGe83wStJxOIz3oRfOjfSS9v9dGGEUbU=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "9c03cae52a8b61c862c031f7df86a1fe4cf1cd4f",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/arnarsson/git-essentials",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
+    "plugin-process": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/dbhurley/process-watch",
+        "lastModified": 1770065847,
+        "narHash": "sha256-ZwwqgpjiEz5VGe83wStJxOIz3oRfOjfSS9v9dGGEUbU=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "9c03cae52a8b61c862c031f7df86a1fe4cf1cd4f",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/dbhurley/process-watch",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
+    "plugin-system": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/zerofire03/system-monitor",
+        "lastModified": 1770065847,
+        "narHash": "sha256-ZwwqgpjiEz5VGe83wStJxOIz3oRfOjfSS9v9dGGEUbU=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "9c03cae52a8b61c862c031f7df86a1fe4cf1cd4f",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/zerofire03/system-monitor",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -1516,6 +1606,11 @@
         "nur": "nur",
         "omarchy-nix": "omarchy-nix",
         "plugin-coding": "plugin-coding",
+        "plugin-docker": "plugin-docker",
+        "plugin-filesystem": "plugin-filesystem",
+        "plugin-git": "plugin-git",
+        "plugin-process": "plugin-process",
+        "plugin-system": "plugin-system",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "treefmt-nix": "treefmt-nix",

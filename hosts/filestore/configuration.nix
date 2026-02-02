@@ -421,7 +421,6 @@ in
     health-check
     nodejs_25
     btop
-    pkgs.openclaw
     gemini-cli
     python3
   ];
