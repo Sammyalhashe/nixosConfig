@@ -50,6 +50,10 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plugin-coding = {
+      url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
+      flake = false;
+    };
   };
 
   outputs =
@@ -70,6 +74,7 @@
       sops-nix,
       nixos-hardware,
       nix-openclaw,
+      plugin-coding,
       ...
     }@inputs:
     let

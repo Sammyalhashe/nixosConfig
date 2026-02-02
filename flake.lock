@@ -1439,6 +1439,24 @@
         "type": "github"
       }
     },
+    "plugin-coding": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/steipete/coding-agent",
+        "lastModified": 1770044757,
+        "narHash": "sha256-NPH4ETIKC/69Yjsd5h07CqVVlsakinDkJaqrrbVOIBA=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "b9f9ed8f6dbf4dc1c9bb22111fd3a9dcf85cca08",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/steipete/coding-agent",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -1497,6 +1515,7 @@
         "nixvim": "nixvim",
         "nur": "nur",
         "omarchy-nix": "omarchy-nix",
+        "plugin-coding": "plugin-coding",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "treefmt-nix": "treefmt-nix",

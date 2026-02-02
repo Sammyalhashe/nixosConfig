@@ -1,3 +1,4 @@
 # TOOLS.md
 
-This file is managed by Nix. A plugin report is appended below.
+# Available system tools
+- 'nix': Provides the 'nix' CLI for inspecting abd building flakes as well as sgore paths

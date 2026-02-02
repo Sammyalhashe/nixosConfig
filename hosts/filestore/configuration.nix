@@ -150,7 +150,6 @@ in
     {
       enable = true;
       base16Scheme = theme.base16Scheme;
-      image = theme.image;
       polarity = theme.polarity;
       fonts = theme.fonts;
 
@@ -423,6 +422,8 @@ in
     nodejs_25
     btop
     pkgs.openclaw
+    gemini-cli
+    python3
   ];
 
   # Enable zRam swap

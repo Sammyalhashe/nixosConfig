@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -11,15 +12,62 @@
     inputs.nix-openclaw.homeManagerModules.openclaw
   ];
 
+  home.packages = with pkgs; [
+    btop
+    podman
+    ripgrep
+    fzf
+    jq
+    python3
+  ];
+
   programs.openclaw = {
     enable = true;
+    firstParty = {
+      summarize.enable = true; # Summarize web pages, PDFs, videos
+      peekaboo.enable = false; # Take screenshots
+      poltergeist.enable = false; # Control your macOS UI
+      sag.enable = false; # Text-to-speech
+      camsnap.enable = false; # Camera snapshots
+      gogcli.enable = false; # Google Calendar
+      bird.enable = false; # Twitter/X
+      sonoscli.enable = false; # Sonos control
+      imsg.enable = false; # iMessage
+    };
+    skills = [
+      {
+        name = "coding-agent";
+        mode = "copy";
+        source = "${inputs.plugin-coding}";
+      }
+    ];
     documents = ../.;
+    config = {
+      channels.telegram = {
+        tokenFile = "/run/agenix/telegram-bot-token";
+        allowFrom = [
+          8555669756
+        ];
+        groups = {
+          "*" = {
+            requireMention = true;
+          };
+          "-1001234567890" = {
+            requireMention = false;
+          }; # couples group
+          "-1002345678901" = {
+            requireMention = true;
+          }; # noisy group
+        };
+      };
+    };
     instances.default = {
       enable = true;
       config = {
         agents.defaults = {
           skipBootstrap = true;
-          model.primary = "ollama/qwen2.5-coder:14b";
+          model.primary = "google/gemini-3.0-pro";
+          # model.primary = "ollama/qwen2.5-coder:14b";
         };
         gateway = {
           mode = lib.mkForce "local";
@@ -27,26 +75,27 @@
         };
         models = {
           providers = {
-            gemini = {
+            google = {
               api = "google-generative-ai";
               apiKey = "***REMOVED***";
-              baseUrl = "https://generativelanguage.googleapis.com";
+              baseUrl = "https://generativelanguage.googleapis.com/v1beta";
               auth = "api-key";
               models = [
                 {
-                  id = "gemini-1.5-pro";
-                  name = "Gemini 1.5 Pro";
+                  id = "gemini-3.0-pro";
+                  name = "Gemini 3.0 Pro";
                 }
               ];
             };
             ollama = {
               api = "openai-responses";
               baseUrl = "http://11.125.37.135:11434/v1";
-              apiKey = "ollama"; # placeholder
+              # Required but ignored by Ollama
+              apiKey = "ollama";
               models = [
                 {
-                  id = "qwen2.5-coder:14b";
-                  name = "Qwen 2.5 Coder 14B (Ollama)";
+                  id = "qwen2.5-coder:14b"; # Matches your 'ollama list' exactly
+                  name = "Qwen 2.5 Coder 14B";
                 }
               ];
             };
