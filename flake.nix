@@ -394,6 +394,27 @@
 
             # Home manager scripts
             (mkScript "switch-home-work" "home-manager switch --flake .#work")
+            (mkScript "push-work" ''
+              if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+              fi
+
+              if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                exit 1
+              fi
+
+              echo "Building work home configuration..."
+              OUT_PATH=$(nix build .#homeConfigurations.work.activationPackage --json | jq -r '.[].outputs.out')
+
+              if [ -z "''${OUT_PATH}" ]; then
+                echo "Error: Build failed or produced no output."
+                exit 1
+              fi
+
+              echo "Pushing ''${OUT_PATH} to cachix..."
+              cachix push starllama "''${OUT_PATH}"
+            '')
           ];
         in
         pkgs.mkShell {
@@ -403,6 +424,8 @@
             pkgs.sops
             pkgs.age
             pkgs.ssh-to-age
+            pkgs.cachix
+            pkgs.jq
           ]
           ++ scripts;
 
@@ -411,6 +434,7 @@
             echo "Available commands:"
             echo "  check         - Run nix flake check"
             echo "  fmt           - Run nix fmt"
+            echo "  push-work     - Build work home config and push to cachix"
             echo "  switch-<host> - Switch NixOS configuration"
             echo "  test-<host>   - Test NixOS configuration"
             echo ""
