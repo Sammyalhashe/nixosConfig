@@ -34,9 +34,9 @@
       sonoscli.enable = false; # Sonos control
       imsg.enable = false; # iMessage
     };
-    # NOTE: This is the 'proper' declarative way to add skills. 
+    # NOTE: This is the 'proper' declarative way to add skills.
     # It is currently commented out because it often collides with existing directories
-    # or fails to create them during first-time activation. We use manual home.file 
+    # or fails to create them during first-time activation. We use manual home.file
     # links (at the bottom of this file) to guarantee reliability on this server.
     #
     # skills = [
@@ -153,7 +153,15 @@
     "OPENCLAW_CONFIG_PATH=/home/salhashemi2/.openclaw/openclaw.json"
     "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
     "OPENCLAW_NIX_MODE=1"
-    "PATH=${lib.makeBinPath [ pkgs.python3 pkgs.nix pkgs.podman pkgs.coreutils pkgs.bash ]}:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
+    "PATH=${
+      lib.makeBinPath [
+        pkgs.python3
+        pkgs.nix
+        pkgs.podman
+        pkgs.coreutils
+        pkgs.bash
+      ]
+    }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
   ];
 
   programs.starship.enable = true;

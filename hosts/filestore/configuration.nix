@@ -8,14 +8,8 @@
 
 let
   user = "salhashemi2";
-  password = "***REMOVED***";
-  SSID = "***REMOVED***";
-  SSIDpassword = "***REMOVED***";
   interface = "wlan0";
   hostname = "filestore";
-  # You should move these to an environmentFile for production!
-  # authentik_secret = "***REMOVED***==";
-  postgres_password = "***REMOVED***";
 
   health-check = pkgs.writeShellScriptBin "sys-health" ''
     echo "--- Systemd Service Health ---"
@@ -40,7 +34,7 @@ let
     # Check Podman/Docker pods if they exist
     if command -v podman &> /dev/null; then
       echo -e "\n--- Container/Pod Health ---"
-      podman ps --format "{{.Names}}: {{.Status}}" | sed 's/^/📦 /'
+      podman ps --format \"{{.Names}}: {{.Status}}\" | sed 's/^/📦 /'
     fi
 
     echo -e "\n--- Storage Health ---"
@@ -134,7 +128,14 @@ in
   imports = [
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
+    inputs.sops-nix.nixosModules.sops
   ];
+
+  sops.secrets.filestore_user_password = { };
+  sops.secrets.filestore_password_hash = { };
+  sops.secrets.filestore_wifi_ssid = { };
+  sops.secrets.filestore_wifi_env = { };
+  sops.secrets.filestore_container_env = { };
 
   documentation.enable = false;
   documentation.man.enable = false;
@@ -190,7 +191,8 @@ in
     hostName = hostname;
     wireless = {
       enable = true;
-      networks."${SSID}".psk = SSIDpassword;
+      secretsFile = config.sops.secrets.filestore_wifi_env.path;
+      networks."***REMOVED***".pskRaw = "ext:WIFI_PSK";
       interfaces = [ interface ];
     };
     # Static IP on wlan0
@@ -271,17 +273,15 @@ in
           SSO_ENABLED = "true";
           SSO_AUTHORITY = "https://auth.salh.xyz/application/o/vaultwarden/";
           SSO_CLIENT_ID = "UajP2X0awwcJmWUVs8eTtWofWir4Ks3GNFgzam4X";
-          SSO_CLIENT_SECRET = "***REMOVED***";
           SSO_SCOPES = "openid profile email offline_access vaultwarden";
           SSO_PKCE = "true";
           SSO_ROLES_ENABLED = "true";
           SSO_ROLES_DEFAULT_TO_USER = "true";
 
-          ADMIN_TOKEN = "***REMOVED***";
-
           # Optional: allow new users to sign up via SSO even if SIGNUPS_ALLOWED is false
           SSO_SIGNUPS_MATCH_EMAIL = "true";
         };
+        environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       };
     };
   };
@@ -300,15 +300,13 @@ in
         POSTGRES_HOST = "nextcloud-db";
         POSTGRES_DB = "nextcloud";
         POSTGRES_USER = "nextcloud";
-        POSTGRES_PASSWORD = postgres_password; # Using your existing variable
         NEXTCLOUD_ADMIN_USER = "salhashemi2";
-        NEXTCLOUD_ADMIN_PASSWORD = "***REMOVED***"; # Set this once
         NEXTCLOUD_TRUSTED_DOMAINS = "cloud.salh.xyz";
         OVERWRITEPROTOCOL = "https";
         OVERWRITEHOST = "cloud.salh.xyz";
         TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
-
       };
+      environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
 
@@ -318,8 +316,8 @@ in
       environment = {
         POSTGRES_DB = "nextcloud";
         POSTGRES_USER = "nextcloud";
-        POSTGRES_PASSWORD = postgres_password;
       };
+      environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
@@ -425,6 +423,10 @@ in
     python3
   ];
 
+  environment.variables = {
+    COINBASE_API_KEY_Clawdbot = config.sops.secrets.coinbase_api_key_clawdbot.path;
+  };
+
   # Enable zRam swap
   zramSwap = {
     enable = true;
@@ -525,7 +527,7 @@ in
     settings = {
       gui = {
         user = "salhashemi2";
-        password = "***REMOVED***"; # Set your own password
+        password = "***REMOVED***";
       };
 
       # Folders to sync
@@ -574,19 +576,18 @@ in
     ReadWritePaths = [ "/postgresql" ];
   };
 
-  users = {
-    mutableUsers = false;
-    users."${user}" = {
-      isNormalUser = true;
-      password = password;
-      extraGroups = [
-        "wheel"
-        "podman"
-      ];
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUptk+nhbHYTfUJvGT3/X4vkKWRotT5ckw8BiQuADml sammy@salh.xyz"
-      ];
-    };
+  users.mutableUsers = false;
+  security.sudo.wheelNeedsPassword = false;
+  users.users."${user}" = {
+    isNormalUser = true;
+    hashedPasswordFile = config.sops.secrets.filestore_password_hash.path;
+    extraGroups = [
+      "wheel"
+      "podman"
+    ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUptk+nhbHYTfUJvGT3/X4vkKWRotT5ckw8BiQuADml sammy@salh.xyz"
+    ];
   };
 
   programs.bash.interactiveShellInit = ''
@@ -622,29 +623,6 @@ in
       chmod -R 750 /forgejo
     '';
   };
-
-  # systemd.services.restic-repo-init = {
-  #   description = "Initialize Restic repository if it doesn't exist";
-  #   before = [ "restic-backups-logseq.service" ];
-  #   wantedBy = [ "multi-user.target" ];
-  #   serviceConfig = {
-  #     Type = "oneshot";
-  #     RemainAfterExit = true;
-  #   };
-  #   script = ''
-  #     if [ ! -f /home/salhashemi2/logseq_backup/config ]; then
-  #       echo "Repository not found. Initializing..."
-  #       mkdir -p /home/salhashemi2/logseq_backup
-  #       # Use the password file defined in your main restic config
-  #       ${pkgs.restic}/bin/restic init \
-  #         --repo /home/salhashemi2/logseq_backup \
-  #         --password-file /etc/nixos/restic-password
-  #     else
-  #       echo "Repository already initialized."
-  #     fi
-  #   '';
-  # };
-
   programs.dconf.enable = true;
   hardware.enableRedistributableFirmware = true;
   system.stateVersion = "23.11";
