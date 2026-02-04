@@ -49,7 +49,24 @@ let
     ps: with ps; [
       pillow
       setuptools
-      # We will install pysn-digest via the shell script since it's not in nixpkgs
+      # aiofiles
+      # aiohttp
+      # beautifulsoup4
+      # numpy
+      # opencv4
+      # pandas
+      # pdf2image
+      # pymupdf
+      # pystray
+      # pytz
+      # pyyaml
+      # requests
+      # svglib
+      # tqdm
+      # reportlab
+      # openai
+      # google-generativeai
+      # anthropic
     ]
   );
 
@@ -134,7 +151,9 @@ in
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = { };
   sops.secrets.filestore_wifi_ssid = { };
-  sops.secrets.filestore_wifi_env = { };
+  sops.secrets.filestore_wifi_env = {
+    owner = "wpa_supplicant";
+  };
   sops.secrets.filestore_container_env = { };
 
   documentation.enable = false;
@@ -191,8 +210,7 @@ in
     hostName = hostname;
     wireless = {
       enable = true;
-      secretsFile = config.sops.secrets.filestore_wifi_env.path;
-      networks."***REMOVED***".psk = "ext:WIFI_PSK";
+      networks."***REMOVED***".psk = "***REMOVED***";
       interfaces = [ interface ];
     };
     # Static IP on wlan0
@@ -425,7 +443,8 @@ in
   ];
 
   environment.variables = {
-    COINBASE_API_KEY_Clawdbot = config.sops.secrets.coinbase_api_key_clawdbot.path;
+    COINBASE_API_KEY_Clawdbot = "/var/lib/private/coinbase_clawdbot2/api_key_id";
+    COINBASE_API_SECRET_Clawdbot = "/var/lib/private/coinbase_clawdbot2/api_secret";
   };
 
   # Enable zRam swap
@@ -466,16 +485,28 @@ in
         # 1. Run our embedded python extractor
         ${extractTodos}/bin/extract-logseq-todos
 
-        # 2. Setup a temporary environment for pysn-digest
-        # We do this because pysn-digest is not in Nixpkgs yet
-        TEMP_VENV="/tmp/pysn_venv"
-        if [ ! -d "$TEMP_VENV" ]; then
-          python -m venv "$TEMP_VENV"
-          "$TEMP_VENV/bin/pip" install git+https://gitlab.com/mmujynya/pysn-digest.git
+        # 2. Clone/Update the repo
+        REPO_DIR="/tmp/pysn_digest_repo"
+        if [ ! -d "$REPO_DIR" ]; then
+             ${pkgs.git}/bin/git clone https://gitlab.com/mmujynya/pysn-digest.git "$REPO_DIR"
+        else
+             cd "$REPO_DIR" && ${pkgs.git}/bin/git pull
         fi
 
-        # 3. Generate the PDF onto the SSD
-        "$TEMP_VENV/bin/pysn-digest" \
+        # 3. Setup a temporary environment for pysn-digest
+        # We rely on nix-provided packages in pysnEnv, but create a venv to allow
+        # pip to install any missing minor deps or to satisfy the script's expectations
+        # if it tries to self-manage. However, with --system-site-packages we can use nix libs.
+        TEMP_VENV="/tmp/pysn_venv"
+        if [ ! -d "$TEMP_VENV" ]; then
+          python -m venv --system-site-packages "$TEMP_VENV"
+          # Install remaining requirements (ignoring those already in system site-packages)
+          "$TEMP_VENV/bin/pip" install -r "$REPO_DIR/requirements_pysn.txt"
+        fi
+
+        # 4. Generate the PDF onto the SSD
+        cd "$REPO_DIR"
+        "$TEMP_VENV/bin/python" digest.py \
           --input /tmp/daily_focus.md \
           --output /SupernoteSync/Digests/Daily_Focus.pdf
       '';

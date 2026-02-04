@@ -73,8 +73,10 @@
       config = {
         agents.defaults = {
           skipBootstrap = true;
-          model.primary = "google/gemini-3-pro-preview";
-          # model.primary = "ollama/qwen2.5-coder:14b";
+          model = {
+            primary = "google/gemini-3-pro-preview";
+            fallbacks = [ "ollama/qwen2.5-coder:14b" ];
+          };
         };
         gateway = {
           mode = lib.mkForce "local";
