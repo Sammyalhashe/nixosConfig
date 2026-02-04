@@ -49,25 +49,6 @@
     # ];
     skills = [ ];
     documents = ../openclaw;
-    config = {
-      channels.telegram = {
-        tokenFile = "/run/agenix/telegram-bot-token";
-        allowFrom = [
-          8555669756
-        ];
-        groups = {
-          "*" = {
-            requireMention = true;
-          };
-          "-1001234567890" = {
-            requireMention = false;
-          }; # couples group
-          "-1002345678901" = {
-            requireMention = true;
-          }; # noisy group
-        };
-      };
-    };
     instances.default = {
       enable = true;
       config = {
@@ -85,6 +66,24 @@
         gateway = {
           mode = lib.mkForce "local";
           auth.token = "temporary-token-123456";
+        };
+        channels.telegram = {
+          enabled = true;
+          tokenFile = "/run/secrets/telegram_bot_token";
+          allowFrom = [
+            8555669756
+          ];
+          groups = {
+            "*" = {
+              requireMention = true;
+            };
+            "-1001234567890" = {
+              requireMention = false;
+            }; # couples group
+            "-1002345678901" = {
+              requireMention = true;
+            }; # noisy group
+          };
         };
         models = {
           providers = {

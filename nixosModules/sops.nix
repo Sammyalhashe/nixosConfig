@@ -25,6 +25,8 @@
   sops.secrets.vaultwarden_admin_token = { };
   sops.secrets.nextcloud_admin_password = { };
   sops.secrets.syncthing_gui_password = { };
-  sops.secrets.telegram_bot_token = { };
+  sops.secrets.telegram_bot_token = {
+    owner = "salhashemi2";
+  };
   sops.secrets.coinbase_api_key_clawdbot = { };
 }
