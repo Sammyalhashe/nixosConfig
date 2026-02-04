@@ -59,7 +59,7 @@
             fallbacks = [
               "google/gemini-2.5-pro"
               "ollama/qwen2.5-coder:7b"
-              "ollama/qwen2.5-coder:14b"
+              "ollama/llama3.1:8b"
             ];
           };
         };
@@ -114,8 +114,8 @@
                   name = "Qwen 2.5 Coder 7B";
                 }
                 {
-                  id = "qwen2.5-coder:14b"; # Matches your 'ollama list' exactly
-                  name = "Qwen 2.5 Coder 14B";
+                  id = "llama3.1:8b";
+                  name = "Llama 3.1 8B";
                 }
               ];
             };
