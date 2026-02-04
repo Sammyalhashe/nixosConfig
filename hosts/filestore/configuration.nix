@@ -399,8 +399,10 @@ in
     iptables -t filter -I INPUT 1 -p tcp --dport 443 -j ACCEPT
     iptables -t filter -I INPUT 2 -p tcp --dport 80 -j ACCEPT
     iptables -t filter -I INPUT 3 -p tcp --dport 81 -j ACCEPT
-    # Block outgoing SSH to prevent lateral movement
-    iptables -t filter -I OUTPUT 1 -p tcp --dport 22 -j REJECT
+    # Allow outgoing SSH to GitHub
+    iptables -t filter -I OUTPUT 1 -p tcp --dport 22 -d 140.82.112.0/20 -j ACCEPT
+    # Block all other outgoing SSH to prevent lateral movement
+    iptables -t filter -I OUTPUT 2 -p tcp --dport 22 -j REJECT
   '';
 
   systemd.tmpfiles.rules = [
