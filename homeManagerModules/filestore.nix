@@ -77,6 +77,7 @@
             primary = "google/gemini-3-pro-preview";
             fallbacks = [
               "google/gemini-2.5-pro"
+              "ollama/qwen2.5-coder:7b"
               "ollama/qwen2.5-coder:14b"
             ];
           };
@@ -109,6 +110,10 @@
               # Required but ignored by Ollama
               apiKey = "ollama";
               models = [
+                {
+                  id = "qwen2.5-coder:7b";
+                  name = "Qwen 2.5 Coder 7B";
+                }
                 {
                   id = "qwen2.5-coder:14b"; # Matches your 'ollama list' exactly
                   name = "Qwen 2.5 Coder 14B";
