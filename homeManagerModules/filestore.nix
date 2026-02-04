@@ -75,7 +75,10 @@
           skipBootstrap = true;
           model = {
             primary = "google/gemini-3-pro-preview";
-            fallbacks = [ "ollama/qwen2.5-coder:14b" ];
+            fallbacks = [
+              "google/gemini-2.5-pro"
+              "ollama/qwen2.5-coder:14b"
+            ];
           };
         };
         gateway = {
