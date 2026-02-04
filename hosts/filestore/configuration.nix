@@ -192,7 +192,7 @@ in
     wireless = {
       enable = true;
       secretsFile = config.sops.secrets.filestore_wifi_env.path;
-      networks."***REMOVED***".pskRaw = "ext:WIFI_PSK";
+      networks."***REMOVED***".psk = "ext:WIFI_PSK";
       interfaces = [ interface ];
     };
     # Static IP on wlan0
@@ -371,6 +371,7 @@ in
     3000
     22000
     18789
+    22
   ];
   networking.firewall.allowedUDPPorts = [
     22000
@@ -451,6 +452,7 @@ in
 
   systemd.services.supernote-digest = {
     description = "Generate Daily Task Digest for Supernote";
+    path = [ pkgs.git ];
     after = [
       "network.target"
     ];
