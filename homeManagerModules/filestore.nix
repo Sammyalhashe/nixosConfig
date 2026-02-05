@@ -117,6 +117,7 @@
                 {
                   id = "deepseek-r1:7b";
                   name = "DeepSeek R1 7B";
+                  reasoning = true;
                 }
                 {
                   id = "qwen2.5-coder:7b";
