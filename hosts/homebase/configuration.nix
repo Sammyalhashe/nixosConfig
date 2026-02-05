@@ -113,6 +113,7 @@ in
       "qwen2.5-coder:7b"
       "llama3.1:8b"
       "deepseek-r1:7b"
+      "qwen2.5:7b"
     ];
   };
 
