@@ -55,13 +55,13 @@
         agents.defaults = {
           skipBootstrap = true;
           model = {
-            primary = "ollama/MFDoom/deepseek-r1-tool-calling:8b";
+            primary = "ollama/qwen2.5:7b";
             fallbacks = [
-              "ollama/qwen2.5:7b"
               "google/gemini-3-pro-preview"
               "google/gemini-2.5-pro"
               "ollama/qwen2.5-coder:7b"
               "ollama/llama3.1:8b"
+              "ollama/MFDoom/deepseek-r1-tool-calling:8b"
             ];
           };
         };
