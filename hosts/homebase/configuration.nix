@@ -114,6 +114,7 @@ in
       "llama3.1:8b"
       "deepseek-r1:7b"
       "qwen2.5:7b"
+      "MFDoom/deepseek-r1-tool-calling:8b"
     ];
   };
 

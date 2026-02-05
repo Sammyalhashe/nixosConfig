@@ -55,8 +55,9 @@
         agents.defaults = {
           skipBootstrap = true;
           model = {
-            primary = "ollama/qwen2.5:7b";
+            primary = "ollama/MFDoom/deepseek-r1-tool-calling:8b";
             fallbacks = [
+              "ollama/qwen2.5:7b"
               "google/gemini-3-pro-preview"
               "google/gemini-2.5-pro"
               "ollama/qwen2.5-coder:7b"
@@ -114,6 +115,11 @@
               # Required but ignored by Ollama
               apiKey = "ollama";
               models = [
+                {
+                  id = "MFDoom/deepseek-r1-tool-calling:8b";
+                  name = "DeepSeek R1 Tools (Doom)";
+                  reasoning = true;
+                }
                 {
                   id = "qwen2.5:7b";
                   name = "Qwen 2.5 7B";
