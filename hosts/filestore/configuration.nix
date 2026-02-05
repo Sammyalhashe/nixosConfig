@@ -548,6 +548,26 @@ in
     wantedBy = [ "timers.target" ];
   };
 
+  # Trading Bot Service (Replaces OpenClaw-based cron)
+  systemd.services.coinbase-trader = {
+    description = "Run Coinbase Trading Bot";
+    path = [ pkgs.nix pkgs.git ]; # Ensure nix and git are in path for flake operations
+    serviceConfig = {
+      Type = "oneshot";
+      User = "salhashemi2";
+      ExecStart = "${pkgs.nix}/bin/nix run /home/salhashemi2/trading-bot-flake";
+    };
+  };
+
+  systemd.timers.coinbase-trader = {
+    description = "Run Coinbase Trading Bot every 5 minutes";
+    timerConfig = {
+      OnCalendar = "*:0/5";
+      Persistent = true;
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
   services.syncthing = {
     enable = true;
     user = "salhashemi2";

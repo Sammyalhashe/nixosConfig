@@ -67,6 +67,9 @@
           mode = lib.mkForce "local";
           auth.token = "temporary-token-123456";
         };
+        commands = {
+          restart = true;
+        };
         channels.telegram = {
           enabled = true;
           tokenFile = "/run/secrets/telegram_bot_token";
@@ -85,6 +88,7 @@
             }; # noisy group
           };
         };
+        plugins.entries.whatsapp.enabled = false;
         models = {
           providers = {
             google = {
