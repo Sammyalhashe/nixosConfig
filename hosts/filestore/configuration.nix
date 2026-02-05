@@ -184,7 +184,7 @@ in
   #   device = "/var/lib/swapfile";
   #   size = 2048; # 2GB in MiB
   # }];
-
+  boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
     kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
     initrd.availableKernelModules = [
