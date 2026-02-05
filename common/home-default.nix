@@ -44,19 +44,21 @@ in
     # applications
     bottles
     brave
+    cachix
+    devenv
     emacs
+    extended-nixvim
     firefox
     hyprlock
     hyprpaper
-    extended-nixvim
     kdePackages.partitionmanager
     kitty
     mupdf
     nextcloud-client
     protonvpn-gui
+    thunar
     thunderbird
     wireguard-ui
-    thunar
     zoom-us
 
     # unfree applications
