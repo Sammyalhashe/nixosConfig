@@ -55,8 +55,9 @@
         agents.defaults = {
           skipBootstrap = true;
           model = {
-            primary = "ollama/qwen2.5:7b";
+            primary = "lemonade/deepseek-r1-distill-llama-70b";
             fallbacks = [
+              "ollama/qwen2.5:7b"
               "google/gemini-3-pro-preview"
               "google/gemini-2.5-pro"
               "ollama/qwen2.5-coder:7b"
@@ -93,6 +94,18 @@
         plugins.entries.whatsapp.enabled = false;
         models = {
           providers = {
+            lemonade = {
+              api = "openai-responses";
+              baseUrl = "http://11.125.37.172:8001/v1";
+              apiKey = "any"; # Often ignored for local servers, but required by schema
+              models = [
+                {
+                  id = "deepseek-r1-distill-llama-70b";
+                  name = "DeepSeek R1 Distill Llama 70B (Lemonade)";
+                  reasoning = true;
+                }
+              ];
+            };
             google = {
               api = "google-generative-ai";
               apiKey = "***REMOVED***";
