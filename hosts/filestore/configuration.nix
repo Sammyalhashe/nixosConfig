@@ -215,7 +215,7 @@ in
     hostName = hostname;
     wireless = {
       enable = true;
-      networks."REPLACED_BY_SOPS".psk = "REPLACED_BY_SOPS";
+      networks."146WIFISt".psk = "Rfin1ihe!";
       interfaces = [ interface ];
     };
     # Static IP on wlan0
@@ -592,7 +592,7 @@ in
     settings = {
       gui = {
         user = "salhashemi2";
-        password = "REPLACED_BY_SOPS";
+        password = "Rfin1ihe!";
       };
 
       # Folders to sync
