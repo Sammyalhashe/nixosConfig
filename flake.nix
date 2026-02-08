@@ -138,10 +138,12 @@
       ];
 
       # Helper to get pkgs for a specific system
-      getPkgs = system: import nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
+      getPkgs =
+        system:
+        import nixpkgs {
+          inherit system overlays;
+          config.allowUnfree = true;
+        };
 
       # Shared base configuration
       baseConfig = {
@@ -421,6 +423,9 @@
               (mkHostScript "switch-homebase-omarchy" "homebase_omarchy" "homebase" "switch")
               (mkHostScript "test-homebase-omarchy" "homebase_omarchy" "homebase" "test")
 
+              (mkHostScript "switch-mothership" "mothership" "mothership" "switch")
+              (mkHostScript "test-mothership" "mothership" "mothership" "test")
+
               (mkHostScript "switch-oldboy" "oldboy" "oldboy" "switch")
               (mkHostScript "test-oldboy" "oldboy" "oldboy" "test")
 
@@ -546,17 +551,16 @@
             ];
           in
           pkgs.mkShell {
-            nativeBuildInputs =
-              [
-                pkgs.nixfmt
-                pkgs.treefmt
-                pkgs.sops
-                pkgs.age
-                pkgs.ssh-to-age
-                pkgs.cachix
-                pkgs.jq
-              ]
-              ++ scripts;
+            nativeBuildInputs = [
+              pkgs.nixfmt
+              pkgs.treefmt
+              pkgs.sops
+              pkgs.age
+              pkgs.ssh-to-age
+              pkgs.cachix
+              pkgs.jq
+            ]
+            ++ scripts;
 
             shellHook = ''
               echo "Welcome to the NixOS Config DevShell!"

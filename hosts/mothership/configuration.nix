@@ -67,6 +67,11 @@ in
     package = pkgs.ollama-rocm;
     # Force Ollama's internal build to recognize your iGPU
     rocmOverrideGfx = "11.5.0";
+    loadModels = [
+      "deepseek-coder-v2:236b-instruct-q4_K_M" # Pro-tier C++ coding
+      "qwen2.5-coder:32b-instruct" # Fast C++ logic
+      "llama3.3:70b-instruct-q4_K_M" # Agentic model for OpenClawd
+    ];
   };
 
   systemd.services.ollama = {
@@ -228,6 +233,13 @@ in
       addresses = true;
       workstation = true;
     };
+  };
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
   };
 
   services.udev.packages = with pkgs; [
