@@ -51,6 +51,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+    homebase-manager = {
+      url = "github:Sammyalhashe/homebase-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-utils.url = "github:numtide/flake-utils";
     plugin-coding = {
       url = "github:openclaw/skills?dir=skills/steipete/coding-agent";

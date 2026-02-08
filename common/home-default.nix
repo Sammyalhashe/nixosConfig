@@ -32,6 +32,7 @@ in
     inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
     jujutsu
     inputs.fromscratch.packages."${pkgs.stdenv.hostPlatform.system}".default
+    inputs.homebase-manager.packages."${pkgs.stdenv.hostPlatform.system}".default
 
     # c compilers
     gcc
