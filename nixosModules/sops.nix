@@ -55,6 +55,6 @@
       POLYGON_RPC_URL=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
       CHAINSTACK_NODE=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
     '';
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
 }

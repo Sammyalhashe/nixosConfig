@@ -153,7 +153,6 @@ in
   #   web.braveApiKey = "REPLACED_BY_SOPS";
   # };
 
-
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = { };
   sops.secrets.filestore_wifi_ssid = { };
@@ -557,7 +556,10 @@ in
   # Trading Bot Service (Replaces OpenClaw-based cron)
   systemd.services.coinbase-trader = {
     description = "Run Coinbase Trading Bot";
-    path = [ pkgs.nix pkgs.git ]; # Ensure nix and git are in path for flake operations
+    path = [
+      pkgs.nix
+      pkgs.git
+    ]; # Ensure nix and git are in path for flake operations
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";

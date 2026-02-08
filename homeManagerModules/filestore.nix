@@ -182,9 +182,9 @@ in
   };
 
   # Activation script to install skills mutably so we can run npm install/uv sync inside them
-  home.activation.installOpenClawSkills = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.installOpenClawSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p $HOME/.openclaw/workspace/skills
-    
+
     install_skill() {
       name=$1
       src=$2
@@ -222,11 +222,11 @@ in
           pkgs.podman
           pkgs.coreutils
           pkgs.bash
-              ]
-            }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
-            ];
-            EnvironmentFile = "/run/secrets/rendered/openclaw-env";
-          };
+        ]
+      }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
+    ];
+    EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+  };
   programs.starship.enable = true;
   programs.git = {
     enable = true;
