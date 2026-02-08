@@ -205,6 +205,26 @@
         ];
       };
 
+      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs sops-nix; };
+        modules = [
+          baseConfig
+          inputs.nix-flatpak.nixosModules.nix-flatpak
+          ./hosts/mothership/configuration.nix
+          ./nixosModules
+          omarchy-nix.nixosModules.default
+          stylix.nixosModules.stylix
+          ./nixosModules/stylix.nix
+          mangowc.nixosModules.mango
+          sops-nix.nixosModules.sops
+          {
+            host.useOmarchy = true;
+            host.isWsl = true; # As per original config comment "just to not import the desktop file"
+            programs.stylix.enable = true;
+          }
+        ];
+      };
+
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         modules = [
@@ -460,6 +480,27 @@
                 echo "Pushing ''${OUT_PATH} to cachix..."
                 cachix push starllama "''${OUT_PATH}"
               '')
+              (mkScript "push-mothership" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building mothership system configuration..."
+                OUT_PATH=$(nix build .#nixosConfigurations.mothership.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
               (mkScript "push-starship" ''
                 if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
                   export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
@@ -526,9 +567,10 @@
                                       echo "  push-homebase    - Build homebase system config and push to cachix"
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
+                                      echo "  push-mothership - Build mothership system config and push to cachix"
                                       echo "  switch-<host>    - Switch NixOS configuration"              echo "  test-<host>   - Test NixOS configuration"
               echo ""
-              echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore"
+              echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
               echo "Home Configs: work"
             '';
           };

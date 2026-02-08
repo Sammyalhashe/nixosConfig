@@ -7,6 +7,8 @@ keys:
   - &starship_user "age1a8hfmtkgfp2s4zz05uxg3pqrsjw83ntfjuzp07u8ygs4j97excksx5y0r7"
   - &filestore "age160k2f56h4qzk7u455t8nrew44nahe7q7k8m8lzr2v8rhsf02nv3qp2vnvh"
   - &filestore_user "age15vs4n27r2qedg2dngad7z39yz2xk6cl7254n7mt8ypqeku46veusyuw46l"
+  - &mothersip "age14w8agagd42tvgfk3l9qc9rg0ht2nfhjzvqjmyx4wp4ap8nm0csjq5ralr4"
+  - &mothersip_user "age1mypdj8sj85nfz4kgncqmrnc6aceacf0tugm87tean67jddqx6qhqksxp0d"
 
 creation_rules:
   - path_regex: secrets.yaml
@@ -19,3 +21,5 @@ creation_rules:
           - *starship_user
           - *filestore
           - *filestore_user
+          - *mothersip
+          - *mothersip_user
