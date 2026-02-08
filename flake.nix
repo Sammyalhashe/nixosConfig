@@ -50,6 +50,7 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
     flake-utils.url = "github:numtide/flake-utils";
     plugin-coding = {
       url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
@@ -169,6 +170,7 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/homebase/configuration.nix
           ./nixosModules
           stylix.nixosModules.stylix
@@ -183,6 +185,7 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/homebase/configuration.nix
           ./nixosModules
           omarchy-nix.nixosModules.default
@@ -270,6 +273,7 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/starship/configuration.nix
           ./nixosModules
           omarchy-nix.nixosModules.default

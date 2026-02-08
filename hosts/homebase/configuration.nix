@@ -176,6 +176,15 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
   services.flatpak.enable = true;
+  services.flatpak.packages = [
+    "com.thincast.client"
+  ];
+  services.flatpak.remotes = [
+    {
+      name = "flathub";
+      location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+    }
+  ];
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   services.openssh.settings.X11Forwarding = true;
