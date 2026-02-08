@@ -83,6 +83,7 @@ in
           mode = lib.mkForce "local";
           auth.token = "temporary-token-123456";
         };
+        tools.web.search.apiKey = "env:BRAVE_API_KEY";
         commands = {
           restart = true;
         };
