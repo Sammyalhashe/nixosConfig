@@ -435,6 +435,69 @@
                 echo "Pushing ''${OUT_PATH} to cachix..."
                 cachix push starllama "''${OUT_PATH}"
               '')
+              (mkScript "push-homebase" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building homebase system configuration..."
+                OUT_PATH=$(nix build .#nixosConfigurations.homebase_omarchy.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
+              (mkScript "push-starship" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building starship system configuration..."
+                OUT_PATH=$(nix build .#nixosConfigurations.starship.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
+              (mkScript "push-starshipwsl" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building starshipwsl system configuration..."
+                OUT_PATH=$(nix build .#nixosConfigurations.starshipwsl.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
             ];
           in
           pkgs.mkShell {
@@ -453,11 +516,13 @@
             shellHook = ''
               echo "Welcome to the NixOS Config DevShell!"
               echo "Available commands:"
-              echo "  check         - Run nix flake check"
-              echo "  fmt           - Run nix fmt"
-              echo "  push-work     - Build work home config and push to cachix"
-              echo "  switch-<host> - Switch NixOS configuration"
-              echo "  test-<host>   - Test NixOS configuration"
+                          echo "  check         - Run nix flake check"
+                          echo "  fmt           - Run nix fmt"
+                          echo "  push-work     - Build work home config and push to cachix"
+                                      echo "  push-homebase    - Build homebase system config and push to cachix"
+                                      echo "  push-starship    - Build starship system config and push to cachix"
+                                      echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
+                                      echo "  switch-<host>    - Switch NixOS configuration"              echo "  test-<host>   - Test NixOS configuration"
               echo ""
               echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore"
               echo "Home Configs: work"
