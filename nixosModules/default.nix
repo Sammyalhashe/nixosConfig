@@ -14,5 +14,6 @@
     ./greetd.nix
     ./networking.nix
     ./sops.nix
+    ./cachix.nix
   ];
 }
