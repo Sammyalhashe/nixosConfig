@@ -148,6 +148,12 @@ in
     inputs.sops-nix.nixosModules.sops
   ];
 
+  # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
+  # services.openclaw.gateway.settings = {
+  #   web.braveApiKey = "***REMOVED***";
+  # };
+
+
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = { };
   sops.secrets.filestore_wifi_ssid = { };

@@ -6,6 +6,7 @@ keys:
   - &starship "age1yzlxa6stqedvgpa0sxq4gxq9gdu25ymhaw9aq4qh5grtu5rrw4nsphakej"
   - &starship_user "age1a8hfmtkgfp2s4zz05uxg3pqrsjw83ntfjuzp07u8ygs4j97excksx5y0r7"
   - &filestore "age160k2f56h4qzk7u455t8nrew44nahe7q7k8m8lzr2v8rhsf02nv3qp2vnvh"
+  - &filestore_user "age15vs4n27r2qedg2dngad7z39yz2xk6cl7254n7mt8ypqeku46veusyuw46l"
 
 creation_rules:
   - path_regex: secrets.yaml
@@ -17,3 +18,4 @@ creation_rules:
           - *starship
           - *starship_user
           - *filestore
+          - *filestore_user

@@ -35,13 +35,31 @@ You need a personal age key to manage secrets.
 3.  **Register Admin Key:**
     Add this public key to the `.sops.yaml` file under `key_groups` -> `age`.
 
+## User Key Setup (For Editing)
+
+If you want to edit `secrets.yaml` on a machine using your personal SSH key (instead of the dedicated Admin Key above), you must register your user's SSH key. This is why `sops secrets.yaml` might fail even if `nixos-rebuild switch` works (the system uses the Host Key, but you use your User Key).
+
+1.  **Get User Public Key:**
+    ```bash
+    # Run this as your normal user
+    nix run nixpkgs#ssh-to-age -- -i ~/.ssh/id_ed25519.pub
+    ```
+2.  **Register User Key:**
+    Add the output (starts with `age1...`) to `.sops.yaml` under `keys` (e.g., `&myuser`) and add it to `creation_rules`.
+3.  **Authorize Key:**
+    You must run this **once** from a machine that already has access (or using `sudo` if the Host Key allows access) to re-encrypt the file for your new user key:
+    ```bash
+    sops updatekeys secrets.yaml
+    ```
+
 ## What are Age Keys?
 
 [Age](https://github.com/FiloSottile/age) is a modern, simple, and secure file encryption tool. Unlike GPG, it is designed to be easy to use and automate.
 
-In this setup, we use two types of Age identities:
+In this setup, we use three types of Age identities:
 1.  **Personal Admin Key:** A dedicated keypair (stored in `~/.config/sops/age/keys.txt`) that belongs to **you**. It allows you to encrypt and decrypt secrets on any machine where you have this key.
-2.  **Derived Host Keys:** Instead of managing separate key files for every server, we convert the server's existing **SSH Host Key** (its identity) into an Age key. This means the server can decrypt secrets using its SSH private key, without needing a separate key file managed manually.
+2.  **User SSH Key:** Your personal SSH key (converted to age format). Allows you to edit secrets on your workstation without needing the separate Admin Key file.
+3.  **Derived Host Keys:** Instead of managing separate key files for every server, we convert the server's existing **SSH Host Key** (its identity) into an Age key. This means the server can decrypt secrets using its SSH private key, without needing a separate key file managed manually.
 
 ## Host Setup
 
@@ -83,11 +101,13 @@ If a host's SSH key changes or you rotate your admin key:
 
 ## Troubleshooting
 
-- **"Failed to decrypt" on host:**
+- **"Failed to decrypt" when editing (`sops secrets.yaml`):**
+    - This means your *current user's* SSH key (or Admin Key) is not authorized.
+    - Check if you have `~/.config/sops/age/keys.txt` (Admin Key).
+    - If relying on SSH keys, ensure your public key is in `.sops.yaml` and you have run `sops updatekeys secrets.yaml` (see "User Key Setup").
+    - **Note:** `sudo nixos-rebuild switch` might still work because it uses the **Host Key** (root), whereas `sops secrets.yaml` uses **Your Key** (user).
+
+- **"Failed to decrypt" on host (boot/switch time):**
     - Check if the host's public SSH key in `.sops.yaml` matches `/etc/ssh/ssh_host_ed25519_key.pub`.
     - Ensure `sops updatekeys secrets.yaml` was run after adding the host.
     - Verify that `sops.age.sshKeyPaths` is correctly set in the host's NixOS config.
-
-- **"Failed to decrypt" on workstation:**
-    - Ensure your personal private key is at `~/.config/sops/age/keys.txt` (or pointed to by `SOPS_AGE_KEY_FILE`).
-    - Ensure your public key is in `.sops.yaml`.

@@ -50,6 +50,7 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
     plugin-coding = {
       url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
       flake = false;
@@ -72,6 +73,14 @@
     };
     plugin-process = {
       url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
+      flake = false;
+    };
+    plugin-polyclaw = {
+      url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw";
+      flake = false;
+    };
+    plugin-better-memory = {
+      url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
       flake = false;
     };
   };
@@ -100,10 +109,13 @@
       plugin-system,
       plugin-filesystem,
       plugin-process,
+      plugin-polyclaw,
+      plugin-better-memory,
+      flake-utils,
       ...
     }@inputs:
     let
-      system = "x86_64-linux";
+      # Define overlays that should be available on all systems
       overlays = [
         nur.overlays.default
         nix-openclaw.overlays.default
@@ -119,14 +131,11 @@
           };
         })
       ];
-      pkgs = import nixpkgs {
+
+      # Helper to get pkgs for a specific system
+      getPkgs = system: import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
-      };
-
-      treefmtEval = treefmt-nix.lib.evalModule pkgs {
-        projectRootFile = "flake.nix";
-        programs.nixfmt.enable = true;
       };
 
       # Shared base configuration
@@ -209,7 +218,7 @@
 
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        inherit system;
+        system = "x86_64-linux";
         modules = [
           baseConfig
           nixos-wsl.nixosModules.default
@@ -231,7 +240,7 @@
 
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        inherit system;
+        system = "x86_64-linux";
         modules = [
           baseConfig
           {
@@ -290,10 +299,7 @@
       # Home-manager-only config for work
       homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
         # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
-        pkgs = import nixpkgs {
-          inherit system overlays;
-          config.allowUnfree = true;
-        };
+        pkgs = getPkgs "x86_64-linux";
         extraSpecialArgs = {
           inherit inputs sops-nix;
           user = "salhashemi2";
@@ -325,122 +331,134 @@
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
-
-      formatter.x86_64-linux = treefmtEval.config.build.wrapper;
-
-      checks.x86_64-linux = {
-        formatting = treefmtEval.config.build.check self;
-      };
-
-      devShells.x86_64-linux.default =
-        let
-          mkScript =
-            name: script:
-            pkgs.writeScriptBin name ''
-              #!/bin/sh
-              ${script}
-            '';
-
-          mkHostScript =
-            name: flakeAttr: hostname: action:
-            pkgs.writeScriptBin name ''
-              #!/bin/sh
-              CURRENT_HOST=$(hostname)
-              TARGET_HOST="${hostname}"
-
-              if [ "$CURRENT_HOST" != "$TARGET_HOST" ]; then
-                echo "⚠️  WARNING: Current host ($CURRENT_HOST) does not match target host ($TARGET_HOST)."
-                printf "Are you sure you want to proceed? [y/N] "
-                read -r response
-                case "$response" in
-                  [yY][eE][sS]|[yY])
-                      ;;
-                  *)
-                      echo "Aborted."
-                      exit 1
-                      ;;
-                esac
-              fi
-
-              echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
-              sudo nixos-rebuild ${action} --flake .#${flakeAttr}
-            '';
-
-          scripts = [
-            (mkScript "check" "nix flake check")
-            (mkScript "fmt" "nix fmt")
-
-            # Host switch/test scripts
-            (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
-            (mkHostScript "test-homebase" "homebase" "homebase" "test")
-
-            (mkHostScript "switch-homebase-omarchy" "homebase_omarchy" "homebase" "switch")
-            (mkHostScript "test-homebase-omarchy" "homebase_omarchy" "homebase" "test")
-
-            (mkHostScript "switch-oldboy" "oldboy" "oldboy" "switch")
-            (mkHostScript "test-oldboy" "oldboy" "oldboy" "test")
-
-            (mkHostScript "switch-starshipwsl" "starshipwsl" "starship_wsl" "switch")
-            (mkHostScript "test-starshipwsl" "starshipwsl" "starship_wsl" "test")
-
-            (mkHostScript "switch-homebasewsl" "homebasewsl" "nixos" "switch")
-            (mkHostScript "test-homebasewsl" "homebasewsl" "nixos" "test")
-
-            (mkHostScript "switch-starship" "starship" "starship" "switch")
-            (mkHostScript "test-starship" "starship" "starship" "test")
-
-            (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
-            (mkHostScript "test-filestore" "filestore" "filestore" "test")
-
-            # Home manager scripts
-            (mkScript "switch-home-work" "home-manager switch --flake .#work")
-            (mkScript "push-work" ''
-              if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-              fi
-
-              if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                exit 1
-              fi
-
-              echo "Building work home configuration..."
-              OUT_PATH=$(nix build .#homeConfigurations.work.activationPackage --json | jq -r '.[].outputs.out')
-
-              if [ -z "''${OUT_PATH}" ]; then
-                echo "Error: Build failed or produced no output."
-                exit 1
-              fi
-
-              echo "Pushing ''${OUT_PATH} to cachix..."
-              cachix push starllama "''${OUT_PATH}"
-            '')
-          ];
-        in
-        pkgs.mkShell {
-          nativeBuildInputs = [
-            pkgs.nixfmt
-            pkgs.treefmt
-            pkgs.sops
-            pkgs.age
-            pkgs.ssh-to-age
-            pkgs.cachix
-            pkgs.jq
-          ]
-          ++ scripts;
-
-          shellHook = ''
-            echo "Welcome to the NixOS Config DevShell!"
-            echo "Available commands:"
-            echo "  check         - Run nix flake check"
-            echo "  fmt           - Run nix fmt"
-            echo "  push-work     - Build work home config and push to cachix"
-            echo "  switch-<host> - Switch NixOS configuration"
-            echo "  test-<host>   - Test NixOS configuration"
-            echo ""
-            echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore"
-            echo "Home Configs: work"
-          '';
+    }
+    // flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = getPkgs system;
+        treefmtEval = treefmt-nix.lib.evalModule pkgs {
+          projectRootFile = "flake.nix";
+          programs.nixfmt.enable = true;
         };
-    };
+      in
+      {
+        formatter = treefmtEval.config.build.wrapper;
+
+        checks = {
+          formatting = treefmtEval.config.build.check self;
+        };
+
+        devShells.default =
+          let
+            mkScript =
+              name: script:
+              pkgs.writeScriptBin name ''
+                #!/bin/sh
+                ${script}
+              '';
+
+            mkHostScript =
+              name: flakeAttr: hostname: action:
+              pkgs.writeScriptBin name ''
+                #!/bin/sh
+                CURRENT_HOST=$(hostname)
+                TARGET_HOST="${hostname}"
+
+                if [ "$CURRENT_HOST" != "$TARGET_HOST" ]; then
+                  echo "⚠️  WARNING: Current host ($CURRENT_HOST) does not match target host ($TARGET_HOST)."
+                  printf "Are you sure you want to proceed? [y/N] "
+                  read -r response
+                  case "$response" in
+                    [yY][eE][sS]|[yY])
+                        ;;
+                    *)
+                        echo "Aborted."
+                        exit 1
+                        ;;
+                  esac
+                fi
+
+                echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
+                sudo nixos-rebuild ${action} --flake .#${flakeAttr}
+              '';
+
+            scripts = [
+              (mkScript "check" "nix flake check")
+              (mkScript "fmt" "nix fmt")
+
+              # Host switch/test scripts
+              (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
+              (mkHostScript "test-homebase" "homebase" "homebase" "test")
+
+              (mkHostScript "switch-homebase-omarchy" "homebase_omarchy" "homebase" "switch")
+              (mkHostScript "test-homebase-omarchy" "homebase_omarchy" "homebase" "test")
+
+              (mkHostScript "switch-oldboy" "oldboy" "oldboy" "switch")
+              (mkHostScript "test-oldboy" "oldboy" "oldboy" "test")
+
+              (mkHostScript "switch-starshipwsl" "starshipwsl" "starship_wsl" "switch")
+              (mkHostScript "test-starshipwsl" "starshipwsl" "starship_wsl" "test")
+
+              (mkHostScript "switch-homebasewsl" "homebasewsl" "nixos" "switch")
+              (mkHostScript "test-homebasewsl" "homebasewsl" "nixos" "test")
+
+              (mkHostScript "switch-starship" "starship" "starship" "switch")
+              (mkHostScript "test-starship" "starship" "starship" "test")
+
+              (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
+              (mkHostScript "test-filestore" "filestore" "filestore" "test")
+
+              # Home manager scripts
+              (mkScript "switch-home-work" "home-manager switch --flake .#work")
+              (mkScript "push-work" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building work home configuration..."
+                OUT_PATH=$(nix build .#homeConfigurations.work.activationPackage --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
+            ];
+          in
+          pkgs.mkShell {
+            nativeBuildInputs =
+              [
+                pkgs.nixfmt
+                pkgs.treefmt
+                pkgs.sops
+                pkgs.age
+                pkgs.ssh-to-age
+                pkgs.cachix
+                pkgs.jq
+              ]
+              ++ scripts;
+
+            shellHook = ''
+              echo "Welcome to the NixOS Config DevShell!"
+              echo "Available commands:"
+              echo "  check         - Run nix flake check"
+              echo "  fmt           - Run nix fmt"
+              echo "  push-work     - Build work home config and push to cachix"
+              echo "  switch-<host> - Switch NixOS configuration"
+              echo "  test-<host>   - Test NixOS configuration"
+              echo ""
+              echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore"
+              echo "Home Configs: work"
+            '';
+          };
+      }
+    );
 }

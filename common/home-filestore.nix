@@ -14,11 +14,12 @@ let
 in
 {
   home.packages = with pkgs; [
+    gh
     extended-nixvim
-    git
-    ripgrep
     fd
     fzf
+    git
+    ripgrep
 
     # system tools
     btop

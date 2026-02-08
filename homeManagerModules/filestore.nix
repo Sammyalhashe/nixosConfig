@@ -4,6 +4,28 @@
   pkgs,
   ...
 }:
+let
+  polyclaw-wrapper = pkgs.writeShellScriptBin "polyclaw" ''
+    export PATH="${pkgs.uv}/bin:$PATH"
+    if [ ! -d "$HOME/.openclaw/workspace/skills/polyclaw" ]; then
+      echo "Error: PolyClaw skill directory not found at $HOME/.openclaw/workspace/skills/polyclaw"
+      exit 1
+    fi
+    cd $HOME/.openclaw/workspace/skills/polyclaw
+    # Pass environment variables from the environment if set
+    exec uv run python scripts/polyclaw.py "$@"
+  '';
+
+  better-memory-wrapper = pkgs.writeShellScriptBin "better-memory" ''
+    export PATH="${pkgs.nodejs_25}/bin:$PATH"
+    if [ ! -d "$HOME/.openclaw/workspace/skills/better-memory" ]; then
+      echo "Error: Better Memory skill directory not found at $HOME/.openclaw/workspace/skills/better-memory"
+      exit 1
+    fi
+    cd $HOME/.openclaw/workspace/skills/better-memory
+    exec node scripts/cli.js "$@"
+  '';
+in
 {
   imports = [
     ./zellij.nix
@@ -19,6 +41,9 @@
     fzf
     jq
     python3
+    rsync
+    polyclaw-wrapper
+    better-memory-wrapper
   ];
 
   programs.openclaw = {
@@ -34,19 +59,6 @@
       sonoscli.enable = false; # Sonos control
       imsg.enable = false; # iMessage
     };
-    # NOTE: This is the 'proper' declarative way to add skills.
-    # It is currently commented out because it often collides with existing directories
-    # or fails to create them during first-time activation. We use manual home.file
-    # links (at the bottom of this file) to guarantee reliability on this server.
-    #
-    # skills = [
-    #   { name = "coding-agent"; mode = "copy"; source = inputs.plugin-coding; }
-    #   { name = "git-essentials"; mode = "copy"; source = inputs.plugin-git; }
-    #   { name = "docker-essentials"; mode = "copy"; source = inputs.plugin-docker; }
-    #   { name = "system-monitor"; mode = "copy"; source = inputs.plugin-system; }
-    #   { name = "filesystem"; mode = "copy"; source = inputs.plugin-filesystem; }
-    #   { name = "process-watch"; mode = "copy"; source = inputs.plugin-process; }
-    # ];
     skills = [ ];
     documents = ../openclaw;
     instances.default = {
@@ -55,11 +67,12 @@
         agents.defaults = {
           skipBootstrap = true;
           model = {
-            primary = "lemonade/deepseek-r1-distill-llama-70b";
+            primary = "google/gemini-2.5-pro";
             fallbacks = [
+              "openrouter/arcee-ai/trinity-large-preview:free"
+              "lemonade/user.Qwen-32B-Coder"
               "ollama/qwen2.5:7b"
               "google/gemini-3-pro-preview"
-              "google/gemini-2.5-pro"
               "ollama/qwen2.5-coder:7b"
               "ollama/llama3.1:8b"
               "ollama/MFDoom/deepseek-r1-tool-calling:8b"
@@ -94,15 +107,25 @@
         plugins.entries.whatsapp.enabled = false;
         models = {
           providers = {
+            openrouter = {
+              api = "openai-completions";
+              baseUrl = "https://openrouter.ai/api/v1";
+              apiKey = "env:OPENROUTER_API_KEY";
+              models = [
+                {
+                  id = "arcee-ai/trinity-large-preview:free";
+                  name = "Trinity Large Preview (Free)";
+                }
+              ];
+            };
             lemonade = {
-              api = "openai-responses";
+              api = "openai-completions";
               baseUrl = "http://11.125.37.172:8001/v1";
               apiKey = "any"; # Often ignored for local servers, but required by schema
               models = [
                 {
-                  id = "deepseek-r1-distill-llama-70b";
-                  name = "DeepSeek R1 Distill Llama 70B (Lemonade)";
-                  reasoning = true;
+                  id = "user.Qwen-32B-Coder";
+                  name = "Qwen 2.5 Coder 32B (Lemonade)";
                 }
               ];
             };
@@ -158,54 +181,52 @@
     };
   };
 
-  # Manually link skills since the module's declarative skills feature is not working as expected
-  home.file = {
-    ".openclaw/workspace/skills/coding-agent" = {
-      source = inputs.plugin-coding;
-      recursive = true;
-    };
-    ".openclaw/workspace/skills/git-essentials" = {
-      source = inputs.plugin-git;
-      recursive = true;
-    };
-    ".openclaw/workspace/skills/docker-essentials" = {
-      source = inputs.plugin-docker;
-      recursive = true;
-    };
-    ".openclaw/workspace/skills/system-monitor" = {
-      source = inputs.plugin-system;
-      recursive = true;
-    };
-    ".openclaw/workspace/skills/filesystem" = {
-      source = inputs.plugin-filesystem;
-      recursive = true;
-    };
-    ".openclaw/workspace/skills/process-watch" = {
-      source = inputs.plugin-process;
-      recursive = true;
-    };
-  };
+  # Activation script to install skills mutably so we can run npm install/uv sync inside them
+  home.activation.installOpenClawSkills = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    mkdir -p $HOME/.openclaw/workspace/skills
+    
+    install_skill() {
+      name=$1
+      src=$2
+      target="$HOME/.openclaw/workspace/skills/$name"
+      
+      # Sync source to target, making files writable and excluding build artifacts
+      ${pkgs.rsync}/bin/rsync -avz --chmod=u+w --exclude 'node_modules' --exclude '.venv' --exclude 'package-lock.json' --exclude 'uv.lock' "$src/" "$target/"
+    }
+
+    install_skill "coding-agent" "${inputs.plugin-coding}"
+    install_skill "git-essentials" "${inputs.plugin-git}"
+    install_skill "docker-essentials" "${inputs.plugin-docker}"
+    install_skill "system-monitor" "${inputs.plugin-system}"
+    install_skill "filesystem" "${inputs.plugin-filesystem}"
+    install_skill "process-watch" "${inputs.plugin-process}"
+    install_skill "polyclaw" "${inputs.plugin-polyclaw}"
+    install_skill "better-memory" "${inputs.plugin-better-memory}"
+  '';
 
   # Disable the document guard to allow overwriting existing files
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
   # Inject system and user profile paths into the OpenClaw gateway service
-  systemd.user.services.openclaw-gateway.Service.Environment = lib.mkForce [
-    "HOME=/home/salhashemi2"
-    "OPENCLAW_CONFIG_PATH=/home/salhashemi2/.openclaw/openclaw.json"
-    "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
-    "OPENCLAW_NIX_MODE=1"
-    "PATH=${
-      lib.makeBinPath [
-        pkgs.python3
-        pkgs.nix
-        pkgs.podman
-        pkgs.coreutils
-        pkgs.bash
-      ]
-    }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
-  ];
-
+  systemd.user.services.openclaw-gateway.Service = {
+    Environment = lib.mkForce [
+      "HOME=/home/salhashemi2"
+      "SHELL=${pkgs.bash}/bin/bash"
+      "OPENCLAW_CONFIG_PATH=/home/salhashemi2/.openclaw/openclaw.json"
+      "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
+      "OPENCLAW_NIX_MODE=1"
+      "PATH=${
+        lib.makeBinPath [
+          pkgs.python3
+          pkgs.nix
+          pkgs.podman
+          pkgs.coreutils
+          pkgs.bash
+              ]
+            }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
+            ];
+            EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+          };
   programs.starship.enable = true;
   programs.git = {
     enable = true;
