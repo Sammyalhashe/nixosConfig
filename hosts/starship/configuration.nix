@@ -131,6 +131,9 @@ in
   };
 
   services.openssh.enable = true;
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
