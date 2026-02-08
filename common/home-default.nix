@@ -56,6 +56,7 @@ in
     mupdf
     nextcloud-client
     protonvpn-gui
+    telegram-desktop
     thunar
     thunderbird
     wireguard-ui
