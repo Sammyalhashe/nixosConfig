@@ -5,6 +5,9 @@
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
   sops.age.generateKey = true;
 
+  sops.secrets.gemini_api_key = {
+    owner = "salhashemi2";
+  };
   sops.secrets.perplexity_api_key = {
     owner = "salhashemi2";
   };
@@ -44,6 +47,7 @@
 
   sops.templates."openclaw-env" = {
     content = ''
+      GEMINI_API_KEY=${config.sops.placeholder.gemini_api_key}
       BRAVE_API_KEY=${config.sops.placeholder.brave_api_key}
       OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
       CHAINSTACK_API_KEY=${config.sops.placeholder.chainstack_api_key}

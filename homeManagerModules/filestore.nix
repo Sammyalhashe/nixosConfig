@@ -131,7 +131,7 @@ in
             };
             google = {
               api = "google-generative-ai";
-              apiKey = "***REMOVED***";
+              apiKey = "env:GEMINI_API_KEY";
               baseUrl = "https://generativelanguage.googleapis.com/v1beta";
               auth = "api-key";
               models = [

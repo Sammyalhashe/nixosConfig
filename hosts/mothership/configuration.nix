@@ -74,6 +74,14 @@ in
     ];
   };
 
+  services.open-webui = {
+    enable = true;
+    port = 8080;
+    environment = {
+      OLLAMA_BASE_URL = "http://0.0.0.0:11434";
+    };
+  };
+
   systemd.services.ollama = {
     # Wait for the GPU to be "warm" before starting the AI service
     after = [ "network.target" ];
@@ -122,6 +130,11 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.nameservers = [
+    "11.125.37.99"
+    "11.125.37.1"
+    "1.1.1.1"
+  ];
 
   # networking.extraHosts = ''
   #   192.168.1.98 picloud.local
@@ -180,6 +193,8 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     git
+    amdgpu_top
+    nvtopPackages.amd
   ];
 
   # xdg env variables

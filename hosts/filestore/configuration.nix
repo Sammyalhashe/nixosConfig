@@ -150,7 +150,7 @@ in
 
   # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
   # services.openclaw.gateway.settings = {
-  #   web.braveApiKey = "***REMOVED***";
+  #   web.braveApiKey = "REPLACED_BY_SOPS";
   # };
 
 
@@ -216,7 +216,7 @@ in
     hostName = hostname;
     wireless = {
       enable = true;
-      networks."***REMOVED***".psk = "***REMOVED***";
+      networks."REPLACED_BY_SOPS".psk = "REPLACED_BY_SOPS";
       interfaces = [ interface ];
     };
     # Static IP on wlan0
@@ -590,7 +590,7 @@ in
     settings = {
       gui = {
         user = "salhashemi2";
-        password = "***REMOVED***";
+        password = "REPLACED_BY_SOPS";
       };
 
       # Folders to sync
