@@ -187,206 +187,119 @@ in
         "/dev/dri/card0"
         "/dev/kfd"
       ];
-
       PrivateDevices = false;
-
       ExecStart = "${
         pkgs.llama-cpp.override { vulkanSupport = true; }
-      }/bin/llama-server --model /var/lib/llama-cpp-models/gpt-oss-120b.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 999 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
-
+      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 999 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
-
       Restart = "on-failure";
-
       RestartSec = "5s";
-
     };
-
   };
 
   powerManagement.cpuFreqGovernor = "performance";
 
   # 3. Systemd Service Overrides (Environment & Permissions for Coder)
-
   systemd.services.llama-cpp = {
-
     after = [ "network.target" ];
-
     environment = {
-
       XDG_CACHE_HOME = "/var/cache/llama-cpp";
-
       RADV_PERFTEST = "aco"; # Use the superior Mesa compiler
-
       AMD_VULKAN_ICD = "RADV";
-
       GGML_VK_PREFER_HOST_MEMORY = "1";
-
     };
 
     serviceConfig = {
-
       # Since the model is in your home dir, we'll run as your user for now
-
       User = "salhashemi2";
-
       Group = "users";
 
       CacheDirectory = "llama-cpp";
-
       RuntimeDirectory = "llama-cpp";
 
       # Grant permission to the GPU and memory fabric
-
       DeviceAllow = [
-
         "/dev/dri/renderD128"
-
         "/dev/dri/card0"
-
         "/dev/kfd"
-
       ];
-
       PrivateDevices = false;
 
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
-
       Restart = "on-failure";
-
       RestartSec = lib.mkForce "5s";
-
     };
-
   };
 
   # 4. Update Open WebUI to talk to Llama.cpp
-
   # Llama.cpp server uses OpenAI-compatible endpoints on port 8012 by default
-
   services.open-webui = {
-
     enable = true;
-
     port = 8080;
-
     environment = {
-
       # Redirect from Ollama's port (11434) to Llama.cpp's port (8012)
-
       # We add /v1 because llama-cpp-server exposes an OpenAI-compatible API
-
       OPENAI_API_BASE_URL = "http://127.0.0.1:8012/v1";
-
       OPENAI_API_KEY = "none";
-
       # Disable the default Ollama search to clean up the UI
-
       ENABLE_OLLAMA_API = "False";
-
     };
-
   };
 
   # Declarative Model Management
-
   systemd.services.model-downloader = {
-
     description = "Download and verify GGUF models in background";
-
     after = [ "network.target" ];
-
     # Keep this so it starts on boot, but Type=simple ensures it doesn't block
-
     wantedBy = [ "multi-user.target" ];
 
     path = [
-
       pkgs.aria2 # The high-speed downloader
-
       pkgs.coreutils # For mkdir/echo
-
       pkgs.systemd # For systemctl restart
-
     ]; # Ensure script can find curl/mkdir
 
     script = ''
-
       MODEL_DIR="/var/lib/llama-cpp-models"
-
       mkdir -p "$MODEL_DIR"
-
       RESTART_REQUIRED=false
 
-
-
       download_model() {
-
-        local name=
-
-
+        local name=$1
         local url=$2
-
         local target="$MODEL_DIR/$name"
-
         if [ ! -f "$target" ]; then
-
           echo "Fast-syncing $name with aria2c..."
-
           # -x16: 16 connections per server
-
           # -s16: Split the file into 16 chunks
-
           # -c:   Continue partial downloads
-
           if aria2c -x16 -s16 -j5 -c --summary-interval=10 --dir="$MODEL_DIR" -o "$name" "$url"; then       
-
               echo "Finished downloading: $name"
-
               RESTART_REQUIRED=true
-
           else
-
               echo "Download failed for model $name"
-
           fi
-
         else
-
           echo "Model $name already exists, skipping."
-
         fi
-
       }
 
-
-
       download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
-
       download_model "llama_70b.gguf" "https://huggingface.co/lmstudio-community/Llama-3.3-70B-Instruct-GGUF/resolve/main/Llama-3.3-70B-Instruct-Q4_K_M.gguf"
 
-      download_model "gpt-oss-120b.gguf" "https://huggingface.co/openai/gpt-oss-120b-GGUF/resolve/main/gpt-oss-120b-q4_k_m.gguf"
-
-
+      # Download Split Parts for GPT-OSS-120B (IQ4_XS)
+      download_model "openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf"
+      download_model "openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf"
 
       if [ "$RESTART_REQUIRED" = true ]; then
-
         echo "Cleaning up .aria2 control files..."
-
         rm -f "$MODEL_DIR"/*.aria2
-
         echo "New models detected. Triggering batch restart of llama-cpp..."
-
         systemctl restart llama-cpp.service
-
         systemctl restart llama-cpp-reasoning.service
-
       else
-
         echo "No updates needed. Services remain undisturbed."
-
       fi
-
     '';
 
     serviceConfig = {
