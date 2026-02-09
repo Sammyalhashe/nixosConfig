@@ -69,6 +69,7 @@ in
           model = {
             primary = "google/gemini-2.5-pro";
             fallbacks = [
+              "mothership-local/qwen2.5-coder-32b-instruct"
               "openrouter/arcee-ai/trinity-large-preview:free"
               "lemonade/user.Qwen-32B-Coder"
               "ollama/qwen2.5:7b"
@@ -108,6 +109,17 @@ in
         plugins.entries.whatsapp.enabled = false;
         models = {
           providers = {
+            mothership-local = {
+              api = "openai-completions";
+              baseUrl = "http://11.125.37.101:8012/v1";
+              apiKey = "none";
+              models = [
+                {
+                  id = "qwen2.5-coder-32b-instruct";
+                  name = "Qwen 2.5 Coder 32B (Mothership)";
+                }
+              ];
+            };
             openrouter = {
               api = "openai-completions";
               baseUrl = "https://openrouter.ai/api/v1";
