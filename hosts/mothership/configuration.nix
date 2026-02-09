@@ -124,25 +124,27 @@ in
     model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
 
     extraFlags = [
+
       "--n-gpu-layers"
-      "999" # Ensure absolutely everything is on GPU
+      "999"
+
       "--ctx-size"
       "32768"
+
       "--threads"
-      "24" # Increased from 16 to utilize more Zen 5 cores
+      "16" # Revert to known safe thread count
+
       "--batch-size"
-      "2048" # Speed up prompt processing
+      "2048"
+
       "--ubatch-size"
-      "512" # Optimize batching
-      "--device"
-      "Vulkan0"
+      "512"
+
       "--flash-attn"
       "1"
-      "--cache-type-k"
-      "f16" # Save memory bandwidth
-      "--cache-type-v"
-      "f16"
-      "--no-mmap" # Force load into RAM (avoids slow disk paging)
+
+      "--no-mmap"
+
     ];
   };
 
