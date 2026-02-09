@@ -130,6 +130,8 @@ in
       "16" # Zen 5 core count
       "--device"
       "Vulkan0"
+      "--flash-attn"
+      "1"
     ];
   };
 
