@@ -70,6 +70,7 @@ in
             primary = "google/gemini-2.5-pro";
             fallbacks = [
               "mothership-local/qwen2.5-coder-32b-instruct"
+              "mothership-reasoning/gpt-oss-120b"
               "openrouter/arcee-ai/trinity-large-preview:free"
               "lemonade/user.Qwen-32B-Coder"
               "ollama/qwen2.5:7b"
@@ -117,6 +118,18 @@ in
                 {
                   id = "qwen2.5-coder-32b-instruct";
                   name = "Qwen 2.5 Coder 32B (Mothership)";
+                }
+              ];
+            };
+            mothership-reasoning = {
+              api = "openai-completions";
+              baseUrl = "http://11.125.37.101:8013/v1";
+              apiKey = "none";
+              models = [
+                {
+                  id = "gpt-oss-120b";
+                  name = "GPT-OSS-120B (Mothership Reasoning)";
+                  reasoning = true;
                 }
               ];
             };
