@@ -124,27 +124,16 @@ in
     model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
 
     extraFlags = [
-
       "--n-gpu-layers"
       "999"
-
       "--ctx-size"
       "32768"
-
       "--threads"
-      "16" # Revert to known safe thread count
-
-      "--batch-size"
-      "2048"
-
-      "--ubatch-size"
-      "512"
-
+      "16"
+      "--device"
+      "Vulkan0"
       "--flash-attn"
       "1"
-
-      "--no-mmap"
-
     ];
   };
 
