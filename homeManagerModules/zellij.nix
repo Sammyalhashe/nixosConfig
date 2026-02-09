@@ -239,8 +239,7 @@ in
                 }
             }
             bind "Ctrl y" {
-                LaunchOrFocusPlugin "file:~/zellij-plugins/zellij_forgot.wasm" {
-                    // "LOAD_ZELLIJ_BINDINGS" "false"
+                LaunchOrFocusPlugin "forgot" {
                     floating true
                 }
             }
@@ -360,6 +359,7 @@ in
         welcome-screen location="zellij:session-manager" {
             welcome_screen false
         }
+        forgot location="https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm"
         zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
             pipe_name "zjstatus_hints"
         }
