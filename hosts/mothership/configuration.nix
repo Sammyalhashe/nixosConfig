@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 {
   config,
   pkgs,
@@ -17,7 +13,7 @@ in
     ./hardware-configuration.nix
     ./bluetooth.nix
     inputs.home-manager.nixosModules.default
-    inputs.home-manager.nixosModules.home-manager # Add this import
+    inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
   ];
 
@@ -26,82 +22,243 @@ in
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
-  # Use latest kernel.
   boot = {
+    initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
-      # Prevents 10Gbe Intel NICs frm dropping out under load
       "amd_iommu=on"
-      # Virtualization on and IOMMU support
       "iommu=pt"
-      # Improve graphics stability on RDNA 3.5
       "amdgpu.gpu_recovery=1"
+      "amdgpu.cwsr_enable=0"
+      "initcall_blacklist=simpledrm_platform_driver_init"
+
+      # --- STRIX HALO HARDWARE FIXES ---
+      "amdgpu.sg_display=0" # Fixes display-linked memory stalls
+      "amdgpu.dcfeaturemask=0x8" # DISABLES PSR (Fixes your REG_WAIT error)
+      "amdgpu.abmlevel=0" # Prevents panel backlight interference
+      "amdgpu.runpm=0" # Keeps GPU awake for ROCm discovery
+
+      # Memory Aperture (Confirmed working)
+      "ttm.pages_limit=25165824"
+      "ttm.page_pool_size=25165824"
+      "amdgpu.gartsize=98304"
     ];
+    kernel.sysctl = {
+      "vm.swappiness" = 10;
+      "vm.overcommit_memory" = 1;
+    };
   };
 
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      rocmPackages.clr.icd # OpenCL/HIP support
-    ];
-  };
-
-  # essential environment variables for ROCm/Ollama
+  # Essential environment variables for GFX 11.5.1
   environment.variables = {
-    # Force ROCm to recognize the Strix Halo iGPU (GFX 11.5.0)
-    HSA_OVERRIDE_GFX_VERSION = "11.5.0";
+    HSA_OVERRIDE_GFX_VERSION = "11.5.1";
+    RADV_PERFTEST = "aco";
   };
 
-  services.ollama = {
+  # services.ollama = {
+  #   enable = true;
+  #   package = pkgs.ollama-rocm;
+  #   rocmOverrideGfx = "11.5.1";
+  #   loadModels = [
+  #     "deepseek-coder-v2:236b-instruct-q4_K_M"
+  #     "qwen2.5-coder:32b-instruct"
+  #     "llama3.3:70b-instruct-q4_K_M"
+  #   ];
+  #
+  #   environmentVariables = {
+  #     HSA_OVERRIDE_GFX_VERSION = "11.5.1";
+  #     HSA_ENABLE_SDMA = "0";
+  #     HSA_XNACK = "0";
+  #
+  #     # --- THE SEGFAULT AT 0x18 FIXES ---
+  #     OLLAMA_USE_MMAP = "0"; # MUST BE ZERO - forces weights into RAM
+  #     HSA_OVERRIDE_CPU_HSA_CAPABLE = "0"; # STOP CPU node capability (Stops the 0x18 sync)
+  #     HSA_AMD_P2P = "0"; # DISABLES Peer-to-Peer (Bypasses APU init bug)
+  #     HSA_FORCE_FINE_GRAIN_CACHE = "0"; # Force Coarse Grained pool usage
+  #
+  #     # Limit ROCm to the GPU only
+  #     HIP_VISIBLE_DEVICES = "0";
+  #     ROCR_VISIBLE_DEVICES = "0";
+  #     HSA_IGNORE_CPU_NODE_CHECK = "1";
+  #     ROC_ENABLE_PRE_ALLOCATION = "0";
+  #   };
+  # };
+  #
+  # # CRITICAL: We must ensure the model loader AND the runner share the exact same env
+  # # The NixOS module sometimes fails to pass these to the helper loader service
+  # systemd.services.ollama-model-loader.environment = config.services.ollama.environmentVariables;
+  # # Fix for PATH conflict in model loader
+  # systemd.services.ollama-model-loader.path = lib.mkForce [
+  #   pkgs.rocmPackages.clr
+  #   pkgs.coreutils
+  # ];
+  #
+  # systemd.services.ollama = {
+  #   after = [ "network.target" ];
+  #   path = lib.mkForce [
+  #     pkgs.rocmPackages.clr
+  #     pkgs.coreutils
+  #   ];
+  #   wants = [ "network.target" ];
+  #   serviceConfig = {
+  #     ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+  #     TimeoutStartSec = "300";
+  #     Restart = "on-failure";
+  #     RestartSec = "5s";
+  #   };
+  # };
+
+  # 1. The Llama-cpp Service (Hardware-Accelerated)
+  services.llama-cpp = {
     enable = true;
-    # use the specific ROCm package instead of generic acceleration
-    package = pkgs.ollama-rocm;
-    # Force Ollama's internal build to recognize your iGPU
-    rocmOverrideGfx = "11.5.0";
-    loadModels = [
-      "deepseek-coder-v2:236b-instruct-q4_K_M" # Pro-tier C++ coding
-      "qwen2.5-coder:32b-instruct" # Fast C++ logic
-      "llama3.3:70b-instruct-q4_K_M" # Agentic model for OpenClawd
+    port = 8012;
+    host = "0.0.0.0";
+    package = pkgs.llama-cpp.override { vulkanSupport = true; };
+    model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
+
+    extraFlags = [
+      "--n-gpu-layers"
+      "65" # Full offload
+      "--ctx-size"
+      "32768" # 32k context (~8GB VRAM/RAM)
+      "--threads"
+      "16" # Zen 5 core count
+      "--device"
+      "Vulkan0"
     ];
   };
 
+  # 2. Systemd Service Overrides (Environment & Permissions)
+  systemd.services.llama-cpp = {
+    after = [ "network.target" ];
+    environment = {
+      XDG_CACHE_HOME = "/var/cache/llama-cpp";
+      RADV_PERFTEST = "aco"; # Use the superior Mesa compiler
+      AMD_VULKAN_ICD = "RADV";
+      GGML_VK_PREFER_HOST_MEMORY = "1";
+    };
+
+    serviceConfig = {
+      # Since the model is in your home dir, we'll run as your user for now
+      User = "salhashemi2";
+      Group = "users";
+
+      CacheDirectory = "llama-cpp";
+      RuntimeDirectory = "llama-cpp";
+
+      # Grant permission to the GPU and memory fabric
+      DeviceAllow = [
+        "/dev/dri/renderD128"
+        "/dev/dri/card0"
+        "/dev/kfd"
+      ];
+      PrivateDevices = false;
+
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+      Restart = "on-failure";
+      RestartSec = lib.mkForce "5s";
+    };
+  };
+
+  # 2. Update Open WebUI to talk to Llama.cpp
+  # Llama.cpp server uses OpenAI-compatible endpoints on port 8012 by default
   services.open-webui = {
     enable = true;
     port = 8080;
     environment = {
-      OLLAMA_BASE_URL = "http://0.0.0.0:11434";
+      # Redirect from Ollama's port (11434) to Llama.cpp's port (8012)
+      # We add /v1 because llama-cpp-server exposes an OpenAI-compatible API
+      OPENAI_API_BASE_URL = "http://127.0.0.1:8012/v1";
+      OPENAI_API_KEY = "none";
+      # Disable the default Ollama search to clean up the UI
+      ENABLE_OLLAMA_API = "False";
     };
   };
 
-  systemd.services.ollama = {
-    # Wait for the GPU to be "warm" before starting the AI service
+  # Declarative Model Management
+  systemd.services.model-downloader = {
+    description = "Download and verify GGUF models in background";
     after = [ "network.target" ];
-    # A small delay is still the most reliable "brute force" fix for strix halo.
-    serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 3";
+    # Keep this so it starts on boot, but Type=simple ensures it doesn't block
+    wantedBy = [ "multi-user.target" ];
+
+    path = [
+      pkgs.aria2 # The high-speed downloader
+      pkgs.coreutils # For mkdir/echo
+      pkgs.systemd # For systemctl restart
+    ]; # Ensure script can find curl/mkdir
+
+    script = ''
+      MODEL_DIR="/var/lib/llama-cpp-models"
+      mkdir -p "$MODEL_DIR"
+      RESTART_REQUIRED=false
+
+      download_model() {
+        local name=$1
+        local url=$2
+        local target="$MODEL_DIR/$name"
+        if [ ! -f "$target" ]; then
+          echo "Fast-syncing $name with aria2c..."
+          # -x16: 16 connections per server
+          # -s16: Split the file into 16 chunks
+          # -c:   Continue partial downloads
+          if aria2c -x16 -s16 -j5 -c --summary-interval=10 --dir="$MODEL_DIR" -o "$name" "$url"; then       
+              echo "Finished downloading: $name"
+              RESTART_REQUIRED=true
+          else
+              echo "Download failed for model $name"
+          fi
+        else
+          echo "Model $name already exists, skipping."
+        fi
+      }
+
+      download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
+      download_model "llama_70b.gguf" "https://huggingface.co/lmstudio-community/Llama-3.3-70B-Instruct-GGUF/resolve/main/Llama-3.3-70B-Instruct-Q4_K_M.gguf"
+      if [ "$RESTART_REQUIRED" = true ]; then
+        echo "Cleaning up .aria2 control files..."
+        rm -f "$MODEL_DIR"/*.aria2
+        echo "New models detected. Triggering batch restart of llama-cpp..."
+        systemctl restart llama-cpp.service
+      else
+        echo "No updates needed. Services remain undisturbed."
+      fi
+    '';
+
+    serviceConfig = {
+      Type = "simple"; # Returns control to Nix immediately
+      User = "salhashemi2";
+      Nice = 10;
+      # If the internet cuts out, try again in 30s
+      Restart = "on-failure";
+      RestartSec = "30s";
+      StateDirectory = "llama-cpp-models";
+      # This creates /var/lib/llama-cpp-models owned by salhashemi2
+      StateDirectoryMode = "0755";
+    };
   };
 
-  # Use ZRAM for compressed, high-speed memory overflow
+  # 2. Add the Vulkan driver to your graphics stack
+  hardware.graphics.extraPackages = with pkgs; [
+    vulkan-loader
+    vulkan-validation-layers
+  ];
+  # Remaining system config...
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    # extraPackages = with pkgs; [ rocmPackages.clr.icd ];
+  };
+
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 20; # Provides -12GB of compressed "extra" space.
-  };
-
-  # kernel tuning for LLM hosting
-  boot.kernel.sysctl = {
-    # Keep models in physical RAM; don't swap unless 90% full
-    "vim.swappiness" = 10;
-    # Allow overcommitting for massive C++ builds
-    "vm.overcommit_memory" = 1;
+    memoryPercent = 20;
   };
 
   # auto upgrade
@@ -121,31 +278,18 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  networking.hostName = "mothership"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking = {
+    hostName = "mothership";
+    networkmanager.enable = true;
+    nameservers = [
+      "11.125.37.99"
+      "11.125.37.1"
+      "1.1.1.1"
+    ];
+  };
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networking.networkmanager.enable = true;
-  networking.nameservers = [
-    "11.125.37.99"
-    "11.125.37.1"
-    "1.1.1.1"
-  ];
-
-  # networking.extraHosts = ''
-  #   192.168.1.98 picloud.local
-  # '';
-
-  # Set your time zone.
   time.timeZone = "America/New_York";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -158,14 +302,11 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
     options = "caps:swapescape";
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
@@ -173,28 +314,32 @@ in
       "networkmanager"
       "docker"
       "wheel"
-      "docker"
     ];
-    packages = with pkgs; [ ];
   };
 
   programs.mango.enable = true;
 
-  # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
-
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+  };
 
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     git
     amdgpu_top
     nvtopPackages.amd
+    rocmPackages.rocminfo
+    vulkan-tools
+    (pkgs.buildEnv {
+      name = "lemonade-runtime";
+      paths = [
+        pkgs.rocmPackages.clr
+        pkgs.vulkan-loader
+        pkgs.libdrm
+      ];
+    })
   ];
 
   # xdg env variables
@@ -210,20 +355,8 @@ in
     xorg.fontadobe100dpi
     xorg.fontadobe75dpi
   ];
-
   fonts.fontDir.enable = true;
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
   services.flatpak.enable = true;
   services.flatpak.packages = [
@@ -235,61 +368,18 @@ in
       location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
     }
   ];
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  services.openssh.settings.X11Forwarding = true;
-  services.avahi = {
-    nssmdns4 = true;
-    enable = true;
-    ipv4 = true;
-    ipv6 = true;
-    publish = {
-      enable = true;
-      addresses = true;
-      workstation = true;
-    };
-  };
-
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
   services.udev.packages = with pkgs; [
     platformio-core.udev
     openocd
   ];
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
   networking.firewall.enable = false;
-  # networking.firewall = {
-  #   enable = true;
-  #   allowedTCPPorts = [ 11434 ];
-  #   allowedTCPPortRanges = [
-  #     {
-  #       from = 1714;
-  #       to = 1764;
-  #     } # KDE Connect
-  #   ];
-  #   allowedUDPPortRanges = [
-  #     {
-  #       from = 1714;
-  #       to = 1764;
-  #     } # KDE Connect
-  #   ];
-  # };
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
-
+  system.stateVersion = "25.11";
 }
