@@ -67,10 +67,10 @@ in
         agents.defaults = {
           skipBootstrap = true;
           model = {
-            primary = "google/gemini-2.5-pro";
+            primary = "mothership-reasoning/gpt-oss-120b";
             fallbacks = [
               "mothership-local/qwen2.5-coder-32b-instruct"
-              "mothership-reasoning/gpt-oss-120b"
+              "google/gemini-2.5-pro"
               "openrouter/arcee-ai/trinity-large-preview:free"
               "lemonade/user.Qwen-32B-Coder"
               "ollama/qwen2.5:7b"
