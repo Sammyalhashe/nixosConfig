@@ -31,7 +31,7 @@ in
     initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
-      "amd_iommu=on"
+      "amd_iommu=off"
       "iommu=pt"
       "amdgpu.gpu_recovery=1"
       "amdgpu.cwsr_enable=0"
@@ -51,6 +51,8 @@ in
     kernel.sysctl = {
       "vm.swappiness" = 10;
       "vm.overcommit_memory" = 1;
+      "vm.nr_hugepages" = 1024;
+      "net.ipv4.tcp_fastopen" = 3;
     };
   };
 
@@ -123,17 +125,28 @@ in
 
     extraFlags = [
       "--n-gpu-layers"
-      "65" # Full offload
+      "999" # Ensure absolutely everything is on GPU
       "--ctx-size"
-      "32768" # 32k context (~8GB VRAM/RAM)
+      "32768"
       "--threads"
-      "16" # Zen 5 core count
+      "24" # Increased from 16 to utilize more Zen 5 cores
+      "--batch-size"
+      "2048" # Speed up prompt processing
+      "--ubatch-size"
+      "512" # Optimize batching
       "--device"
       "Vulkan0"
       "--flash-attn"
       "1"
+      "--cache-type-k"
+      "f16" # Save memory bandwidth
+      "--cache-type-v"
+      "f16"
+      "--no-mmap" # Force load into RAM (avoids slow disk paging)
     ];
   };
+
+  powerManagement.cpuFreqGovernor = "performance";
 
   # 2. Systemd Service Overrides (Environment & Permissions)
   systemd.services.llama-cpp = {
