@@ -64,8 +64,21 @@ in
     instances.default = {
       enable = true;
       config = {
+        tools = {
+          allow = [
+            "browser"
+            "read"
+            "write"
+            "exec"
+          ];
+        };
         agents.defaults = {
           skipBootstrap = true;
+          models = {
+            "mothership-reasoning/gpt-oss-120b" = {
+              alias = "gpt-oss:120b";
+            };
+          };
           model = {
             primary = "mothership-reasoning/gpt-oss-120b";
             fallbacks = [
