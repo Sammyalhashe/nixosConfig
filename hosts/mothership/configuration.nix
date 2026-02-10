@@ -19,6 +19,14 @@ in
 
   host.useOmarchy = lib.mkDefault false;
   host.greetd = true;
+
+  specialisation = {
+    server.configuration = {
+      system.nixos.tags = [ "server" ];
+      host.greetd = lib.mkForce false;
+      host.isHeadless = true;
+    };
+  };
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
