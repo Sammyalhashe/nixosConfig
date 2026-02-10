@@ -205,7 +205,7 @@ in
       PrivateDevices = false;
       ExecStart = "${
         pkgs.llama-cpp.override { vulkanSupport = true; }
-      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 80 --ctx-size 16384 --threads 16 --device Vulkan0 --flash-attn 1";
+      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 80 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
       Restart = "on-failure";
       RestartSec = "5s";
@@ -245,7 +245,7 @@ in
       ];
       PrivateDevices = false;
 
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 15";
       Restart = "on-failure";
       RestartSec = lib.mkForce "5s";
     };

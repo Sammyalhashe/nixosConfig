@@ -112,7 +112,7 @@ in
           providers = {
             mothership-local = {
               api = "openai-completions";
-              baseUrl = "http://11.125.37.172:8012/v1";
+              baseUrl = "http://11.125.37.101:8012/v1";
               apiKey = "none";
               models = [
                 {
@@ -123,7 +123,7 @@ in
             };
             mothership-reasoning = {
               api = "openai-completions";
-              baseUrl = "http://11.125.37.172:8013/v1";
+              baseUrl = "http://11.125.37.101:8013/v1";
               apiKey = "none";
               models = [
                 {
