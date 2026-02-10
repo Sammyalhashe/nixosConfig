@@ -118,6 +118,73 @@ let
         echo "No journal entry found for today yet."
     fi
   '';
+
+  # sncloud derivation
+  sncloud = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "sncloud";
+    version = "0.2.1";
+    pyproject = true;
+    src = pkgs.fetchFromGitHub {
+      owner = "julianprester";
+      repo = "sncloud";
+      rev = "master";
+      sha256 = "1v8cm06lrsskfpf62jv6zgs6dz70sk6wh8sy18cn6mxans4i3apw";
+    };
+    nativeBuildInputs = [ pkgs.python3Packages.hatchling ];
+    propagatedBuildInputs = with pkgs.python3Packages; [ click httpx pydantic ];
+  };
+
+  # Sync script
+  supernote-sync-script = pkgs.writeScriptBin "supernote-sync" ''
+    #!${pkgs.python3.withPackages (ps: [ sncloud ])}/bin/python
+    import os
+    import sys
+    from sncloud import SNClient
+    from sncloud.models import Directory
+    from pathlib import Path
+
+    EMAIL = os.environ.get("SN_EMAIL")
+    PASSWORD = os.environ.get("SN_PASSWORD")
+    TARGET_DIR = Path("/SupernoteSync")
+
+    if not EMAIL or not PASSWORD:
+        print("Error: SN_EMAIL or SN_PASSWORD not set")
+        sys.exit(1)
+
+    print(f"Logging in as {EMAIL}...")
+    try:
+        sn = SNClient()
+        sn.login(email=EMAIL, password=PASSWORD)
+        print("Login successful.")
+        
+        def sync_folder(parent_id, local_path):
+            local_path.mkdir(parents=True, exist_ok=True)
+            print(f"Listing folder {parent_id}...")
+            items = sn.ls(parent_id)
+            for item in items:
+                # Sanitize name
+                safe_name = item.file_name.replace("/", "_")
+                item_path = local_path / safe_name
+                
+                if isinstance(item, Directory):
+                    sync_folder(item.id, item_path)
+                else:
+                    if not item_path.exists(): # Simple check
+                        print(f"Downloading {item.file_name} to {item_path}...")
+                        try:
+                            sn.get(item, local_path)
+                        except Exception as e:
+                            print(f"Failed to download {item.file_name}: {e}")
+                    else:
+                        pass
+
+        sync_folder(None, TARGET_DIR)
+        print("Sync complete.")
+
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+  '';
 in
 {
   time.timeZone = "America/New_York";
@@ -160,6 +227,8 @@ in
     owner = "wpa_supplicant";
   };
   sops.secrets.filestore_container_env = { };
+  sops.secrets.supernote_email = { owner = "salhashemi2"; };
+  sops.secrets.supernote_password = { owner = "salhashemi2"; };
 
   documentation.enable = false;
   documentation.man.enable = false;
@@ -528,6 +597,27 @@ in
     timerConfig = {
       OnCalendar = "*-*-* 08:00:00";
       Persistent = true; # Run immediately if the Pi was off at 8 AM
+    };
+  };
+
+  systemd.services.supernote-sync = {
+    description = "Sync Supernote Cloud to /SupernoteSync";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "salhashemi2";
+    };
+    script = ''
+      export SN_EMAIL=$(cat ${config.sops.secrets.supernote_email.path})
+      export SN_PASSWORD=$(cat ${config.sops.secrets.supernote_password.path})
+      exec ${supernote-sync-script}/bin/supernote-sync
+    '';
+  };
+
+  systemd.timers.supernote-sync = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "hourly";
+      Persistent = true;
     };
   };
 
