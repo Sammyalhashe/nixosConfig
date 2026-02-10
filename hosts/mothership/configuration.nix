@@ -44,9 +44,12 @@ in
       "amdgpu.runpm=0" # Keeps GPU awake for ROCm discovery
 
       # Memory Aperture (Confirmed working)
-      "ttm.pages_limit=25165824"
-      "ttm.page_pool_size=25165824"
-      "amdgpu.gartsize=98304"
+      "ttm.pages_limit=30000000"
+      "ttm.page_pool_size=30000000"
+      "amdgpu.gartsize=122880"
+      # "ttm.pages_limit=25165824"
+      # "ttm.page_pool_size=25165824"
+      # "amdgpu.gartsize=98304"
     ];
     kernel.sysctl = {
       "vm.swappiness" = 10;
@@ -132,10 +135,10 @@ in
     extraFlags = [
 
       "--n-gpu-layers"
-      "999"
+      "65"
 
       "--ctx-size"
-      "32768"
+      "16384"
 
       "--threads"
       "16"
@@ -153,7 +156,6 @@ in
   # 2. The Llama-cpp Service (Reasoner - Port 8013)
 
   systemd.services.llama-cpp-reasoning = {
-
     description = "LLaMA C++ server (Reasoning)";
 
     after = [ "network.target" ];
@@ -168,7 +170,12 @@ in
 
       AMD_VULKAN_ICD = "RADV";
 
-      GGML_VK_PREFER_HOST_MEMORY = "1";
+      # Inject Lemonade Runtime Libs
+      LD_LIBRARY_PATH = lib.makeLibraryPath [
+        pkgs.rocmPackages.clr
+        pkgs.vulkan-loader
+        pkgs.libdrm
+      ];
 
     };
 
@@ -190,7 +197,7 @@ in
       PrivateDevices = false;
       ExecStart = "${
         pkgs.llama-cpp.override { vulkanSupport = true; }
-      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 999 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
+      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 80 --ctx-size 16384 --threads 16 --device Vulkan0 --flash-attn 1";
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
       Restart = "on-failure";
       RestartSec = "5s";
@@ -206,7 +213,12 @@ in
       XDG_CACHE_HOME = "/var/cache/llama-cpp";
       RADV_PERFTEST = "aco"; # Use the superior Mesa compiler
       AMD_VULKAN_ICD = "RADV";
-      GGML_VK_PREFER_HOST_MEMORY = "1";
+      # Inject Lemonade Runtime Libs
+      LD_LIBRARY_PATH = lib.makeLibraryPath [
+        pkgs.rocmPackages.clr
+        pkgs.vulkan-loader
+        pkgs.libdrm
+      ];
     };
 
     serviceConfig = {
@@ -237,12 +249,32 @@ in
     enable = true;
     port = 8080;
     environment = {
-      # Redirect from Ollama's port (11434) to Llama.cpp's port (8012)
+      # Redirect from Ollama's port (11434) to Llama.cpp's port (8013)
       # We add /v1 because llama-cpp-server exposes an OpenAI-compatible API
-      OPENAI_API_BASE_URL = "http://127.0.0.1:8012/v1";
+      OPENAI_API_BASE_URL = "http://127.0.0.1:8013/v1";
       OPENAI_API_KEY = "none";
       # Disable the default Ollama search to clean up the UI
       ENABLE_OLLAMA_API = "False";
+      # Inject Python dependencies for Tools (Web Search, Crawl, etc.)
+      PYTHONPATH = let
+        pyPkgs = pkgs.python313Packages;
+      in lib.makeSearchPath "lib/python3.13/site-packages" [
+        pyPkgs.requests
+        pyPkgs.beautifulsoup4
+        pyPkgs.markdownify
+        pyPkgs.lxml
+        pyPkgs.tiktoken
+        pyPkgs.aiohttp
+        pyPkgs.loguru
+        pyPkgs.orjson
+        pyPkgs.rank-bm25
+        pyPkgs.scikit-learn
+        pyPkgs.scipy
+        pyPkgs.torch
+        pyPkgs.sentence-transformers
+        pyPkgs.transformers
+        pyPkgs.regex
+      ];
     };
   };
 
@@ -284,24 +316,26 @@ in
         fi
       }
 
-      download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
-      download_model "llama_70b.gguf" "https://huggingface.co/lmstudio-community/Llama-3.3-70B-Instruct-GGUF/resolve/main/Llama-3.3-70B-Instruct-Q4_K_M.gguf"
+            download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
+            # download_model "llama_70b.gguf" "https://huggingface.co/lmstudio-community/Llama-3.3-70B-Instruct-GGUF/resolve/main/Llama-3.3-70B-Instruct-Q4_K_M.gguf"
+            
+            # Download Split Parts for GPT-OSS-120B (IQ4_XS)
+            # These are in a subdirectory on the HF repo
+            #download_model "openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf"
+            #download_model "openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS/openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf"
 
-      # Download Split Parts for GPT-OSS-120B (IQ4_XS)
-      download_model "openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf"
-      download_model "openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf"
-
-      if [ "$RESTART_REQUIRED" = true ]; then
-        echo "Cleaning up .aria2 control files..."
-        rm -f "$MODEL_DIR"/*.aria2
-        echo "New models detected. Triggering batch restart of llama-cpp..."
-        systemctl restart llama-cpp.service
-        systemctl restart llama-cpp-reasoning.service
-      else
-        echo "No updates needed. Services remain undisturbed."
-      fi
+            if [ "$RESTART_REQUIRED" = true ]; then
+              echo "Cleaning up .aria2 control files..."
+              rm -f "$MODEL_DIR"/*.aria2
+              # Clean up the previous failed download attempt
+              rm -f "$MODEL_DIR"/2687a00b84e7e35c652ea0024cb8747070b090e9f311ab9b6461b8a71c2bc50f*
+              echo "New models detected. Triggering batch restart of llama-cpp..."
+              systemctl restart llama-cpp.service
+              #systemctl restart llama-cpp-reasoning.service
+            else
+              echo "No updates needed. Services remain undisturbed."
+            fi
     '';
-
     serviceConfig = {
       Type = "simple"; # Returns control to Nix immediately
       User = "salhashemi2";
