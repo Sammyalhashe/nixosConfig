@@ -129,53 +129,29 @@ in
     # 1. The Llama-cpp Service (Coder - Port 8012)
 
     services.llama-cpp = {
-
       enable = true;
-
       port = 8012;
-
       host = "0.0.0.0";
-
       package = pkgs.llama-cpp.override { vulkanSupport = true; };
-
       model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
-
       extraFlags = [
-
         "--n-gpu-layers"
-
         "65"
-
         "--ctx-size"
-
-        "65536"
-
+        "32768"
         "--cache-type-k"
-
         "q8_0"
-
         "--cache-type-v"
-
         "q8_0"
-
         "--threads"
-
         "16"
-
         "--device"
-
         "Vulkan0"
-
         "--flash-attn"
-
         "1"
-
         "--chat-template"
-
         "chatml"
-
       ];
-
     };
 
   
