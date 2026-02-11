@@ -60,6 +60,8 @@
       (import ./scripts/system-copy.nix { inherit pkgs; })
     ];
 
+  programs.aider.enable = true;
+
   systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.isLinux {
     Unit = {
       Description = "Neovim server to connect to for fast startup";

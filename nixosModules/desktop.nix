@@ -7,13 +7,13 @@
 
 {
   config = lib.mkMerge [
-    (lib.mkIf (!config.host.isWsl && !config.host.greetd && !config.host.isHeadless) {
-      # Enable KDE
-      services.xserver.enable = true;
-      services.displayManager.sddm.enable = true;
-      services.desktopManager.plasma6.enable = true;
-    })
     (lib.mkIf (!config.host.isWsl && !config.host.isHeadless) {
+      # Enable KDE only if NOT headless
+      services.xserver.enable = true;
+      # Conditionally enable SDDM based on greetd flag, but only if not headless
+      services.displayManager.sddm.enable = !config.host.greetd;
+      services.desktopManager.plasma6.enable = true;
+
       # Enable Steam
       programs.steam = {
         enable = true;

@@ -134,6 +134,16 @@
           openclaw = prev.openclaw.override {
             openclaw-gateway = final.openclaw-gateway;
           };
+          open-webui = prev.open-webui.override {
+            # Use fetchgit instead of fetchFromGitHub to avoid corrupted tarballs
+            fetchFromGitHub =
+              _:
+              final.fetchgit {
+                url = "https://github.com/open-webui/open-webui";
+                rev = "2b26355002064228e9b671339f8f3fb9d1fafa73"; # v0.7.2
+                sha256 = "06zi3n60kdg3nffdx8qgfkl57a6ismj057gjm53jpzrjmq3w8bq5";
+              };
+          };
         })
       ];
 

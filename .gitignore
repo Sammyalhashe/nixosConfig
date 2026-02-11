@@ -2,3 +2,6 @@ age.key
 key_pi*.txt
 test_lanzaboote_setup
 .direnv/
+.aider*
+*.log
+.nvimlog

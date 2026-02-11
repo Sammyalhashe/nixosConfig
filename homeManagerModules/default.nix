@@ -7,12 +7,14 @@ let
     ./wofi.nix
     ./stylix.nix
     ./gemini-cli.nix
-    ./pomodoro.nix
+    # ./pomodoro.nix
     ./startup-fix.nix
     ./mods.nix
     ./mangowc.nix
     ./ghostty.nix
     ./waybar.nix
+    ./crush.nix
+    ./aider.nix
     {
       # themeSwitcher.enable = true;
       # stylix.targets.gtk.enable = false;

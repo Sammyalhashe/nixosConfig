@@ -126,97 +126,135 @@ in
   #   };
   # };
 
-  # 1. The Llama-cpp Service (Coder - Port 8012)
+    # 1. The Llama-cpp Service (Coder - Port 8012)
 
-  services.llama-cpp = {
+    services.llama-cpp = {
 
-    enable = true;
+      enable = true;
 
-    port = 8012;
+      port = 8012;
 
-    host = "0.0.0.0";
+      host = "0.0.0.0";
 
-    package = pkgs.llama-cpp.override { vulkanSupport = true; };
+      package = pkgs.llama-cpp.override { vulkanSupport = true; };
 
-    model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
+      model = "/var/lib/llama-cpp-models/qwen_32b.gguf";
 
-    extraFlags = [
+      extraFlags = [
 
-      "--n-gpu-layers"
-      "65"
+        "--n-gpu-layers"
 
-      "--ctx-size"
-      "16384"
+        "65"
 
-      "--threads"
-      "16"
+        "--ctx-size"
 
-      "--device"
-      "Vulkan0"
+        "65536"
 
-      "--flash-attn"
-      "1"
+        "--cache-type-k"
 
-    ];
+        "q8_0"
 
-  };
+        "--cache-type-v"
 
-  # 2. The Llama-cpp Service (Reasoner - Port 8013)
+        "q8_0"
 
-  systemd.services.llama-cpp-reasoning = {
-    description = "LLaMA C++ server (Reasoning)";
+        "--threads"
 
-    after = [ "network.target" ];
+        "16"
 
-    wantedBy = [ "multi-user.target" ];
+        "--device"
 
-    environment = {
+        "Vulkan0"
 
-      XDG_CACHE_HOME = "/var/cache/llama-cpp-reasoning";
+        "--flash-attn"
 
-      RADV_PERFTEST = "aco";
+        "1"
 
-      AMD_VULKAN_ICD = "RADV";
+        "--chat-template"
 
-      # Inject Lemonade Runtime Libs
-      LD_LIBRARY_PATH = lib.makeLibraryPath [
-        pkgs.rocmPackages.clr
-        pkgs.vulkan-loader
-        pkgs.libdrm
+        "chatml"
+
       ];
 
     };
 
-    serviceConfig = {
+  
 
-      User = "salhashemi2";
+    # 2. The Llama-cpp Service (Reasoner - Port 8013)
 
-      Group = "users";
+    systemd.services.llama-cpp-reasoning = {
 
-      CacheDirectory = "llama-cpp-reasoning";
+      description = "LLaMA C++ server (Reasoning)";
 
-      RuntimeDirectory = "llama-cpp-reasoning";
+      after = [ "network.target" ];
 
-      DeviceAllow = [
-        "/dev/dri/renderD128"
-        "/dev/dri/card0"
-        "/dev/kfd"
-      ];
-      PrivateDevices = false;
-      ExecStart = "${
-        pkgs.llama-cpp.override { vulkanSupport = true; }
-      }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 80 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
-      Restart = "on-failure";
-      RestartSec = "5s";
+      wantedBy = [ "multi-user.target" ];
+
+      environment = {
+
+        XDG_CACHE_HOME = "/var/cache/llama-cpp-reasoning";
+
+        RADV_PERFTEST = "aco";
+
+        AMD_VULKAN_ICD = "RADV";
+
+        # Inject Lemonade Runtime Libs
+
+        LD_LIBRARY_PATH = lib.makeLibraryPath [
+
+          pkgs.rocmPackages.clr
+
+          pkgs.vulkan-loader
+
+          pkgs.libdrm
+
+        ];
+
+      };
+
+      serviceConfig = {
+
+        User = "salhashemi2";
+
+        Group = "users";
+
+        CacheDirectory = "llama-cpp-reasoning";
+
+        RuntimeDirectory = "llama-cpp-reasoning";
+
+        DeviceAllow = [
+
+          "/dev/dri/renderD128"
+
+          "/dev/dri/card0"
+
+          "/dev/kfd"
+
+        ];
+
+        PrivateDevices = false;
+
+        ExecStart = "${
+
+          pkgs.llama-cpp.override { vulkanSupport = true; }
+
+        }/bin/llama-server --model /var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf --port 8013 --host 0.0.0.0 --n-gpu-layers 60 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 8192 --jinja --threads 16 --device Vulkan0 --flash-attn 1";
+
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+
+        Restart = "on-failure";
+
+        RestartSec = "5s";
+
+      };
+
     };
-  };
 
   powerManagement.cpuFreqGovernor = "performance";
 
   # 3. Systemd Service Overrides (Environment & Permissions for Coder)
   systemd.services.llama-cpp = {
-    after = [ "network.target" ];
+    after = [ "network.target" "llama-cpp-reasoning.service" ];
     environment = {
       XDG_CACHE_HOME = "/var/cache/llama-cpp";
       RADV_PERFTEST = "aco"; # Use the superior Mesa compiler
@@ -264,25 +302,27 @@ in
       # Disable the default Ollama search to clean up the UI
       ENABLE_OLLAMA_API = "False";
       # Inject Python dependencies for Tools (Web Search, Crawl, etc.)
-      PYTHONPATH = let
-        pyPkgs = pkgs.python313Packages;
-      in lib.makeSearchPath "lib/python3.13/site-packages" [
-        pyPkgs.requests
-        pyPkgs.beautifulsoup4
-        pyPkgs.markdownify
-        pyPkgs.lxml
-        pyPkgs.tiktoken
-        pyPkgs.aiohttp
-        pyPkgs.loguru
-        pyPkgs.orjson
-        pyPkgs.rank-bm25
-        pyPkgs.scikit-learn
-        pyPkgs.scipy
-        pyPkgs.torch
-        pyPkgs.sentence-transformers
-        pyPkgs.transformers
-        pyPkgs.regex
-      ];
+      PYTHONPATH =
+        let
+          pyPkgs = pkgs.python313Packages;
+        in
+        lib.makeSearchPath "lib/python3.13/site-packages" [
+          pyPkgs.requests
+          pyPkgs.beautifulsoup4
+          pyPkgs.markdownify
+          pyPkgs.lxml
+          pyPkgs.tiktoken
+          pyPkgs.aiohttp
+          pyPkgs.loguru
+          pyPkgs.orjson
+          pyPkgs.rank-bm25
+          pyPkgs.scikit-learn
+          pyPkgs.scipy
+          pyPkgs.torch
+          pyPkgs.sentence-transformers
+          pyPkgs.transformers
+          pyPkgs.regex
+        ];
     };
   };
 
@@ -446,6 +486,10 @@ in
     nvtopPackages.amd
     rocmPackages.rocminfo
     vulkan-tools
+    uv
+    (pkgs.writeShellScriptBin "mcp-hub" ''
+      exec ${pkgs.nodejs}/bin/npx -y mcp-hub@latest "$@"
+    '')
     (pkgs.buildEnv {
       name = "lemonade-runtime";
       paths = [

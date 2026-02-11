@@ -131,7 +131,11 @@ let
       sha256 = "1v8cm06lrsskfpf62jv6zgs6dz70sk6wh8sy18cn6mxans4i3apw";
     };
     nativeBuildInputs = [ pkgs.python3Packages.hatchling ];
-    propagatedBuildInputs = with pkgs.python3Packages; [ click httpx pydantic ];
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      click
+      httpx
+      pydantic
+    ];
   };
 
   # Sync script
@@ -227,8 +231,12 @@ in
     owner = "wpa_supplicant";
   };
   sops.secrets.filestore_container_env = { };
-  sops.secrets.supernote_email = { owner = "salhashemi2"; };
-  sops.secrets.supernote_password = { owner = "salhashemi2"; };
+  sops.secrets.supernote_email = {
+    owner = "salhashemi2";
+  };
+  sops.secrets.supernote_password = {
+    owner = "salhashemi2";
+  };
 
   documentation.enable = false;
   documentation.man.enable = false;
@@ -607,8 +615,8 @@ in
       User = "salhashemi2";
     };
     script = ''
-      export SN_EMAIL=$(cat ${config.sops.secrets.supernote_email.path})
-      export SN_PASSWORD=$(cat ${config.sops.secrets.supernote_password.path})
+      export SN_EMAIL="$(cat ${config.sops.secrets.supernote_email.path})"
+      export SN_PASSWORD="$(cat ${config.sops.secrets.supernote_password.path})"
       exec ${supernote-sync-script}/bin/supernote-sync
     '';
   };
