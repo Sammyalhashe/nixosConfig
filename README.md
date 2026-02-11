@@ -20,6 +20,7 @@
 | `Super` + `Shift` + `Escape` | Quit Session (Logout) |
 | `Super` + `Ctrl` + `Escape` | Reboot |
 | `Super` + `Shift` + `Ctrl` + `Escape` | Poweroff |
+| `Super` + `Shift` + `P` | Print System Info |
 | **Media & Hardware** | |
 | `Print` | Screenshot (Region) |
 | `Shift` + `Print` | Screenshot (Window) |
