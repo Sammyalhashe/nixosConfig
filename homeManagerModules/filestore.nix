@@ -120,12 +120,12 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "mothership-reasoning/gpt-oss-120b" = {
               alias = "gpt-oss:120b";
             };
-            "google/gemini-1.5-pro" = {
-              alias = "gemini-2.5-pro";
+            "google/gemini-3.0-pro-preview" = {
+              alias = "gemini-3";
             };
           };
           model = {
-            primary = "google/gemini-2.0-flash";
+            primary = "mothership-reasoning/gpt-oss-120b";
             fallbacks = [
               "mothership-reasoning/gpt-oss-120b"
               "mothership-local/qwen2.5-coder-32b-instruct"
@@ -208,12 +208,12 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
               apiKey = "env:GEMINI_API_KEY";
               models = [
                 {
-                  id = "gemini-2.0-flash";
-                  name = "Gemini 2.0 Flash";
+                  id = "gemini-2.5-pro";
+                  name = "Gemini 2.5 Pro";
                 }
                 {
-                  id = "gemini-1.5-pro";
-                  name = "Gemini 1.5 Pro";
+                  id = "gemini-3.0-pro-preview";
+                  name = "Gemini 3.0 Pro (Preview)";
                 }
               ];
             };
