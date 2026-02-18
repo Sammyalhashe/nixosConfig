@@ -13,7 +13,7 @@ let
   nixvim-wsl = nixvim-package.extend { nixvim.wsl = false; };
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
   extended-nixvim =
-    if config.stylix.enable then
+    if (config.stylix or {}).enable or false then
       nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
     else
       nixvim-wsl;
