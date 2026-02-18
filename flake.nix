@@ -347,21 +347,7 @@
         };
         modules = [
           baseConfig
-          stylix.homeModules.stylix
           sops-nix.homeManagerModules.sops
-          (
-            { pkgs, ... }:
-            let
-              theme = import ./common/stylix-values.nix { inherit pkgs; };
-            in
-            {
-              stylix.enable = true;
-              stylix.base16Scheme = theme.base16Scheme;
-              stylix.image = theme.image;
-              stylix.polarity = theme.polarity;
-              stylix.fonts = theme.fonts;
-            }
-          )
           ./homeManagerModules/work.nix
           ./common/home-work.nix
         ];
