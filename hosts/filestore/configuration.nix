@@ -661,6 +661,8 @@ in
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";
+      WorkingDirectory = "/home/salhashemi2/trading-bot-flake";
+      Environment = "TRADING_MODE=live";
       ExecStart = "${pkgs.nix}/bin/nix run /home/salhashemi2/trading-bot-flake";
     };
   };
@@ -780,11 +782,16 @@ in
   # systemd.services.restic-backups-logseq.requires = [ "restic-repo-init.service" ];
 
   systemd.services.forgejo-secrets = {
+    description = "Forgejo secret bootstrap helper";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "forgejo.service" ];
+    serviceConfig.Type = "oneshot";
     preStart = ''
       mkdir -p /forgejo/custom/conf
-      chown -R forgejo:forgejo /forgejo
-      chmod -R 750 /forgejo
+      chown -hR forgejo:forgejo /forgejo || true
+      chmod -R 750 /forgejo || true
     '';
+    script = "true";
   };
   programs.dconf.enable = true;
   hardware.enableRedistributableFirmware = true;

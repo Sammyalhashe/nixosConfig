@@ -13,7 +13,7 @@ let
 
   # nixvim-package = inputs.nixvim-config.packages.${system}.default;
   extended-nixvim =
-    if config.stylix.enable then
+    if config.stylix.enable && config.stylix.targets.nixvim.enable then
       nixvim-package.extend config.stylix.targets.nixvim.exportedModule
     else
       nixvim-package;

@@ -4,6 +4,7 @@ let
     ./home-common.nix
     ./neovim.nix
     ./stylix.nix
+    ./aider.nix
   ];
 in
 {

@@ -228,6 +228,7 @@ in
       inputs.mangowc.packages.${pkgs.stdenv.hostPlatform.system}.default
       pkgs.swaybg
       pkgs.wlr-randr
+      pkgs.kanshi
       pkgs.zenity
       pkgs.libnotify
       rebuildScript
@@ -235,6 +236,12 @@ in
     ];
 
     xdg.configFile."waybar/mango-style.css".text = mangoWaybarStyle;
+
+    xdg.configFile."kanshi/config".text = ''
+      profile {
+        output * scale 1.5
+      }
+    '';
 
     xdg.configFile."mango/config.conf".text = ''
       # General Configuration
@@ -256,10 +263,9 @@ in
         ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
         ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
-        # Set scaling for all connected outputs
-        for output in $(${pkgs.wlr-randr}/bin/wlr-randr | ${pkgs.gnugrep}/bin/grep "^[^ ]" | ${pkgs.gawk}/bin/awk '{print $1}'); do
-            ${pkgs.wlr-randr}/bin/wlr-randr --output $output --scale 1.5
-        done
+        # Start kanshi for automatic display configuration (hotplug support)
+        ${pkgs.kanshi}/bin/kanshi &
+
         ${pkgs.procps}/bin/pkill swaybg || true
         ${pkgs.swaybg}/bin/swaybg -i ${config.stylix.image} &
         ${pkgs.waybar}/bin/waybar -s $HOME/.config/waybar/mango-style.css &

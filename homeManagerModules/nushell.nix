@@ -9,7 +9,7 @@ let
   raspberrypi = "raspberrypi.local";
   picloud = "picloud.local";
   homebase = "homebase";
-  wslCfg = config.environments.wsl;
+  wslCfg = lib.attrByPath [ "environments" "wsl" ] { enable = false; } config;
 in
 {
   home.activation.syncSkateKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
