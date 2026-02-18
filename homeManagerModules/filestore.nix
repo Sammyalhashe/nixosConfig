@@ -116,6 +116,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
         };
         agents.defaults = {
           skipBootstrap = true;
+          timeoutSeconds = 300; # 5 minutes to prevent timeouts
           models = {
             "mothership-reasoning/gpt-oss-120b" = {
               alias = "gpt-oss:120b";
@@ -213,6 +214,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
                 {
                   id = "moonshotai/kimi-k2.5";
                   name = "Kimi k2.5 (NVIDIA)";
+                  reasoning = true;
                 }
               ];
             };
