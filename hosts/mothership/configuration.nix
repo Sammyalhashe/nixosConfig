@@ -226,6 +226,41 @@ in
 
     };
 
+    # 3. The Llama-cpp Service (MiniMax - Port 8014) - DISABLED BY DEFAULT
+    systemd.services.llama-cpp-minimax = {
+      description = "LLaMA C++ server (MiniMax)";
+      after = [ "network.target" ];
+      # wantedBy = [ "multi-user.target" ]; # Disabled
+      environment = {
+        XDG_CACHE_HOME = "/var/cache/llama-cpp-minimax";
+        RADV_PERFTEST = "aco";
+        AMD_VULKAN_ICD = "RADV";
+        LD_LIBRARY_PATH = lib.makeLibraryPath [
+          pkgs.rocmPackages.clr
+          pkgs.vulkan-loader
+          pkgs.libdrm
+        ];
+      };
+      serviceConfig = {
+        User = "salhashemi2";
+        Group = "users";
+        CacheDirectory = "llama-cpp-minimax";
+        RuntimeDirectory = "llama-cpp-minimax";
+        DeviceAllow = [
+          "/dev/dri/renderD128"
+          "/dev/dri/card0"
+          "/dev/kfd"
+        ];
+        PrivateDevices = false;
+        ExecStart = "${
+          pkgs.llama-cpp.override { vulkanSupport = true; }
+        }/bin/llama-server --model /var/lib/llama-cpp-models/MiniMax-M2.1-UD-IQ2_M-00001-of-00002.gguf --port 8014 --host 0.0.0.0 --n-gpu-layers 60 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 8192 --threads 16 --device Vulkan0 --flash-attn 1";
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+        Restart = "on-failure";
+        RestartSec = "5s";
+      };
+    };
+
   powerManagement.cpuFreqGovernor = "performance";
 
   # 3. Systemd Service Overrides (Environment & Permissions for Coder)
@@ -347,6 +382,10 @@ in
             # These are in a subdirectory on the HF repo
             #download_model "openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf"
             #download_model "openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf" "https://huggingface.co/bartowski/openai_gpt-oss-120b-GGUF/resolve/main/openai_gpt-oss-120b-IQ4_XS/openai_gpt-oss-120b-IQ4_XS-00002-of-00002.gguf"
+
+            # Download Split Parts for MiniMax-M2.1 (UD-IQ2_M)
+            # download_model "MiniMax-M2.1-UD-IQ2_M-00001-of-00002.gguf" "https://huggingface.co/unsloth/MiniMax-M2.1-GGUF/resolve/main/UD-IQ2_M/MiniMax-M2.1-UD-IQ2_M-00001-of-00002.gguf"
+            # download_model "MiniMax-M2.1-UD-IQ2_M-00002-of-00002.gguf" "https://huggingface.co/unsloth/MiniMax-M2.1-GGUF/resolve/main/UD-IQ2_M/MiniMax-M2.1-UD-IQ2_M-00002-of-00002.gguf"
 
             if [ "$RESTART_REQUIRED" = true ]; then
               echo "Cleaning up .aria2 control files..."
