@@ -43,6 +43,9 @@
   sops.secrets.polyclaw_private_key = {
     owner = "salhashemi2";
   };
+  sops.secrets.nvidia_api_key = {
+    owner = "salhashemi2";
+  };
   sops.secrets.coinbase_api_key_clawdbot = { };
 
   sops.templates."openclaw-env" = {
@@ -53,6 +56,7 @@
       OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
       CHAINSTACK_API_KEY=${config.sops.placeholder.chainstack_api_key}
       POLYCLAW_PRIVATE_KEY=${config.sops.placeholder.polyclaw_private_key}
+      NVIDIA_API_KEY=${config.sops.placeholder.nvidia_api_key}
       POLYGON_RPC_URL=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
       CHAINSTACK_NODE=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
     '';

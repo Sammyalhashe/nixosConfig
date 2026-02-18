@@ -123,9 +123,12 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "google/gemini-3.0-pro-preview" = {
               alias = "gemini-3";
             };
+            "nvidia/moonshotai/kimi-k2.5" = {
+              alias = "kimi-k2";
+            };
           };
           model = {
-            primary = "mothership-reasoning/gpt-oss-120b";
+            primary = "nvidia/moonshotai/kimi-k2.5";
             fallbacks = [
               "mothership-reasoning/gpt-oss-120b"
               "mothership-local/qwen2.5-coder-32b-instruct"
@@ -199,6 +202,17 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
                 {
                   id = "arcee-ai/trinity-large-preview:free";
                   name = "Trinity Large Preview (Free)";
+                }
+              ];
+            };
+            nvidia = {
+              api = "openai-completions";
+              baseUrl = "https://integrate.api.nvidia.com/v1";
+              apiKey = "env:NVIDIA_API_KEY";
+              models = [
+                {
+                  id = "moonshotai/kimi-k2.5";
+                  name = "Kimi k2.5 (NVIDIA)";
                 }
               ];
             };
