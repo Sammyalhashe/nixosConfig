@@ -246,14 +246,14 @@ in
 
   # Stylix Configuration (Headless/Minimal)
   stylix =
-    let
-      theme = import ../../common/stylix-values.nix { inherit pkgs; };
-    in
+    # let
+    #   theme = import ../../common/stylix-values.nix { inherit pkgs; };
+    # in
     {
-      enable = true;
-      base16Scheme = theme.base16Scheme;
-      polarity = theme.polarity;
-      fonts = theme.fonts;
+      enable = lib.mkForce false;
+      # base16Scheme = theme.base16Scheme;
+      # polarity = theme.polarity;
+      # fonts = theme.fonts;
 
       # Disable graphical targets to save space/dependencies
       targets.gtk.enable = false;

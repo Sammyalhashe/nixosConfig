@@ -31,6 +31,8 @@ in
     ./zellij.nix
     ./nushell.nix
     ./aider.nix
+    ./tmux.nix
+    ./yazi.nix
     inputs.nix-openclaw.homeManagerModules.openclaw
   ];
 
@@ -90,7 +92,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
 
   programs.openclaw = {
     enable = true;
-    firstParty = {
+    bundledPlugins = {
       summarize.enable = true; # Summarize web pages, PDFs, videos
       peekaboo.enable = false; # Take screenshots
       poltergeist.enable = false; # Control your macOS UI

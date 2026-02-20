@@ -286,7 +286,7 @@ in
 
       # see https://github.com/nix-community/home-manager/issues/5952
       set -gu default-command
-      set -g default-shell "$SHELL"
+      set -g default-shell "$env.SHELL"
     '';
   };
 }

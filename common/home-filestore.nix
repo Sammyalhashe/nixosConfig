@@ -7,7 +7,7 @@
 let
   nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
   extended-nixvim =
-    if config.stylix.enable && config.stylix.targets.nixvim.enable then
+    if (config.stylix.enable or false) && (config.stylix.targets.nixvim.enable or false) then
       nixvim-package.extend config.stylix.targets.nixvim.exportedModule
     else
       nixvim-package;

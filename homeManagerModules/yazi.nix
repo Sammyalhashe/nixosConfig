@@ -13,7 +13,7 @@
           {
 
             on = [ "<C-s>" ];
-            run = ''shell "$SHELL" --block --confirm'';
+            run = ''shell "$env.SHELL" --block --confirm'';
             desc = "Open shell here";
           }
         ];
