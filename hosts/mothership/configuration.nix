@@ -224,7 +224,7 @@ in
 
       };
 
-      enable = false;
+      enable = true;
 
     };
 
@@ -261,6 +261,7 @@ in
         Restart = "on-failure";
         RestartSec = "5s";
       };
+        enable = false;
     };
 
   powerManagement.cpuFreqGovernor = "performance";
