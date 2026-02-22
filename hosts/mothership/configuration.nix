@@ -66,10 +66,12 @@ in
     };
   };
 
-  # Essential environment variables for GFX 11.5.1
+  # Essential environment variables for GFX 11.5.1 and Playwright
   environment.variables = {
     HSA_OVERRIDE_GFX_VERSION = "11.5.1";
     RADV_PERFTEST = "aco";
+    PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
   };
 
   # Enable the Modular LLM Services
@@ -215,6 +217,8 @@ in
     rocmPackages.rocminfo
     vulkan-tools
     uv
+    yq-go
+    playwright-driver.browsers
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
   ];
 
