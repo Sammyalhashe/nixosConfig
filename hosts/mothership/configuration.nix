@@ -243,6 +243,7 @@ in
     ]))
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
     (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
+    (import ../../common/scripts/agent-chainer.nix { inherit pkgs; })
   ];
 
   services.openssh.enable = true;
