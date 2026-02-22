@@ -10,7 +10,7 @@ in
     enable = mkEnableOption "Qwen3-Coder-Next Service (Port 8012)";
     modelPath = mkOption {
       type = types.str;
-      default = "/var/lib/llama-cpp-models/qwen3_next_q4km.gguf";
+      default = "/var/lib/llama-cpp-models/qwen3_next_q3km.gguf";
       description = "Path to the Qwen3-Coder-Next GGUF model.";
     };
   };
@@ -40,7 +40,7 @@ in
         PrivateDevices = false;
         # Using the same Vulkan override as the reasoning service
         # --no-mmap: Crucial for large MoE models on unified memory to prevent thrashing
-        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8012 --host 0.0.0.0 --n-gpu-layers 65 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap";
+        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8012 --host 0.0.0.0 --n-gpu-layers 65 --ctx-size 32768 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         Restart = "on-failure";
         RestartSec = "5s";

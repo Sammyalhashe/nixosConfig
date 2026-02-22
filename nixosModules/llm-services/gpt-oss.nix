@@ -38,7 +38,7 @@ in
         RuntimeDirectory = "llama-cpp-reasoning";
         DeviceAllow = [ "/dev/dri/renderD128" "/dev/dri/card0" "/dev/kfd" ];
         PrivateDevices = false;
-        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8013 --host 0.0.0.0 --n-gpu-layers 60 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 8192 --jinja --threads 16 --device Vulkan0 --flash-attn 1";
+        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8013 --host 0.0.0.0 --n-gpu-layers 60 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         Restart = "on-failure";
         RestartSec = "5s";

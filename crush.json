@@ -1,0 +1,1 @@
+{"providers":{"local-inference":{"api_key":"none","base_url":"http://127.0.0.1:8013/v1","models":[{"id":"gpt-oss-120b","name":"GPT-OSS 120B"}],"name":"Mothership Reasoner (Primary)","type":"openai"}}}

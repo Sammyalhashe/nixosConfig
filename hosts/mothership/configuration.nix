@@ -75,7 +75,7 @@ in
   };
 
   # Enable the Modular LLM Services
-  services.llm-services.gpt-oss.enable = false;
+  services.llm-services.gpt-oss.enable = true;
   services.llm-services.qwen-coder.enable = true;
 
   powerManagement.cpuFreqGovernor = "performance";
@@ -85,8 +85,8 @@ in
     enable = true;
     port = 8080;
     environment = {
-      OPENAI_API_BASE_URL = "http://127.0.0.1:8012/v1";
-      OPENAI_API_KEY = "none";
+      OPENAI_API_BASE_URLS = "http://127.0.0.1:8012/v1;http://127.0.0.1:8013/v1";
+      OPENAI_API_KEYS = "none;none";
       ENABLE_OLLAMA_API = "False";
       PYTHONPATH =
         let
@@ -134,6 +134,7 @@ in
         fi
       }
       download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
+      download_model "qwen3_next_q3km.gguf" "https://huggingface.co/unsloth/Qwen3-Coder-Next-GGUF/resolve/main/Qwen3-Coder-Next-Q3_K_M.gguf"
     '';
     serviceConfig = {
       Type = "simple";
@@ -219,7 +220,29 @@ in
     uv
     yq-go
     playwright-driver.browsers
+    (python312.withPackages (ps: with ps; [
+      litellm
+      backoff
+      fastapi
+      uvicorn
+      pydantic
+      python-dotenv
+      apscheduler
+      gunicorn
+      uvloop
+      orjson
+      pyyaml
+      rich
+      python-multipart
+      cryptography
+      pyjwt
+      boto3
+      aiohttp
+      httpx
+      email-validator
+    ]))
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
+    (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
   ];
 
   services.openssh.enable = true;

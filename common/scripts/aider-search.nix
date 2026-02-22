@@ -17,11 +17,16 @@ mcp-servers:
 EOF
 
   # Launch Aider with the absolute path to the temporary config
-  echo "Starting Aider with Brave Search MCP..."
+  echo "Starting Agentic Aider with Brave Search MCP..."
   trap 'rm -f "$TEMP_CONFIG"' EXIT
   exec ${pkgs.aider-chat-with-browser}/bin/aider \
     --model openai/qwen3-coder \
     --openai-api-base http://127.0.0.1:8012/v1 \
     --no-auto-commits \
-    --config "$TEMP_CONFIG" "$@"
+    --config "$TEMP_CONFIG" \
+    --map-tokens 2048 \
+    --architect \
+    --auto-lint \
+    --lint-cmd "nix develop --command bash -c 'dune build'" \
+    "$@"
 ''
