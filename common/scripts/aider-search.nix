@@ -9,11 +9,19 @@ pkgs.writeShellScriptBin "aider-search" ''
     exit 1
   fi
 
-  # Launch Aider with the MCP server
+  # Create a unique temporary config file in /tmp
+  TEMP_CONFIG=$(mktemp /tmp/aider-config-XXXXXX.yml)
+  cat <<EOF > "$TEMP_CONFIG"
+mcp-servers:
+  - "npx -y @modelcontextprotocol/server-brave-search"
+EOF
+
+  # Launch Aider with the absolute path to the temporary config
   echo "Starting Aider with Brave Search MCP..."
-  exec ${pkgs.aider-chat}/bin/aider \
+  trap 'rm -f "$TEMP_CONFIG"' EXIT
+  exec ${pkgs.aider-chat-with-browser}/bin/aider \
     --model openai/qwen3-coder \
     --openai-api-base http://127.0.0.1:8012/v1 \
     --no-auto-commits \
-    --mcp-server "npx -y @modelcontextprotocol/server-brave-search"
+    --config "$TEMP_CONFIG" "$@"
 ''
