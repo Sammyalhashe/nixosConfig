@@ -46,6 +46,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nix-picoclaw = {
+      url = "path:/home/salhashemi2/picoclaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-openclaw = {
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -108,6 +112,7 @@
       sops-nix,
       nixos-hardware,
       nix-openclaw,
+      nix-picoclaw,
       plugin-coding,
       plugin-git,
       plugin-docker,
@@ -124,6 +129,7 @@
       overlays = [
         nur.overlays.default
         nix-openclaw.overlays.default
+        nix-picoclaw.overlays.default
         (final: prev: {
           openclaw-gateway = prev.openclaw-gateway.overrideAttrs (old: {
             installPhase = ''
