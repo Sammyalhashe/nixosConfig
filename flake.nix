@@ -146,8 +146,8 @@
               _:
               final.fetchgit {
                 url = "https://github.com/open-webui/open-webui";
-                rev = "2b26355002064228e9b671339f8f3fb9d1fafa73"; # v0.7.2
-                sha256 = "06zi3n60kdg3nffdx8qgfkl57a6ismj057gjm53jpzrjmq3w8bq5";
+                rev = "v0.8.5";
+                sha256 = "sha256-uK80y3ncHyYGTO2x7HKx19r5/2VW2PnarE4pnxrzleI=";
               };
           };
         })

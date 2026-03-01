@@ -220,7 +220,7 @@ in
     uv
     yq-go
     playwright-driver.browsers
-    (python312.withPackages (ps: with ps; [
+    (python313.withPackages (ps: with ps; [
       litellm
       backoff
       fastapi
@@ -244,7 +244,11 @@ in
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
     (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
     (import ../../common/scripts/agent-chainer.nix { inherit pkgs; })
+    gnome-keyring
+    libsecret
   ];
+
+  services.gnome.gnome-keyring.enable = true;
 
   services.openssh.enable = true;
   services.pipewire = {
