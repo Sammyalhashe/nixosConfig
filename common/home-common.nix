@@ -10,7 +10,6 @@
     [
       # common applications
       git
-      nodejs
 
       # nur repos
       pkgs.nur.repos.charmbracelet.glow

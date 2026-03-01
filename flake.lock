@@ -1156,14 +1156,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1772321417,
-        "narHash": "sha256-4/hVMqGpYIQOD+znyU3mgAMY1+QCdMIssNBksQRnp6g=",
-        "path": "/home/salhashemi2/picoclaw",
-        "type": "path"
+        "lastModified": 1772321364,
+        "narHash": "sha256-6h3WGyYWXdP8MpxLi4WBWBnuJ5LvMEC+yIOy52+gyW8=",
+        "owner": "Sammyalhashe",
+        "repo": "picoclaw",
+        "rev": "fd78f1ab329a2532ea85c1cfe1d4c0c42925e312",
+        "type": "github"
       },
       "original": {
-        "path": "/home/salhashemi2/picoclaw",
-        "type": "path"
+        "owner": "Sammyalhashe",
+        "repo": "picoclaw",
+        "type": "github"
       }
     },
     "nix-steipete-tools": {

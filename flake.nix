@@ -47,7 +47,7 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-picoclaw = {
-      url = "path:/home/salhashemi2/picoclaw";
+      url = "github:Sammyalhashe/picoclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-openclaw = {
@@ -249,14 +249,10 @@
           baseConfig
           ./hosts/oldboy/configuration.nix
           ./nixosModules
-          omarchy-nix.nixosModules.default
-          stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = true;
+            host.useOmarchy = false;
             host.isWsl = true;
-            programs.stylix.enable = true;
           }
         ];
       };
