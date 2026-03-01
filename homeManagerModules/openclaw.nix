@@ -69,16 +69,21 @@ in
             "mothership-reasoning/gpt-oss-120b" = {
               alias = "gpt-oss:120b";
             };
-            "google/gemini-3.0-pro-preview" = {
-              alias = "gemini-3";
+            "google/gemini-3.1-pro-preview" = {
+              alias = "gemini-3.1";
+            };
+            "google/gemini-3-flash" = {
+              alias = "gemini-3-flash";
             };
             "nvidia/moonshotai/kimi-k2.5" = {
               alias = "kimi-k2";
             };
           };
           model = {
-            primary = "nvidia/moonshotai/kimi-k2.5";
+            primary = "google/gemini-3.1-pro-preview";
             fallbacks = [
+              "nvidia/moonshotai/kimi-k2.5"
+              "google/gemini-3-flash"
               "mothership-reasoning/gpt-oss-120b"
               "mothership-local/qwen2.5-coder-32b-instruct"
               "openrouter/arcee-ai/trinity-large-preview:free"
@@ -120,68 +125,81 @@ in
         plugins.entries.telegram.enabled = true;
         models = {
           providers = {
-            mothership-local = {
-              api = "openai-completions";
-              baseUrl = "http://11.125.37.101:8012/v1";
-              apiKey = "none";
-              models = [
-                {
-                  id = "qwen2.5-coder-32b-instruct";
-                  name = "Qwen 2.5 Coder 32B (Mothership)";
-                }
-              ];
-            };
-            mothership-reasoning = {
-              api = "openai-completions";
-              baseUrl = "http://11.125.37.101:8013/v1";
-              apiKey = "none";
-              models = [
-                {
-                  id = "gpt-oss-120b";
-                  name = "GPT-OSS-120B (Mothership Reasoning)";
-                  reasoning = true;
-                }
-              ];
-            };
-            openrouter = {
-              api = "openai-completions";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "env:OPENROUTER_API_KEY";
-              models = [
-                {
-                  id = "arcee-ai/trinity-large-preview:free";
-                  name = "Trinity Large Preview (Free)";
-                }
-              ];
-            };
-            nvidia = {
-              api = "openai-completions";
-              baseUrl = "https://integrate.api.nvidia.com/v1";
-              apiKey = "env:NVIDIA_API_KEY";
-              models = [
-                {
-                  id = "moonshotai/kimi-k2.5";
-                  name = "Kimi k2.5 (NVIDIA)";
-                  reasoning = true;
-                }
-              ];
-            };
-            google = {
-              api = "google-generative-ai";
-              baseUrl = "https://generativelanguage.googleapis.com/v1beta";
-              apiKey = "env:GEMINI_API_KEY";
-              models = [
-                {
-                  id = "gemini-2.5-pro";
-                  name = "Gemini 2.5 Pro";
-                }
-                {
-                  id = "gemini-3.0-pro-preview";
-                  name = "Gemini 3.0 Pro (Preview)";
-                }
-              ];
-            };
-            lemonade = {
+                            mothership-local = {
+                              api = "openai-completions";
+                              baseUrl = "http://11.125.37.101:8012/v1";
+                              apiKey = "";
+                              models = [
+                                {
+                                  id = "qwen2.5-coder-32b-instruct";
+                                  name = "Qwen 2.5 Coder 32B (Mothership)";
+                                }
+                              ];
+                            };
+                            mothership-reasoning = {
+                              api = "openai-completions";
+                              baseUrl = "http://11.125.37.101:8013/v1";
+                              apiKey = "";
+                              models = [
+                                {
+                                  id = "gpt-oss-120b";
+                                  name = "GPT-OSS-120B (Mothership Reasoning)";
+                                  reasoning = true;
+                                }
+                              ];
+                            };
+                            openrouter = {
+                              api = "openai-completions";
+                              baseUrl = "https://openrouter.ai/api/v1";
+                              apiKey = "env:OPENROUTER_API_KEY";
+                              models = [
+                                {
+                                  id = "arcee-ai/trinity-large-preview:free";
+                                  name = "Trinity Large Preview (Free)";
+                                }
+                              ];
+                            };
+                                        nvidia = {
+                                          api = "openai-completions";
+                                          baseUrl = "https://integrate.api.nvidia.com/v1";
+                                          apiKey = "env:NVIDIA_API_KEY";
+                                          models = [
+                                            {
+                                              id = "moonshotai/kimi-k2.5";
+                                              name = "Kimi k2.5 (NVIDIA)";
+                                              reasoning = true;
+                                            }
+                                          ];
+                                        };
+                            
+                            google = {
+                              api = "google-generative-ai";
+                              baseUrl = "https://generativelanguage.googleapis.com/v1beta";
+                              apiKey = "env:GEMINI_API_KEY";
+                              models = [
+                                {
+                                  id = "gemini-3.1-pro-preview";
+                                  name = "Gemini 3.1 Pro (Preview)";
+                                  reasoning = true;
+                                }
+                                {
+                                  id = "gemini-3-flash";
+                                  name = "Gemini 3 Flash";
+                                }
+                                {
+                                  id = "gemini-2.5-pro";
+                                  name = "Gemini 2.5 Pro";
+                                }
+                                {
+                                  id = "gemini-2.5-flash";
+                                  name = "Gemini 2.5 Flash";
+                                }
+                                {
+                                  id = "gemini-2.0-flash";
+                                  name = "Gemini 2.0 Flash";
+                                }
+                              ];
+                            };            lemonade = {
               api = "openai-completions";
               baseUrl = "http://11.125.37.172:8001/v1";
               apiKey = "any"; # Often ignored for local servers, but required by schema
@@ -267,6 +285,10 @@ in
           pkgs.podman
           pkgs.coreutils
           pkgs.bash
+          pkgs.uv
+          pkgs.nodejs
+          pkgs.git
+          pkgs.rsync
         ]
       }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
     ];

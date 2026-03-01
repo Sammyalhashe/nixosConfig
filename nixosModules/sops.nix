@@ -47,6 +47,8 @@
     owner = "salhashemi2";
   };
   sops.secrets.coinbase_api_key_clawdbot = { };
+  sops.secrets.coinbase_api_id_clawdbot = { };
+  sops.secrets.coinbase_api_secret_clawdbot = { };
 
   sops.templates."openclaw-env" = {
     content = ''
@@ -61,6 +63,17 @@
       CHAINSTACK_NODE=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
     '';
     owner = config.host.username;
+  };
+
+  sops.templates."coinbase-api-json" = {
+    content = ''
+      {
+         "name": "${config.sops.placeholder.coinbase_api_id_clawdbot}",
+         "privateKey": "${config.sops.placeholder.coinbase_api_secret_clawdbot}"
+      }
+    '';
+    owner = config.host.username;
+    path = "/home/${config.host.username}/cdb_api_key.json";
   };
 
   sops.templates."picoclaw-env" = {

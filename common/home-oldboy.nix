@@ -12,6 +12,7 @@
     ./home-common.nix
     ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
+    ../homeManagerModules/coinbase-trader.nix
   ];
 
   home.username = "${user}";
