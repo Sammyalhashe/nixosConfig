@@ -69,29 +69,26 @@ in
             "mothership-reasoning/gpt-oss-120b" = {
               alias = "gpt-oss:120b";
             };
+            "mothership-local/qwen3-coder-next" = {
+              alias = "qwen3";
+            };
+            "mothership-flash/qwen2.5-coder-7b" = {
+              alias = "flash";
+            };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
             };
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "nvidia/moonshotai/kimi-k2.5" = {
-              alias = "kimi-k2";
-            };
           };
           model = {
-            primary = "google/gemini-3.1-pro-preview";
+            primary = "mothership-local/qwen3-coder-next";
             fallbacks = [
-              "nvidia/moonshotai/kimi-k2.5"
-              "google/gemini-3-flash"
+              "mothership-flash/qwen2.5-coder-7b"
+              "google/gemini-3.1-pro-preview"
               "mothership-reasoning/gpt-oss-120b"
-              "mothership-local/qwen2.5-coder-32b-instruct"
-              "openrouter/arcee-ai/trinity-large-preview:free"
-              "lemonade/user.Qwen-32B-Coder"
-              "ollama/qwen2.5:7b"
               "ollama/qwen2.5-coder:7b"
-              "ollama/llama3.1:8b"
-              "ollama/MFDoom/deepseek-r1-tool-calling:8b"
             ];
           };
         };
@@ -125,20 +122,31 @@ in
         plugins.entries.telegram.enabled = true;
         models = {
           providers = {
-                            mothership-local = {
+                            mothership-flash = {
                               api = "openai-completions";
-                              baseUrl = "http://11.125.37.101:8012/v1";
+                              baseUrl = "http://127.0.0.1:8011/v1";
                               apiKey = "";
                               models = [
                                 {
-                                  id = "qwen2.5-coder-32b-instruct";
-                                  name = "Qwen 2.5 Coder 32B (Mothership)";
+                                  id = "qwen2.5-coder-7b";
+                                  name = "Qwen 2.5 Coder 7B (Mothership Flash)";
+                                }
+                              ];
+                            };
+                            mothership-local = {
+                              api = "openai-completions";
+                              baseUrl = "http://127.0.0.1:8012/v1";
+                              apiKey = "";
+                              models = [
+                                {
+                                  id = "qwen3-coder-next";
+                                  name = "Qwen 3 Coder Next (Mothership)";
                                 }
                               ];
                             };
                             mothership-reasoning = {
                               api = "openai-completions";
-                              baseUrl = "http://11.125.37.101:8013/v1";
+                              baseUrl = "http://127.0.0.1:8013/v1";
                               apiKey = "";
                               models = [
                                 {

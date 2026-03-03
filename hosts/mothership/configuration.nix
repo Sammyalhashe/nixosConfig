@@ -19,6 +19,9 @@ in
     ../../nixosModules/llm-services
   ];
 
+  services.udev.packages = [ inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.system}.default ];
+  boot.kernelModules = [ "uinput" ];
+
   host.useOmarchy = lib.mkDefault false;
   host.greetd = true;
 
@@ -75,17 +78,19 @@ in
   };
 
   # Enable the Modular LLM Services
-  services.llm-services.gpt-oss.enable = true;
+  # services.llm-services.gpt-oss.enable = true; # Disabled for memory headroom
   services.llm-services.qwen-coder.enable = true;
+  services.llm-services.qwen-flash.enable = true;
+  # services.llm-services.litellm.enable = false; # Replaced by direct routing
 
   powerManagement.cpuFreqGovernor = "performance";
 
-  # 4. Update Open WebUI to talk to Llama.cpp
+  # 4. Update Open WebUI to talk to local ports directly
   services.open-webui = {
     enable = true;
     port = 8080;
     environment = {
-      OPENAI_API_BASE_URLS = "http://127.0.0.1:8012/v1;http://127.0.0.1:8013/v1";
+      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8012/v1";
       OPENAI_API_KEYS = "none;none";
       ENABLE_OLLAMA_API = "False";
       PYTHONPATH =
@@ -200,10 +205,12 @@ in
       "networkmanager"
       "docker"
       "wheel"
+      "video"
+      "input"
     ];
   };
 
-  programs.mango.enable = true;
+  programs.mango.enable = lib.mkForce false;
   services.getty.autologinUser = "${user}";
   nixpkgs.config.allowUnfree = true;
   home-manager = {
@@ -212,6 +219,9 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    inputs.breezy-desktop.packages.${pkgs.system}.default
+    inputs.breezy-desktop.packages.${pkgs.system}.breezy-kwin
+    inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.system}.default
     git
     amdgpu_top
     nvtopPackages.amd
