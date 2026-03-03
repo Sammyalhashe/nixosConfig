@@ -66,13 +66,10 @@ in
           skipBootstrap = true;
           timeoutSeconds = 300; # 5 minutes to prevent timeouts
           models = {
-            "mothership-reasoning/gpt-oss-120b" = {
-              alias = "gpt-oss:120b";
-            };
-            "mothership-local/qwen3-coder-next" = {
+            "mothership-proxy/gpt-4o" = {
               alias = "qwen3";
             };
-            "mothership-flash/qwen2.5-coder-7b" = {
+            "mothership-proxy/gpt-4o-mini" = {
               alias = "flash";
             };
             "google/gemini-3.1-pro-preview" = {
@@ -83,11 +80,10 @@ in
             };
           };
           model = {
-            primary = "mothership-local/qwen3-coder-next";
+            primary = "mothership-proxy/gpt-4o";
             fallbacks = [
-              "mothership-flash/qwen2.5-coder-7b"
+              "mothership-proxy/gpt-4o-mini"
               "google/gemini-3.1-pro-preview"
-              "mothership-reasoning/gpt-oss-120b"
               "ollama/qwen2.5-coder:7b"
             ];
           };
@@ -122,37 +118,18 @@ in
         plugins.entries.telegram.enabled = true;
         models = {
           providers = {
-                            mothership-flash = {
+                            mothership-proxy = {
                               api = "openai-completions";
-                              baseUrl = "http://127.0.0.1:8011/v1";
+                              baseUrl = "http://127.0.0.1:4000/v1";
                               apiKey = "";
                               models = [
                                 {
-                                  id = "qwen2.5-coder-7b";
-                                  name = "Qwen 2.5 Coder 7B (Mothership Flash)";
+                                  id = "gpt-4o";
+                                  name = "Qwen 3 Coder Next (via LiteLLM)";
                                 }
-                              ];
-                            };
-                            mothership-local = {
-                              api = "openai-completions";
-                              baseUrl = "http://127.0.0.1:8012/v1";
-                              apiKey = "";
-                              models = [
                                 {
-                                  id = "qwen3-coder-next";
-                                  name = "Qwen 3 Coder Next (Mothership)";
-                                }
-                              ];
-                            };
-                            mothership-reasoning = {
-                              api = "openai-completions";
-                              baseUrl = "http://127.0.0.1:8013/v1";
-                              apiKey = "";
-                              models = [
-                                {
-                                  id = "gpt-oss-120b";
-                                  name = "GPT-OSS-120B (Mothership Reasoning)";
-                                  reasoning = true;
+                                  id = "gpt-4o-mini";
+                                  name = "Qwen 2.5 Coder 7B (via LiteLLM)";
                                 }
                               ];
                             };

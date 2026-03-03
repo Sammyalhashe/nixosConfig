@@ -5,12 +5,12 @@ let
   inferenceHost = if hostname == "mothership" then "127.0.0.1" else "11.125.37.101";
 
   aiderConfig = {
-    # Use our local OpenAI-compatible endpoint
-    openai-api-base = "http://${inferenceHost}:8013/v1";
+    # Use our local LiteLLM Proxy endpoint
+    openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
     
-    # Use the MiniMax model by default
-    model = "openai/MiniMax-M2.1-UD-IQ2_M";
+    # Use the Qwen3 model by default via LiteLLM
+    model = "openai/qwen3-coder-next";
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;
