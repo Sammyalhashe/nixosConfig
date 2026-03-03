@@ -81,17 +81,18 @@ in
   # services.llm-services.gpt-oss.enable = true; # Disabled for memory headroom
   services.llm-services.qwen-coder.enable = true;
   services.llm-services.qwen-flash.enable = true;
-  # services.llm-services.litellm.enable = false; # Replaced by direct routing
+  services.llm-services.litellm-uv.enable = true;
+  # services.llm-services.one-api.enable = false; 
 
   powerManagement.cpuFreqGovernor = "performance";
 
-  # 4. Update Open WebUI to talk to local ports directly
+  # 4. Update Open WebUI to talk to local ports and LiteLLM
   services.open-webui = {
     enable = true;
     port = 8080;
     environment = {
-      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8012/v1";
-      OPENAI_API_KEYS = "none;none";
+      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8012/v1;http://127.0.0.1:4000/v1";
+      OPENAI_API_KEYS = "none;none;none";
       ENABLE_OLLAMA_API = "False";
       PYTHONPATH =
         let
