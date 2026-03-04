@@ -65,6 +65,10 @@ in
         agents.defaults = {
           skipBootstrap = true;
           timeoutSeconds = 300; # 5 minutes to prevent timeouts
+          maxConcurrent = 8;
+          subagents = {
+            maxConcurrent = 16;
+          };
           models = {
             "mothership-proxy/gpt-4o" = {
               alias = "qwen3";
