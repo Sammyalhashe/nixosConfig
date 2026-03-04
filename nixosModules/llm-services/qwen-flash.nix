@@ -38,8 +38,8 @@ in
         DeviceAllow = [ "/dev/dri/renderD128" "/dev/dri/card0" "/dev/kfd" ];
         PrivateDevices = false;
         # --n-gpu-layers: 7B models have ~28 layers. Setting to 40 ensures full GPU offload.
-        # --ctx-size: 32768 is plenty for "Flash" tasks.
-        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 32768 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
+        # --ctx-size: 128k for large documents and transcripts.
+        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 131072 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
         Restart = "on-failure";
         RestartSec = "5s";

@@ -17,6 +17,7 @@ in
 
   # 1. Activation script to clone/update the trading bot repository
   home.activation.installTradingBot = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    PATH=$PATH:${pkgs.openssh}/bin
     if [ ! -d "${repoDir}" ]; then
       ${pkgs.git}/bin/git clone https://github.com/Sammyalhashe/trading-bot-flake "${repoDir}"
     else

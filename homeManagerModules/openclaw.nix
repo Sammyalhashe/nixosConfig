@@ -116,15 +116,13 @@ in
         };
         plugins.entries.whatsapp.enabled = false;
         plugins.entries.telegram.enabled = true;
-        models = {
-          providers = {
-                            mothership-proxy = {
-                              api = "openai-completions";
-                              baseUrl = "http://127.0.0.1:4000/v1";
-                              apiKey = "";
-                              models = [
-                                {
-                                  id = "gpt-4o";
+                                models = {
+                  providers = {
+                                                                mothership-proxy = {
+                                                                  api = "openai-completions";
+                                                                  baseUrl = "http://11.125.37.101:4000/v1";
+                                                                  apiKey = "any";
+                                                                  models = [                                        {                                  id = "gpt-4o";
                                   name = "Qwen 3 Coder Next (via LiteLLM)";
                                 }
                                 {
@@ -251,6 +249,13 @@ in
     install_skill "process-watch" "${inputs.plugin-process}"
     install_skill "polyclaw" "${inputs.plugin-polyclaw}"
     install_skill "better-memory" "${inputs.plugin-better-memory}"
+
+    # Install dependencies for better-memory
+    if [ -f "$HOME/.openclaw/workspace/skills/better-memory/package.json" ]; then
+      cd "$HOME/.openclaw/workspace/skills/better-memory"
+      # Only install if node_modules is missing or package.json changed
+      ${pkgs.nodejs_25}/bin/npm install --silent
+    fi
   '';
 
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
@@ -274,6 +279,7 @@ in
           pkgs.nodejs
           pkgs.git
           pkgs.rsync
+          pkgs.sqlite
         ]
       }:/run/current-system/sw/bin:/etc/profiles/per-user/salhashemi2/bin"
     ];
