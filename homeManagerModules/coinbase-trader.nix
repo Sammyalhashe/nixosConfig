@@ -36,8 +36,10 @@ in
       WorkingDirectory = repoDir;
       Environment = [
         "TRADING_MODE=live"
+        "ENABLE_ETHEREUM=true"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
       ];
+      EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       # Use nix run directly on the flake
       ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes'";
     };

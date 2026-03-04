@@ -257,7 +257,8 @@ in
     # Install dependencies for better-memory
     if [ -f "$HOME/.openclaw/workspace/skills/better-memory/package.json" ]; then
       cd "$HOME/.openclaw/workspace/skills/better-memory"
-      # Only install if node_modules is missing or package.json changed
+      # Ensure node is in path for npm
+      export PATH="${pkgs.nodejs_25}/bin:$PATH"
       ${pkgs.nodejs_25}/bin/npm install --silent
     fi
   '';
