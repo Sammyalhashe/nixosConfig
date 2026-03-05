@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+
+set -e
+
+check_command() {
+    for cmd in "$@"; do
+        if command -v "$cmd" &>/dev/null; then
+            return
+        fi
+    done
+
+    echo "Please install one of the following: ${*}, and make sure it's available in your \$PATH, then rerun the setup."
+    exit 1
+}
+
+check_command "gnome-extensions"
+check_command "glib-compile-schemas"
+check_command "update-desktop-database"
+check_command "gtk-update-icon-cache"
+check_command "python" "python3"
+
+PYTHON_GI_CHECK="import gi; gi.require_version('Gtk', '4.0'); gi.require_version('Adw', '1'); gi.require_version('Gio', '2.0'); gi.require_version('GLib', '2.0'); gi.require_version('GObject', '2.0'); gi.require_version('Gst', '1.0'); from gi.repository import Gtk, Adw, Gio, GLib, GObject, Gst"
+
+if ! { python3 -c "$PYTHON_GI_CHECK" 2>/dev/null || python -c "$PYTHON_GI_CHECK" 2>/dev/null; }; then
+    if [ -z "$BREEZY_IGNORE_PYTHON_ERRORS" ]; then
+        printf "\033[1;31mERROR:\033[0m Python GObject libraries are missing\n"
+        printf "Please install the required Python GObject dependencies: GTK4, libadwaita, and GStreamer libraries:\n"
+        printf "If you're using a Python installation from a package manager, you may need to install the following packages:\n"
+        printf "\tFor Debian/Ubuntu: sudo apt install python3-gi gir1.2-gtk-4.0 libadwaita-1-0 gir1.2-adw-1 gir1.2-glib-2.0 gir1.2-gobject-2.0 gir1.2-gstreamer-1.0\n"
+        printf "\tFor Fedora: sudo dnf install python3-gobject python3-gstreamer1 gtk4 libadwaita\n"
+        printf "\tFor Arch Linux: sudo pacman -S python-gobject gst-python gtk4 libadwaita\n"
+        printf "\nIf you continue to have issues, rerun the setup with BREEZY_IGNORE_PYTHON_ERRORS=1 to skip this check.\n\n"
+        exit 1
+    else
+        printf "\033[1;33mWARNING:\033[0m Ignoring Python dependency failures. "
+        printf "Be aware that the Breezy Desktop UI application may fail to launch.\n\n"
+    fi
+fi
+
+gst_pipewire_found=0
+if command -v dpkg >/dev/null 2>&1; then
+    # Debian/Ubuntu
+    gst_pipewire_found=$(dpkg -l | grep -c "gstreamer1.0-pipewire")
+elif command -v pacman >/dev/null 2>&1; then
+    # Arch Linux
+    gst_pipewire_found=$(pacman -Qq gst-plugin-pipewire 2>/dev/null | wc -l)
+elif command -v rpm >/dev/null 2>&1; then
+    # RPM-based (Fedora, RHEL, openSUSE, etc.)
+    gst_pipewire_found=$((rpm -q pipewire-gstreamer &>/dev/null && echo "found") | wc -l)
+fi
+
+if [ "$gst_pipewire_found" -eq 0 ]; then
+    if [ -z "$BREEZY_IGNORE_GST_ERRORS" ]; then
+        printf "\033[1;31mERROR:\033[0m Pipewire GStreamer plugin not found\n"
+        printf "Please install the required Pipewire GStreamer plugin:\n"
+        printf "\tFor Debian/Ubuntu: sudo apt install gstreamer1.0-pipewire\n"
+        printf "\tFor Fedora: sudo dnf install pipewire-gstreamer\n"
+        printf "\tFor Arch Linux: sudo pacman -S gst-plugin-pipewire\n"
+        printf "\nIf you continue to have issues, rerun the setup with BREEZY_IGNORE_GST_ERRORS=1 to skip this check.\n\n"
+        exit 1
+    else
+        printf "\033[1;33mWARNING:\033[0m Ignoring GStreamer dependency failures. "
+        printf "Be aware that virtual display functionality may be disabled.\n\n"
+    fi
+fi
+
+if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+    printf "\033[1;33mWARNING:\033[0m Windowing system is %s\n" "$XDG_SESSION_TYPE"
+    printf "\033[1;33mWARNING:\033[0m Virtual display functionality requires GNOME on Wayland\n"
+fi
+
+if ! systemctl --user is-active gnome-remote-desktop &>/dev/null; then
+    printf "\033[1;33mWARNING:\033[0m gnome-remote-desktop service is not running\n"
+    printf "\033[1;33mWARNING:\033[0m Virtual display functionality requires the gnome-remote-desktop service running\n"
+fi
+
+# This script gets packaged with the release and should do the bulk of the setup work. This allows this setup to be tied
+# to a specific release of the code, and guarantees it will never run along-side newer or older binaries.
+
+USER_HOME=$(realpath ~)
+
+if [ -z "$XDG_DATA_HOME" ]; then
+  XDG_DATA_HOME="$USER_HOME/.local/share"
+fi
+XR_DRIVER_DATA_DIR="$XDG_DATA_HOME/xr_driver"
+GNOME_SHELL_DATA_DIR="$XDG_DATA_HOME/gnome-shell"
+BREEZY_GNOME_DATA_DIR="$XDG_DATA_HOME/breezy_gnome"
+
+if [ -z "$XDG_BIN_HOME" ]; then
+  XDG_BIN_HOME="$USER_HOME/.local/bin"
+fi
+
+if [ -d "$XDG_BIN_HOME" ]; then
+  # check ownership and permissions before doing chown and chmod
+  XDG_BIN_USER=$(stat -c %U $XDG_BIN_HOME)
+  XDG_BIN_GROUP=$(stat -c %G $XDG_BIN_HOME)
+
+  USER=$(whoami)
+  GROUP=$(id -gn)
+
+  if [ "$XDG_BIN_USER" != "$USER" ] || [ "$XDG_BIN_GROUP" != "$GROUP" ]; then
+    echo "Fixing ownership and permissions of $XDG_BIN_HOME"
+    sudo chown -R $USER:$GROUP $XDG_BIN_HOME
+    sudo chmod -R 700 $XDG_BIN_HOME
+  fi
+fi
+
+UA_EVENT_NAME="breezy_gnome_install"
+if [ -e "$XDG_BIN_HOME/breezy_gnome_uninstall" ]; then
+  echo "Cleaning up the previous installation"
+
+  # ` || true` will ensure that this can't cause a failure, even with `set -e`
+  $XDG_BIN_HOME/breezy_gnome_uninstall --for-install || true
+
+  UA_EVENT_NAME="breezy_gnome_update"
+fi
+
+UA_CLIENT_ID="BreezyGNOME"
+UA_EVENT_VERSION="$1"
+#INJECT_UA_CALL
+
+# escaping sed replace: https://stackoverflow.com/questions/407523/escape-a-string-for-a-sed-replace-pattern
+ESCAPED_XDG_BIN_HOME=$(printf '%s\n' "$XDG_BIN_HOME" | sed -e 's/[\/&]/\\&/g')
+ESCAPED_BREEZY_GNOME_DATA_DIR=$(printf '%s\n' "$BREEZY_GNOME_DATA_DIR" | sed -e 's/[\/&]/\\&/g')
+ESCAPED_XR_DRIVER_DATA_DIR=$(printf '%s\n' "$XR_DRIVER_DATA_DIR" | sed -e 's/[\/&]/\\&/g')
+ESCAPED_GNOME_SHELL_DATA_DIR=$(printf '%s\n' "$GNOME_SHELL_DATA_DIR" | sed -e 's/[\/&]/\\&/g')
+
+echo "Copying the breezy_gnome scripts to ${XDG_BIN_HOME}"
+mkdir -p $XDG_BIN_HOME
+cp bin/breezy_gnome_uninstall $XDG_BIN_HOME
+cp bin/breezy_gnome_logs $XDG_BIN_HOME
+sed -i -e "s/{bin_dir}/$ESCAPED_XDG_BIN_HOME/g" \
+       -e "s/{data_dir}/$ESCAPED_BREEZY_GNOME_DATA_DIR/g" \
+       -e "s/{xr_driver_data_dir}/$ESCAPED_XR_DRIVER_DATA_DIR/g" \
+       -e "s/{gnome_shell_data_dir}/$ESCAPED_GNOME_SHELL_DATA_DIR/g" \
+          bin/breezy_gnome_verify
+cp bin/breezy_gnome_verify $XDG_BIN_HOME
+
+echo "Copying the manifest file to ${BREEZY_GNOME_DATA_DIR}"
+mkdir -p $BREEZY_GNOME_DATA_DIR
+cp manifest $BREEZY_GNOME_DATA_DIR
+
+echo "Installing the breezydesktop@xronlinux.com GNOME extension"
+gnome-extensions install --force breezydesktop@xronlinux.com.shell-extension.zip
+
+echo "Installing the Breezy Desktop UI application"
+cp -r breezy_ui/data/* $XDG_DATA_HOME
+cp -r breezy_ui/bin/* $XDG_BIN_HOME
+
+# update copied files to use the local XDG paths
+ESCAPED_XDG_DATA_HOME=$(printf '%s\n' "$XDG_DATA_HOME" | sed -e 's/[\/&]/\\&/g')
+sed -i -e "s/\/usr\/local\/share/$ESCAPED_XDG_DATA_HOME/g" $XDG_BIN_HOME/breezydesktop
+sed -i "/Exec/c\Exec=$XDG_BIN_HOME/breezydesktop" $XDG_DATA_HOME/applications/com.xronlinux.BreezyDesktop.desktop
+
+glib-compile-schemas $XDG_DATA_HOME/glib-2.0/schemas
+update-desktop-database $XDG_DATA_HOME/applications
+gtk-update-icon-cache
+
+# refresh bash session so new commands in the PATH are available
+hash -r
+
+# set up the XR driver using the local binary
+echo "Installing xrDriver"
+echo "BEGIN - xr_driver_setup"
+if [ -z "$1" ]
+then
+  sudo bin/xr_driver_setup $(pwd)
+else
+  sudo bin/xr_driver_setup -v $1 $(pwd)
+fi
+
+echo "END - xr_driver_setup"
+
+echo "Setting up productivity features"
+printf "request_features=productivity_basic\n" >> /dev/shm/xr_driver_control 2>/dev/null || true

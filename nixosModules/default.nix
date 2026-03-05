@@ -9,6 +9,7 @@
   imports = [
     ./options.nix
     ./desktop.nix
+    ./hyprland.nix
     ./shell.nix
     ./kdestuff.nix
     ./greetd.nix

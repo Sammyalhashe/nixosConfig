@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+
+# This setup script should do the minimum work required to download the release package, unzip it, and kick off the
+# setup script contained within.
+
+# exit when any command fails
+set -e
+
+if [ "$(id -u)" == "0" ]; then
+   echo "This script must not be run as root" 1>&2
+   exit 1
+fi
+
+check_command() {
+    if ! command -v "$1" &>/dev/null; then
+        echo "Please install \"$1\" and make sure it's available in your \$PATH, then rerun the setup."
+        exit 1
+    fi
+}
+
+check_command "curl"
+
+print_missing_dependencies() {
+  echo ""
+  printf "\n\033[1;31mMissing required components\033[0m\n"
+  if [ -n "${BREEZY_DISTROBOX:-}" ]; then
+    echo ""
+    printf "\033[1;33mFirst, enter your Distrobox container:\033[0m\n"
+    printf "\tdistrobox enter $BREEZY_DISTROBOX\n"
+  fi
+  echo ""
+  printf "\033[1;33mInstall the missing packages\033[0m with your package manager, then rerun this setup:\n"
+  printf "\tDebian/Ubuntu:\tsudo apt-get update && sudo apt-get install -y extra-cmake-modules kwin-dev libkf6config-dev libkf6configwidgets-dev libkf6coreaddons-dev libkf6kcmutils-dev libkf6globalaccel-dev libkf6i18n-dev libkf6windowsystem-dev libkf6xmlgui-dev qt6-base-dev qt6-declarative-dev libdrm-dev && (sudo apt-get install -y qml6-module-qtquick3d-helpers || true)\n"
+  printf "\tFedora/RHEL:\tsudo dnf install -y cmake gcc gcc-c++ extra-cmake-modules kwin-devel kf6-kconfig-devel kf6-kconfigwidgets-devel kf6-kcoreaddons-devel kf6-kcmutils-devel kf6-kglobalaccel-devel kf6-ki18n-devel kf6-kwindowsystem-devel kf6-kxmlgui-devel qt6-qtbase-devel qt6-qttools-devel qt6-qtquick3d wayland-devel libepoxy-devel libdrm-devel\n"
+  printf "\tArch:\t\tsudo pacman -S --needed extra-cmake-modules qt6-base qt6-declarative qt6-tools qt6-quick3d kconfig kconfigwidgets kcoreaddons kglobalaccel ki18n kcmutils kxmlgui kwindowsystem kwin\n"
+  echo ""
+  if [ -z "${BREEZY_DISTROBOX:-}" ]; then
+    printf "\033[1;33mOn immutable distributions\033[0m (e.g. Fedora Silverblue) you can run the build inside a container.\n"
+    printf "\tBREEZY_DISTROBOX=your-container-name %s\n" "$0 $*"
+    echo ""
+  fi
+  printf "\n\033[1;33mIf you continue to see this issue\033[0m rerun as follows and attach the full output to a bug report:\n"
+  printf "\n\tPRINT_FULL_STDERR=1 %s\n" "$0 $*"
+  exit 1
+}
+
+ARCH=$(uname -m)
+LIBS_ARCH="$ARCH"
+if [ -f /etc/os-release ]; then
+  . /etc/os-release
+  if [ "$ID" == "steamos" ]; then
+    ARCH="steamos"
+  fi
+fi
+FILE_NAME="breezyKWin-$ARCH.tar.gz"
+LIBS_FILE_NAME="breezyKWin-libs-$LIBS_ARCH.tar.gz"
+LATEST_RELEASE=$(curl -s "https://api.github.com/repos/wheaney/breezy-desktop/releases/latest")
+echo "Performing setup for KWin ($ARCH)"
+
+start_dir=$(pwd)
+
+# create temp directory
+tmp_dir=$(mktemp -d -t breezy-kwin-XXXXXXXXXX)
+pushd $tmp_dir > /dev/null
+echo "Created temp directory: ${tmp_dir}"
+
+binary_download_url="https://github.com/wheaney/breezy-desktop/releases/latest/download/$FILE_NAME"
+libs_download_url="https://github.com/wheaney/breezy-desktop/releases/latest/download/$LIBS_FILE_NAME"
+if [ "$1" = "-v" ]
+then
+  metrics_version="$2"
+  local_dir_arg="$3"
+elif [ "$1" = "--tag" ] && [ -n "$2" ]
+then
+  binary_download_url="https://github.com/wheaney/breezy-desktop/releases/download/$2/$FILE_NAME"
+  libs_download_url="https://github.com/wheaney/breezy-desktop/releases/download/$2/$LIBS_FILE_NAME"
+else
+  local_dir_arg="$1"
+fi
+
+if [ -n "$local_dir_arg" ]
+then
+  if [[ "$local_dir_arg" = /* ]]; then
+    local_dir="$local_dir_arg"
+  else
+    local_dir=$(realpath "$start_dir/$local_dir_arg")
+  fi
+
+  binary_path_arg="$local_dir/$FILE_NAME"
+  if [ ! -f "$binary_path_arg" ]; then
+    echo "Error: Breezy KWin archive not found at $binary_path_arg" 1>&2
+    exit 1
+  fi
+
+  lib_path_arg="$local_dir/$LIBS_FILE_NAME"
+  if [ ! -f "$lib_path_arg" ]; then
+    echo "Error: Breezy KWin libs archive not found at $lib_path_arg" 1>&2
+    exit 1
+  fi
+fi
+
+if [ -z "$binary_path_arg" ]
+then
+  http_code=$(curl -s -o /dev/null -w "%{http_code}" -L "$binary_download_url" || echo "000")
+
+  if [[ "$http_code" =~ ^(2|3) ]]; then
+    echo "Downloading to: ${tmp_dir}/$FILE_NAME"
+    curl -L "$binary_download_url" -o "$FILE_NAME"
+    binary_path_arg="$FILE_NAME"
+  else
+    check_command "git"
+    check_command "cmake"
+    check_command "make"
+
+    # handle -v / --tag like the rest of the script
+    if [ "$1" = "--tag" ] && [ -n "$2" ]; then
+      requested_tag="$2"
+    fi
+
+    # resolve tag: prefer requested_tag, then LATEST_RELEASE if already fetched, else query GitHub API
+    if [ -n "$requested_tag" ]; then
+      tag="$requested_tag"
+    else
+      tag=$(curl -s "https://api.github.com/repos/wheaney/breezy-desktop/releases/latest" \
+            | grep -m1 '"tag_name":' \
+            | sed -E 's/.*"tag_name":[[:space:]]*"([^"]+)".*/\1/')
+    fi
+
+    if [ -z "$tag" ]; then
+      echo "Failed to determine latest tag for wheaney/breezy-desktop" 1>&2
+      exit 1
+    fi
+
+    if [ -z "${DEV_BUILD+x}" ]; then
+      echo "Cloning wheaney/breezy-desktop (tag: ${tag})"
+      if git clone --depth 1 --branch "$tag" "https://github.com/wheaney/breezy-desktop.git" breezy-desktop 2>/dev/null; then
+        pushd breezy-desktop > /dev/null
+      else
+        git clone "https://github.com/wheaney/breezy-desktop.git" breezy-desktop
+        pushd breezy-desktop > /dev/null
+        git checkout "$tag"
+      fi
+
+      echo "Downloading git submodules"
+      git submodule sync --recursive || true
+      git submodule update --init modules/XRLinuxDriver
+      git submodule update --init modules/sombrero
+      git submodule update --init ui/modules/PyXRLinuxDriverIPC
+    else
+      pushd $start_dir > /dev/null
+    fi
+
+    set +e
+    distrobox_name="${BREEZY_DISTROBOX:-}"
+    if [ -n "$distrobox_name" ]; then
+      check_command "distrobox"
+      echo "Building Breezy Desktop from source inside Distrobox container: $distrobox_name"
+      build_dir=$(pwd)
+      distrobox_shell_cmd="cd \"$build_dir\" && LOCAL_BUILD_SYSTEM=1 bin/package_kwin --download-driver"
+      pkgkwin_stderr=$(distrobox enter --name "$distrobox_name" -- /bin/sh --noprofile --norc -lc "$distrobox_shell_cmd" 2>&1)
+      pkgkwin_rc=$?
+    else
+      echo "Building Breezy Desktop from source, this may take a while..."
+      pkgkwin_stderr=$(LOCAL_BUILD_SYSTEM=1 bin/package_kwin --download-driver 2>&1)
+      pkgkwin_rc=$?
+    fi
+    set -e
+    if [ "$pkgkwin_rc" -ne 0 ]; then
+      if echo "$pkgkwin_stderr" | grep -qiE 'could not find|Please install "cmake"' && [ -z "${PRINT_FULL_STDERR+x}" ]; then
+        print_missing_dependencies "$*"
+      else
+        echo "$pkgkwin_stderr"
+      fi
+      echo "Error: Breezy Desktop build failed with exit code $pkgkwin_rc"
+      exit $pkgkwin_rc
+    fi
+    FILE_NAME="breezyKWin-$ARCH.tar.gz"
+    binary_path_arg="$FILE_NAME"
+    cp "out/$binary_path_arg" "$tmp_dir"
+    popd > /dev/null
+  fi
+else
+  cp "$binary_path_arg" "$tmp_dir"
+fi
+
+if [ -z "$lib_path_arg" ]
+then
+  lib_path_arg="$LIBS_FILE_NAME"
+  echo "Downloading to: ${tmp_dir}/$lib_path_arg"
+
+  curl -L "$libs_download_url" -o "$lib_path_arg"
+else
+  cp "$lib_path_arg" "$tmp_dir"
+fi
+
+echo "Extracting to: ${tmp_dir}/breezy_kwin"
+tar -xf $(basename "$binary_path_arg")
+
+echo "Extracting lib to: ${tmp_dir}/breezy_kwin"
+tar -xf $(basename "$lib_path_arg")
+mv breezy_desktop_lib/* breezy_kwin/
+
+pushd breezy_kwin > /dev/null
+
+# run the setup script that comes with this release
+bin/setup $metrics_version
+
+echo "Deleting temp directory: ${tmp_dir}"
+rm -rf $tmp_dir
+cd "$(dirs -l -0)" && dirs -c

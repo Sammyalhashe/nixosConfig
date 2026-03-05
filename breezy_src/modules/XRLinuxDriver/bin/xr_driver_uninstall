@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+for_install=0
+if [[ -n "$1" ]] && [[ "$1" == "--for-install" ]]; then
+    for_install=1
+fi
+
+# we don't want the uninstall script to be able to cause a failure if being triggered by the setup script
+[ "$for_install" -eq 0 ] && set -e
+
+# Get the directory of the current script
+script_dir=$(dirname "$0")
+
+USER=${SUDO_USER:-$USER}
+USER_HOME=$(getent passwd $USER | cut -d: -f6)
+
+if [ -z "$XDG_DATA_HOME" ]; then
+  XDG_DATA_HOME="$USER_HOME/.local/share"
+fi
+SYSTEMD_DATA_DIR="$XDG_DATA_HOME/systemd"
+SYSTEMD_USER_DIR="$SYSTEMD_DATA_DIR/user"
+DATA_DIR="$XDG_DATA_HOME/xr_driver"
+
+if [ -z "$XDG_CONFIG_HOME" ]; then
+  XDG_CONFIG_HOME="$USER_HOME/.config"
+fi
+
+CONFIG_DIR="$XDG_CONFIG_HOME/xr_driver"
+
+if [ -z "$XDG_BIN_HOME" ]; then
+  XDG_BIN_HOME="$USER_HOME/.local/bin"
+fi
+OLD_BIN_DIR="$USER_HOME/bin"
+BIN_DIR="$XDG_BIN_HOME"
+
+if [ -z "$XDG_STATE_HOME" ]; then
+  XDG_STATE_HOME="$USER_HOME/.local/state"
+fi
+STATE_DIR="$XDG_STATE_HOME/xr_driver"
+
+[ "$for_install" -eq 0 ] && echo "Removing the systemd service"
+# if this is root
+if [ "$(id -u)" == "0" ]; then
+  export XDG_RUNTIME_DIR=/run/user/$(id -u $USER)
+  if su -l -c "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR systemctl --user is-active --quiet xr-driver" $USER; then
+      su -l -c "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR systemctl --user stop xr-driver" $USER
+  fi
+else
+  if systemctl --user is-active --quiet xr-driver; then
+      systemctl --user stop xr-driver
+  fi
+fi
+
+[ "$for_install" -eq 0 ] && echo "Removing the systemd service from ${SYSTEMD_USER_DIR}"
+rm -f $SYSTEMD_USER_DIR/xr-driver.service
+
+UDEV_RULES_DIR="/usr/lib/udev/rules.d"
+ALT_UDEV_RULES_DIR="/etc/udev/rules.d"
+
+[ "$for_install" -eq 0 ] && echo "Removing the udev rules from ${UDEV_RULES_DIR} or ${ALT_UDEV_RULES_DIR}"
+sudo rm $UDEV_RULES_DIR/70-*-xr.rules > /dev/null 2>&1 || true
+sudo rm $ALT_UDEV_RULES_DIR/70-*-xr.rules > /dev/null 2>&1 || true
+
+if [ "$for_install" -eq 0 ]; then
+    echo "Removing installed files from $STATE_DIR, $CONFIG_DIR, $DATA_DIR, and $BIN_DIR"
+
+    UA_EVENT_NAME="uninstall"
+    UA_CLIENT_ID="ARLinuxDriver"
+    #INJECT_UA_CALL
+
+    rm -rf $STATE_DIR
+    rm -rf $CONFIG_DIR
+fi
+rm -rf $DATA_DIR
+rm -f $BIN_DIR/xrDriver
+rm -f $BIN_DIR/xr_driver_cli
+rm -f $BIN_DIR/xr_driver_verify
+rm -f $BIN_DIR/xr_driver_logs
+
+rm -f /tmp/shader_runtime_*
+rm -f /dev/shm/xr_*
+rm -f /dev/shm/breezy_desktop_imu
+
+# this script is self-deleting, leave this as the last command
+# remove the one we're not using first
+if [ "$script_dir" = "$OLD_BIN_DIR" ]; then
+    rm -f "$BIN_DIR/xr_driver_uninstall"
+    rm -f "$OLD_BIN_DIR/xreal_driver_uninstall"
+else
+    rm -f "$OLD_BIN_DIR/xreal_driver_uninstall"
+    rm -f "$BIN_DIR/xr_driver_uninstall"
+fi

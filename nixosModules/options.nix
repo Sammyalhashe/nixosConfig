@@ -29,5 +29,20 @@
       default = [ ];
       description = "A list of additional nameservers to append as fallbacks.";
     };
+
+    desktop = lib.mkOption {
+      type = lib.types.enum [
+        "kde"
+        "mango"
+        "hyprland"
+        "none"
+      ];
+      default = "kde";
+      description = "The default desktop environment to start.";
+    };
+
+    enableKDE = lib.mkEnableOption "Whether to install KDE Plasma.";
+    enableMango = lib.mkEnableOption "Whether to install Mango desktop.";
+    enableHyprland = lib.mkEnableOption "Whether to install Hyprland.";
   };
 }

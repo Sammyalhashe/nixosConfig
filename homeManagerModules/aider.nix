@@ -9,8 +9,12 @@ let
     openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
     
-    # Use the Qwen3 model by default via LiteLLM
-    model = "openai/qwen3-coder-next";
+    # Use the reasoning model for the main chat
+    model = "openai/qwq-32b";
+    # Use Qwen3 for editing tasks
+    editor-model = "openai/qwen3-coder-next";
+    # Use flash for smaller tasks like history summarization
+    weak-model = "openai/qwen-flash";
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;
@@ -25,7 +29,7 @@ in
   };
 
   config = lib.mkIf config.programs.aider.enable {
-    home.packages = [ pkgs.aider-chat ];
+    home.packages = [ pkgs.aider-chat-full ];
 
     # Write the configuration file to the home directory
     # Aider looks for .aider.conf.yml in the home directory or git root

@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BreezyDesktopEffectConfig</class>
+ <widget class="QWidget" name="BreezyDesktopEffectConfig">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+      <widget class="QLabel" name="labelDeviceConnectionStatus">
+       <property name="text">
+          <string>Loading, please wait...</string>
+         </property>
+         <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+         </property>
+         <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+         </property>
+        </widget>
+     </item>
+     <item>
+       <widget class="QLabel" name="labelGlobalWarning">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="visible">
+         <bool>false</bool>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(200,0,0); font-weight: bold;</string>
+        </property>
+       </widget>
+     </item>
+     <item>
+        <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <widget class="QWidget" name="tabGeneral">
+      <attribute name="title">
+       <string>&amp;General</string>
+      </attribute>
+   <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0" colspan="2">
+      <widget class="QWidget" name="widgetGeneralCheckboxes" native="true">
+      <layout class="QGridLayout" name="gridLayoutGeneralCheckboxes" columnstretch="1,1">
+        <property name="leftMargin"><number>0</number></property>
+        <property name="topMargin"><number>0</number></property>
+        <property name="rightMargin"><number>0</number></property>
+        <property name="bottomMargin"><number>0</number></property>
+        <property name="horizontalSpacing"><number>12</number></property>
+        <property name="verticalSpacing"><number>6</number></property>
+        <item row="0" column="0">
+        <widget class="QCheckBox" name="EffectEnabled">
+         <property name="text">
+          <string>XR Effect enabled</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+        </item>
+        <item row="0" column="1">
+        <widget class="QCheckBox" name="kcfg_ZoomOnFocusEnabled">
+         <property name="text">
+          <string>Zoom on Focus</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+        </item>
+        <item row="1" column="0">
+        <widget class="QCheckBox" name="kcfg_CurvedDisplay">
+         <property name="text">
+          <string>Curved display</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+        </item>
+        <item row="1" column="1">
+        <widget class="QCheckBox" name="SmoothFollowEnabled">
+         <property name="text">
+          <string>Follow mode</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+        </item>
+       </layout>
+      </widget>
+      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelFocusedDisplayDistance">
+        <property name="text">
+        <string>Focused Display Distance:</string>
+        </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+        <widget class="LabeledSlider" name="kcfg_FocusedDisplayDistance">
+         <property name="decimalShift">
+          <double>2</double>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickStartOffset">
+          <double>15</double>
+         </property>
+         <property name="tickInterval">
+          <double>50</double>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      <item row="2" column="0">
+        <widget class="QLabel" name="labelAllDisplaysDistance">
+         <property name="text">
+          <string>All Displays Distance:</string>
+         </property>
+        </widget>
+       </item>
+      <item row="2" column="1">
+        <widget class="LabeledSlider" name="kcfg_AllDisplaysDistance">
+         <property name="decimalShift">
+          <double>2</double>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickStartOffset">
+          <double>15</double>
+         </property>
+         <property name="tickInterval">
+          <double>50</double>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      <item row="3" column="0">
+        <widget class="QLabel" name="labelDisplaySize">
+         <property name="text">
+          <string>Display Size:</string>
+         </property>
+        </widget>
+       </item>
+      <item row="3" column="1">
+        <widget class="LabeledSlider" name="kcfg_DisplaySize">
+         <property name="decimalShift">
+          <double>2</double>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickStartOffset">
+          <double>15</double>
+         </property>
+         <property name="tickInterval">
+          <double>50</double>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      <item row="4" column="0">
+        <widget class="QLabel" name="labelDisplaySpacing">
+         <property name="text">
+          <string>Display Spacing:</string>
+         </property>
+        </widget>
+       </item>
+      <item row="4" column="1">
+        <widget class="QSlider" name="kcfg_DisplaySpacing">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+        <item row="5" column="0">
+          <widget class="QLabel" name="labelDisplayHorizontalOffset">
+          <property name="text">
+            <string>Display Horizontal Offset:</string>
+          </property>
+          </widget>
+        </item>
+        <item row="5" column="1">
+          <widget class="LabeledSlider" name="kcfg_DisplayHorizontalOffset">
+          <property name="decimalShift">
+            <double>2</double>
+          </property>
+          <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+          </property>
+          <property name="tickStartOffset">
+            <double>50</double>
+          </property>
+          <property name="tickInterval">
+            <double>100</double>
+          </property>
+          <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tracking">
+            <bool>true</bool>
+          </property>
+          </widget>
+        </item>
+        <item row="6" column="0">
+          <widget class="QLabel" name="labelDisplayVerticalOffset">
+          <property name="text">
+            <string>Display Vertical Offset:</string>
+          </property>
+          </widget>
+        </item>
+        <item row="6" column="1">
+          <widget class="LabeledSlider" name="kcfg_DisplayVerticalOffset">
+          <property name="decimalShift">
+            <double>2</double>
+          </property>
+          <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+          </property>
+          <property name="tickStartOffset">
+            <double>50</double>
+          </property>
+          <property name="tickInterval">
+            <double>100</double>
+          </property>
+          <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tracking">
+            <bool>true</bool>
+          </property>
+          </widget>
+        </item>
+      <item row="7" column="0">
+        <widget class="QLabel" name="labelFollowThreshold">
+         <property name="text">
+          <string>Follow threshold:</string>
+         </property>
+        </widget>
+       </item>
+      <item row="7" column="1">
+        <widget class="LabeledSlider" name="kcfg_SmoothFollowThreshold">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tracking">
+          <bool>false</bool>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickStartOffset">
+          <double>9</double>
+         </property>
+         <property name="tickInterval">
+          <double>10</double>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+        <item row="8" column="0">
+          <widget class="QLabel" name="labelVirtualDisplays">
+            <property name="text">
+              <string>Add Virtual Display:</string>
+            </property>
+            <property name="visible">
+              <bool>false</bool>
+            </property>
+            <property name="enabled">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+      <item row="8" column="1">
+          <widget class="QWidget" name="widgetVirtualDisplayButtons">
+            <property name="visible">
+              <bool>false</bool>
+            </property>
+            <property name="enabled">
+              <bool>false</bool>
+            </property>
+            <layout class="QHBoxLayout" name="layoutVirtualDisplayButtons">
+              <item>
+                <widget class="QComboBox" name="comboAddVirtualDisplay">
+                  <item>
+                    <property name="text">
+                      <string>1080p</string>
+                    </property>
+                  </item>
+                  <item>
+                    <property name="text">
+                      <string>1440p</string>
+                    </property>
+                  </item>
+                  <item>
+                    <property name="text">
+                      <string>Add custom…</string>
+                    </property>
+                  </item>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonRemoveCustomResolution">
+                  <property name="toolTip">
+                    <string>Remove custom resolution</string>
+                  </property>
+                  <property name="icon">
+                    <iconset theme="list-remove-symbolic"/>
+                  </property>
+                  <property name="flat"><bool>true</bool></property>
+                  <property name="visible">
+                    <bool>false</bool>
+                  </property>
+                  <property name="enabled">
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonAddVirtualDisplay">
+                  <property name="icon">
+                    <iconset theme="list-add-symbolic"/>
+                  </property>
+                  <property name="flat"><bool>true</bool></property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonOpenDisplaysSettings">
+                  <property name="text">
+                  <string>Rearrange displays</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QWidget" name="widgetVirtualDisplayList">
+      <property name="visible"><bool>false</bool></property>
+      <property name="enabled"><bool>false</bool></property>
+         <layout class="QVBoxLayout" name="layoutVirtualDisplayList">
+          <property name="spacing"><number>6</number></property>
+          <property name="leftMargin"><number>0</number></property>
+          <property name="topMargin"><number>0</number></property>
+          <property name="rightMargin"><number>0</number></property>
+          <property name="bottomMargin"><number>0</number></property>
+         </layout>
+     </widget>
+    </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabShortcuts">
+      <attribute name="title">
+       <string>&amp;Shortcuts</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutShortcuts">
+       <item>
+      <widget class="KShortcutsEditor" name="shortcutsEditor" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabAdvanced">
+      <attribute name="title">
+       <string>&amp;Advanced</string>
+      </attribute>
+      <layout class="QFormLayout" name="formAdvanced">
+        <item row="0" column="0">
+          <widget class="QLabel" name="labelDisplayWrappingScheme">
+          <property name="text">
+            <string>Display Wrapping Scheme:</string>
+          </property>
+          </widget>
+        </item>
+        <item row="0" column="1">
+          <widget class="QComboBox" name="kcfg_DisplayWrappingScheme">
+          <item>
+            <property name="text">
+              <string>Auto</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Horizontal</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Vertical</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Flat</string>
+            </property>
+          </item>
+          </widget>
+        </item>
+        <item row="1" column="0">
+          <widget class="QLabel" name="labelAntialiasingQuality">
+          <property name="text">
+            <string>Anti-aliasing quality:</string>
+          </property>
+          </widget>
+        </item>
+        <item row="1" column="1">
+          <widget class="QComboBox" name="kcfg_AntialiasingQuality">
+          <item>
+            <property name="text">
+              <string>None</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Medium</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>High</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Very High</string>
+            </property>
+          </item>
+          </widget>
+        </item>
+        <item row="2" column="0">
+          <widget class="QLabel" name="labelSmoothFollowTracking">
+            <property name="text">
+              <string>Follow mode movement tracking:</string>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="1">
+          <widget class="QWidget" name="widgetSmoothFollowTracking">
+            <layout class="QHBoxLayout" name="layoutSmoothFollowTracking">
+              <property name="leftMargin"><number>0</number></property>
+              <property name="topMargin"><number>0</number></property>
+              <property name="rightMargin"><number>0</number></property>
+              <property name="bottomMargin"><number>0</number></property>
+              <item>
+                <widget class="QCheckBox" name="SmoothFollowTrackYaw">
+                  <property name="text">
+                    <string>Yaw</string>
+                  </property>
+                  <property name="checked">
+                    <bool>true</bool>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QCheckBox" name="SmoothFollowTrackPitch">
+                  <property name="text">
+                    <string>Pitch</string>
+                  </property>
+                  <property name="checked">
+                    <bool>true</bool>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QCheckBox" name="SmoothFollowTrackRoll">
+                  <property name="text">
+                    <string>Roll</string>
+                  </property>
+                  <property name="checked">
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="kcfg_AllDisplaysFollowMode">
+            <property name="text">
+              <string>All displays follow mode</string>
+            </property>
+            <property name="checked">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+          <widget class="QCheckBox" name="kcfg_RemoveVirtualDisplaysOnDisable">
+            <property name="visible">
+              <bool>false</bool>
+            </property>
+            <property name="enabled">
+              <bool>false</bool>
+            </property>
+            <property name="text">
+              <string>Remove virtual displays on disable</string>
+            </property>
+            <property name="checked"><bool>true</bool></property>
+          </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+          <widget class="QCheckBox" name="kcfg_MirrorPhysicalDisplays">
+            <property name="text">
+              <string>Mirror physical displays (may impact performance)</string>
+            </property>
+            <property name="checked"><bool>false</bool></property>
+          </widget>
+        </item>
+        <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="EnableMultitap">
+            <property name="text">
+              <string>Enable multi-tap detection</string>
+            </property>
+            <property name="checked"><bool>false</bool></property>
+          </widget>
+        </item>
+        <item row="7" column="0">
+          <widget class="QLabel" name="labelLookAheadOverride">
+          <property name="text">
+            <string>Movement look-ahead (ms):</string>
+          </property>
+          </widget>
+        </item>
+        <item row="7" column="1">
+          <widget class="LabeledSlider" name="kcfg_LookAheadOverride">
+          <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+          </property>
+          <property name="tickStartOffset">
+            <double>1</double>
+          </property>
+          <property name="tickInterval">
+            <double>5</double>
+          </property>
+          <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tracking">
+            <bool>true</bool>
+          </property>
+          </widget>
+        </item>
+        <item row="8" column="0">
+          <widget class="QLabel" name="labelNeckSaverHorizontal">
+            <property name="text">
+              <string>Neck-saver horizontal:</string>
+            </property>
+          </widget>
+        </item>
+        <item row="8" column="1">
+          <widget class="LabeledSlider" name="NeckSaverHorizontalMultiplier">
+            <property name="decimalShift">
+              <double>2</double>
+            </property>
+            <property name="minimum">
+              <number>100</number>
+            </property>
+            <property name="maximum">
+              <number>250</number>
+            </property>
+            <property name="tickStartOffset">
+              <double>25</double>
+            </property>
+            <property name="tickInterval">
+              <double>50</double>
+            </property>
+            <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+            </property>
+            <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tracking">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+        <item row="9" column="0">
+          <widget class="QLabel" name="labelNeckSaverVertical">
+            <property name="text">
+              <string>Neck-saver vertical:</string>
+            </property>
+          </widget>
+        </item>
+        <item row="9" column="1">
+          <widget class="LabeledSlider" name="NeckSaverVerticalMultiplier">
+            <property name="decimalShift">
+              <double>2</double>
+            </property>
+            <property name="minimum">
+              <number>100</number>
+            </property>
+            <property name="maximum">
+              <number>250</number>
+            </property>
+            <property name="tickStartOffset">
+              <double>25</double>
+            </property>
+            <property name="tickInterval">
+              <double>50</double>
+            </property>
+            <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+            </property>
+            <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tracking">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+        <item row="10" column="0">
+          <widget class="QLabel" name="labelDeadZoneThresholdDeg">
+            <property name="text">
+              <string>Dead-zone threshold (deg):</string>
+            </property>
+          </widget>
+        </item>
+        <item row="10" column="1">
+          <widget class="LabeledSlider" name="DeadZoneThresholdDeg">
+            <property name="decimalShift">
+              <double>1</double>
+            </property>
+            <property name="minimum">
+              <number>-5</number>
+            </property>
+            <property name="maximum">
+              <number>55</number>
+            </property>
+            <property name="tickStartOffset">
+              <double>5</double>
+            </property>
+            <property name="tickInterval">
+              <double>10</double>
+            </property>
+            <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+            </property>
+            <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tracking">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+        <item row="11" column="0">
+          <widget class="QLabel" name="labelMeasurementUnits">
+            <property name="text">
+              <string>Measurement units:</string>
+            </property>
+          </widget>
+        </item>
+        <item row="11" column="1">
+          <widget class="QComboBox" name="comboMeasurementUnits"/>
+        </item>
+        <item row="12" column="0">
+          <widget class="QLabel" name="labelResetDriver">
+            <property name="text">
+              <string>Reset driver:</string>
+            </property>
+          </widget>
+        </item>
+        <item row="12" column="1">
+          <widget class="QPushButton" name="buttonResetDriver">
+            <property name="text">
+              <string>Force reset driver</string>
+            </property>
+          </widget>
+        </item>
+        <item row="13" column="1">
+          <widget class="QLabel" name="labelResetDriverStatus">
+            <property name="text">
+              <string/>
+            </property>
+            <property name="visible">
+              <bool>false</bool>
+            </property>
+            <property name="wordWrap">
+              <bool>true</bool>
+            </property>
+          </widget>
+        </item>
+      </layout>
+     </widget>
+   <widget class="QWidget" name="tabLicenseDetails">
+    <attribute name="title">
+     <string>&amp;License Details</string>
+    </attribute>
+   <layout class="QVBoxLayout" name="verticalLayoutLicense">
+    <item>
+     <widget class="QLabel" name="labelLicenseSummary">
+      <property name="text">
+      <string/>
+      </property>
+      <property name="wordWrap">
+        <bool>true</bool>
+      </property>
+      <property name="visible">
+        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+  <item>
+   <widget class="QLabel" name="labelDonateLink">
+    <property name="text">
+     <string>&lt;a href=&quot;https://ko-fi.com/wheaney&quot;&gt;Renew or support on Ko‑fi&lt;/a&gt;</string>
+    </property>
+    <property name="openExternalLinks">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+    </property>
+    <property name="visible">
+     <bool>false</bool>
+    </property>
+   </widget>
+  </item>
+    <item>
+    <widget class="QGroupBox" name="groupBoxEmail">
+       <property name="title">
+      <string>Request a token</string>
+       </property>
+   <layout class="QGridLayout" name="gridLayoutEmail">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEditLicenseEmail">
+        <property name="placeholderText">
+         <string>you@example.com</string>
+        </property>
+       </widget>
+      </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="buttonSubmitEmail">
+     <property name="text">
+      <string>Submit</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="labelEmailStatus">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBoxToken">
+       <property name="title">
+      <string>Verify token</string>
+       </property>
+   <layout class="QGridLayout" name="gridLayoutToken">
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="lineEditLicenseToken"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="buttonSubmitToken">
+      <property name="text">
+       <string>Verify</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="labelTokenStatus">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="visible">
+       <bool>false</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacerLicense">
+       <property name="orientation">
+      <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="tabAbout">
+    <attribute name="title">
+     <string>&amp;About</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayoutAbout">
+     <item>
+      <widget class="QLabel" name="labelAppNameVersion">
+       <property name="text">
+      <string>Breezy Desktop Effect - v0.0.0</string>
+       </property>
+       <property name="alignment">
+      <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+       </property>
+       <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel">
+       <property name="text">
+      <string>Author: Wayne Heaney &lt;wayne@xronlinux.com&gt;</string>
+       </property>
+       <property name="alignment">
+      <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel">
+       <property name="text">
+      <string>License: GPL-3.0</string>
+       </property>
+       <property name="alignment">
+      <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+      <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacerAbout">
+       <property name="orientation">
+      <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KShortcutsEditor</class>
+   <extends>QWidget</extends>
+   <header>kshortcutseditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+ </connections>
+</ui>

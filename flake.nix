@@ -55,6 +55,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+    viture-virtual-display = {
+      url = "github:mgschwan/viture_virtual_display";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    breezy-desktop = {
+      url = "path:./breezy_src";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     homebase-manager = {
       url = "github:Sammyalhashe/homebase-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -236,8 +244,11 @@
           mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = true;
-            host.isWsl = true; # As per original config comment "just to not import the desktop file"
+            host.useOmarchy = false;
+            host.isWsl = false; # Enable GUI
+            host.desktop = "mango";
+            host.enableKDE = true;
+            host.enableMango = true;
             programs.stylix.enable = true;
           }
         ];

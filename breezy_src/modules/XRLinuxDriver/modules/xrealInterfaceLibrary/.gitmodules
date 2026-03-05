@@ -1,0 +1,9 @@
+[submodule "interface_lib/modules/Fusion"]
+	path = interface_lib/modules/Fusion
+	url = https://github.com/xioTechnologies/Fusion.git
+[submodule "interface_lib/modules/hidapi"]
+	path = interface_lib/modules/hidapi
+	url = https://github.com/libusb/hidapi.git
+[submodule "interface_lib/modules/xreal_one_driver"]
+	path = interface_lib/modules/xreal_one_driver
+	url = https://github.com/rohitsangwan01/xreal_one_driver.git

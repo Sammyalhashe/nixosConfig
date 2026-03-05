@@ -24,12 +24,16 @@ in
 
   host.useOmarchy = lib.mkDefault false;
   host.greetd = true;
+  host.desktop = "mango";
 
   specialisation = {
     server.configuration = {
       system.nixos.tags = [ "server" ];
       host.greetd = lib.mkForce false;
       host.isHeadless = true;
+      host.enableKDE = lib.mkForce false;
+      host.enableMango = lib.mkForce false;
+      host.enableHyprland = lib.mkForce false;
     };
   };
   host.homeManagerHostname = "default";
@@ -78,7 +82,7 @@ in
   };
 
   # Enable the Modular LLM Services
-  # services.llm-services.gpt-oss.enable = true; # Disabled for memory headroom
+  services.llm-services.gpt-oss.enable = true;
   services.llm-services.qwen-coder.enable = true;
   services.llm-services.qwen-flash.enable = true;
   services.llm-services.litellm-uv.enable = true;
@@ -140,6 +144,7 @@ in
         fi
       }
       download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
+      download_model "qwq_32b_q4km.gguf" "https://huggingface.co/unsloth/QwQ-32B-GGUF/resolve/main/QwQ-32B-Q4_K_M.gguf"
       download_model "qwen3_next_q3km.gguf" "https://huggingface.co/unsloth/Qwen3-Coder-Next-GGUF/resolve/main/Qwen3-Coder-Next-Q3_K_M.gguf"
     '';
     serviceConfig = {
@@ -211,7 +216,6 @@ in
     ];
   };
 
-  programs.mango.enable = lib.mkForce false;
   services.getty.autologinUser = "${user}";
   nixpkgs.config.allowUnfree = true;
   home-manager = {

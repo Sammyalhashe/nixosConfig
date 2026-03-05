@@ -25,7 +25,7 @@ in
   ];
 
   programs.waybar = {
-    enable = lib.mkForce true;
+    enable = lib.mkDefault true;
     systemd.enable = true;
     package = pkgs.waybar;
     settings = lib.mkForce {
@@ -63,7 +63,7 @@ in
 
         # Modules configuration
         "custom/mangolayout" = {
-          exec = "mmsg -g -l | awk '{print $NF}' | sed -E 's/^t$|^tile$/Tiling/;s/^s$|^scroller$/Scroller/;s/^m$|^monocle$/Monocle/;s/^g$|^grid$/Grid/;s/^d$|^deck$/Deck/;s/^c$|^center_tile$/Center Tile/;s/^r$|^right_tile$/Right Tile/;s/^v$|^vertical_tile$/Vert Tile/;s/^z$|^vertical_scroller$/Vert Scroll/;s/^x$|^vertical_grid$/Vert Grid/;s/^y$|^vertical_spiral$/Vert Spiral/;s/^u$|^vertical_deck$/Vert Deck/;s/^o$|^tgmix$/TG Mix/'";
+          exec = "pgrep -x mango > /dev/null && mmsg -g -l | awk '{print $NF}' | sed -E 's/^t$|^tile$/Tiling/;s/^s$|^scroller$/Scroller/;s/^m$|^monocle$/Monocle/;s/^g$|^grid$/Grid/;s/^d$|^deck$/Deck/;s/^c$|^center_tile$/Center Tile/;s/^r$|^right_tile$/Right Tile/;s/^v$|^vertical_tile$/Vert Tile/;s/^z$|^vertical_scroller$/Vert Scroll/;s/^x$|^vertical_grid$/Vert Grid/;s/^y$|^vertical_spiral$/Vert Spiral/;s/^u$|^vertical_deck$/Vert Deck/;s/^o$|^tgmix$/TG Mix/' || echo ''";
           interval = 1;
           format = "󰕰 {}";
           tooltip = false;

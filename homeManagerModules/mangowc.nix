@@ -336,6 +336,16 @@ in
       bind=SUPER+SHIFT,k,exchange_client,up
       bind=SUPER+SHIFT,j,exchange_client,down
 
+      # Monitor Management (Moving windows between displays)
+      bind=SUPER+ALT,left,tagmon,left
+      bind=SUPER+ALT,right,tagmon,right
+      bind=SUPER+ALT,h,tagmon,left
+      bind=SUPER+ALT,l,tagmon,right
+
+      # Virtual Output Management
+      bind=SUPER+ALT,v,create_virtual_output,
+      bind=SUPER+ALT,x,destroy_all_virtual_output,
+
       # Layout Orientation / Master Management
       bind=SUPER,comma,incnmaster,-1
       bind=SUPER,period,incnmaster,+1
@@ -408,6 +418,10 @@ in
       # Take a screenshot of a region and copy to clipboard
       bind=SUPER,p,spawn,bash -c 'grim -g "$(slurp)" - | wl-copy'
       bind=SUPER_SHIFT,s,spawn,bash -c 'grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y-%m-%d_%H-%M-%S).png'
+
+      # Mouse bindings
+      mousebind=SUPER,btn_left,moveresize,curmove
+      mousebind=SUPER,btn_right,moveresize,curresize
     '';
   };
 }

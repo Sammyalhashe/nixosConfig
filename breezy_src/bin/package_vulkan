@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+# exit when any command fails
+set -e
+
+ARCH=${ARCH:-$(uname -m)}
+echo "Building Breezy Vulkan for $ARCH"
+
+XR_DRIVER_DIR=modules/XRLinuxDriver
+source $XR_DRIVER_DIR/bin/inject_ua
+
+VULKAN_DIR=vulkan
+VULKAN_BUILD_DIR=$VULKAN_DIR/build
+if [ ! -d "$VULKAN_BUILD_DIR" ]; then
+  mkdir -p $VULKAN_BUILD_DIR
+else
+  rm -rf $VULKAN_BUILD_DIR/*
+fi
+
+VULKAN_MODULES=$VULKAN_DIR/modules
+PACKAGE_DIR=$VULKAN_BUILD_DIR/breezy_vulkan
+if [ ! -d "$PACKAGE_DIR" ]; then
+  mkdir -p $PACKAGE_DIR
+else
+  rm -rf $PACKAGE_DIR/*
+fi
+BUILD_FILE_NAME=breezyVulkan-$ARCH.tar.gz
+
+# copy Sombrero shader, get ReShade headers
+cp modules/sombrero/*.frag $PACKAGE_DIR
+cp modules/sombrero/*.png $PACKAGE_DIR
+wget -P $PACKAGE_DIR https://raw.githubusercontent.com/crosire/reshade-shaders/384465d0287999caa6190b5ebea506200b4f4a0a/Shaders/ReShade.fxh
+wget -P $PACKAGE_DIR https://raw.githubusercontent.com/crosire/reshade-shaders/384465d0287999caa6190b5ebea506200b4f4a0a/Shaders/ReShadeUI.fxh
+
+# if a custom_banner image exists, copy it over the sombrero one
+if [ -e "$VULKAN_DIR/custom_banner.png" ]; then
+  cp $VULKAN_DIR/custom_banner.png $PACKAGE_DIR
+fi
+
+# copy vulkan setup scripts and configs
+mkdir -p $PACKAGE_DIR/bin
+copy_and_inject_ua "$XR_DRIVER_DIR/bin/ua.sh" "$PACKAGE_DIR/bin" "$VULKAN_DIR/bin/setup" "$VULKAN_DIR/bin/breezy_vulkan_verify" "$VULKAN_DIR/bin/breezy_vulkan_uninstall" "$VULKAN_DIR/bin/breezy_vulkan_logs"
+cp -r $VULKAN_DIR/config $PACKAGE_DIR
+
+# build XR driver
+XR_DRIVER_BINARY_NAME=xrDriver-$ARCH.tar.gz
+XR_DRIVER_BINARY="$XR_DRIVER_DIR/out/$XR_DRIVER_BINARY_NAME"
+
+if [ ! -e "$XR_DRIVER_BINARY" ] || [ "$1" == "--rebuild-driver" ]; then
+  # if a file exists at custom_banner_config.yml, copy it to the xrealAirLinuxDriver directory
+  if [ -e "$VULKAN_DIR/custom_banner_config.yml" ]; then
+    cp $VULKAN_DIR/custom_banner_config.yml $XR_DRIVER_DIR
+  fi
+
+  pushd $XR_DRIVER_DIR
+
+  # strange issue where the base library produces a .so file if the build is not cleaned
+  rm -rf build/
+  
+  docker-build/init.sh
+  docker-build/run-build.sh $ARCH
+  popd
+fi
+
+TMP_DIR=$(mktemp -d -t breezy-vulkan-XXXXXXXXXX)
+cp "$XR_DRIVER_BINARY" "$TMP_DIR/$XR_DRIVER_BINARY_NAME"
+pushd $TMP_DIR
+tar -xf "$TMP_DIR/$XR_DRIVER_BINARY_NAME"
+
+XR_DRIVER_MANIFEST_LINE=$(sha256sum xr_driver/manifest)
+popd
+rm -rf $TMP_DIR
+
+# copy XR driver binary and setup script
+cp "$XR_DRIVER_BINARY" "$PACKAGE_DIR/$XR_DRIVER_BINARY_NAME"
+cp $XR_DRIVER_DIR/bin/xr_driver_setup $PACKAGE_DIR/bin
+
+# create manifest file for verifying installed file checksums against the originally packaged versions
+# include any file that doesn't get modified during setup (e.g. vkBasalt.json files)
+pushd $PACKAGE_DIR
+echo $XR_DRIVER_MANIFEST_LINE > manifest
+sha256sum bin/breezy_vulkan_uninstall bin/breezy_vulkan_logs *.frag *.fx* *.png >> manifest
+popd
+
+# bundle everything up
+pushd $VULKAN_BUILD_DIR
+tar -zcvf $BUILD_FILE_NAME breezy_vulkan
+popd
+
+mkdir -p out
+if [ -e "out/$BUILD_FILE_NAME" ]; then
+  rm out/$BUILD_FILE_NAME
+fi
+cp $VULKAN_BUILD_DIR/$BUILD_FILE_NAME out
