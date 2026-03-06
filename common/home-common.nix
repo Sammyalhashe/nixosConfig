@@ -5,14 +5,18 @@
   ...
 }:
 let
+  # Define the package name and version once so they can be reused safely.
+  openTerminalPname = "open-terminal";
+  openTerminalVersion = "0.1.0"; # <-- update to the actual version you need
+
   # Derivation for the `open-terminal` Python package, which is not available in
-  # the default Nixpkgs collection. Replace the version and sha256 with the
-  # correct values for the desired release.
+  # the default Nixpkgs collection.
   open-terminal = pkgs.python3Packages.buildPythonPackage {
-    pname = "open-terminal";
-    version = "0.1.0"; # <-- update to the actual version you need
+    pname = openTerminalPname;
+    version = openTerminalVersion;
     src = pkgs.fetchPypi {
-      inherit pname version;
+      pname = openTerminalPname;
+      version = openTerminalVersion;
       sha256 = "sha256-PLACEHOLDER"; # <-- replace with the real sha256 hash
     };
   };
