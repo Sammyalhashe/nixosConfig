@@ -4,6 +4,19 @@
   lib,
   ...
 }:
+let
+  # Derivation for the `open-terminal` Python package, which is not available in
+  # the default Nixpkgs collection. Replace the version and sha256 with the
+  # correct values for the desired release.
+  open-terminal = pkgs.python3Packages.buildPythonPackage {
+    pname = "open-terminal";
+    version = "0.1.0"; # <-- update to the actual version you need
+    src = pkgs.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-PLACEHOLDER"; # <-- replace with the real sha256 hash
+    };
+  };
+in
 {
   home.packages =
     with pkgs;
@@ -49,6 +62,9 @@
 
       # fonts
       iosevka
+
+      # add the open-terminal Python package
+      open-terminal
     ]
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })
