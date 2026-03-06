@@ -81,10 +81,10 @@ in
     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
   };
 
-  # Enable the Modular LLM Services
+  # Enable the Master 120B Service
   services.llm-services.gpt-oss.enable = true;
-  services.llm-services.qwen-coder.enable = true;
-  services.llm-services.qwen-flash.enable = true;
+  services.llm-services.qwen-coder.enable = false;
+  services.llm-services.qwen-flash.enable = false;
   services.llm-services.litellm-uv.enable = true;
   # services.llm-services.one-api.enable = false; 
 
@@ -212,6 +212,7 @@ in
       "docker"
       "wheel"
       "video"
+      "render"
       "input"
     ];
   };

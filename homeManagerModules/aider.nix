@@ -9,12 +9,10 @@ let
     openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
     
-    # Use the reasoning model for the main chat
-    model = "openai/qwq-32b";
-    # Use Qwen3 for editing tasks
-    editor-model = "openai/qwen3-coder-next";
-    # Use flash for smaller tasks like history summarization
-    weak-model = "openai/qwen-flash";
+    # Use the 120B model for everything now (prefix with openai/ for LiteLLM)
+    model = "openai/gpt-oss-120b";
+    editor-model = "openai/gpt-oss-120b";
+    weak-model = "openai/gpt-oss-120b";
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;

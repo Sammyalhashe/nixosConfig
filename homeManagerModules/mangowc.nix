@@ -231,6 +231,9 @@ in
       pkgs.kanshi
       pkgs.zenity
       pkgs.libnotify
+      pkgs.grim
+      pkgs.slurp
+      pkgs.wl-clipboard
       rebuildScript
       hotkeysScript
     ];
@@ -245,10 +248,10 @@ in
 
     xdg.configFile."mango/config.conf".text = ''
       # General Configuration
-      mfact=0.7
-      border_width=2
-      border_color_active=0x33ccff
-      border_color_inactive=0x595959
+      default_mfact=0.7
+      borderpx=2
+      focuscolor=0x33ccffff
+      bordercolor=0x595959ff
 
       # Window corner radius in pixels
       border_radius=6
@@ -271,14 +274,14 @@ in
         ${pkgs.waybar}/bin/waybar -s $HOME/.config/waybar/mango-style.css &
       ''}
 
-      focus_follows_mouse=false
+      sloppyfocus=0
 
       # Keybindings (Translated from Hyprland)
 
       # App Launchers
-      bind=SUPER,space,spawn,wofi --show drun --sort-order=alphabetical
-      bind=SUPER,B,spawn,brave --new-window --ozone-platform=wayland
-      bind=SUPER,A,spawn,brave --new-window --ozone-platform=wayland --app=https://perplexity.ai
+      bind=SUPER,space,spawn,wofi,--show,drun,--sort-order=alphabetical
+      bind=SUPER,B,spawn,brave,--new-window,--ozone-platform=wayland
+      bind=SUPER,A,spawn,brave,--new-window,--ozone-platform=wayland,--app=https://perplexity.ai
       bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
       bind=SUPER,T,spawn,alacritty
       bind=SUPER,Return,spawn,alacritty
@@ -298,20 +301,20 @@ in
       bind=SUPER,U,setlayout,vertical_deck
       bind=SUPER,O,setlayout,tgmix
 
-      bind=SUPER,W,killclient,
-      bind=SUPER,Backspace,killclient,
-      bind=SUPER+SHIFT,V,togglefloating,
-      bind=SUPER+SHIFT,Return,togglefullscreen,
-      bind=SUPER+SHIFT,f,togglefullscreen,
-      bind=SUPER,f,togglefullscreen,
+      bind=SUPER,W,killclient
+      bind=SUPER,Backspace,killclient
+      bind=SUPER+SHIFT,V,togglefloating
+      bind=SUPER+SHIFT,Return,togglefullscreen
+      bind=SUPER+SHIFT,f,togglefullscreen
+      bind=SUPER,f,togglefullscreen
 
       # Session Management
       bind=SUPER,Escape,spawn,hyprlock
-      bind=SUPER+SHIFT,Escape,quit,
+      bind=SUPER+SHIFT,Escape,quit
       bind=SUPER+CTRL,Escape,spawn,reboot
-      bind=SUPER+SHIFT+CTRL,Escape,spawn,systemctl poweroff
+      bind=SUPER+SHIFT+CTRL,Escape,spawn,systemctl,poweroff
       bind=SUPER+SHIFT,P,spawn,wlogout
-      bind=SUPER+CTRL,R,reload,
+      bind=SUPER+CTRL,R,reload_config
       ${lib.optionalString (
         !config.environments.wsl.enable
       ) "bind=SUPER+SHIFT,r,spawn,${rebuildScript}/bin/rebuild-nixos-notify"}
@@ -343,8 +346,8 @@ in
       bind=SUPER+ALT,l,tagmon,right
 
       # Virtual Output Management
-      bind=SUPER+ALT,v,create_virtual_output,
-      bind=SUPER+ALT,x,destroy_all_virtual_output,
+      bind=SUPER+ALT,v,create_virtual_output
+      bind=SUPER+ALT,x,destroy_all_virtual_output
 
       # Layout Orientation / Master Management
       bind=SUPER,comma,incnmaster,-1
@@ -380,28 +383,28 @@ in
       bind=SUPER+SHIFT,0,tag,10
 
       # Screenshots (using hyprshot/hyprpicker as defined in hyprland config)
-      bind=,Print,spawn,hyprshot -m region
-      bind=SHIFT,Print,spawn,hyprshot -m window
-      bind=CTRL,Print,spawn,hyprshot -m output
-      bind=SUPER,Print,spawn,hyprpicker -a
+      bind=none,Print,spawn,hyprshot,-m,region
+      bind=SHIFT,Print,spawn,hyprshot,-m,window
+      bind=CTRL,Print,spawn,hyprshot,-m,output
+      bind=SUPER,Print,spawn,hyprpicker,-a
 
       # Volume Control
-      bind = NONE, XF86AudioRaiseVolume, spawn_shell, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-      bind=NONE,XF86AudioLowerVolume,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-      bind=NONE,XF86AudioMute,spawn_shell,wpctl set-volume @DEFAULT_AUDIO_SINK@ toggle
-      bind=NONE,XF86AudioMicMute,spawn_shell,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+      bind=none,XF86AudioRaiseVolume,spawn_shell,wpctl,set-volume,@DEFAULT_AUDIO_SINK@,5%+
+      bind=none,XF86AudioLowerVolume,spawn_shell,wpctl,set-volume,@DEFAULT_AUDIO_SINK@,5%-
+      bind=none,XF86AudioMute,spawn_shell,wpctl,set-volume,@DEFAULT_AUDIO_SINK@,toggle
+      bind=none,XF86AudioMicMute,spawn_shell,wpctl,set-mute,@DEFAULT_AUDIO_SOURCE@,toggle
 
       # Mute Toggle
-      bind=NONE,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+      bind=none,XF86AudioMute,spawn,wpctl,set-mute,@DEFAULT_AUDIO_SINK@,toggle
 
       # Brightness Control
-      bind=NONE,XF86MonBrightnessUp,spawn_shell,brightnessctl -e4 -n2 set 5%+
-      bind=NONE,XF86MonBrightnessDown,spawn_shell,brightnessctl -e4 -n2 set 5%-
+      bind=none,XF86MonBrightnessUp,spawn_shell,brightnessctl,-e4,-n2,set,5%+
+      bind=none,XF86MonBrightnessDown,spawn_shell,brightnessctl,-e4,-n2,set,5%-
 
       # Media Control
-      bind=,XF86AudioNext,spawn,playerctl next
-      bind=,XF86AudioPlay,spawn,playerctl play-pause
-      bind=,XF86AudioPrev,spawn,playerctl previous
+      bind=none,XF86AudioNext,spawn,playerctl,next
+      bind=none,XF86AudioPlay,spawn,playerctl,play-pause
+      bind=none,XF86AudioPrev,spawn,playerctl,previous
 
       # 3-finger: Window focus
       gesturebind=none,left,3,focusdir,left
@@ -413,15 +416,11 @@ in
       gesturebind=none,left,4,viewtoleft_have_client
       gesturebind=none,right,4,viewtoright_have_client
       gesturebind=none,up,4,toggleoverview
-      gesturebind=none,down,4,toggleovervie
+      gesturebind=none,down,4,toggleoverview
 
       # Take a screenshot of a region and copy to clipboard
-      bind=SUPER,p,spawn,bash -c 'grim -g "$(slurp)" - | wl-copy'
-      bind=SUPER_SHIFT,s,spawn,bash -c 'grim -g "$(slurp)" ~/Pictures/screenshots/$(date +%Y-%m-%d_%H-%M-%S).png'
-
-      # Mouse bindings
-      mousebind=SUPER,btn_left,moveresize,curmove
-      mousebind=SUPER,btn_right,moveresize,curresize
+      bind=SUPER,p,spawn,bash,-c,${pkgs.grim}/bin/grim,-g,$(${pkgs.slurp}/bin/slurp),-,|,${pkgs.wl-clipboard}/bin/wl-copy
+      bind=SUPER+SHIFT,s,spawn,bash,-c,${pkgs.grim}/bin/grim,-g,$(${pkgs.slurp}/bin/slurp),~/Pictures/screenshots/$(date,+%Y-%m-%d_%H-%M-%S).png
     '';
   };
 }

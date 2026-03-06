@@ -70,11 +70,8 @@ in
             maxConcurrent = 16;
           };
           models = {
-            "mothership-proxy/gpt-4o" = {
-              alias = "qwen3";
-            };
-            "mothership-proxy/gpt-4o-mini" = {
-              alias = "flash";
+            "mothership-proxy/gpt-oss-120b" = {
+              alias = "master";
             };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
@@ -84,11 +81,10 @@ in
             };
           };
           model = {
-            primary = "mothership-proxy/gpt-4o";
+            primary = "mothership-proxy/gpt-oss-120b";
             fallbacks = [
-              "mothership-proxy/gpt-4o-mini"
               "google/gemini-3.1-pro-preview"
-              "ollama/qwen2.5-coder:7b"
+              "google/gemini-3-flash"
             ];
           };
         };
@@ -126,12 +122,8 @@ in
                                                                   api = "openai-completions";
                                                                   baseUrl = "http://11.125.37.101:4000/v1";
                                                                   apiKey = "any";
-                                                                  models = [                                        {                                  id = "gpt-4o";
-                                  name = "Qwen 3 Coder Next (via LiteLLM)";
-                                }
-                                {
-                                  id = "gpt-4o-mini";
-                                  name = "Qwen 2.5 Coder 7B (via LiteLLM)";
+                                                                  models = [                                        {                                  id = "gpt-oss-120b";
+                                  name = "GPT-OSS 120B (via Mothership)";
                                 }
                               ];
                             };
