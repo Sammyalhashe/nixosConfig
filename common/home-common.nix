@@ -17,7 +17,9 @@ let
     src = pkgs.fetchPypi {
       pname = openTerminalPname;
       version = openTerminalVersion;
-      sha256 = "sha256-PLACEHOLDER"; # <-- replace with the real sha256 hash
+      # Use a fake hash so that the first build will report the correct hash.
+      # After the first build you can replace `lib.fakeSha256` with the real hash.
+      sha256 = lib.fakeSha256;
     };
     # The package does not provide a pyproject.toml, so we need to tell Nix
     # which build system to use.  Using the classic setuptools format works.
