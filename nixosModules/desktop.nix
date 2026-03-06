@@ -27,8 +27,5 @@
         dedicatedServer.openFirewall = true;
       };
     })
-    (lib.mkIf (config.host.enableMango) {
-      programs.mango.enable = true;
-    })
   ];
 }
