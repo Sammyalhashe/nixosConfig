@@ -19,6 +19,9 @@ let
       version = openTerminalVersion;
       sha256 = "sha256-PLACEHOLDER"; # <-- replace with the real sha256 hash
     };
+    # The package does not provide a pyproject.toml, so we need to tell Nix
+    # which build system to use.  Using the classic setuptools format works.
+    format = "setuptools";
   };
 in
 {
