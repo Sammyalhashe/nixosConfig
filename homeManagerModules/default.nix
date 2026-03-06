@@ -15,6 +15,7 @@ let
     ./waybar.nix
     ./crush.nix
     ./aider.nix
+    ./opencode.nix
     {
       # themeSwitcher.enable = true;
       stylix.targets.gtk.enable = false;
