@@ -9,8 +9,8 @@ let
     providers = {
       local-inference = {
         type = "openai";
-        base_url = "http://${inferenceHost}:8013/v1";
-        name = "Mothership Reasoner (Primary)";
+        base_url = "http://${inferenceHost}:4000/v1";
+        name = "Mothership (LiteLLM)";
         api_key = "none";
         models = [
           {

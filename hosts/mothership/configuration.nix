@@ -94,6 +94,7 @@ in
   services.open-webui = {
     enable = true;
     port = 8080;
+    host = "0.0.0.0";
     environment = {
       OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8012/v1;http://127.0.0.1:4000/v1";
       OPENAI_API_KEYS = "none;none;none";
@@ -244,7 +245,6 @@ in
       pydantic
       python-dotenv
       apscheduler
-      gunicorn
       uvloop
       orjson
       pyyaml

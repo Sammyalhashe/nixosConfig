@@ -4,52 +4,6 @@
   lib,
   ...
 }:
-let
-  # Define the package name and version once so they can be reused safely.
-  openTerminalPname = "open-terminal";
-  openTerminalVersion = "0.1.0"; # <-- update to the actual version you need
-
-  # -------------------------------------------------------------------------
-  # The real `open-terminal` package is not available on PyPI (the URL returns
-  # 404), which caused the build to fail.  To keep the system buildable we
-  # provide a minimal stub package that installs a tiny executable.  This stub
-  # can be replaced later with a proper `buildPythonPackage` derivation once the
-  # correct source (e.g. a GitHub repository or a different PyPI name) is
-  # known.
-  # -------------------------------------------------------------------------
-  open-terminal = pkgs.stdenv.mkDerivation {
-    pname = openTerminalPname;
-    version = openTerminalVersion;
-
-    # No source to fetch – the derivation is self‑contained.
-    src = null;
-
-    # The build is a no‑op; we only need to create a placeholder executable.
-    buildPhase = ''
-      echo "Building stub open-terminal package..."
-    '';
-
-    installPhase = ''
-      mkdir -p $out/bin
-      cat > $out/bin/open-terminal <<'EOF'
-#!/usr/bin/env sh
-# Stub implementation of the `open-terminal` package.
-# Replace this with the real package when a proper source is available.
-echo "open-terminal placeholder (version ${openTerminalVersion})"
-EOF
-      chmod +x $out/bin/open-terminal
-    '';
-
-    # Ensure the package appears as a normal executable in $PATH.
-    meta = with lib; {
-      description = "Stub for the open-terminal Python package (unavailable on PyPI)";
-      homepage = "";
-      license = licenses.unfree; # placeholder
-      maintainers = [];
-      platforms = platforms.all;
-    };
-  };
-in
 {
   home.packages =
     with pkgs;
@@ -95,9 +49,6 @@ in
 
       # fonts
       iosevka
-
-      # add the open-terminal stub package
-      open-terminal
     ]
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })
