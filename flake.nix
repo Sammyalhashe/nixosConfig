@@ -227,7 +227,6 @@
             host.useOmarchy = true;
             host.isWsl = true; # As per original config comment "just to not import the desktop file"
             programs.stylix.enable = true;
-            programs.mango.enable = true;
           }
         ];
       };
@@ -250,7 +249,6 @@
             host.desktop = "mango";
             host.enableKDE = true;
             host.enableMango = true;
-            programs.mango.enable = true;
             programs.stylix.enable = true;
           }
         ];
@@ -336,7 +334,6 @@
             host.useOmarchy = true;
             host.isWsl = true; # As per original config comment "just to not import the desktop file"
             programs.stylix.enable = true;
-            programs.mango.enable = true;
           }
         ];
       };

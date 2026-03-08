@@ -279,12 +279,12 @@ in
       # Keybindings (Translated from Hyprland)
 
       # App Launchers
-      bind=SUPER,space,spawn,wofi,--show,drun,--sort-order=alphabetical
-      bind=SUPER,B,spawn,brave,--new-window,--ozone-platform=wayland
-      bind=SUPER,A,spawn,brave,--new-window,--ozone-platform=wayland,--app=https://perplexity.ai
+      bind=SUPER,Space,spawn,${pkgs.wofi}/bin/wofi --show drun --sort-order=alphabetical
+      bind=SUPER,B,spawn,${pkgs.brave}/bin/brave --new-window --ozone-platform=wayland
+      bind=SUPER,A,spawn,${pkgs.brave}/bin/brave --new-window --ozone-platform=wayland --app=https://perplexity.ai
       bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
-      bind=SUPER,T,spawn,alacritty
-      bind=SUPER,Return,spawn,alacritty
+      bind=SUPER,T,spawn,${pkgs.alacritty}/bin/alacritty
+      bind=SUPER,Return,spawn,${pkgs.alacritty}/bin/alacritty
 
       # Window Management
       bind=SUPER,I,setlayout,tile
@@ -309,7 +309,7 @@ in
       bind=SUPER,f,togglefullscreen
 
       # Session Management
-      bind=SUPER,Escape,spawn,hyprlock
+      bind=SUPER,Escape,spawn,${pkgs.hyprlock}/bin/hyprlock
       bind=SUPER+SHIFT,Escape,quit
       bind=SUPER+CTRL,Escape,spawn,reboot
       bind=SUPER+SHIFT+CTRL,Escape,spawn,systemctl,poweroff
