@@ -41,5 +41,6 @@ model_list:
 litellm_settings:
   drop_params: true
   set_verbose: true
+  cors_allow_origins: ["*"]
 router_settings:
   routing_strategy: simple-shuffle

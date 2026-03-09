@@ -13,6 +13,11 @@ in
       default = "/var/lib/llama-cpp-models/openai_gpt-oss-120b-IQ4_XS-00001-of-00002.gguf";
       description = "Path to the GPT-OSS 120B GGUF model.";
     };
+    draftModelPath = mkOption {
+      type = types.nullOr types.str;
+      default = "/var/lib/llama-cpp-models/qwen2.5-1.5b-instruct-q8_0.gguf";
+      description = "Path to the draft model for speculative decoding.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -38,7 +43,11 @@ in
         RuntimeDirectory = "llama-cpp-reasoning";
         DeviceAllow = [ "/dev/dri/renderD128" "/dev/dri/card0" "/dev/kfd" ];
         PrivateDevices = false;
-        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8013 --host 0.0.0.0 --n-gpu-layers 1000 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 65536 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap --parallel 1";
+        ExecStart = let
+          draftFlags = if cfg.draftModelPath != null 
+            then "--model-draft ${cfg.draftModelPath} --n-gpu-layers-draft 1000 --ctx-size-draft 8192 --draft 5"
+            else "";
+        in "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} ${draftFlags} --port 8013 --host 0.0.0.0 --n-gpu-layers 1000 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 131072 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap --parallel 1";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         Restart = "on-failure";
         RestartSec = "5s";
