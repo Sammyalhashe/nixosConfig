@@ -10,7 +10,6 @@
     ./nushell.nix
     ./tmux.nix
     ./yazi.nix
-    ./picoclaw.nix
   ];
 
   home.packages = with pkgs; [
