@@ -65,12 +65,14 @@ in
     "1.1.1.1"
   ];
 
-  networking.resolved = {
+  services.resolved = {
     enable = true;
-    extraConfig = ''
-      DNS=11.125.37.99
-      Domains=~salh.xyz
-    '';
+    settings = {
+      Resolve = {
+        DNS = "11.125.37.99";
+        Domains = "~salh.xyz";
+      };
+    };
   };
 
   # Configure network proxy if necessary

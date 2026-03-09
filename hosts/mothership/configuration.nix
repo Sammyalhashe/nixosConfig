@@ -204,11 +204,16 @@ in
       "11.125.37.1"
       "1.1.1.1"
     ];
-    resolved.enable = true;
-    resolved.extraConfig = ''
-      DNS=11.125.37.99
-      Domains=~salh.xyz
-    '';
+  };
+
+  services.resolved = {
+    enable = true;
+    settings = {
+      Resolve = {
+        DNS = "11.125.37.99";
+        Domains = "~salh.xyz";
+      };
+    };
   };
 
   time.timeZone = "America/New_York";

@@ -10,6 +10,5 @@
   # This helps with Asus-specific hardware quirks
   services.asusd = {
     enable = true;
-    enableUserService = true;
   };
 }
