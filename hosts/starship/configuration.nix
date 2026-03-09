@@ -59,6 +59,20 @@ in
   networking.hostName = "starship"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
+  networking.nameservers = [
+    "11.125.37.99"
+    "11.125.37.1"
+    "1.1.1.1"
+  ];
+
+  networking.resolved = {
+    enable = true;
+    extraConfig = ''
+      DNS=11.125.37.99
+      Domains=~salh.xyz
+    '';
+  };
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
