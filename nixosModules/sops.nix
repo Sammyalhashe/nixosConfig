@@ -98,4 +98,13 @@
     '';
     owner = config.host.username;
   };
+
+  sops.templates."open-webui-env" = {
+    content = ''
+      BRAVE_SEARCH_API_KEY=${config.sops.placeholder.brave_api_key}
+      PERPLEXITY_API_KEY=${config.sops.placeholder.perplexity_api_key}
+      PERPLEXITY_SEARCH_API_URL=https://api.perplexity.ai/chat/completions
+      PERPLEXITY_MODEL=sonar
+    '';
+  };
 }
