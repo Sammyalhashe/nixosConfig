@@ -55,21 +55,23 @@ in
       "initcall_blacklist=simpledrm_platform_driver_init"
 
       # --- STRIX HALO HARDWARE FIXES ---
-      "amdgpu.sg_display=0" # Fixes display-linked memory stalls
-      "amdgpu.dcfeaturemask=0x8" # DISABLES PSR (Fixes your REG_WAIT error)
+      "amdgpu.sg_display=1" # Allows non-contiguous memory for display (Prevents -12 pin errors)
+      "amdgpu.dcfeaturemask=0x0" # Disable PSR (Prevents pageflip timeouts)
+      "amdgpu.dcdebugmask=0x10" # Disable unstable DC features
       "amdgpu.abmlevel=0" # Prevents panel backlight interference
       "amdgpu.runpm=0" # Keeps GPU awake for ROCm discovery
 
-      # Memory Aperture (Working Baseline)
-      "ttm.pages_limit=30000000"
-      "ttm.page_pool_size=30000000"
-      "amdgpu.gartsize=122880"
+      # Memory Aperture (Balanced for 128GB System)
+      # Leaving ~24GB for CPU/OS prevents the "Pageflip timeout" freezes
+      "ttm.pages_limit=25600000"
+      "amdgpu.gartsize=102400"
     ];
     kernel.sysctl = {
       "vm.swappiness" = 10;
       "vm.overcommit_memory" = 1;
       "vm.nr_hugepages" = 1024;
       "net.ipv4.tcp_fastopen" = 3;
+      "vm.min_free_kbytes" = 1048576; # 1GB reserve to prevent fragmentation stalls
     };
   };
 
@@ -99,6 +101,10 @@ in
       OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8012/v1;http://127.0.0.1:4000/v1";
       OPENAI_API_KEYS = "none;none;none";
       ENABLE_OLLAMA_API = "False";
+      ENABLE_WEB_SEARCH = "True";
+      WEB_SEARCH_ENGINE = "duckduckgo";
+      WEB_SEARCH_CONCURRENT_REQUESTS = "1";
+      USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
       PYTHONPATH =
         let
           pyPkgs = pkgs.python313Packages;
@@ -122,6 +128,8 @@ in
         ];
     };
   };
+
+  systemd.services.open-webui.serviceConfig.EnvironmentFile = [ config.sops.templates."open-webui-env".path ];
 
   # Declarative Model Management
   systemd.services.model-downloader = {
@@ -147,6 +155,7 @@ in
       download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
       download_model "qwq_32b_q4km.gguf" "https://huggingface.co/unsloth/QwQ-32B-GGUF/resolve/main/QwQ-32B-Q4_K_M.gguf"
       download_model "qwen3_next_q3km.gguf" "https://huggingface.co/unsloth/Qwen3-Coder-Next-GGUF/resolve/main/Qwen3-Coder-Next-Q3_K_M.gguf"
+      download_model "qwen2.5-1.5b-instruct-q8_0.gguf" "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q8_0.gguf"
     '';
     serviceConfig = {
       Type = "simple";

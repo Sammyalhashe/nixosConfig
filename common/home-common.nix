@@ -20,6 +20,7 @@
       pkgs.nur.repos.charmbracelet.gum
 
       # terminal utilities
+      nmap
       alacritty
       bat
       cowsay
