@@ -12,6 +12,9 @@
       host.enableKDE = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
       host.enableMango = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
       host.enableHyprland = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
+
+      # Modern D-Bus implementation
+      services.dbus.implementation = "broker";
     }
     (lib.mkIf (config.host.enableKDE) {
       # Enable KDE if enable flag is true
