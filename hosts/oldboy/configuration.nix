@@ -24,8 +24,16 @@ in
 
   networking.hostName = "oldboy"; # Define your hostname.
 
+  host.isHeadless = true;
+  host.desktop = "none";
+
+  # Thermal management for lid-closed operation
+  services.thermald.enable = true;
+
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.powersave = false;
+  networking.networkmanager.wifi.scanRandMacAddress = false;
 
   # Set your time zone.
   time.timeZone = "America/New_York";

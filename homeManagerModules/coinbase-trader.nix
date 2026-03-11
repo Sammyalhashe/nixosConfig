@@ -17,11 +17,15 @@ in
 
   # 1. Activation script to clone/update the trading bot repository
   home.activation.installTradingBot = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    PATH=$PATH:${pkgs.openssh}/bin
-    if [ ! -d "${repoDir}" ]; then
-      ${pkgs.git}/bin/git clone https://github.com/Sammyalhashe/trading-bot-flake "${repoDir}"
+    PATH=$PATH:${pkgs.openssh}/bin:${pkgs.iputils}/bin
+    if ${pkgs.iputils}/bin/ping -c 1 github.com &>/dev/null; then
+      if [ ! -d "${repoDir}" ]; then
+        ${pkgs.git}/bin/git clone https://github.com/Sammyalhashe/trading-bot-flake "${repoDir}"
+      else
+        cd "${repoDir}" && ${pkgs.git}/bin/git pull
+      fi
     else
-      cd "${repoDir}" && ${pkgs.git}/bin/git pull
+      echo "Network unreachable, skipping trading-bot-flake update"
     fi
   '';
 
@@ -29,7 +33,8 @@ in
   systemd.user.services.coinbase-trader = {
     Unit = {
       Description = "Run Coinbase Trading Bot";
-      After = [ "network.target" ];
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
     };
     Service = {
       Type = "oneshot";
@@ -40,6 +45,8 @@ in
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+      # Wait for network to be truly available (timeout after 60s)
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
       # Use nix run directly on the flake
       ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes'";
     };
