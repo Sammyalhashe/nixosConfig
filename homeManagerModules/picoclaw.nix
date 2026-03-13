@@ -62,12 +62,16 @@ in
             "nvidia/moonshotai/kimi-k2.5" = {
               alias = "kimi-k2";
             };
+            "openrouter/openrouter/hunter-alpha" = {
+              alias = "hunter-alpha";
+            };
           };
           model = {
             primary = "nvidia/moonshotai/kimi-k2.5";
             fallbacks = [
               "mothership-reasoning/gpt-oss-120b"
               "mothership-local/qwen2.5-coder-32b-instruct"
+              "openrouter/openrouter/hunter-alpha"
               "openrouter/arcee-ai/trinity-large-preview:free"
               "lemonade/user.Qwen-32B-Coder"
               "ollama/qwen2.5:7b"
@@ -157,6 +161,10 @@ in
               {
                 id = "arcee-ai/trinity-large-preview:free";
                 name = "Trinity Large Preview (Free)";
+              }
+              {
+                id = "openrouter/hunter-alpha";
+                name = "Hunter Alpha (Free)";
               }
             ];
           };

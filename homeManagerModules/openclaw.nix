@@ -100,18 +100,27 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "read"
             "write"
             "exec"
+            "sessions_spawn" # Enable subagent spawning
+            "agents_list" # Allow listing available agents
           ];
         };
         agents.defaults = {
           skipBootstrap = true;
-          timeoutSeconds = 300; # 5 minutes to prevent timeouts
+          timeoutSeconds = 600; # 10 minutes for reasoning/slow models
           maxConcurrent = 8;
           subagents = {
-            maxConcurrent = 16;
+            maxConcurrent = 32; # Swarm support: more parallel subtasks
+          };
+          compaction = {
+            mode = "default";
+            reserveTokensFloor = 30000; # Prune context when 30k tokens left
           };
           models = {
             "mothership-proxy/gpt-oss-120b" = {
               alias = "master";
+            };
+            "mothership-proxy/qwq-32b" = {
+              alias = "reasoning";
             };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
@@ -119,18 +128,26 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
+            "openrouter/openrouter/hunter-alpha" = {
+              alias = "hunter-alpha";
+            };
           };
           model = {
             primary = "mothership-proxy/gpt-oss-120b";
             fallbacks = [
-              "google/gemini-3.1-pro-preview"
-              "google/gemini-3-flash"
+              "mothership-proxy/qwq-32b"
+              "moonshotai/kimi-k2.5"
+              "openrouter/openrouter/hunter-alpha"
+              # "google/gemini-3-flash"
+              # "google/gemini-3.1-pro-preview"
             ];
           };
         };
         gateway = {
           mode = lib.mkForce "local";
-          auth.token = "temporary-token-123456";
+          auth = {
+            token = "temporary-token-123456";
+          };
         };
         tools.web.search.apiKey = "env:BRAVE_API_KEY";
         commands = {
@@ -156,72 +173,83 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
         };
         plugins.entries.whatsapp.enabled = false;
         plugins.entries.telegram.enabled = true;
-                                models = {
-                  providers = {
-                                                                mothership-proxy = {
-                                                                  api = "openai-completions";
-                                                                  baseUrl = "http://11.125.37.101:4000/v1";
-                                                                  apiKey = "any";
-                                                                  models = [                                        {                                  id = "gpt-oss-120b";
-                                  name = "GPT-OSS 120B (via Mothership)";
-                                }
-                              ];
-                            };
-                            openrouter = {
-                              api = "openai-completions";
-                              baseUrl = "https://openrouter.ai/api/v1";
-                              apiKey = "env:OPENROUTER_API_KEY";
-                              models = [
-                                {
-                                  id = "arcee-ai/trinity-large-preview:free";
-                                  name = "Trinity Large Preview (Free)";
-                                }
-                              ];
-                            };
-                                        nvidia = {
-                                          api = "openai-completions";
-                                          baseUrl = "https://integrate.api.nvidia.com/v1";
-                                          apiKey = "env:NVIDIA_API_KEY";
-                                          models = [
-                                            {
-                                              id = "moonshotai/kimi-k2.5";
-                                              name = "Kimi k2.5 (NVIDIA)";
-                                              reasoning = true;
-                                            }
-                                          ];
-                                        };
-                            
-                            google = {
-                              api = "google-generative-ai";
-                              baseUrl = "https://generativelanguage.googleapis.com/v1beta";
-                              apiKey = "env:GEMINI_API_KEY";
-                              models = [
-                                {
-                                  id = "gemini-3.1-pro-preview";
-                                  name = "Gemini 3.1 Pro (Preview)";
-                                  reasoning = true;
-                                }
-                                {
-                                  id = "gemini-3-flash";
-                                  name = "Gemini 3 Flash";
-                                }
-                                {
-                                  id = "gemini-2.5-pro";
-                                  name = "Gemini 2.5 Pro";
-                                }
-                                {
-                                  id = "gemini-2.5-flash";
-                                  name = "Gemini 2.5 Flash";
-                                }
-                                {
-                                  id = "gemini-2.0-flash";
-                                  name = "Gemini 2.0 Flash";
-                                }
-                              ];
-                            };            lemonade = {
+        models = {
+          providers = {
+            mothership-proxy = {
+              api = "openai-completions";
+              baseUrl = "http://11.125.37.101:4000/v1";
+              apiKey = "any";
+              models = [
+                {
+                  id = "gpt-oss-120b";
+                  name = "GPT-OSS 120B (via Mothership)";
+                }
+                {
+                  id = "qwq-32b";
+                  name = "QwQ 32B (Reasoning)";
+                  reasoning = true;
+                }
+              ];
+            };
+            openrouter = {
+              api = "openai-completions";
+              baseUrl = "https://openrouter.ai/api/v1";
+              apiKey = "env:OPENROUTER_API_KEY";
+              models = [
+                {
+                  id = "arcee-ai/trinity-large-preview:free";
+                  name = "Trinity Large Preview (Free)";
+                }
+                {
+                  id = "openrouter/hunter-alpha";
+                  name = "Hunter Alpha (Free)";
+                }
+              ];
+            };
+            nvidia = {
+              api = "openai-completions";
+              baseUrl = "https://integrate.api.nvidia.com/v1";
+              apiKey = "env:NVIDIA_API_KEY";
+              models = [
+                {
+                  id = "moonshotai/kimi-k2.5";
+                  name = "Kimi k2.5 (NVIDIA)";
+                  reasoning = true;
+                }
+              ];
+            };
+            google = {
+              api = "google-generative-ai";
+              baseUrl = "https://generativelanguage.googleapis.com/v1beta";
+              apiKey = "env:GEMINI_API_KEY";
+              models = [
+                {
+                  id = "gemini-3.1-pro-preview";
+                  name = "Gemini 3.1 Pro (Preview)";
+                  reasoning = true;
+                }
+                {
+                  id = "gemini-3-flash";
+                  name = "Gemini 3 Flash";
+                }
+                {
+                  id = "gemini-2.5-pro";
+                  name = "Gemini 2.5 Pro";
+                }
+                {
+                  id = "gemini-2.5-flash";
+                  name = "Gemini 2.5 Flash";
+                }
+                {
+                  id = "gemini-2.0-flash";
+                  name = "Gemini 2.0 Flash";
+                }
+              ];
+            };
+            lemonade = {
               api = "openai-completions";
               baseUrl = "http://11.125.37.172:8001/v1";
-              apiKey = "any"; # Often ignored for local servers, but required by schema
+              apiKey = "any"; 
               models = [
                 {
                   id = "user.Qwen-32B-Coder";
@@ -232,7 +260,6 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             ollama = {
               api = "openai-responses";
               baseUrl = "http://11.125.37.135:11434/v1";
-              # Required but ignored by Ollama
               apiKey = "ollama";
               models = [
                 {
@@ -285,6 +312,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
     install_skill "process-watch" "${inputs.plugin-process}"
     install_skill "polyclaw" "${inputs.plugin-polyclaw}"
     install_skill "better-memory" "${inputs.plugin-better-memory}"
+    install_skill "phar-bot" "${../skills/phar-bot}"
 
     # Install dependencies for better-memory
     if [ -f "$HOME/.openclaw/workspace/skills/better-memory/package.json" ]; then
@@ -293,7 +321,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
       export PATH="${pkgs.nodejs_25}/bin:$PATH"
       ${pkgs.nodejs_25}/bin/npm install --silent
     fi
-  '';
+  '' ;
 
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
@@ -323,5 +351,9 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
     EnvironmentFile = "/run/secrets/rendered/openclaw-env";
     StandardOutput = lib.mkForce "journal";
     StandardError = lib.mkForce "journal";
+  };
+
+  systemd.user.services.openclaw-gateway.Install = {
+    WantedBy = [ "default.target" ];
   };
 }

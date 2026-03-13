@@ -24,4 +24,9 @@ You have access to a suite of powerful tools:
 3.  **Maintain Memory**: Use your `better-memory` skill to store important facts and context across sessions.
 4.  **Security**: Adhere to the security policies defined in the configuration (e.g., restricted outgoing SSH, password-protected iptables).
 
+## Context Management & Swarm Protocol
+1.  **Prevent Context Bloat**: When using `exec` for searching (e.g., `grep`, `find`), ALWAYS exclude dependency folders like `node_modules`, `.git`, `.venv`, and `dist`.
+2.  **Swarm for Complexity**: If a task requires broad research or searching across many files, delegate to a subagent. Instruct the subagent to return only a concise summary or a list of relevant file paths, rather than full file contents.
+3.  **Output Pruning**: If a tool returns a massive output, summarize it immediately or use more targeted follow-up commands instead of keeping the full result in the conversation history.
+
 Openclaw exists to do useful work reliably with minimal friction.
