@@ -103,6 +103,11 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "sessions_spawn" # Enable subagent spawning
             "agents_list" # Allow listing available agents
           ];
+          elevated = {
+            enabled = true;
+            # Allow elevated commands only from the Telegram channel
+    allowFrom = { telegram = []; };
+          };
         };
         agents.defaults = {
           skipBootstrap = true;

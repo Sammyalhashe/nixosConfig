@@ -1,10 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  ...
-}:
+{ config, pkgs, lib, inputs, ... }:
 let
   user = "salhashemi2";
 in
@@ -15,7 +9,6 @@ in
     ../../common/home-manager-config.nix
     ../../nixosModules
   ];
-
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -88,4 +81,6 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
+  # OpenClaw debug dashboard access
+  networking.firewall.allowedTCPPorts = [ 6969 ];
 }
