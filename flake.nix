@@ -148,16 +148,6 @@
           openclaw = prev.openclaw.override {
             openclaw-gateway = final.openclaw-gateway;
           };
-          open-webui = prev.open-webui.override {
-            # Use fetchgit instead of fetchFromGitHub to avoid corrupted tarballs
-            fetchFromGitHub =
-              _:
-              final.fetchgit {
-                url = "https://github.com/open-webui/open-webui";
-                rev = "v0.8.5";
-                sha256 = "sha256-uK80y3ncHyYGTO2x7HKx19r5/2VW2PnarE4pnxrzleI=";
-              };
-          };
         })
       ];
 
@@ -251,6 +241,17 @@
             host.enableMango = true;
             programs.stylix.enable = true;
           }
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  # This "fakes" the blueberry package so the build can finish
+                  blueberry = final.runCommand "blueberry-stub" { } "mkdir -p $out";
+                })
+              ];
+            }
+          )
         ];
       };
 

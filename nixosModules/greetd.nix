@@ -6,7 +6,7 @@
 }:
 
 {
-  config = lib.mkIf config.host.greetd {
+  config = lib.mkIf (config.host.greetd && !config.host.isHeadless) {
     services.greetd = {
       enable = true;
       settings = {

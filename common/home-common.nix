@@ -32,7 +32,7 @@
       gemini-cli
       gh
       grim
-      neofetch
+      fastfetch
       notejot
       pandoc
       ripgrep

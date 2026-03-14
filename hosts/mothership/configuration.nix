@@ -34,6 +34,11 @@ in
       host.enableKDE = lib.mkForce false;
       host.enableMango = lib.mkForce false;
       host.enableHyprland = lib.mkForce false;
+
+      # Explicitly disable display managers to allow TTY autologin
+      services.greetd.enable = lib.mkForce false;
+      services.displayManager.sddm.enable = lib.mkForce false;
+      services.xserver.enable = lib.mkForce false;
     };
   };
   host.homeManagerHostname = "default";

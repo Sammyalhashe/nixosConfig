@@ -15,8 +15,11 @@
 
       # Modern D-Bus implementation
       services.dbus.implementation = "broker";
+
+      # Link mango programs to host flag
+      programs.mango.enable = lib.mkDefault config.host.enableMango;
     }
-    (lib.mkIf (config.host.enableKDE) {
+    (lib.mkIf (config.host.enableKDE && !config.host.isHeadless) {
       # Enable KDE if enable flag is true
       services.xserver.enable = true;
       # Conditionally enable SDDM based on greetd flag

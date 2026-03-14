@@ -11,7 +11,7 @@
   ];
 
   programs.hyprland = {
-    enable = lib.mkDefault config.host.enableHyprland;
+    enable = lib.mkDefault (config.host.enableHyprland && !config.host.isHeadless);
 
     xwayland.enable = true;
 
