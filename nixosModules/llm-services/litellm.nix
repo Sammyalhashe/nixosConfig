@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -18,7 +23,11 @@ in
   config = mkIf cfg.enable {
     systemd.services.litellm = {
       description = "LiteLLM Proxy Server (Master Router)";
-      after = [ "network.target" "llama-cpp-flash.service" "llama-cpp-coder.service" ];
+      after = [
+        "network.target"
+        "llama-cpp-flash.service"
+        "llama-cpp-coder.service"
+      ];
       wantedBy = [ "multi-user.target" ];
       environment = {
         PORT = "4000";
@@ -27,44 +36,48 @@ in
       serviceConfig = {
         User = "salhashemi2";
         Group = "users";
-        ExecStart = let
-          pythonEnv = pkgs.python313.withPackages (ps: with ps; [
-            litellm
-            backoff
-            fastapi
-            uvicorn
-            pydantic
-            python-dotenv
-            pyyaml
-            orjson
-            aiohttp
-            httpx
-            rich
-            python-multipart
-            cryptography
-            pyjwt
-            apscheduler
-            gunicorn
-            uvloop
-            tiktoken
-            requests
-            beautifulsoup4
-            markdownify
-            lxml
-            loguru
-            rank-bm25
-            scikit-learn
-            scipy
-            torch
-            sentence-transformers
-            transformers
-            regex
-            boto3
-            email-validator
-            fastapi_sso
-            python-jose
-          ]);
-        in "${pythonEnv}/bin/litellm --config ${cfg.configPath} --port 4000 --host 0.0.0.0";
+        ExecStart =
+          let
+            pythonEnv = pkgs.python313.withPackages (
+              ps: with ps; [
+                litellm
+                backoff
+                fastapi
+                uvicorn
+                pydantic
+                python-dotenv
+                pyyaml
+                orjson
+                aiohttp
+                httpx
+                rich
+                python-multipart
+                cryptography
+                pyjwt
+                apscheduler
+                gunicorn
+                uvloop
+                tiktoken
+                requests
+                beautifulsoup4
+                markdownify
+                lxml
+                loguru
+                rank-bm25
+                scikit-learn
+                scipy
+                torch
+                sentence-transformers
+                transformers
+                regex
+                boto3
+                email-validator
+                fastapi_sso
+                python-jose
+              ]
+            );
+          in
+          "${pythonEnv}/bin/litellm --config ${cfg.configPath} --port 4000 --host 0.0.0.0";
         Restart = "on-failure";
         RestartSec = "5s";
       };

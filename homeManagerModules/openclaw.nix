@@ -37,43 +37,43 @@ in
   ];
 
   home.file.".openclaw/workspace/skills/aider-bootstrap/SKILL.md".text = ''
----
-name: aider-bootstrap
-description: Bootstrap new software projects using Aider. Automatically handles directory creation and git initialization required by Aider.
----
+    ---
+    name: aider-bootstrap
+    description: Bootstrap new software projects using Aider. Automatically handles directory creation and git initialization required by Aider.
+    ---
 
-# Aider Project Bootstrapper
+    # Aider Project Bootstrapper
 
-Use this skill when the user wants to create, scaffold, or bootstrap a new project using Aider.
+    Use this skill when the user wants to create, scaffold, or bootstrap a new project using Aider.
 
-## Workflow
+    ## Workflow
 
-1.  **Create Directory**: Ensure the target directory exists.
-    ```bash
-    mkdir -p <target_directory>
-    ```
+    1.  **Create Directory**: Ensure the target directory exists.
+        ```bash
+        mkdir -p <target_directory>
+        ```
 
-2.  **Safety Check**: Verify the target directory is NOT the root filesystem.
-    *   Target must NOT be `/`.
-    *   Target must NOT be `/home/username` (unless explicitly requested, but prefer subdirs).
+    2.  **Safety Check**: Verify the target directory is NOT the root filesystem.
+        *   Target must NOT be `/`.
+        *   Target must NOT be `/home/username` (unless explicitly requested, but prefer subdirs).
 
-3.  **Git Initialization**: Aider requires a git repository to function.
-    *   Check if git is initialized: `cd <target_directory> && git status`
-    *   If not, initialize it: `cd <target_directory> && git init`
+    3.  **Git Initialization**: Aider requires a git repository to function.
+        *   Check if git is initialized: `cd <target_directory> && git status`
+        *   If not, initialize it: `cd <target_directory> && git init`
 
-4.  **Run Aider**: Invoke aider with the prompt.
-    ```bash
-    cd <target_directory> && aider --no-auto-commits --message "<prompt>"
-    ```
+    4.  **Run Aider**: Invoke aider with the prompt.
+        ```bash
+        cd <target_directory> && aider --no-auto-commits --message "<prompt>"
+        ```
 
-## Example
+    ## Example
 
-**User:** "Make a python calculator in `py-calc`"
+    **User:** "Make a python calculator in `py-calc`"
 
-**Agent Action:**
-1.  `mkdir -p py-calc`
-2.  `cd py-calc && git init`
-3.  `cd py-calc && aider --message "Build a python calculator..."`
+    **Agent Action:**
+    1.  `mkdir -p py-calc`
+    2.  `cd py-calc && git init`
+    3.  `cd py-calc && aider --message "Build a python calculator..."`
   '';
 
   programs.openclaw = {
@@ -106,7 +106,9 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
           elevated = {
             enabled = true;
             # Allow elevated commands only from the Telegram channel
-    allowFrom = { telegram = []; };
+            allowFrom = {
+              telegram = [ ];
+            };
           };
         };
         agents.defaults = {
@@ -149,7 +151,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
           };
         };
         gateway = {
-          mode = lib.mkForce "local";
+          mode = "local";
           auth = {
             token = "temporary-token-123456";
           };
@@ -254,7 +256,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             lemonade = {
               api = "openai-completions";
               baseUrl = "http://11.125.37.172:8001/v1";
-              apiKey = "any"; 
+              apiKey = "any";
               models = [
                 {
                   id = "user.Qwen-32B-Coder";
@@ -326,7 +328,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
       export PATH="${pkgs.nodejs_25}/bin:$PATH"
       ${pkgs.nodejs_25}/bin/npm install --silent
     fi
-  '' ;
+  '';
 
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 

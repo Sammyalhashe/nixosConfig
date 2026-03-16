@@ -12,6 +12,7 @@
     ./home-common.nix
     ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
+    ../homeManagerModules/opencode.nix
     ../homeManagerModules/coinbase-trader.nix
   ];
 
@@ -26,6 +27,7 @@
     ripgrep
     fzf
     neovim
+    podman
   ];
 
   home.sessionVariables = {

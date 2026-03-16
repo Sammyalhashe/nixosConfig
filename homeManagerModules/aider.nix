@@ -1,4 +1,10 @@
-{ config, lib, pkgs, osConfig ? {}, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  osConfig ? { },
+  ...
+}:
 
 let
   hostname = osConfig.networking.hostName or "unknown";
@@ -8,7 +14,7 @@ let
     # Use our local LiteLLM Proxy endpoint
     openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
-    
+
     # Use the 120B model for everything now (prefix with openai/ for LiteLLM)
     model = "openai/gpt-oss-120b";
     editor-model = "openai/gpt-oss-120b";
@@ -16,7 +22,7 @@ let
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;
-    
+
     # Don't check for updates constantly
     check-update = false;
   };
@@ -31,6 +37,6 @@ in
 
     # Write the configuration file to the home directory
     # Aider looks for .aider.conf.yml in the home directory or git root
-    home.file.".aider.conf.yml".text = lib.generators.toYAML {} aiderConfig;
+    home.file.".aider.conf.yml".text = lib.generators.toYAML { } aiderConfig;
   };
 }

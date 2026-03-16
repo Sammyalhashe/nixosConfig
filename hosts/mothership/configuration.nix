@@ -24,7 +24,7 @@ in
 
   host.useOmarchy = lib.mkDefault false;
   host.greetd = true;
-  host.desktop = "mango";
+  host.desktop = "mangowc";
 
   specialisation = {
     server.configuration = {
@@ -93,7 +93,7 @@ in
   services.llm-services.qwen-coder.enable = false;
   services.llm-services.qwen-flash.enable = false;
   services.llm-services.litellm-uv.enable = true;
-  # services.llm-services.one-api.enable = false; 
+  # services.llm-services.one-api.enable = false;
 
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -134,7 +134,9 @@ in
     };
   };
 
-  systemd.services.open-webui.serviceConfig.EnvironmentFile = [ config.sops.templates."open-webui-env".path ];
+  systemd.services.open-webui.serviceConfig.EnvironmentFile = [
+    config.sops.templates."open-webui-env".path
+  ];
 
   # Declarative Model Management
   systemd.services.model-downloader = {
@@ -261,26 +263,28 @@ in
     uv
     yq-go
     playwright-driver.browsers
-    (python313.withPackages (ps: with ps; [
-      litellm
-      backoff
-      fastapi
-      uvicorn
-      pydantic
-      python-dotenv
-      apscheduler
-      uvloop
-      orjson
-      pyyaml
-      rich
-      python-multipart
-      cryptography
-      pyjwt
-      boto3
-      aiohttp
-      httpx
-      email-validator
-    ]))
+    (python313.withPackages (
+      ps: with ps; [
+        litellm
+        backoff
+        fastapi
+        uvicorn
+        pydantic
+        python-dotenv
+        apscheduler
+        uvloop
+        orjson
+        pyyaml
+        rich
+        python-multipart
+        cryptography
+        pyjwt
+        boto3
+        aiohttp
+        httpx
+        email-validator
+      ]
+    ))
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
     (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
     (import ../../common/scripts/agent-chainer.nix { inherit pkgs; })

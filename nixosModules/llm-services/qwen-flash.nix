@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -35,11 +40,17 @@ in
         Group = "users";
         CacheDirectory = "llama-cpp-flash";
         RuntimeDirectory = "llama-cpp-flash";
-        DeviceAllow = [ "/dev/dri/renderD128" "/dev/dri/card0" "/dev/kfd" ];
+        DeviceAllow = [
+          "/dev/dri/renderD128"
+          "/dev/dri/card0"
+          "/dev/kfd"
+        ];
         PrivateDevices = false;
         # --n-gpu-layers: 7B models have ~28 layers. Setting to 40 ensures full GPU offload.
         # --ctx-size: 128k for large documents and transcripts.
-        ExecStart = "${pkgs.llama-cpp.override { vulkanSupport = true; }}/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 131072 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
+        ExecStart = "${
+          pkgs.llama-cpp.override { vulkanSupport = true; }
+        }/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 131072 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
         Restart = "on-failure";
         RestartSec = "5s";

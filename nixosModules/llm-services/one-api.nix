@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -38,7 +43,7 @@ in
       description = "One-API Proxy Server";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      
+
       environment = {
         PORT = toString cfg.port;
         DATA_DIR = cfg.dataDir;

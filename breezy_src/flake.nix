@@ -10,8 +10,15 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, xr-driver }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      xr-driver,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
       in
@@ -41,8 +48,14 @@
 
           postPatch = ''
             # Inject XR driver includes and linking into vkBasalt
-            sed -i "s|dependencies : \[x11_dep, reshade_dep\]|dependencies : [x11_dep, reshade_dep, cpp.find_library('xrealAirLibrary', dirs: '${xr-driver.packages.${system}.default}/lib'), cpp.find_library('Fusion', dirs: '${xr-driver.packages.${system}.default}/lib')]|" vulkan/modules/vkBasalt/src/meson.build
-            sed -i "s|include_directories : vkBasalt_include_path|include_directories : [vkBasalt_include_path, include_directories('${xr-driver.packages.${system}.default}/include')]|" vulkan/modules/vkBasalt/src/meson.build
+            sed -i "s|dependencies : \[x11_dep, reshade_dep\]|dependencies : [x11_dep, reshade_dep, cpp.find_library('xrealAirLibrary', dirs: '${
+              xr-driver.packages.${system}.default
+            }/lib'), cpp.find_library('Fusion', dirs: '${
+              xr-driver.packages.${system}.default
+            }/lib')]|" vulkan/modules/vkBasalt/src/meson.build
+            sed -i "s|include_directories : vkBasalt_include_path|include_directories : [vkBasalt_include_path, include_directories('${
+              xr-driver.packages.${system}.default
+            }/include')]|" vulkan/modules/vkBasalt/src/meson.build
           '';
 
           preConfigure = ''
@@ -55,31 +68,31 @@
           ];
 
           installPhase = ''
-            runHook preInstall
-            mkdir -p $out/lib $out/share/vulkan/implicit_layer.d
-            cp src/libvkbasalt.so $out/lib/libbreezy_vulkan.so
-            
-            # Create the Vulkan layer JSON
-            cat <<EOF > $out/share/vulkan/implicit_layer.d/breezy_vulkan.json
-{
-    "file_format_version" : "1.0.0",
-    "layer" : {
-        "name": "VK_LAYER_BREEZY_VULKAN",
-        "type": "GLOBAL",
-        "library_path": "$out/lib/libbreezy_vulkan.so",
-        "api_version": "1.3.0",
-        "implementation_version": "1",
-        "description": "Breezy Vulkan XR Layer",
-        "functions": {
-            "vkNegotiateLoaderLayerInterfaceVersion": "vkNegotiateLoaderLayerInterfaceVersion"
-        },
-        "enable_environment": {
-            "ENABLE_VKBASALT": "1"
-        }
-    }
-}
-EOF
-            runHook postInstall
+                        runHook preInstall
+                        mkdir -p $out/lib $out/share/vulkan/implicit_layer.d
+                        cp src/libvkbasalt.so $out/lib/libbreezy_vulkan.so
+                        
+                        # Create the Vulkan layer JSON
+                        cat <<EOF > $out/share/vulkan/implicit_layer.d/breezy_vulkan.json
+            {
+                "file_format_version" : "1.0.0",
+                "layer" : {
+                    "name": "VK_LAYER_BREEZY_VULKAN",
+                    "type": "GLOBAL",
+                    "library_path": "$out/lib/libbreezy_vulkan.so",
+                    "api_version": "1.3.0",
+                    "implementation_version": "1",
+                    "description": "Breezy Vulkan XR Layer",
+                    "functions": {
+                        "vkNegotiateLoaderLayerInterfaceVersion": "vkNegotiateLoaderLayerInterfaceVersion"
+                    },
+                    "enable_environment": {
+                        "ENABLE_VKBASALT": "1"
+                    }
+                }
+            }
+            EOF
+                        runHook postInstall
           '';
         };
 
@@ -114,38 +127,38 @@ EOF
           ];
 
           postPatch = ''
-            # Fix python path in meson.build
-            sed -i "s|python.find_installation('python3').full_path()|'${pkgs.python3}/bin/python3'|" ui/src/meson.build
-            
-            # Fix pkgdatadir logic in .in files to work with Nix store
-            sed -i "s|pkgdatadir = os.path.join(appdir, 'breezydesktop')|pkgdatadir = '$out/share/breezydesktop'|" ui/src/breezydesktop.in
-            sed -i "s|pkgdatadir = os.path.join(appdir, 'breezydesktop')|pkgdatadir = '$out/share/breezydesktop'|" ui/src/virtualdisplay.in
-            
-            # Ensure moduledir is also correct
-            sed -i "s|lib_dir = os.path.join(pkgdatadir, 'breezydesktop', 'lib')|lib_dir = os.path.join(pkgdatadir, 'lib')|" ui/src/breezydesktop.in
-            sed -i "s|lib_dir = os.path.join(pkgdatadir, 'breezydesktop', 'lib')|lib_dir = os.path.join(pkgdatadir, 'lib')|" ui/src/virtualdisplay.in
+                        # Fix python path in meson.build
+                        sed -i "s|python.find_installation('python3').full_path()|'${pkgs.python3}/bin/python3'|" ui/src/meson.build
+                        
+                        # Fix pkgdatadir logic in .in files to work with Nix store
+                        sed -i "s|pkgdatadir = os.path.join(appdir, 'breezydesktop')|pkgdatadir = '$out/share/breezydesktop'|" ui/src/breezydesktop.in
+                        sed -i "s|pkgdatadir = os.path.join(appdir, 'breezydesktop')|pkgdatadir = '$out/share/breezydesktop'|" ui/src/virtualdisplay.in
+                        
+                        # Ensure moduledir is also correct
+                        sed -i "s|lib_dir = os.path.join(pkgdatadir, 'breezydesktop', 'lib')|lib_dir = os.path.join(pkgdatadir, 'lib')|" ui/src/breezydesktop.in
+                        sed -i "s|lib_dir = os.path.join(pkgdatadir, 'breezydesktop', 'lib')|lib_dir = os.path.join(pkgdatadir, 'lib')|" ui/src/virtualdisplay.in
 
-            # Add missing sources to meson.build
-            sed -i "s|'window.py'|'window.py', 'virtualdisplayrow.py'|" ui/src/meson.build
+                        # Add missing sources to meson.build
+                        sed -i "s|'window.py'|'window.py', 'virtualdisplayrow.py'|" ui/src/meson.build
 
-            # Patch verify.py to always succeed
-            echo "def verify_installation(): return True" > ui/src/verify.py
+                        # Patch verify.py to always succeed
+                        echo "def verify_installation(): return True" > ui/src/verify.py
 
-            # Stub out ExtensionsManager to bypass GNOME checks
-            cat <<EOF > ui/src/extensionsmanager.py
-from gi.repository import GObject
-class ExtensionsManager(GObject.GObject):
-    __gproperties__ = { "breezy-enabled": (bool, "Breezy Enabled", "", True, GObject.ParamFlags.READWRITE) }
-    _instance = None
-    @staticmethod
-    def get_instance():
-        if ExtensionsManager._instance is None: ExtensionsManager._instance = ExtensionsManager()
-        return ExtensionsManager._instance
-    def is_installed(self): return True
-    def is_enabled(self): return True
-    def do_get_property(self, prop): return True
-    def do_set_property(self, prop, value): pass
-EOF
+                        # Stub out ExtensionsManager to bypass GNOME checks
+                        cat <<EOF > ui/src/extensionsmanager.py
+            from gi.repository import GObject
+            class ExtensionsManager(GObject.GObject):
+                __gproperties__ = { "breezy-enabled": (bool, "Breezy Enabled", "", True, GObject.ParamFlags.READWRITE) }
+                _instance = None
+                @staticmethod
+                def get_instance():
+                    if ExtensionsManager._instance is None: ExtensionsManager._instance = ExtensionsManager()
+                    return ExtensionsManager._instance
+                def is_installed(self): return True
+                def is_enabled(self): return True
+                def do_get_property(self, prop): return True
+                def do_set_property(self, prop, value): pass
+            EOF
           '';
 
           preConfigure = ''

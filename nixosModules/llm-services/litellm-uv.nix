@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -18,10 +23,19 @@ in
   config = mkIf cfg.enable {
     systemd.services.litellm = {
       description = "LiteLLM Proxy Server (Master Router via UV)";
-      after = [ "network.target" "llama-cpp-flash.service" "llama-cpp-coder.service" ];
+      after = [
+        "network.target"
+        "llama-cpp-flash.service"
+        "llama-cpp-coder.service"
+      ];
       wantedBy = [ "multi-user.target" ];
-      
-      path = [ pkgs.uv pkgs.python3 pkgs.bash pkgs.coreutils ];
+
+      path = [
+        pkgs.uv
+        pkgs.python3
+        pkgs.bash
+        pkgs.coreutils
+      ];
 
       serviceConfig = {
         User = "salhashemi2";
@@ -34,7 +48,12 @@ in
         # Required for uv to store its tools and for binaries to find libraries
         Environment = [
           "HOME=/home/salhashemi2"
-          "LD_LIBRARY_PATH=${lib.makeLibraryPath [ pkgs.stdenv.cc.cc pkgs.zlib ]}"
+          "LD_LIBRARY_PATH=${
+            lib.makeLibraryPath [
+              pkgs.stdenv.cc.cc
+              pkgs.zlib
+            ]
+          }"
         ];
       };
     };

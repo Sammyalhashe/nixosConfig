@@ -190,12 +190,12 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/homebase/configuration.nix
           ./nixosModules
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
-          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           { programs.stylix.enable = true; }
         ];
@@ -205,13 +205,13 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/homebase/configuration.nix
           ./nixosModules
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
-          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           {
             host.useOmarchy = true;
@@ -225,13 +225,13 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/mothership/configuration.nix
           ./nixosModules
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
-          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           {
             host.useOmarchy = false;
@@ -274,6 +274,7 @@
         system = "x86_64-linux";
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           nixos-wsl.nixosModules.default
           ./hosts/starshipwsl/configuration.nix
           ./nixosModules
@@ -296,6 +297,7 @@
         system = "x86_64-linux";
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           {
             nixpkgs.overlays = [
               (final: prev: {
@@ -323,13 +325,13 @@
         specialArgs = { inherit inputs sops-nix; };
         modules = [
           baseConfig
+          mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/starship/configuration.nix
           ./nixosModules
           omarchy-nix.nixosModules.default
           stylix.nixosModules.stylix
           ./nixosModules/stylix.nix
-          mangowc.nixosModules.mango
           sops-nix.nixosModules.sops
           {
             host.useOmarchy = true;
