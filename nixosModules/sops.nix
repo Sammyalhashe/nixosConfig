@@ -59,6 +59,9 @@
   sops.secrets.icloud_email = {
     owner = "salhashemi2";
   };
+  sops.secrets.openclaw_icloud_user = {
+    owner = "salhashemi2";
+  };
   sops.secrets.icloud_password = {
     owner = "salhashemi2";
   };
@@ -83,12 +86,12 @@
       # Email Skill (iCloud)
       IMAP_HOST=imap.mail.me.com
       IMAP_PORT=993
-      IMAP_USER=${config.sops.placeholder.icloud_email}
+      IMAP_USER=${config.sops.placeholder.openclaw_icloud_user}
       IMAP_PASS=${config.sops.placeholder.icloud_password}
       IMAP_TLS=true
       SMTP_HOST=smtp.mail.me.com
       SMTP_PORT=587
-      SMTP_USER=${config.sops.placeholder.icloud_email}
+      SMTP_USER=${config.sops.placeholder.openclaw_icloud_user}
       SMTP_PASS=${config.sops.placeholder.icloud_password}
       SMTP_SECURE=false
 
