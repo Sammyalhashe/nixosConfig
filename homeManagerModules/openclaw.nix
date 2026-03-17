@@ -123,11 +123,11 @@ in
             reserveTokensFloor = 30000; # Prune context when 30k tokens left
           };
           models = {
-            "mothership-proxy/gpt-oss-120b" = {
+            "mothership-proxy/gpt-4o" = {
               alias = "master";
             };
-            "mothership-proxy/qwq-32b" = {
-              alias = "reasoning";
+            "mothership-proxy/gpt-4o-mini" = {
+              alias = "flash";
             };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
@@ -140,9 +140,9 @@ in
             };
           };
           model = {
-            primary = "mothership-proxy/gpt-oss-120b";
+            primary = "mothership-proxy/gpt-4o";
             fallbacks = [
-              "mothership-proxy/qwq-32b"
+              "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
               "openrouter/openrouter/hunter-alpha"
               # "google/gemini-3-flash"
@@ -188,8 +188,12 @@ in
               apiKey = "any";
               models = [
                 {
-                  id = "gpt-oss-120b";
-                  name = "GPT-OSS 120B (via Mothership)";
+                  id = "gpt-4o";
+                  name = "Qwen3 Coder 70B (Master)";
+                }
+                {
+                  id = "gpt-4o-mini";
+                  name = "Qwen2.5 Coder 7B (Flash)";
                 }
                 {
                   id = "qwq-32b";
@@ -319,6 +323,8 @@ in
     install_skill "process-watch" "${inputs.plugin-process}"
     install_skill "polyclaw" "${inputs.plugin-polyclaw}"
     install_skill "better-memory" "${inputs.plugin-better-memory}"
+    install_skill "email-manager" "${inputs.plugin-email}"
+    install_skill "cloudflare-api" "${inputs.plugin-cloudflare}"
     install_skill "phar-bot" "${../skills/phar-bot}"
 
     # Install dependencies for better-memory

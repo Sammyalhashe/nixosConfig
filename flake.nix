@@ -100,6 +100,14 @@
       url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
       flake = false;
     };
+    plugin-email = {
+      url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email";
+      flake = false;
+    };
+    plugin-cloudflare = {
+      url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
+      flake = false;
+    };
   };
 
   outputs =
@@ -129,6 +137,8 @@
       plugin-process,
       plugin-polyclaw,
       plugin-better-memory,
+      plugin-email,
+      plugin-cloudflare,
       flake-utils,
       ...
     }@inputs:
