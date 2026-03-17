@@ -327,13 +327,15 @@ in
     install_skill "cloudflare-api" "${inputs.plugin-cloudflare}"
     install_skill "phar-bot" "${../skills/phar-bot}"
 
-    # Install dependencies for better-memory
-    if [ -f "$HOME/.openclaw/workspace/skills/better-memory/package.json" ]; then
-      cd "$HOME/.openclaw/workspace/skills/better-memory"
-      # Ensure node is in path for npm
-      export PATH="${pkgs.nodejs_25}/bin:$PATH"
-      ${pkgs.nodejs_25}/bin/npm install --silent
-    fi
+    # Install dependencies for any skill with a package.json
+    export PATH="${pkgs.nodejs_25}/bin:$PATH"
+    for skill_dir in $HOME/.openclaw/workspace/skills/*; do
+      if [ -f "$skill_dir/package.json" ]; then
+        echo "Installing dependencies for skill: $(basename $skill_dir)"
+        cd "$skill_dir"
+        ${pkgs.nodejs_25}/bin/npm install --silent
+      fi
+    done
   '';
 
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
