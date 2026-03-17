@@ -16,38 +16,27 @@ in
     inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
     # Import the new modular LLM services
-    ../../nixosModules/llm-services
+    ../../modules/ai/llm-services
   ];
 
   services.udev.packages = [ inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.system}.default ];
   boot.kernelModules = [ "uinput" ];
 
-  host.useOmarchy = lib.mkDefault false;
-  host.greetd = true;
-  host.desktop = "mangowc";
+  # Default to server/headless mode (what systemd-boot loads)
+  host.isHeadless = true;
+  host.enableGreetd = false;
 
   specialisation = {
-    server.configuration = {
-      system.nixos.tags = [ "server" ];
-      host.greetd = lib.mkForce false;
-      host.isHeadless = true;
-      host.enableKDE = lib.mkForce false;
-      host.enableMango = lib.mkForce false;
-      host.enableHyprland = lib.mkForce false;
-
-      # Explicitly disable display managers to allow TTY autologin
-      services.greetd.enable = lib.mkForce false;
-      services.displayManager.sddm.enable = lib.mkForce false;
-      services.xserver.enable = lib.mkForce false;
+    desktop.configuration = {
+      system.nixos.tags = [ "desktop" ];
+      host.isHeadless = lib.mkForce false;
+      host.enableGreetd = lib.mkForce true;
+      host.enableKDE = lib.mkForce true;
+      host.enableMango = lib.mkForce true;
     };
   };
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
 
   boot = {
     initrd.kernelModules = [ "amdgpu" ];
@@ -192,12 +181,6 @@ in
 
   system.autoUpgrade.enable = false;
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 1;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -245,7 +228,6 @@ in
   };
 
   services.getty.autologinUser = "${user}";
-  nixpkgs.config.allowUnfree = true;
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;

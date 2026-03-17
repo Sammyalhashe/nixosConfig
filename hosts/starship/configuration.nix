@@ -21,29 +21,13 @@ in
     ../../common/home-manager-config.nix
   ];
 
-  host.useOmarchy = lib.mkDefault false;
-  host.greetd = true;
+  host.enableGreetd = true;
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
-
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
 
   # auto upgrade
   system.autoUpgrade.enable = true;
   system.autoUpgrade.allowReboot = true;
-
-  # enable garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -116,9 +100,6 @@ in
   };
 
   programs.mango.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;

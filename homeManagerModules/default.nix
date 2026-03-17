@@ -2,12 +2,9 @@
 let
   my_imports = [
     ./home-common.nix
-    # ./desktop.nix
-    # ./neovim.nix
     ./wofi.nix
     ./stylix.nix
     ./gemini-cli.nix
-    # ./pomodoro.nix
     ./startup-fix.nix
     ./mods.nix
     ./mangowc.nix
@@ -17,15 +14,11 @@ let
     ./aider.nix
     ./opencode.nix
     {
-      # themeSwitcher.enable = true;
       stylix.targets.gtk.enable = false;
       stylix.targets.kde.enable = false;
       stylix.targets.wofi.enable = false;
-      # stylix.targets.hyprland.enable = false;
-      # stylix.targets.hyprlock.enable = false;
       stylix.targets.mako.enable = false;
       stylix.targets.btop.enable = false;
-      services.hypridle.enable = lib.mkForce false;
     }
   ];
 in

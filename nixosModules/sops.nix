@@ -6,13 +6,13 @@
   sops.age.generateKey = true;
 
   sops.secrets.gemini_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.perplexity_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.pop_resend_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = {
@@ -29,44 +29,44 @@
   sops.secrets.nextcloud_admin_password = { };
   sops.secrets.syncthing_gui_password = { };
   sops.secrets.telegram_bot_token = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.brave_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.openrouter_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.chainstack_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.polyclaw_private_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.nvidia_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.eth_rpc_url = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.eth_private_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.coinbase_api_key_clawdbot = { };
   sops.secrets.coinbase_api_id_clawdbot = { };
   sops.secrets.coinbase_api_secret_clawdbot = { };
 
   sops.secrets.icloud_email = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.openclaw_icloud_user = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.icloud_password = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.cloudflare_token = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
 
   sops.templates."openclaw-env" = {
