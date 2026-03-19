@@ -12,8 +12,6 @@
 
     isHeadless = lib.mkEnableOption "Whether the host is headless (no GUI/Steam).";
 
-    useOmarchy = lib.mkEnableOption "Whether to use Omarchy configuration.";
-
     greetd = lib.mkEnableOption "Whether to use Greetd.";
 
     homeManagerHostname = lib.mkOption {
@@ -28,17 +26,6 @@
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "A list of additional nameservers to append as fallbacks.";
-    };
-
-    desktop = lib.mkOption {
-      type = lib.types.enum [
-        "kde"
-        "mango"
-        "hyprland"
-        "none"
-      ];
-      default = "kde";
-      description = "The default desktop environment to start.";
     };
 
     enableKDE = lib.mkEnableOption "Whether to install KDE Plasma.";

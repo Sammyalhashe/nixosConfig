@@ -192,19 +192,7 @@ let
 in
 {
   time.timeZone = "America/New_York";
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 14d";
-  };
-
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
+  nix.gc.options = lib.mkForce "--delete-older-than 14d";
 
   # This deduplicates files that are identical across different packages
   nix.settings.auto-optimise-store = true;

@@ -21,26 +21,10 @@ in
     ../../common/home-manager-config.nix
   ];
 
-  host.useOmarchy = lib.mkDefault false;
   host.homeManagerHostname = "homebasewsl";
   host.username = user;
   host.isWsl = true;
   host.setNameservers = false;
-
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
-
-  # enable garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 
   wsl.enable = true;
   wsl.defaultUser = user;

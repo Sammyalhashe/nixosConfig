@@ -32,10 +32,27 @@ let
   '';
 
   hotkeysScript = pkgs.writeShellScriptBin "show-hotkeys" ''
-    ${pkgs.gnugrep}/bin/grep 'bind=' ~/.config/mango/config.conf \
+    # Parse mango config keybindings into "display | command" format
+    SELECTED=$(${pkgs.gnugrep}/bin/grep '^[[:space:]]*bind=' ~/.config/mango/config.conf \
       | ${pkgs.gnused}/bin/sed 's/^[[:space:]]*bind=//' \
-      | ${pkgs.gawk}/bin/awk -F, '{printf "%-15s + %-10s  ->  ", $1, $2; for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' \
-      | ${pkgs.wofi}/bin/wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500
+      | ${pkgs.gawk}/bin/awk -F, '{
+          display = sprintf("%-15s + %-10s  ->  ", $1, $2);
+          cmd = "";
+          for(i=3; i<=NF; i++) { cmd = cmd (i>3 ? " " : "") $i; }
+          print display " | " cmd
+        }' \
+      | ${pkgs.wofi}/bin/wofi --dmenu --prompt 'Hotkeys' --width 800 --height 500)
+
+    # If user selected a line, extract and run the command after " | "
+    if [ -n "$SELECTED" ]; then
+      CMD=$(echo "$SELECTED" | ${pkgs.gnused}/bin/sed 's/.*| //')
+      # Only execute spawn commands (skip window management actions)
+      case "$CMD" in
+        spawn*|/*|${pkgs.wofi}/bin/*|${pkgs.brave}/bin/*|${pkgs.alacritty}/bin/*)
+          eval "$CMD" &
+          ;;
+      esac
+    fi
   '';
 
   betterTransition = "all 0.3s cubic-bezier(.55,-0.68,.48,1.682)";

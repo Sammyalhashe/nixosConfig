@@ -13,7 +13,7 @@ in
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
-    ../../nixosModules
+    ../../modules
     ./services/openclaw-dashboard.nix
   ];
 
@@ -25,7 +25,6 @@ in
   networking.hostName = "oldboy"; # Define your hostname.
 
   host.isHeadless = true;
-  host.desktop = "none";
 
   # Thermal management for lid-closed operation
   services.thermald.enable = true;
@@ -59,14 +58,6 @@ in
   services.logind.lidSwitch = "ignore";
   services.logind.lidSwitchExternalPower = "ignore";
   services.logind.lidSwitchDocked = "ignore";
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;

@@ -36,6 +36,7 @@ in
     better-memory-wrapper
   ];
 
+  home.file.".openclaw/openclaw.json".force = true;
   home.file.".openclaw/workspace/skills/aider-bootstrap/SKILL.md".text = ''
     ---
     name: aider-bootstrap
@@ -107,7 +108,7 @@ in
             enabled = true;
             # Allow elevated commands only from the Telegram channel
             allowFrom = {
-              telegram = [ ];
+              telegram = [ 8555669756 ];
             };
           };
         };
@@ -135,8 +136,8 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/openrouter/hunter-alpha" = {
-              alias = "hunter-alpha";
+            "openrouter/openrouter/pony-alpha" = {
+              alias = "pony-alpha";
             };
           };
           model = {
@@ -144,7 +145,7 @@ in
             fallbacks = [
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/openrouter/hunter-alpha"
+              "openrouter/openrouter/pony-alpha"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
@@ -212,8 +213,8 @@ in
                   name = "Trinity Large Preview (Free)";
                 }
                 {
-                  id = "openrouter/hunter-alpha";
-                  name = "Hunter Alpha (Free)";
+                  id = "openrouter/pony-alpha";
+                  name = "Pony Alpha (Free)";
                 }
               ];
             };
@@ -341,6 +342,11 @@ in
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
   systemd.user.services.openclaw-gateway.Service = {
+    Restart = "always";
+    RestartSec = lib.mkForce "5";
+    # Prevent runaway memory usage
+    MemoryMax = "4G";
+    MemoryHigh = "3G";
     Environment = lib.mkForce [
       "HOME=/home/salhashemi2"
       "SHELL=${pkgs.bash}/bin/bash"
@@ -348,6 +354,7 @@ in
       "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
       "OPENCLAW_NIX_MODE=1"
       "OPENCLAW_QUIET=1"
+      "NODE_OPTIONS=--max-old-space-size=3072"
       "PATH=${
         lib.makeBinPath [
           pkgs.python3

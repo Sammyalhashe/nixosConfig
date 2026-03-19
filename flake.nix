@@ -14,11 +14,6 @@
     hyprlock = {
       url = "github:hyprwm/hyprlock";
     };
-    omarchy-nix = {
-      url = "github:Sammyalhashe/omarchy-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
     mangowc = {
       url = "github:DreamMaoMao/mangowc";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -118,7 +113,6 @@
       darwin,
       zen-browser,
       hyprlock,
-      omarchy-nix,
       mangowc,
       fromscratch,
       nixos-wsl,
@@ -175,6 +169,15 @@
           inherit overlays;
           config.allowUnfree = true;
         };
+        nix.settings.experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+        nix.gc = {
+          automatic = true;
+          dates = "weekly";
+          options = "--delete-older-than 7d";
+        };
       };
     in
     {
@@ -185,9 +188,9 @@
           baseConfig
           nixos-hardware.nixosModules.raspberry-pi-4
           ./hosts/filestore/configuration.nix
-          ./nixosModules
+          ./modules
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
             programs.stylix.enable = true;
@@ -203,29 +206,11 @@
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/homebase/configuration.nix
-          ./nixosModules
+          ./modules
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
-          sops-nix.nixosModules.sops
-          { programs.stylix.enable = true; }
-        ];
-      };
-
-      nixosConfigurations.homebase_omarchy = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        modules = [
-          baseConfig
-          mangowc.nixosModules.mango
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          ./hosts/homebase/configuration.nix
-          ./nixosModules
-          omarchy-nix.nixosModules.default
-          stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = true;
-            host.isWsl = true; # As per original config comment "just to not import the desktop file"
             programs.stylix.enable = true;
           }
         ];
@@ -238,30 +223,15 @@
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/mothership/configuration.nix
-          ./nixosModules
-          omarchy-nix.nixosModules.default
+          ./modules
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = false;
-            host.isWsl = false; # Enable GUI
-            host.desktop = "mango";
             host.enableKDE = true;
             host.enableMango = true;
             programs.stylix.enable = true;
           }
-          (
-            { pkgs, ... }:
-            {
-              nixpkgs.overlays = [
-                (final: prev: {
-                  # This "fakes" the blueberry package so the build can finish
-                  blueberry = final.runCommand "blueberry-stub" { } "mkdir -p $out";
-                })
-              ];
-            }
-          )
         ];
       };
 
@@ -270,10 +240,9 @@
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
-          ./nixosModules
+          ./modules
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = false;
             host.isHeadless = true;
           }
         ];
@@ -287,15 +256,14 @@
           mangowc.nixosModules.mango
           nixos-wsl.nixosModules.default
           ./hosts/starshipwsl/configuration.nix
-          ./nixosModules
-          ./nixosModules/wsl.nix
+          ./modules
+          ./modules/wsl
           sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
-            host.useOmarchy = false; # Explicitly set
           }
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           {
             programs.stylix.enable = true;
           }
@@ -317,14 +285,14 @@
           }
           nixos-wsl.nixosModules.default
           ./hosts/homebasewsl/configuration.nix
-          ./nixosModules
-          ./nixosModules/wsl.nix
+          ./modules
+          ./modules/wsl
           sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
           }
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           {
             programs.stylix.enable = true;
           }
@@ -338,14 +306,11 @@
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
           ./hosts/starship/configuration.nix
-          ./nixosModules
-          omarchy-nix.nixosModules.default
+          ./modules
           stylix.nixosModules.stylix
-          ./nixosModules/stylix.nix
+          ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
-            host.useOmarchy = true;
-            host.isWsl = true; # As per original config comment "just to not import the desktop file"
             programs.stylix.enable = true;
           }
         ];
@@ -357,7 +322,7 @@
         modules = [
           baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
-          ./nixosModules/options.nix
+          ./modules/options.nix
           sops-nix.darwinModules.sops
         ];
       };
@@ -442,9 +407,6 @@
               (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
               (mkHostScript "test-homebase" "homebase" "homebase" "test")
 
-              (mkHostScript "switch-homebase-omarchy" "homebase_omarchy" "homebase" "switch")
-              (mkHostScript "test-homebase-omarchy" "homebase_omarchy" "homebase" "test")
-
               (mkHostScript "switch-mothership" "mothership" "mothership" "switch")
               (mkHostScript "test-mothership" "mothership" "mothership" "test")
 
@@ -497,7 +459,7 @@
                 fi
 
                 echo "Building homebase system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.homebase_omarchy.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+                OUT_PATH=$(nix build .#nixosConfigurations.homebase.config.system.build.toplevel --json | jq -r '.[].outputs.out')
 
                 if [ -z "''${OUT_PATH}" ]; then
                   echo "Error: Build failed or produced no output."
@@ -617,7 +579,7 @@
                                       echo "  push-mothership - Build mothership system config and push to cachix"
                                       echo "  switch-<host>    - Switch NixOS configuration"              echo "  test-<host>   - Test NixOS configuration"
               echo ""
-              echo "Hosts: homebase, homebase_omarchy, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
+              echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
               echo "Home Configs: work"
             '';
           };
