@@ -147,6 +147,16 @@
             installPhase = ''
               ${old.installPhase}
               cp -r docs $out/lib/openclaw/
+              # Fix for missing plugin manifests in dist/extensions
+              if [ -d "$out/lib/openclaw/extensions" ]; then
+                find "$out/lib/openclaw/extensions" -name "openclaw.plugin.json" | while read manifest; do
+                  plugin_name=$(basename $(dirname "$manifest"))
+                  target_dir="$out/lib/openclaw/dist/extensions/$plugin_name"
+                  if [ -d "$target_dir" ]; then
+                    cp "$manifest" "$target_dir/"
+                  fi
+                done
+              fi
             '';
           });
           openclaw = prev.openclaw.override {

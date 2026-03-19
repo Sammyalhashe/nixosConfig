@@ -167,6 +167,11 @@ in
           allowFrom = [
             8555669756
           ];
+          execApprovals = {
+            enabled = true;
+            approvers = [ 8555669756 ];
+            target = "dm";
+          };
           groups = {
             "*" = {
               requireMention = true;
