@@ -22,12 +22,13 @@
 
   home.packages = with pkgs; [
     # minimal packages for a server
-    git
-    tmux
-    ripgrep
+    direnv
     fzf
+    git
     neovim
     podman
+    ripgrep
+    tmux
   ];
 
   home.sessionVariables = {
