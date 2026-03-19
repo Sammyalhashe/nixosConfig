@@ -36,6 +36,7 @@ in
     better-memory-wrapper
   ];
 
+  home.file.".openclaw/openclaw.json".force = true;
   home.file.".openclaw/workspace/skills/aider-bootstrap/SKILL.md".text = ''
     ---
     name: aider-bootstrap
@@ -107,7 +108,7 @@ in
             enabled = true;
             # Allow elevated commands only from the Telegram channel
             allowFrom = {
-              telegram = [ ];
+              telegram = [ 8555669756 ];
             };
           };
         };
@@ -342,7 +343,7 @@ in
 
   systemd.user.services.openclaw-gateway.Service = {
     Restart = "always";
-    RestartSec = "5";
+    RestartSec = lib.mkForce "5";
     # Prevent runaway memory usage
     MemoryMax = "4G";
     MemoryHigh = "3G";
