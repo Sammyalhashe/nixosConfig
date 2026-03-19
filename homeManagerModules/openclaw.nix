@@ -136,8 +136,8 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/openrouter/pony-alpha" = {
-              alias = "pony-alpha";
+            "openrouter/openrouter/aurora-alpha" = {
+              alias = "aurora-alpha";
             };
           };
           model = {
@@ -145,7 +145,7 @@ in
             fallbacks = [
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/openrouter/pony-alpha"
+              "openrouter/openrouter/aurora-alpha"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
@@ -218,8 +218,8 @@ in
                   name = "Trinity Large Preview (Free)";
                 }
                 {
-                  id = "openrouter/pony-alpha";
-                  name = "Pony Alpha (Free)";
+                  id = "openrouter/aurora-alpha";
+                  name = "Aurora Alpha (Free)";
                 }
               ];
             };
