@@ -1622,6 +1622,24 @@
         "type": "github"
       }
     },
+    "plugin-cloudflare": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/stopmoclay/cloudflare-api",
+        "lastModified": 1773945242,
+        "narHash": "sha256-VrAZf/YTW/7Cv99P+avhZHQaWDDSDL55vKHCk71nnbM=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "3e83ef4b7cc7f81b7ab0b60de5b60705c33d7896",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/stopmoclay/cloudflare-api",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "plugin-coding": {
       "flake": false,
       "locked": {
@@ -1653,6 +1671,24 @@
       },
       "original": {
         "dir": "skills/arnarsson/docker-essentials",
+        "owner": "openclaw",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
+    "plugin-email": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/gzlicanyi/imap-smtp-email",
+        "lastModified": 1773945242,
+        "narHash": "sha256-VrAZf/YTW/7Cv99P+avhZHQaWDDSDL55vKHCk71nnbM=",
+        "owner": "openclaw",
+        "repo": "skills",
+        "rev": "3e83ef4b7cc7f81b7ab0b60de5b60705c33d7896",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/gzlicanyi/imap-smtp-email",
         "owner": "openclaw",
         "repo": "skills",
         "type": "github"
@@ -1812,8 +1848,10 @@
         "nur": "nur",
         "omarchy-nix": "omarchy-nix",
         "plugin-better-memory": "plugin-better-memory",
+        "plugin-cloudflare": "plugin-cloudflare",
         "plugin-coding": "plugin-coding",
         "plugin-docker": "plugin-docker",
+        "plugin-email": "plugin-email",
         "plugin-filesystem": "plugin-filesystem",
         "plugin-git": "plugin-git",
         "plugin-polyclaw": "plugin-polyclaw",
