@@ -20,8 +20,20 @@ let
         api_key = "none";
         models = [
           {
-            name = "GPT-OSS 120B";
-            id = "gpt-oss-120b";
+            name = "Qwen3 Coder Next";
+            id = "qwen3-coder-next";
+          }
+        ];
+      };
+      openrouter = {
+        type = "openai";
+        base_url = "https://openrouter.ai/api/v1";
+        name = "OpenRouter";
+        api_key = "env:OPENROUTER_API_KEY";
+        models = [
+          {
+            name = "MiMo-V2-Omni (Free)";
+            id = "xiaomi/mimo-v2-omni:free";
           }
         ];
       };

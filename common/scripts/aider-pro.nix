@@ -6,7 +6,7 @@ pkgs.writeShellScriptBin "aider-pro" ''
 
   exec ${pkgs.aider-chat}/bin/aider \
     --architect \
-    --model openai/gpt-oss \
+    --model openai/qwen3-coder-next \
     --editor-model openai/qwen-coder \
     --openai-api-base http://127.0.0.1:8000/v1 \
     --openai-api-key none \
