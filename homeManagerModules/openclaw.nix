@@ -119,6 +119,13 @@ in
           maxConcurrent = 8;
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
+            model = {
+              primary = "openrouter/openrouter/aurora-alpha";
+              fallbacks = [
+                "openrouter/amazon-canada-ai/nova"
+                "openrouter/qwen/qwen-2.5-7b-instruct"
+              ];
+            };
           };
           compaction = {
             mode = "default";
@@ -169,7 +176,7 @@ in
             8555669756
           ];
           execApprovals = {
-            enabled = true;
+            enabled = false;
             approvers = [ 8555669756 ];
             target = "dm";
           };
@@ -319,6 +326,9 @@ in
     
     # Add user profile binaries to allowlist
     $OPENCLAW approvals allowlist add "/etc/profiles/per-user/${config.home.username}/bin/*" || true
+    
+    # Add user bin to allowlist
+    $OPENCLAW approvals allowlist add "$HOME/bin/*" || true
   '';
 
   home.activation.installOpenClawSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
