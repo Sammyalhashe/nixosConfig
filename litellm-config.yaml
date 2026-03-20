@@ -24,23 +24,8 @@ model_list:
       model: openai/qwen3-coder-next
       api_base: http://127.0.0.1:8012/v1
       api_key: none
-  - model_name: gpt-oss-120b
-    litellm_params:
-      model: openai/gpt-oss-120b
-      api_base: http://127.0.0.1:8013/v1
-      api_key: none
-      enable_reasoning: true
-      drop_params: true
-    model_info:
-      max_tokens: 131072
-      input_cost_per_token: 0.0
-      output_cost_per_token: 0.0
-  - model_name: qwq-32b
-    litellm_params:
-      model: openai/gpt-oss-120b # Fallback to 120B since 32B reasoning service isn't enabled separately
-      api_base: http://127.0.0.1:8013/v1
-      api_key: none
-      enable_reasoning: true
+
+
 litellm_settings:
   drop_params: true
   modify_params: true

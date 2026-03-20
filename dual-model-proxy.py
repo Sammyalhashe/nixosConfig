@@ -6,7 +6,7 @@ app = flask.Flask(__name__)
 
 # Mapping of model identifiers to their respective backend ports
 MODEL_MAPPING = {
-    "openai/gpt-oss": 8013,
+    "openai/qwen3-coder-next": 8012,
     "openai/qwen-coder": 8012
 }
 
@@ -41,7 +41,7 @@ def models_proxy():
     return flask.jsonify({
         "object": "list",
         "data": [
-            {"id": "openai/gpt-oss", "object": "model", "owned_by": "local"},
+            {"id": "openai/qwen3-coder-next", "object": "model", "owned_by": "local"},
             {"id": "openai/qwen-coder", "object": "model", "owned_by": "local"}
         ]
     })

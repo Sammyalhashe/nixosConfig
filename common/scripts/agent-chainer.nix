@@ -8,9 +8,9 @@ pkgs.writeScriptBin "agent-chainer" ''
   import time
 
   # Configuration
-  PORT_REASONER = 8013  # GPT-OSS 120B
+  PORT_REASONER = 8012  # Qwen3-Coder Next
   PORT_CODER = 8012     # Qwen3-Coder
-  MODEL_REASONER = "openai/gpt-oss"
+  MODEL_REASONER = "openai/qwen3-coder-next"
   MODEL_CODER = "openai/qwen-coder"
 
   def query_llm(port, prompt, system_prompt="You are a helpful AI."):

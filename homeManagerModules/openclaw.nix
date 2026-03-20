@@ -124,6 +124,7 @@ in
               fallbacks = [
                 "openrouter/amazon-canada-ai/nova"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
+                "openrouter/xiaomi/mimo-v2-omni:free"
               ];
             };
           };
@@ -154,6 +155,7 @@ in
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
               "openrouter/openrouter/aurora-alpha"
+              "openrouter/xiaomi/mimo-v2-omni:free"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
@@ -228,6 +230,10 @@ in
                 {
                   id = "openrouter/aurora-alpha";
                   name = "Aurora Alpha (Free)";
+                }
+                {
+                  id = "xiaomi/mimo-v2-omni:free";
+                  name = "MiMo-V2-Omni (Free)";
                 }
               ];
             };

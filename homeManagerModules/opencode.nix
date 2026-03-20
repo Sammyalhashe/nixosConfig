@@ -34,22 +34,25 @@ in
             "openrouter/qwen/qwen-2.5-7b-instruct" = {
               name = "Qwen 2.5 7B";
             };
+            "openrouter/xiaomi/mimo-v2-omni:free" = {
+              name = "MiMo-V2-Omni (Free)";
+            };
           };
         };
         mothership = {
           npm = "@ai-sdk/openai-compatible";
           name = "Mothership (LiteLLM)";
           options = {
-            baseURL = "http://${inferenceHost}:4000/v1";
+            baseUrl = "http://${inferenceHost}:4000/v1";
           };
           models = {
-            "gpt-oss-120b" = {
-              name = "GPT-OSS 120B";
+            "qwen3-coder-next" = {
+              name = "Qwen3 Coder Next";
             };
           };
         };
       };
-      model = "mothership/gpt-oss-120b";
+      model = "mothership/qwen3-coder-next";
     };
   };
 
@@ -72,14 +75,17 @@ in
         },
         "general": {
           "model": "openrouter/qwen/qwen-2.5-7b-instruct"
+        },
+        "omni": {
+          "model": "openrouter/xiaomi/mimo-v2-omni:free"
         }
       },
       "agents": {
         "Sisyphus": {
-          "model": "mothership/gpt-oss-120b"
+          "model": "mothership/qwen3-coder-next"
         },
         "Sisyphus-Junior": {
-          "model": "mothership/gpt-oss-120b"
+          "model": "mothership/qwen3-coder-next"
         },
         "Prometheus (Planner)": {
           "model": "openrouter/openrouter/free"
@@ -98,6 +104,9 @@ in
         },
         "code-reviewer": {
           "model": "openrouter/amazon-canada-ai/nova"
+        },
+        "MiMo": {
+          "model": "openrouter/xiaomi/mimo-v2-omni:free"
         }
       }
     }
