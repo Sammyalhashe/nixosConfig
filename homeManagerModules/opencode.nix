@@ -4,7 +4,10 @@
   pkgs,
   ...
 }:
-
+let
+  hostname = osConfig.networking.hostName or "unknown";
+  inferenceHost = if hostname == "mothership" then "127.0.0.1" else "11.125.37.101";
+in
 {
   programs.opencode = {
     enable = true;
@@ -14,7 +17,7 @@
           npm = "@ai-sdk/openai-compatible";
           name = "Mothership (LiteLLM)";
           options = {
-            baseURL = "http://127.0.0.1:4000/v1";
+            baseURL = "http://${inferenceHost}:4000/v1";
           };
           models = {
             "gpt-oss-120b" = {
