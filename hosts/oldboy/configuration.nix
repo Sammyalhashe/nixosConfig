@@ -14,7 +14,6 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     ../../modules
-    ./services/openclaw-dashboard.nix
   ];
 
   # Bootloader.
@@ -79,9 +78,10 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-  # OpenClaw debug dashboard access
-  networking.firewall.allowedTCPPorts = [ 6969 ];
-
-  # Enable OpenClaw Debug Dashboard
-  services.openclaw-dashboard.enable = true;
+  # Cockpit web-based server management UI
+  services.cockpit = {
+    enable = true;
+    port = 6969;
+    settings.WebService.AllowUnencrypted = true;
+  };
 }
