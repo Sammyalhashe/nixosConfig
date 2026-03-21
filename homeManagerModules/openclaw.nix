@@ -148,6 +148,9 @@ in
             "openrouter/openrouter/aurora-alpha" = {
               alias = "aurora-alpha";
             };
+            "openrouter/xiaomi/mimo-v2-omni:free" = {
+              alias = "mimo";
+            };
           };
           model = {
             primary = "mothership-proxy/gpt-4o";
@@ -177,11 +180,6 @@ in
           allowFrom = [
             8555669756
           ];
-          execApprovals = {
-            enabled = false;
-            approvers = [ 8555669756 ];
-            target = "dm";
-          };
           groups = {
             "*" = {
               requireMention = true;
