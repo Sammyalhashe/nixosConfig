@@ -105,6 +105,10 @@ in
             "sessions_spawn" # Enable subagent spawning
             "agents_list" # Allow listing available agents
           ];
+          exec = {
+            security = "full";
+            ask = "off";
+          };
           elevated = {
             enabled = true;
             # Allow elevated commands only from the Telegram channel
