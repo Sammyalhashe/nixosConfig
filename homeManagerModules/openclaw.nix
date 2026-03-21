@@ -315,13 +315,13 @@ in
   home.activation.configureOpenClawApprovals = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     # Use the OpenClaw binary from the flake input to ensure we're using the correct version
     OPENCLAW="${inputs.nix-openclaw.packages.${pkgs.system}.default}/bin/openclaw"
-    
+
     # Add standard system binaries to allowlist
     $OPENCLAW approvals allowlist add "/run/current-system/sw/bin/*" || true
-    
+
     # Add user profile binaries to allowlist
     $OPENCLAW approvals allowlist add "/etc/profiles/per-user/${config.home.username}/bin/*" || true
-    
+
     # Add user bin to allowlist
     $OPENCLAW approvals allowlist add "$HOME/bin/*" || true
   '';
