@@ -120,7 +120,7 @@ in
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
             model = {
-              primary = "openrouter/free";
+              primary = "openrouter/openrouter/free";
               fallbacks = [
                 "openrouter/amazon-canada-ai/nova"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
@@ -144,7 +144,7 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/free" = {
+            "openrouter/openrouter/free" = {
               alias = "free";
             };
           };
@@ -153,7 +153,7 @@ in
             fallbacks = [
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/free"
+              "openrouter/openrouter/free"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
