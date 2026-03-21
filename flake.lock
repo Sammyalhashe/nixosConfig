@@ -77,6 +77,7 @@
         "xr-driver": "xr-driver"
       },
       "locked": {
+        "narHash": "sha256-P2JWGABODgu/1YABurNVustnnXGts2GZkXYk41Rs7Lc=",
         "path": "./breezy_src",
         "type": "path"
       },
@@ -1742,6 +1743,7 @@
         ]
       },
       "locked": {
+        "narHash": "sha256-7DvICWxK/OMW4QBidwyco8Pk+hQT9wBnCub40ToR9Ng=",
         "path": "../xr_driver_src",
         "type": "path"
       },
