@@ -14,11 +14,6 @@ let
   stylixModule = if (options ? stylix) then [ ] else [ inputs.stylix.homeModules.stylix ];
 in
 {
-  imports = [
-    # Import omarchy config (which handles conditional logic internally)
-    ./omarchy-config.nix
-  ];
-
   config = {
     # Standard home-manager setup
     home-manager = {

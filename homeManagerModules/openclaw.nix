@@ -2,6 +2,7 @@
   inputs,
   lib,
   pkgs,
+  config,
   ...
 }:
 let
@@ -36,44 +37,45 @@ in
     better-memory-wrapper
   ];
 
+  home.file.".openclaw/openclaw.json".force = true;
   home.file.".openclaw/workspace/skills/aider-bootstrap/SKILL.md".text = ''
----
-name: aider-bootstrap
-description: Bootstrap new software projects using Aider. Automatically handles directory creation and git initialization required by Aider.
----
+    ---
+    name: aider-bootstrap
+    description: Bootstrap new software projects using Aider. Automatically handles directory creation and git initialization required by Aider.
+    ---
 
-# Aider Project Bootstrapper
+    # Aider Project Bootstrapper
 
-Use this skill when the user wants to create, scaffold, or bootstrap a new project using Aider.
+    Use this skill when the user wants to create, scaffold, or bootstrap a new project using Aider.
 
-## Workflow
+    ## Workflow
 
-1.  **Create Directory**: Ensure the target directory exists.
-    ```bash
-    mkdir -p <target_directory>
-    ```
+    1.  **Create Directory**: Ensure the target directory exists.
+        ```bash
+        mkdir -p <target_directory>
+        ```
 
-2.  **Safety Check**: Verify the target directory is NOT the root filesystem.
-    *   Target must NOT be `/`.
-    *   Target must NOT be `/home/username` (unless explicitly requested, but prefer subdirs).
+    2.  **Safety Check**: Verify the target directory is NOT the root filesystem.
+        *   Target must NOT be `/`.
+        *   Target must NOT be `/home/username` (unless explicitly requested, but prefer subdirs).
 
-3.  **Git Initialization**: Aider requires a git repository to function.
-    *   Check if git is initialized: `cd <target_directory> && git status`
-    *   If not, initialize it: `cd <target_directory> && git init`
+    3.  **Git Initialization**: Aider requires a git repository to function.
+        *   Check if git is initialized: `cd <target_directory> && git status`
+        *   If not, initialize it: `cd <target_directory> && git init`
 
-4.  **Run Aider**: Invoke aider with the prompt.
-    ```bash
-    cd <target_directory> && aider --no-auto-commits --message "<prompt>"
-    ```
+    4.  **Run Aider**: Invoke aider with the prompt.
+        ```bash
+        cd <target_directory> && aider --no-auto-commits --message "<prompt>"
+        ```
 
-## Example
+    ## Example
 
-**User:** "Make a python calculator in `py-calc`"
+    **User:** "Make a python calculator in `py-calc`"
 
-**Agent Action:**
-1.  `mkdir -p py-calc`
-2.  `cd py-calc && git init`
-3.  `cd py-calc && aider --message "Build a python calculator..."`
+    **Agent Action:**
+    1.  `mkdir -p py-calc`
+    2.  `cd py-calc && git init`
+    3.  `cd py-calc && aider --message "Build a python calculator..."`
   '';
 
   programs.openclaw = {
@@ -106,7 +108,9 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
           elevated = {
             enabled = true;
             # Allow elevated commands only from the Telegram channel
-    allowFrom = { telegram = []; };
+            allowFrom = {
+              telegram = [ 8555669756 ];
+            };
           };
         };
         agents.defaults = {
@@ -115,17 +119,24 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
           maxConcurrent = 8;
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
+            model = {
+              primary = "openrouter/free";
+              fallbacks = [
+                "openrouter/amazon-canada-ai/nova"
+                "openrouter/qwen/qwen-2.5-7b-instruct"
+              ];
+            };
           };
           compaction = {
             mode = "default";
             reserveTokensFloor = 30000; # Prune context when 30k tokens left
           };
           models = {
-            "mothership-proxy/gpt-oss-120b" = {
+            "mothership-proxy/gpt-4o" = {
               alias = "master";
             };
-            "mothership-proxy/qwq-32b" = {
-              alias = "reasoning";
+            "mothership-proxy/gpt-4o-mini" = {
+              alias = "flash";
             };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
@@ -133,23 +144,23 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/openrouter/hunter-alpha" = {
-              alias = "hunter-alpha";
+            "openrouter/free" = {
+              alias = "free";
             };
           };
           model = {
-            primary = "mothership-proxy/gpt-oss-120b";
+            primary = "mothership-proxy/gpt-4o";
             fallbacks = [
-              "mothership-proxy/qwq-32b"
+              "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/openrouter/hunter-alpha"
+              "openrouter/free"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
           };
         };
         gateway = {
-          mode = lib.mkForce "local";
+          mode = "local";
           auth = {
             token = "temporary-token-123456";
           };
@@ -186,8 +197,12 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
               apiKey = "any";
               models = [
                 {
-                  id = "gpt-oss-120b";
-                  name = "GPT-OSS 120B (via Mothership)";
+                  id = "gpt-4o";
+                  name = "Qwen3 Coder 70B (Master)";
+                }
+                {
+                  id = "gpt-4o-mini";
+                  name = "Qwen2.5 Coder 7B (Flash)";
                 }
                 {
                   id = "qwq-32b";
@@ -206,8 +221,8 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
                   name = "Trinity Large Preview (Free)";
                 }
                 {
-                  id = "openrouter/hunter-alpha";
-                  name = "Hunter Alpha (Free)";
+                  id = "openrouter/free";
+                  name = "Auto-Free Router";
                 }
               ];
             };
@@ -254,7 +269,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
             lemonade = {
               api = "openai-completions";
               baseUrl = "http://11.125.37.172:8001/v1";
-              apiKey = "any"; 
+              apiKey = "any";
               models = [
                 {
                   id = "user.Qwen-32B-Coder";
@@ -297,6 +312,20 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
     };
   };
 
+  home.activation.configureOpenClawApprovals = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Use the OpenClaw binary from the flake input to ensure we're using the correct version
+    OPENCLAW="${inputs.nix-openclaw.packages.${pkgs.system}.default}/bin/openclaw"
+
+    # Add standard system binaries to allowlist
+    $OPENCLAW approvals allowlist add "/run/current-system/sw/bin/*" || true
+
+    # Add user profile binaries to allowlist
+    $OPENCLAW approvals allowlist add "/etc/profiles/per-user/${config.home.username}/bin/*" || true
+
+    # Add user bin to allowlist
+    $OPENCLAW approvals allowlist add "$HOME/bin/*" || true
+  '';
+
   home.activation.installOpenClawSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p $HOME/.openclaw/workspace/skills
 
@@ -317,20 +346,29 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
     install_skill "process-watch" "${inputs.plugin-process}"
     install_skill "polyclaw" "${inputs.plugin-polyclaw}"
     install_skill "better-memory" "${inputs.plugin-better-memory}"
+    install_skill "email-manager" "${inputs.plugin-email}"
+    install_skill "cloudflare-api" "${inputs.plugin-cloudflare}"
     install_skill "phar-bot" "${../skills/phar-bot}"
 
-    # Install dependencies for better-memory
-    if [ -f "$HOME/.openclaw/workspace/skills/better-memory/package.json" ]; then
-      cd "$HOME/.openclaw/workspace/skills/better-memory"
-      # Ensure node is in path for npm
-      export PATH="${pkgs.nodejs_25}/bin:$PATH"
-      ${pkgs.nodejs_25}/bin/npm install --silent
-    fi
-  '' ;
+    # Install dependencies for any skill with a package.json
+    export PATH="${pkgs.nodejs_25}/bin:$PATH"
+    for skill_dir in $HOME/.openclaw/workspace/skills/*; do
+      if [ -f "$skill_dir/package.json" ]; then
+        echo "Installing dependencies for skill: $(basename $skill_dir)"
+        cd "$skill_dir"
+        ${pkgs.nodejs_25}/bin/npm install --silent
+      fi
+    done
+  '';
 
   home.activation.openclawDocumentGuard = lib.mkForce (lib.hm.dag.entryBefore [ "writeBoundary" ] "");
 
   systemd.user.services.openclaw-gateway.Service = {
+    Restart = "always";
+    RestartSec = lib.mkForce "5";
+    # Prevent runaway memory usage
+    MemoryMax = "4G";
+    MemoryHigh = "3G";
     Environment = lib.mkForce [
       "HOME=/home/salhashemi2"
       "SHELL=${pkgs.bash}/bin/bash"
@@ -338,6 +376,7 @@ Use this skill when the user wants to create, scaffold, or bootstrap a new proje
       "OPENCLAW_STATE_DIR=/home/salhashemi2/.openclaw"
       "OPENCLAW_NIX_MODE=1"
       "OPENCLAW_QUIET=1"
+      "NODE_OPTIONS=--max-old-space-size=3072"
       "PATH=${
         lib.makeBinPath [
           pkgs.python3

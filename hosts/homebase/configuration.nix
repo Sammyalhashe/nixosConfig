@@ -1,6 +1,6 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
 {
   config,
@@ -20,32 +20,19 @@ in
     inputs.home-manager.nixosModules.default
     inputs.home-manager.nixosModules.home-manager # Add this import
     ../../common/home-manager-config.nix
-    # ./webdav.nix
   ];
 
-  host.useOmarchy = lib.mkDefault false;
-  host.greetd = true;
+  host.enableGreetd = true;
+
+  specialisation.kde.configuration = {
+    host.enableKDE = lib.mkForce true;
+  };
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
-
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
 
   # auto upgrade
   system.autoUpgrade.enable = true;
   system.autoUpgrade.allowReboot = true;
-
-  # enable garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -92,7 +79,7 @@ in
     options = "caps:swapescape";
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
@@ -100,7 +87,6 @@ in
       "networkmanager"
       "docker"
       "wheel"
-      "docker"
     ];
     packages = with pkgs; [ ];
   };
@@ -126,9 +112,6 @@ in
 
   # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -235,7 +218,7 @@ in
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # on your system were taken. It's perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).

@@ -9,17 +9,6 @@ let
   betterTransition = "all 0.3s cubic-bezier(.55,-0.68,.48,1.682)";
 in
 {
-  # Disable omarchy-nix waybar config files to avoid conflicts
-  home.file.".config/waybar/" = {
-    enable = lib.mkForce false;
-  };
-  home.file.".config/waybar/theme.css" = {
-    enable = lib.mkForce false;
-  };
-
-  # Prevent Hyprland from starting waybar manually (conflicts with systemd)
-  wayland.windowManager.hyprland.settings.exec = lib.mkForce [ ];
-
   home.packages = with pkgs; [
     wlogout
   ];
@@ -28,7 +17,7 @@ in
     enable = lib.mkDefault true;
     systemd.enable = true;
     package = pkgs.waybar;
-    settings = lib.mkForce {
+    settings = {
       mainBar = {
         layer = "top";
         position = "top";
@@ -217,7 +206,7 @@ in
       };
     };
 
-    style = lib.mkForce ''
+    style = ''
       * {
         border: none;
         border-radius: 0;

@@ -7,11 +7,15 @@
   lib,
   ...
 }:
+let
+  nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
+in
 {
   imports = [
     ./home-common.nix
     ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
+    ../homeManagerModules/opencode.nix
     ../homeManagerModules/coinbase-trader.nix
   ];
 
@@ -21,15 +25,23 @@
 
   home.packages = with pkgs; [
     # minimal packages for a server
-    git
-    tmux
-    ripgrep
+    direnv
+    nixvim-package
     fzf
+    git
     neovim
+    podman
+    ripgrep
+    tmux
   ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   # Let Home Manager install and manage itself.

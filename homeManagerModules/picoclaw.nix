@@ -53,8 +53,8 @@ in
           skipBootstrap = true;
           timeoutSeconds = 300;
           models = {
-            "mothership-reasoning/gpt-oss-120b" = {
-              alias = "gpt-oss:120b";
+            "mothership-reasoning/qwen3-coder-next" = {
+              alias = "qwen3-coder-next";
             };
             "google/gemini-3.0-pro-preview" = {
               alias = "gemini-3";
@@ -69,8 +69,8 @@ in
           model = {
             primary = "nvidia/moonshotai/kimi-k2.5";
             fallbacks = [
-              "mothership-reasoning/gpt-oss-120b"
-              "mothership-local/qwen2.5-coder-32b-instruct"
+              "mothership-reasoning/qwen3-coder-next"
+              "mothership-local/qwen3-coder-next"
               "openrouter/openrouter/hunter-alpha"
               "openrouter/arcee-ai/trinity-large-preview:free"
               "lemonade/user.Qwen-32B-Coder"
@@ -136,20 +136,20 @@ in
             apiKey = "none";
             models = [
               {
-                id = "qwen2.5-coder-32b-instruct";
-                name = "Qwen 2.5 Coder 32B (Mothership)";
+                id = "qwen3-coder-next";
+                name = "Qwen3 Coder Next (Mothership)";
               }
             ];
           };
           mothership-reasoning = {
             api = "openai-completions";
-            baseUrl = "http://11.125.37.101:8013/v1";
+            baseUrl = "http://11.125.37.101:8012/v1";
             apiKey = "none";
             models = [
               {
-                id = "gpt-oss-120b";
-                name = "GPT-OSS-120B (Mothership Reasoning)";
-                reasoning = true;
+                id = "qwen3-coder-next";
+                name = "Qwen3 Coder Next (Mothership)";
+                reasoning = false;
               }
             ];
           };
@@ -165,6 +165,10 @@ in
               {
                 id = "openrouter/hunter-alpha";
                 name = "Hunter Alpha (Free)";
+              }
+              {
+                id = "xiaomi/mimo-v2-omni:free";
+                name = "MiMo-V2-Omni (Free)";
               }
             ];
           };
