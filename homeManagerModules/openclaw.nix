@@ -120,10 +120,10 @@ in
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
             model = {
-              primary = "openrouter/free";
+              primary = "openrouter/qwen/qwen3-coder:free";
               fallbacks = [
                 "openrouter/amazon-canada-ai/nova"
-                "openrouter/qwen/qwen-2.5-7b-instruct"
+                "openrouter/arcee-ai/trinity-large-preview:free"
               ];
             };
           };
@@ -144,7 +144,7 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/free" = {
+            "openrouter/qwen/qwen3-coder:free" = {
               alias = "free";
             };
           };
@@ -153,7 +153,7 @@ in
             fallbacks = [
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/free"
+              "openrouter/qwen/qwen3-coder:free"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
@@ -221,8 +221,8 @@ in
                   name = "Trinity Large Preview (Free)";
                 }
                 {
-                  id = "openrouter/free";
-                  name = "Auto-Free Router";
+                  id = "openrouter/qwen/qwen3-coder:free";
+                  name = "Qwen3 Coder 480B (Free)";
                 }
               ];
             };
