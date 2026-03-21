@@ -51,7 +51,7 @@ in
         # --no-mmap: Crucial for large MoE models on unified memory to prevent thrashing
         ExecStart = "${
           pkgs.llama-cpp.override { vulkanSupport = true; }
-        }/bin/llama-server --model ${cfg.modelPath} --port 8012 --host 0.0.0.0 --n-gpu-layers 65 --ctx-size 131072 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap";
+        }/bin/llama-server --model ${cfg.modelPath} --port 8012 --host 0.0.0.0 --n-gpu-layers 65 --ctx-size 131072 --parallel 1 --jinja --threads 16 --device Vulkan0 --flash-attn 1 --no-mmap";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         Restart = "on-failure";
         RestartSec = "5s";

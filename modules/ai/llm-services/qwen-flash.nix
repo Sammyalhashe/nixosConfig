@@ -50,7 +50,7 @@ in
         # --ctx-size: 128k for large documents and transcripts.
         ExecStart = "${
           pkgs.llama-cpp.override { vulkanSupport = true; }
-        }/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 131072 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
+        }/bin/llama-server --model ${cfg.modelPath} --port 8011 --host 0.0.0.0 --n-gpu-layers 40 --ctx-size 32768 --parallel 1 --jinja --threads 8 --device Vulkan0 --flash-attn 1";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
         Restart = "on-failure";
         RestartSec = "5s";
