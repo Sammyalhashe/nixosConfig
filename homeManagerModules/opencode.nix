@@ -18,7 +18,7 @@ in
           name = "openrouter/free";
           npm = "@ai-sdk/openai-compatible";
           options = {
-            baseUrl = "https://openrouter.ai/api/v1";
+            baseURL = "https://openrouter.ai/api/v1";
             apiKey = "env:OPENROUTER_API_KEY";
           };
           models = {
@@ -43,7 +43,8 @@ in
           npm = "@ai-sdk/openai-compatible";
           name = "Mothership (LiteLLM)";
           options = {
-            baseUrl = "http://${inferenceHost}:4000/v1";
+            baseURL = "http://${inferenceHost}:4000/v1";
+            apiKey = "any";
           };
           models = {
             "qwen3-coder-next" = {
