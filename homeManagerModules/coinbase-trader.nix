@@ -55,6 +55,9 @@ in
         "TAKE_PROFIT_1_SELL_RATIO=0.33"
         "TAKE_PROFIT_2_PCT=0.20"
         "TAKE_PROFIT_2_SELL_RATIO=0.50"
+        # Short Selling
+        "ENABLE_SHORT=true"
+        "SHORT_RISK_PERCENTAGE=0.05"
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       # Wait for network to be truly available (timeout after 60s)

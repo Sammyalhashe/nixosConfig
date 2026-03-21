@@ -1,12 +1,12 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
 {
   config,
   pkgs,
-  inputs,
   lib,
+  inputs,
   ...
 }:
 let
@@ -14,38 +14,20 @@ let
 in
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./asus.nix
     ./bluetooth.nix
-    ./graphics.nix
     inputs.home-manager.nixosModules.default
+    inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
-    ./wireguard.nix
-    ../../nixosModules/sops.nix
   ];
 
-  host.useOmarchy = lib.mkDefault false;
+  host.enableGreetd = true;
   host.homeManagerHostname = "default";
-
-  # enable flakes
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
+  host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade
   system.autoUpgrade.enable = true;
   system.autoUpgrade.allowReboot = true;
-
-  # enable garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -53,27 +35,8 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
   networking.hostName = "starship"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  networking.nameservers = [
-    "11.125.37.99"
-    "11.125.37.1"
-    "1.1.1.1"
-  ];
-
-  services.resolved = {
-    enable = true;
-    settings = {
-      Resolve = {
-        DNS = "11.125.37.99";
-        Domains = "~salh.xyz";
-      };
-    };
-  };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -107,44 +70,64 @@ in
     options = "caps:swapescape";
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.salhashemi2 = {
+  # Define a user account. Don't forget to set a password with 'passwd'.
+  users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
     extraGroups = [
       "networkmanager"
+      "docker"
       "wheel"
     ];
     packages = with pkgs; [ ];
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  services.ollama = {
+    package = pkgs.ollama-cuda;
+    enable = true;
+    host = "0.0.0.0";
+    loadModels = [
+      "qwen2.5-coder:7b"
+      "llama3.1:8b"
+      "deepseek-r1:7b"
+      "qwen2.5:7b"
+      "MFDoom/deepseek-r1-tool-calling:8b"
+    ];
+  };
+
+  services.open-webui = {
+    enable = true;
+  };
+
+  programs.mango.enable = true;
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  programs.mango.enable = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
+    git
+    (vivaldi.overrideAttrs (oldAttrs: {
+      dontWrapQtApps = false;
+      dontPatchELF = true;
+      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.kdePackages.wrapQtAppsHook ];
+    }))
   ];
+
+  # xdg env variables
+  environment.sessionVariables = {
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME = "$HOME/var/lib";
+    XDG_CACHE_HOME = "$HOME/var/cache";
+  };
 
   fonts.packages = with pkgs; [
     monoid
     source-code-pro
   ];
 
-  # List services that you want to enable:
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
+  fonts.fontDir.enable = true;
 
   services.openssh.enable = true;
   services.flatpak.enable = true;
@@ -159,13 +142,22 @@ in
   ];
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  services.openssh.settings.X11Forwarding = true;
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
+  services.udev.packages = with pkgs; [
+    platformio-core.udev
+    openocd
+  ];
 
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 11434 ];
+  };
+
+  security.pki.certificateFiles = [
+    (builtins.toFile "wildcard.picloud.crt" (builtins.readFile ../../certs/wildcard.picloud.crt))
+    (builtins.toFile "wildcard.rpi.cripz.crt" (builtins.readFile ../../certs/wildcard.rpi.cripz.crt))
+  ];
+
+  system.stateVersion = "24.11";
 }

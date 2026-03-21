@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 # Mapping of model identifiers to their respective backend ports
 MODEL_MAPPING = {
-    "openai/gpt-oss": 8013,
+    "openai/qwen3-coder-next": 8012,
     "openai/qwen-coder": 8012
 }
 
@@ -71,7 +71,7 @@ async def handle_models(request):
     return web.json_response({
         "object": "list",
         "data": [
-            {"id": "openai/gpt-oss", "object": "model", "owned_by": "local"},
+            {"id": "openai/qwen3-coder-next", "object": "model", "owned_by": "local"},
             {"id": "openai/qwen-coder", "object": "model", "owned_by": "local"}
         ]
     })

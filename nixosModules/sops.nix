@@ -6,13 +6,13 @@
   sops.age.generateKey = true;
 
   sops.secrets.gemini_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.perplexity_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.pop_resend_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = {
@@ -29,32 +29,45 @@
   sops.secrets.nextcloud_admin_password = { };
   sops.secrets.syncthing_gui_password = { };
   sops.secrets.telegram_bot_token = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.brave_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.openrouter_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.chainstack_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.polyclaw_private_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.nvidia_api_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.eth_rpc_url = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.eth_private_key = {
-    owner = "salhashemi2";
+    owner = config.host.username;
   };
   sops.secrets.coinbase_api_key_clawdbot = { };
   sops.secrets.coinbase_api_id_clawdbot = { };
   sops.secrets.coinbase_api_secret_clawdbot = { };
+
+  sops.secrets.icloud_email = {
+    owner = config.host.username;
+  };
+  sops.secrets.openclaw_icloud_user = {
+    owner = config.host.username;
+  };
+  sops.secrets.icloud_password = {
+    owner = config.host.username;
+  };
+  sops.secrets.cloudflare_token = {
+    owner = config.host.username;
+  };
 
   sops.templates."openclaw-env" = {
     content = ''
@@ -69,6 +82,21 @@
       ETH_PRIVATE_KEY=${config.sops.placeholder.eth_private_key}
       POLYGON_RPC_URL=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
       CHAINSTACK_NODE=https://polygon-mainnet.core.chainstack.com/cb70f464d151c934637cb3318b1cb66e
+
+      # Email Skill (iCloud)
+      IMAP_HOST=imap.mail.me.com
+      IMAP_PORT=993
+      IMAP_USER=${config.sops.placeholder.icloud_email}
+      IMAP_PASS=${config.sops.placeholder.icloud_password}
+      IMAP_TLS=true
+      SMTP_HOST=smtp.mail.me.com
+      SMTP_PORT=587
+      SMTP_USER=${config.sops.placeholder.icloud_email}
+      SMTP_PASS=${config.sops.placeholder.icloud_password}
+      SMTP_SECURE=false
+
+      # Cloudflare Skill
+      CLOUDFLARE_API_TOKEN=${config.sops.placeholder.cloudflare_token}
     '';
     owner = config.host.username;
   };

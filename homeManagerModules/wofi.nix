@@ -8,11 +8,6 @@ let
   colors = config.lib.stylix.colors.withHashtag;
 in
 {
-  # Resolve conflicts with other modules (like omarchy-nix) that might try to
-  # define style.css via home.file. We only want the xdg.configFile generation
-  # from programs.wofi below.
-  home.file.".config/wofi/style.css".enable = lib.mkForce false;
-
   programs.wofi = {
     enable = true;
     settings = {
@@ -34,7 +29,7 @@ in
       gtk_dark = true;
       dynamic_lines = true;
     };
-    style = lib.mkForce ''
+    style = ''
       * {
         font-family: "JetBrainsMono Nerd Font", monospace;
         font-weight: bold;
