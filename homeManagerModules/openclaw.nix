@@ -120,11 +120,10 @@ in
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
             model = {
-              primary = "openrouter/openrouter/aurora-alpha";
+              primary = "openrouter/free";
               fallbacks = [
                 "openrouter/amazon-canada-ai/nova"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
-                "openrouter/xiaomi/mimo-v2-omni:free"
               ];
             };
           };
@@ -145,11 +144,8 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
-            "openrouter/openrouter/aurora-alpha" = {
-              alias = "aurora-alpha";
-            };
-            "openrouter/xiaomi/mimo-v2-omni:free" = {
-              alias = "mimo";
+            "openrouter/free" = {
+              alias = "free";
             };
           };
           model = {
@@ -157,8 +153,7 @@ in
             fallbacks = [
               "mothership-proxy/gpt-4o-mini"
               "moonshotai/kimi-k2.5"
-              "openrouter/openrouter/aurora-alpha"
-              "openrouter/xiaomi/mimo-v2-omni:free"
+              "openrouter/free"
               # "google/gemini-3-flash"
               # "google/gemini-3.1-pro-preview"
             ];
@@ -226,12 +221,8 @@ in
                   name = "Trinity Large Preview (Free)";
                 }
                 {
-                  id = "openrouter/aurora-alpha";
-                  name = "Aurora Alpha (Free)";
-                }
-                {
-                  id = "xiaomi/mimo-v2-omni:free";
-                  name = "MiMo-V2-Omni (Free)";
+                  id = "openrouter/free";
+                  name = "Auto-Free Router";
                 }
               ];
             };
