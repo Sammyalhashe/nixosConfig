@@ -714,8 +714,9 @@ in
 
   services.postgresql = {
     enable = true;
+    package = pkgs.postgresql_16;
     # Ensure the path is exactly what Postgres expects
-    dataDir = "/postgresql/${config.services.postgresql.package.psqlSchema}";
+    dataDir = "/postgresql/16";
     authentication = lib.mkOverride 10 ''
       local all all trust
     '';

@@ -211,6 +211,7 @@
 
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -228,6 +229,7 @@
 
       nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -247,6 +249,7 @@
 
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        system = "x86_64-linux";
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
@@ -311,6 +314,7 @@
 
       nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
