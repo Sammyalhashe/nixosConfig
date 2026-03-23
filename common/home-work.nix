@@ -63,6 +63,9 @@ in
 
   targets.genericLinux.enable = true;
 
+  # Configure Nix package for generating nix.conf
+  nix.package = pkgs.nix;
+
   # syncthing
   # services.syncthing.enable = true;
 
