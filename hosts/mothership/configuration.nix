@@ -19,7 +19,7 @@ in
     ../../modules/ai/llm-services
   ];
 
-  services.udev.packages = [ inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.system}.default ];
+  services.udev.packages = [ inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default ];
   boot.kernelModules = [ "uinput" ];
 
   # Default to server/headless mode (what systemd-boot loads)
@@ -238,9 +238,9 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    inputs.breezy-desktop.packages.${pkgs.system}.default
-    inputs.breezy-desktop.packages.${pkgs.system}.breezy-kwin
-    inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.system}.default
+    inputs.breezy-desktop.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.breezy-desktop.packages.${pkgs.stdenv.hostPlatform.system}.breezy-kwin
+    inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default
     git
     amdgpu_top
     nvtopPackages.amd

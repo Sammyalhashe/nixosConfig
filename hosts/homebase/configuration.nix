@@ -17,8 +17,7 @@ in
     ./hardware-configuration.nix
     ./nvidia.nix
     ./bluetooth.nix
-    inputs.home-manager.nixosModules.default
-    inputs.home-manager.nixosModules.home-manager # Add this import
+    inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
   ];
 
