@@ -146,12 +146,18 @@ in
         replication_factor = 1;
         ring = {
           instance_addr = "127.0.0.1";
+          instance_interface_names = [ ];
           kvstore.store = "inmemory";
         };
       };
 
       # Single-node: disable memberlist clustering
-      memberlist.join_members = [ ];
+      memberlist = {
+        bind_addr = [ "127.0.0.1" ];
+        advertise_addr = "127.0.0.1";
+        abort_if_cluster_join_fails = false;
+        join_members = [ ];
+      };
 
       schema_config.configs = [
         {
