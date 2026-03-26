@@ -55,13 +55,13 @@ in
     };
   };
 
-  # 3. Systemd user timer to run the bot every 5 minutes
+  # 3. Systemd user timer to run the bot every 3 minutes
   systemd.user.timers.coinbase-trader = {
     Unit = {
-      Description = "Run Coinbase Trading Bot every 5 minutes";
+      Description = "Run Coinbase Trading Bot every 3 minutes";
     };
     Timer = {
-      OnCalendar = "*:0/5";
+      OnCalendar = "*:0/3";
       Persistent = true;
     };
     Install = {
