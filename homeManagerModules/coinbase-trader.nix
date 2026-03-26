@@ -43,8 +43,8 @@ in
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=true"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
+        "STRATEGY=mean_reversion"
         # All risk/strategy params use Python defaults from config/trading_config.py
-        # To switch strategy: add "STRATEGY=mean_reversion"
         # To override any default, add the env var here (see config/trading_config.py)
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
