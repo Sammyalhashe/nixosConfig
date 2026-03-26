@@ -92,6 +92,19 @@ in
     settings.WebService.AllowUnencrypted = true;
   };
 
+  # Generate Grafana secret key if it doesn't exist
+  systemd.tmpfiles.rules = [
+    "d /var/lib/grafana 0750 grafana grafana -"
+  ];
+  system.activationScripts.grafana-secret-key = ''
+    if [ ! -f /var/lib/grafana/secret_key ]; then
+      mkdir -p /var/lib/grafana
+      ${pkgs.openssl}/bin/openssl rand -hex 32 > /var/lib/grafana/secret_key
+      chmod 400 /var/lib/grafana/secret_key
+      chown grafana:grafana /var/lib/grafana/secret_key 2>/dev/null || true
+    fi
+  '';
+
   # Grafana - log visualization and dashboards
   services.grafana = {
     enable = true;
@@ -100,6 +113,7 @@ in
         http_addr = "0.0.0.0";
         http_port = 3000;
       };
+      security.secret_key = "$__file{/var/lib/grafana/secret_key}";
       # Disable login requirement for local use
       "auth.anonymous" = {
         enabled = true;
