@@ -147,6 +147,7 @@ in
           instance_addr = "127.0.0.1";
           kvstore.store = "inmemory";
         };
+        instance_interface_names = [ "lo" ];
       };
 
       schema_config.configs = [
