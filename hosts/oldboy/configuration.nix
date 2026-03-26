@@ -78,10 +78,126 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
+  # Firewall
+  networking.firewall.allowedTCPPorts = [
+    6969 # Cockpit
+    3000 # Grafana
+    3100 # Loki
+  ];
+
   # Cockpit web-based server management UI
   services.cockpit = {
     enable = true;
     port = 6969;
     settings.WebService.AllowUnencrypted = true;
+  };
+
+  # Grafana - log visualization and dashboards
+  services.grafana = {
+    enable = true;
+    settings = {
+      server = {
+        http_addr = "0.0.0.0";
+        http_port = 3000;
+      };
+      # Disable login requirement for local use
+      "auth.anonymous" = {
+        enabled = true;
+        org_role = "Admin";
+      };
+    };
+    provision = {
+      datasources.settings.datasources = [
+        {
+          name = "Loki";
+          type = "loki";
+          url = "http://localhost:3100";
+          isDefault = true;
+        }
+      ];
+    };
+  };
+
+  # Loki - log aggregation backend
+  services.loki = {
+    enable = true;
+    configuration = {
+      auth_enabled = false;
+      server.http_listen_port = 3100;
+
+      common = {
+        path_prefix = "/var/lib/loki";
+        storage.filesystem.chunks_directory = "/var/lib/loki/chunks";
+        storage.filesystem.rules_directory = "/var/lib/loki/rules";
+        ring = {
+          instance_addr = "127.0.0.1";
+          kvstore.store = "inmemory";
+        };
+      };
+
+      schema_config.configs = [
+        {
+          from = "2024-01-01";
+          store = "tsdb";
+          object_store = "filesystem";
+          schema = "v13";
+          index = {
+            prefix = "index_";
+            period = "24h";
+          };
+        }
+      ];
+
+      limits_config = {
+        retention_period = "30d";
+      };
+
+      compactor = {
+        working_directory = "/var/lib/loki/compactor";
+        delete_request_store = "filesystem";
+        retention_enabled = true;
+      };
+    };
+  };
+
+  # Promtail - log shipper (scrapes journald and sends to Loki)
+  services.promtail = {
+    enable = true;
+    configuration = {
+      server = {
+        http_listen_port = 9080;
+        grpc_listen_port = 0;
+      };
+      positions.filename = "/var/lib/promtail/positions.yaml";
+      clients = [
+        { url = "http://localhost:3100/loki/api/v1/push"; }
+      ];
+      scrape_configs = [
+        {
+          job_name = "journal";
+          journal = {
+            max_age = "12h";
+            labels = {
+              job = "systemd-journal";
+              host = "oldboy";
+            };
+          };
+          relabel_configs = [
+            {
+              source_labels = [ "__journal__systemd_unit" ];
+              target_label = "unit";
+            }
+            {
+              source_labels = [ "__journal__systemd_user_unit" ];
+              target_label = "user_unit";
+            }
+            {
+              source_labels = [ "__journal_priority_keyword" ];
+              target_label = "priority";
+            }
+          ];
+        }
+      ];
+    };
   };
 }
