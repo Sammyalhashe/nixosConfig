@@ -43,21 +43,9 @@ in
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=true"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        # Risk Limits
-        "MAX_POSITION_USD=5000"
-        "MAX_DRAWDOWN_PCT=10"
-        "MIN_ORDER_USD=10"
-        "PORTFOLIO_RISK_PERCENTAGE=0.15"
-        "RISK_PER_TRADE_PCT=0.95"
-        # Trailing Stop & Take-Profit
-        "TRAILING_STOP_PCT=0.05"
-        "TAKE_PROFIT_1_PCT=0.10"
-        "TAKE_PROFIT_1_SELL_RATIO=0.33"
-        "TAKE_PROFIT_2_PCT=0.20"
-        "TAKE_PROFIT_2_SELL_RATIO=0.50"
-        # Short Selling
-        "ENABLE_SHORT=true"
-        "SHORT_RISK_PERCENTAGE=0.05"
+        # All risk/strategy params use Python defaults from config/trading_config.py
+        # To switch strategy: add "STRATEGY=mean_reversion"
+        # To override any default, add the env var here (see config/trading_config.py)
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       # Wait for network to be truly available (timeout after 60s)
