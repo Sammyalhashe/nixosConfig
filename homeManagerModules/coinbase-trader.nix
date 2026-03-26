@@ -55,6 +55,31 @@ in
     };
   };
 
+  # 2b. Systemd user service for WebSocket mode (long-lived, real-time exits)
+  systemd.user.services.coinbase-trader-ws = {
+    Unit = {
+      Description = "Coinbase Trading Bot (WebSocket mode)";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
+      Conflicts = [ "coinbase-trader.service" "coinbase-trader.timer" ];
+    };
+    Service = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = "10s";
+      WorkingDirectory = repoDir;
+      Environment = [
+        "TRADING_MODE=live"
+        "ENABLE_ETHEREUM=true"
+        "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
+        "STRATEGY=mean_reversion"
+      ];
+      EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
+      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes' -- --ws";
+    };
+  };
+
   # 3. Systemd user timer to run the bot every 3 minutes
   systemd.user.timers.coinbase-trader = {
     Unit = {
