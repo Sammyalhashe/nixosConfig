@@ -70,6 +70,30 @@ let
     ]
   );
 
+  # Backup script for Vaultwarden SQLite DB
+  vaultwardenBackupScript = pkgs.writeShellScriptBin "vaultwarden-sqlite-backup" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+    BACKUP_DIR="/backup/vaultwarden"
+    mkdir -p "$BACKUP_DIR"
+    TIMESTAMP=$(date +"%Y-%m-%dT%H-%M-%S")
+    BACKUP_FILE="$BACKUP_DIR/vaultwarden-$TIMESTAMP.sqlite3"
+    ${pkgs.podman}/bin/podman exec vaultwarden sqlite3 /data/db.sqlite3 ".backup \"$BACKUP_FILE\""
+  '';
+
+  # HACS download wrapper script
+  hacsDownloadScript = pkgs.writeShellScriptBin "hacs-download-wrapper" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+    HACS_DIR="/config/custom_components/hacs"
+    if ${pkgs.podman}/bin/podman exec homeassistant test -d "$HACS_DIR"; then
+      echo "HACS already installed – skipping download"
+      exit 0
+    fi
+    echo "Downloading HACS..."
+    ${pkgs.podman}/bin/podman exec homeassistant wget -O - https://get.hacs.xyz | bash -
+  '';
+
   # 2. The Extraction Script (Embedded Python)
   # This script pulls TODOs from your Logseq Journals on your SSD
   extractTodos = pkgs.writeScriptBin "extract-logseq-todos" ''
@@ -130,12 +154,6 @@ let
       rev = "master";
       sha256 = "1v8cm06lrsskfpf62jv6zgs6dz70sk6wh8sy18cn6mxans4i3apw";
     };
-    nativeBuildInputs = [ pkgs.python3Packages.hatchling ];
-    propagatedBuildInputs = with pkgs.python3Packages; [
-      click
-      httpx
-      pydantic
-    ];
   };
 
   # Sync script
@@ -374,6 +392,29 @@ in
     };
   };
 
+  # Backup Vaultwarden SQLite DB using sqlite3 .backup
+  systemd.services.vaultwarden-backup = {
+    description = "Backup Vaultwarden SQLite database";
+    after = [
+      "network.target"
+      "podman.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${vaultwardenBackupScript}/bin/vaultwarden-sqlite-backup";
+    };
+  };
+
+  systemd.timers.vaultwarden-backup = {
+    description = "Timer for Vaultwarden backup";
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
   virtualisation.oci-containers.containers = {
     # Nextcloud App
     nextcloud-app = {
@@ -435,6 +476,17 @@ in
       ${pkgs.podman}/bin/podman network exists hass-net || \
       ${pkgs.podman}/bin/podman network create hass-net
     '';
+  };
+
+  systemd.services.hacs-download = {
+    description = "Download and install HACS into Home Assistant";
+    after = [ "podman-homeassistant.service" ];
+    wants = [ "podman-homeassistant.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${hacsDownloadScript}/bin/hacs-download-wrapper";
+    };
   };
 
   systemd.services.init-nextcloud-network = {
