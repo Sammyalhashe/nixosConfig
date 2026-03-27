@@ -29,7 +29,7 @@ in
     fi
   '';
 
-  # 2. Systemd user service to run the trading bot
+  # 2. Systemd user service to run the trading bot (Disabled by default, replaced by WS)
   systemd.user.services.coinbase-trader = {
     Unit = {
       Description = "Run Coinbase Trading Bot";
@@ -78,9 +78,12 @@ in
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
       ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes' -- --ws";
     };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
   };
 
-  # 3. Systemd user timer to run the bot every 3 minutes
+  # 3. Systemd user timer to run the bot every 3 minutes (Disabled by default)
   systemd.user.timers.coinbase-trader = {
     Unit = {
       Description = "Run Coinbase Trading Bot every 3 minutes";
@@ -88,9 +91,6 @@ in
     Timer = {
       OnCalendar = "*:0/3";
       Persistent = true;
-    };
-    Install = {
-      WantedBy = [ "timers.target" ];
     };
   };
 
