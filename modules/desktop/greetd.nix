@@ -11,15 +11,36 @@
       enable = true;
       settings = {
         default_session = {
-          command = lib.mkForce "${pkgs.cosmic-greeter}/bin/cosmic-greeter";
+          # cosmic-greeter is a Wayland app and needs a compositor (like cage) to run.
+          # -s enables VT switching in cage
+          command = lib.mkForce "${pkgs.cage}/bin/cage -s -- ${pkgs.cosmic-greeter}/bin/cosmic-greeter";
           user = "greeter";
         };
       };
     };
 
-    # Ensure cosmic-greeter and its dependencies are available
+    # The greeter requires its daemon to be running for D-Bus communication
+    systemd.services.cosmic-greeter-daemon = {
+      description = "COSMIC Greeter Daemon";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.cosmic-greeter}/bin/cosmic-greeter-daemon";
+        Restart = "always";
+      };
+    };
+
+    # Ensure the 'greeter' user has necessary permissions for graphics and input
+    users.users.greeter = {
+      isSystemUser = true;
+      group = "greeter";
+      extraGroups = [ "video" "input" ];
+    };
+    users.groups.greeter = {};
+
+    # Ensure cosmic-greeter, cage, and their dependencies are available
     environment.systemPackages = with pkgs; [
       cosmic-greeter
+      cage
     ];
   };
 }
