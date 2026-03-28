@@ -429,7 +429,12 @@
 
   services.mako = {
     enable = true;
-    backgroundColor = "#11111b";
+    backgroundColor = lib.mkForce "#11111b";
+    borderColor = lib.mkForce "#89b4fa";
+    borderSize = 2;
+    borderRadius = 12;
+    defaultTimeout = 10000; # 10 seconds
+    font = "Lexend 11";
   };
 
   # hyprlock
