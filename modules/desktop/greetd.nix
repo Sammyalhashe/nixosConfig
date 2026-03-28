@@ -13,7 +13,7 @@
         default_session = {
           # cosmic-greeter is a Wayland app and needs a compositor (like cage) to run.
           # -s enables VT switching in cage
-          command = lib.mkForce "${pkgs.cage}/bin/cage -s -- ${pkgs.cosmic-greeter}/bin/cosmic-greeter";
+          command = lib.mkForce "${pkgs.dbus}/bin/dbus-run-session ${pkgs.cage}/bin/cage -s -- ${pkgs.cosmic-greeter}/bin/cosmic-greeter";
           user = "greeter";
         };
       };
@@ -33,7 +33,7 @@
     users.users.greeter = {
       isSystemUser = true;
       group = "greeter";
-      extraGroups = [ "video" "input" ];
+      extraGroups = [ "video" "input" "render" ];
     };
     users.groups.greeter = {};
 
@@ -41,6 +41,12 @@
     environment.systemPackages = with pkgs; [
       cosmic-greeter
       cage
+    ];
+
+    # Required for some Wayland compositors/apps to function correctly
+    # especially when run via greetd
+    systemd.tmpfiles.rules = [
+      "d /run/greetd 0755 greeter greeter -"
     ];
   };
 }
