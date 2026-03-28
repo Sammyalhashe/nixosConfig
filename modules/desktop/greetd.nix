@@ -13,8 +13,8 @@
       
       # Use a modern font and theme
       font = {
-        package = pkgs.lexend;
-        name = "Lexend 12";
+        package = lib.mkForce pkgs.lexend;
+        name = lib.mkForce "Lexend 12";
       };
 
       settings = {
