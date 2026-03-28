@@ -18,9 +18,9 @@
           fit = "Cover";
         };
         GTK = {
-          theme_name = "Adwaita-dark";
-          cursor_theme_name = "Adwaita";
-          font_name = "Cantarell 11";
+          theme_name = lib.mkForce "Adwaita-dark";
+          cursor_theme_name = lib.mkForce "Adwaita";
+          font_name = lib.mkForce "Cantarell 11";
         };
       };
     };
