@@ -14,8 +14,8 @@
       settings = {
         background = {
           # Using one of your existing wallpapers
-          path = ../../common/assets/BLACK_VII_desktop.jpg;
-          fit = "Cover";
+          path = lib.mkForce ../../common/assets/BLACK_VII_desktop.jpg;
+          fit = lib.mkForce "Cover";
         };
         GTK = {
           theme_name = lib.mkForce "Adwaita-dark";
