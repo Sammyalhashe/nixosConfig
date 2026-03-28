@@ -34,7 +34,7 @@
       };
 
       # Custom CSS for a modern "Glassmorphism" look
-      extraCss = ''
+      extraCss = lib.mkForce ''
         /* The main container for the login widgets */
         .main-container {
           background-color: rgba(30, 30, 46, 0.4); /* Semi-transparent */
