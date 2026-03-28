@@ -214,29 +214,31 @@ in
           body-font = "JetBrainsMono Nerd Font:style=Bold:size=14";
           border-size = 2;
           border-radius = 24;
-          background = "00000000";
+          background = "${config.lib.stylix.colors.base00}ff";
           border-color = "${config.lib.stylix.colors.base05}ff";
           padding-vertical = 20;
           padding-horizontal = 20;
+          default-timeout = 10;
         };
         low = {
-          background = "00000000";
+          background = "${config.lib.stylix.colors.base00}ff";
           title-color = "${config.lib.stylix.colors.base05}ff";
           summary-color = "${config.lib.stylix.colors.base05}ff";
           body-color = "${config.lib.stylix.colors.base05}ff";
         };
         normal = {
-          background = "00000000";
+          background = "${config.lib.stylix.colors.base00}ff";
           title-color = "${config.lib.stylix.colors.base0D}ff";
           summary-color = "${config.lib.stylix.colors.base05}ff";
           body-color = "${config.lib.stylix.colors.base05}ff";
         };
         critical = {
-          background = "00000000";
+          background = "${config.lib.stylix.colors.base00}ff";
           border-color = "${config.lib.stylix.colors.base08}ff";
           title-color = "${config.lib.stylix.colors.base08}ff";
           summary-color = "${config.lib.stylix.colors.base08}ff";
           body-color = "${config.lib.stylix.colors.base08}ff";
+          default-timeout = 0;
         };
       };
     };
