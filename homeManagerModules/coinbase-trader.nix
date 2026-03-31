@@ -41,9 +41,9 @@ in
       WorkingDirectory = repoDir;
       Environment = [
         "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=true"
+        "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        "STRATEGY=mean_reversion"
+        "STRATEGY=trend_following"
         # All risk/strategy params use Python defaults from config/trading_config.py
         # To override any default, add the env var here (see config/trading_config.py)
       ];
@@ -56,6 +56,9 @@ in
   };
 
   # 2b. Systemd user service for WebSocket mode (long-lived, real-time exits)
+  #     This is the default — auto-starts via WantedBy.
+  #     To fall back to timer mode: systemctl --user stop coinbase-trader-ws
+  #     then: systemctl --user start coinbase-trader.timer
   systemd.user.services.coinbase-trader-ws = {
     Unit = {
       Description = "Coinbase Trading Bot (WebSocket mode)";
@@ -70,9 +73,9 @@ in
       WorkingDirectory = repoDir;
       Environment = [
         "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=true"
+        "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        "STRATEGY=mean_reversion"
+        "STRATEGY=trend_following"
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
@@ -83,7 +86,7 @@ in
     };
   };
 
-  # 3. Systemd user timer to run the bot every 3 minutes (Disabled by default)
+  # 3. Systemd user timer to run the bot every 3 minutes (fallback, not auto-started)
   systemd.user.timers.coinbase-trader = {
     Unit = {
       Description = "Run Coinbase Trading Bot every 3 minutes";
