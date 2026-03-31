@@ -43,7 +43,7 @@ in
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        "STRATEGY=trend_following"
+        "STRATEGY=auto"
         # All risk/strategy params use Python defaults from config/trading_config.py
         # To override any default, add the env var here (see config/trading_config.py)
       ];
@@ -75,7 +75,7 @@ in
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        "STRATEGY=trend_following"
+        "STRATEGY=auto"
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
