@@ -31,5 +31,7 @@
     enableKDE = lib.mkEnableOption "Whether to install KDE Plasma.";
     enableMango = lib.mkEnableOption "Whether to install Mango desktop.";
     enableHyprland = lib.mkEnableOption "Whether to install Hyprland.";
+
+    enableMonitoring = lib.mkEnableOption "Whether to enable the monitoring stack (Cockpit, Grafana, Loki, Promtail).";
   };
 }

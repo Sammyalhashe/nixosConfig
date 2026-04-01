@@ -13,5 +13,6 @@
     ./networking
     ./security/sops.nix
     ./security/cachix.nix
+    ./monitoring
   ];
 }
