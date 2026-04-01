@@ -25,8 +25,8 @@ in
             "openrouter/free" = {
               name = "Auto-Free Router";
             };
-            "openrouter/aurora-alpha" = {
-              name = "Aurora Alpha";
+            "openrouter/qwen/qwen2.5-vl-72b-instruct:free" = {
+              name = "Qwen 2.5 VL 72B (Free)";
             };
             "openrouter/amazon-canada-ai/nova" = {
               name = "Amazon Nova";
@@ -82,7 +82,7 @@ in
           "model": "openrouter/amazon-canada-ai/nova"
         },
         "visual-engineering": {
-          "model": "openrouter/aurora-alpha"
+          "model": "openrouter/qwen/qwen2.5-vl-72b-instruct:free"
         },
         "deep": {
           "model": "openrouter/openrouter/free"
@@ -111,7 +111,7 @@ in
           "model": "openrouter/openrouter/free"
         },
         "oracle": {
-          "model": "openrouter/aurora-alpha"
+          "model": "openrouter/qwen/qwen2.5-vl-72b-instruct:free"
         },
         "explore": {
           "model": "openrouter/openrouter/free"
