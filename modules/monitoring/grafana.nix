@@ -33,7 +33,6 @@ lib.mkIf config.host.enableMonitoring {
         {
           name = "Loki";
           type = "loki";
-          uid = "loki";
           url = "http://localhost:3100";
           isDefault = true;
         }
