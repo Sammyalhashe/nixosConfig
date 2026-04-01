@@ -52,6 +52,22 @@ in
             };
           };
         };
+        opencode = {
+          name = "OpenCode Free";
+          npm = "@ai-sdk/openai-compatible";
+          options = {
+            baseURL = "https://opencode.ai/v1";
+            apiKey = "any";
+          };
+          models = {
+            "mimo-v2-omni-free" = {
+              name = "MiMo V2 Omni Free";
+            };
+            "mimo-v2-pro-free" = {
+              name = "MiMo V2 Pro Free";
+            };
+          };
+        };
       };
       model = "mothership/qwen3-coder-next";
     };
@@ -78,7 +94,7 @@ in
           "model": "openrouter/qwen/qwen-2.5-7b-instruct"
         },
         "omni": {
-          "model": "openrouter/xiaomi/mimo-v2-omni:free"
+          "model": "opencode/mimo-v2-omni-free"
         }
       },
       "agents": {
@@ -107,7 +123,7 @@ in
           "model": "openrouter/amazon-canada-ai/nova"
         },
         "MiMo": {
-          "model": "openrouter/xiaomi/mimo-v2-omni:free"
+          "model": "opencode/mimo-v2-omni-free"
         }
       }
     }

@@ -317,17 +317,22 @@ in
   };
 
   home.activation.configureOpenClawApprovals = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    # Use the OpenClaw binary from the flake input to ensure we're using the correct version
-    OPENCLAW="${inputs.nix-openclaw.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/openclaw"
+    # Use the OpenClaw binary from pkgs to ensure overlays are applied
+    OPENCLAW="${pkgs.openclaw}/bin/openclaw"
 
-    # Add standard system binaries to allowlist
-    $OPENCLAW approvals allowlist add "/run/current-system/sw/bin/*" || true
+    # Add standard system binaries to allowlist for all agents
+    $OPENCLAW approvals allowlist add --agent "*" "/run/current-system/sw/bin/*" || true
+    $OPENCLAW approvals allowlist add --agent "*" "/etc/profiles/per-user/${config.home.username}/bin/*" || true
+    $OPENCLAW approvals allowlist add --agent "*" "/home/${config.home.username}/bin/*" || true
 
-    # Add user profile binaries to allowlist
-    $OPENCLAW approvals allowlist add "/etc/profiles/per-user/${config.home.username}/bin/*" || true
+    # Also add explicitly for main agent as it sometimes overrides *
+    $OPENCLAW approvals allowlist add --agent "main" "/run/current-system/sw/bin/*" || true
+    $OPENCLAW approvals allowlist add --agent "main" "/etc/profiles/per-user/${config.home.username}/bin/*" || true
+    $OPENCLAW approvals allowlist add --agent "main" "/home/${config.home.username}/bin/*" || true
 
-    # Add user bin to allowlist
-    $OPENCLAW approvals allowlist add "$HOME/bin/*" || true
+    # Allow approve command itself to prevent recursive prompts
+    $OPENCLAW approvals allowlist add --agent "*" "/approve*" || true
+    $OPENCLAW approvals allowlist add --agent "main" "/approve*" || true
   '';
 
   home.activation.installOpenClawSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
