@@ -146,7 +146,6 @@ in
         replication_factor = 1;
         ring = {
           instance_addr = "127.0.0.1";
-          instance_interface_names = [ ];
           kvstore.store = "inmemory";
         };
       };
