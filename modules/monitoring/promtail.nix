@@ -1,6 +1,10 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
+  systemd.tmpfiles.rules = [
+    "d /var/lib/promtail 0750 promtail promtail -"
+  ];
+
   services.promtail = {
     enable = true;
     configuration = {
