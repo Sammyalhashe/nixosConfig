@@ -84,6 +84,7 @@ in
     6969 # Cockpit
     3000 # Grafana
     3100 # Loki
+    9090 # Prometheus
   ];
 
 }
