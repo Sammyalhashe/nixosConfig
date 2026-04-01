@@ -144,11 +144,15 @@ in
         storage.filesystem.chunks_directory = "/var/lib/loki/chunks";
         storage.filesystem.rules_directory = "/var/lib/loki/rules";
         replication_factor = 1;
+        instance_addr = "127.0.0.1";
+        instance_interface_names = [ ];
         ring = {
           instance_addr = "127.0.0.1";
           kvstore.store = "inmemory";
         };
       };
+
+      frontend.address = "127.0.0.1";
 
       # Single-node: disable memberlist clustering
       memberlist = {
