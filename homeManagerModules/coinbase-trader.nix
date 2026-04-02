@@ -44,6 +44,8 @@ in
         "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
         "STRATEGY=trend_following"
+        "SHORT_WINDOW=21"
+        "LONG_WINDOW=55"
         # All risk/strategy params use Python defaults from config/trading_config.py
         # To override any default, add the env var here (see config/trading_config.py)
       ];
@@ -64,7 +66,10 @@ in
       Description = "Coinbase Trading Bot (WebSocket mode)";
       After = [ "network-online.target" ];
       Wants = [ "network-online.target" ];
-      Conflicts = [ "coinbase-trader.service" "coinbase-trader.timer" ];
+      Conflicts = [
+        "coinbase-trader.service"
+        "coinbase-trader.timer"
+      ];
     };
     Service = {
       Type = "simple";
@@ -76,6 +81,8 @@ in
         "ENABLE_ETHEREUM=false"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
         "STRATEGY=trend_following"
+        "SHORT_WINDOW=21"
+        "LONG_WINDOW=55"
       ];
       EnvironmentFile = "/run/secrets/rendered/openclaw-env";
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
