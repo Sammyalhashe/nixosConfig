@@ -154,6 +154,14 @@ let
       rev = "master";
       sha256 = "1v8cm06lrsskfpf62jv6zgs6dz70sk6wh8sy18cn6mxans4i3apw";
     };
+    nativeBuildInputs = with pkgs.python3Packages; [
+      hatchling
+    ];
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      click
+      httpx
+      pydantic
+    ];
   };
 
   # Sync script
@@ -399,7 +407,6 @@ in
       "network.target"
       "podman.service"
     ];
-    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
       ExecStart = "${vaultwardenBackupScript}/bin/vaultwarden-sqlite-backup";
@@ -416,10 +423,29 @@ in
   };
 
   virtualisation.oci-containers.containers = {
-    # Nextcloud App
+    # 1. The Database (Pinned to 16)
+    nextcloud-db = {
+      image = "docker.io/library/postgres:16-alpine";
+      environment = {
+        POSTGRES_DB = "nextcloud";
+        POSTGRES_USER = "nextcloud";
+      };
+      environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
+      volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
+      extraOptions = [ "--network=nextcloud-net" ];
+    };
+
+    # 2. Redis (CRITICAL for stability/speed with photos)
+    nextcloud-redis = {
+      image = "docker.io/library/redis:alpine";
+      extraOptions = [ "--network=nextcloud-net" ];
+    };
+
+    # 3. Nextcloud App (Pinned Version!)
     nextcloud-app = {
-      image = "docker.io/library/nextcloud:latest";
-      ports = [ "8082:80" ]; # Maps container port 80 to host port 8082
+      # NEVER use :latest. Pin to a specific stable version.
+      image = "docker.io/library/nextcloud:33.0.0-apache";
+      ports = [ "8082:80" ];
       volumes = [
         "/nextcloud/html:/var/www/html"
         "/nextcloud/data:/var/www/html/data"
@@ -434,38 +460,65 @@ in
         OVERWRITEPROTOCOL = "https";
         OVERWRITEHOST = "cloud.salh.xyz";
         TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
+        # Add Redis for file locking and caching
+        REDIS_HOST = "nextcloud-redis";
       };
       environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
 
-    # Nextcloud Dedicated Database
-    nextcloud-db = {
-      image = "docker.io/library/postgres:16-alpine";
+    homeassistant = {
+      image = "ghcr.io/home-assistant/home-assistant:stable";
+      volumes = [
+        "/homeassistant:/config"
+        "/etc/localtime:/etc/localtime:ro"
+      ];
       environment = {
-        POSTGRES_DB = "nextcloud";
-        POSTGRES_USER = "nextcloud";
+        TZ = "America/New_York"; # Set your timezone
       };
-      environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
-      volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
-      extraOptions = [ "--network=nextcloud-net" ];
+      ports = [ "8123:8123" ];
+      extraOptions = [
+        "--network=hass-net"
+      ];
     };
   };
 
-  virtualisation.oci-containers.containers.homeassistant = {
-    image = "ghcr.io/home-assistant/home-assistant:stable";
-    volumes = [
-      "/homeassistant:/config"
-      "/etc/localtime:/etc/localtime:ro"
-    ];
-    environment = {
-      TZ = "America/New_York"; # Set your timezone
-    };
-    ports = [ "8123:8123" ];
-    extraOptions = [
-      "--network=hass-net"
-    ];
-  };
+  # virtualisation.oci-containers.containers = {
+  #   # Nextcloud App
+  #   nextcloud-app = {
+  #     image = "docker.io/library/nextcloud:latest";
+  #     ports = [ "8082:80" ]; # Maps container port 80 to host port 8082
+  #     volumes = [
+  #       "/nextcloud/html:/var/www/html"
+  #       "/nextcloud/data:/var/www/html/data"
+  #       "/nextcloud/config:/var/www/html/config"
+  #     ];
+  #     environment = {
+  #       POSTGRES_HOST = "nextcloud-db";
+  #       POSTGRES_DB = "nextcloud";
+  #       POSTGRES_USER = "nextcloud";
+  #       NEXTCLOUD_ADMIN_USER = "salhashemi2";
+  #       NEXTCLOUD_TRUSTED_DOMAINS = "cloud.salh.xyz";
+  #       OVERWRITEPROTOCOL = "https";
+  #       OVERWRITEHOST = "cloud.salh.xyz";
+  #       TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
+  #     };
+  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
+  #     extraOptions = [ "--network=nextcloud-net" ];
+  #   };
+  #
+  #   # Nextcloud Dedicated Database
+  #   nextcloud-db = {
+  #     image = "docker.io/library/postgres:16-alpine";
+  #     environment = {
+  #       POSTGRES_DB = "nextcloud";
+  #       POSTGRES_USER = "nextcloud";
+  #     };
+  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
+  #     volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
+  #     extraOptions = [ "--network=nextcloud-net" ];
+  #   };
+  # };
 
   systemd.services.init-hass-network = {
     description = "Create the internal network for Home Assistant";
@@ -498,6 +551,20 @@ in
       ${pkgs.podman}/bin/podman network exists nextcloud-net || \
       ${pkgs.podman}/bin/podman network create nextcloud-net
     '';
+  };
+
+  # Ensure containers wait for the network
+  systemd.services."podman-nextcloud-db" = {
+    after = [ "init-nextcloud-network.service" ];
+    requires = [ "init-nextcloud-network.service" ];
+  };
+  systemd.services."podman-nextcloud-redis" = {
+    after = [ "init-nextcloud-network.service" ];
+    requires = [ "init-nextcloud-network.service" ];
+  };
+  systemd.services."podman-nextcloud-app" = {
+    after = [ "init-nextcloud-network.service" "podman-nextcloud-db.service" "podman-nextcloud-redis.service" ];
+    requires = [ "init-nextcloud-network.service" "podman-nextcloud-redis.service" ];
   };
 
   networking.firewall.allowedTCPPorts = [
@@ -599,6 +666,7 @@ in
     after = [
       "network.target"
     ];
+    stopIfChanged = false;
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";
@@ -648,6 +716,7 @@ in
 
   systemd.services.supernote-sync = {
     description = "Sync Supernote Cloud to /SupernoteSync";
+    stopIfChanged = false;
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";
@@ -696,6 +765,7 @@ in
       pkgs.nix
       pkgs.git
     ]; # Ensure nix and git are in path for flake operations
+    stopIfChanged = false;
     serviceConfig = {
       Type = "oneshot";
       User = "salhashemi2";

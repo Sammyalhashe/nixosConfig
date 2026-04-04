@@ -31,10 +31,6 @@
   sops.secrets.telegram_bot_token = {
     owner = config.host.username;
   };
-  sops.secrets.grafana_telegram_bot_token = {
-    key = "telegram_bot_token";
-    owner = "grafana";
-  };
   sops.secrets.brave_api_key = {
     owner = config.host.username;
   };

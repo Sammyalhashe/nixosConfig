@@ -1,6 +1,11 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
+  sops.secrets.grafana_telegram_bot_token = {
+    key = "telegram_bot_token";
+    owner = "grafana";
+  };
+
   services.grafana.provision.alerting = {
     contactPoints.settings = {
       apiVersion = 1;
