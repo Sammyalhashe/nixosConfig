@@ -1,0 +1,13 @@
+# Exclude massive JSON/Lockfiles
+flake.lock
+result
+.git/
+
+# Exclude secrets and logs
+secrets.yaml
+*.log
+certs/
+
+# Exclude build artifacts
+*.q4km.gguf
+*.gguf

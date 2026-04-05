@@ -549,7 +549,7 @@ in
     // (Requires restart)
     // Default: true (if the host terminal supports it)
     // 
-    // support_kitty_keyboard_protocol false
+    support_kitty_keyboard_protocol true
      
     // Whether to stack panes when resizing beyond a certain size
     // Default: true
