@@ -80,7 +80,7 @@ in
   # Enable the Tiered Inference Services
   services.llm-services.gpt-oss.enable = false;
   services.llm-services.qwen-coder.enable = true;
-  services.llm-services.qwen-flash.enable = true;
+  services.llm-services.qwen-flash.enable = false;
   services.llm-services.litellm-uv.enable = true;
   # services.llm-services.one-api.enable = false;
 

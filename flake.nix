@@ -103,6 +103,7 @@
       url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
       flake = false;
     };
+    llama-cpp.url = "github:ggml-org/llama.cpp";
   };
 
   outputs =
@@ -134,6 +135,7 @@
       plugin-email,
       plugin-cloudflare,
       flake-utils,
+      llama-cpp,
       ...
     }@inputs:
     let
@@ -244,6 +246,12 @@
             host.enableMango = true;
             programs.stylix.enable = true;
           }
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [ llama-cpp.overlays.default ];
+            }
+          )
         ];
       };
 
