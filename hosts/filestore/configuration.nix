@@ -423,9 +423,17 @@ in
   };
 
   virtualisation.oci-containers.containers = {
-    # 1. The Database (Pinned to 16)
+    # 1. The Database (Sane limits for Pi 4)
     nextcloud-db = {
       image = "docker.io/library/postgres:16-alpine";
+      # Lower connections to prevent RAM exhaustion, but enough for the job
+      cmd = [
+        "postgres"
+        "-c"
+        "max_connections=100"
+        "-c"
+        "shared_buffers=512MB" # Assuming 4GB or 8GB Pi
+      ];
       environment = {
         POSTGRES_DB = "nextcloud";
         POSTGRES_USER = "nextcloud";
@@ -435,15 +443,14 @@ in
       extraOptions = [ "--network=nextcloud-net" ];
     };
 
-    # 2. Redis (CRITICAL for stability/speed with photos)
+    # 2. Redis (MANDATORY for Pi 4)
     nextcloud-redis = {
       image = "docker.io/library/redis:alpine";
       extraOptions = [ "--network=nextcloud-net" ];
     };
 
-    # 3. Nextcloud App (Pinned Version!)
+    # 3. Nextcloud App
     nextcloud-app = {
-      # NEVER use :latest. Pin to a specific stable version.
       image = "docker.io/library/nextcloud:33.0.0-apache";
       ports = [ "8082:80" ];
       volumes = [
@@ -455,39 +462,45 @@ in
         POSTGRES_HOST = "nextcloud-db";
         POSTGRES_DB = "nextcloud";
         POSTGRES_USER = "nextcloud";
-        NEXTCLOUD_ADMIN_USER = "salhashemi2";
+        REDIS_HOST = "nextcloud-redis";
+
+        # Pi 4 sweet spot: 1GB is enough for scans, 2GB if you have the 8GB Pi.
+        PHP_MEMORY_LIMIT = "1G";
+        PHP_UPLOAD_LIMIT = "10G";
+
+        # Optimization: Disable heavy background tasks during migration
         NEXTCLOUD_TRUSTED_DOMAINS = "cloud.salh.xyz";
         OVERWRITEPROTOCOL = "https";
         OVERWRITEHOST = "cloud.salh.xyz";
-        TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
-        # Add Redis for file locking and caching
-        REDIS_HOST = "nextcloud-redis";
       };
       environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
-
-    homeassistant = {
-      image = "ghcr.io/home-assistant/home-assistant:stable";
-      volumes = [
-        "/homeassistant:/config"
-        "/etc/localtime:/etc/localtime:ro"
-      ];
-      environment = {
-        TZ = "America/New_York"; # Set your timezone
-      };
-      ports = [ "8123:8123" ];
-      extraOptions = [
-        "--network=hass-net"
-      ];
-    };
   };
-
   # virtualisation.oci-containers.containers = {
-  #   # Nextcloud App
+  #   # 1. The Database (Pinned to 16)
+  #   nextcloud-db = {
+  #     image = "docker.io/library/postgres:16-alpine";
+  #     environment = {
+  #       POSTGRES_DB = "nextcloud";
+  #       POSTGRES_USER = "nextcloud";
+  #     };
+  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
+  #     volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
+  #     extraOptions = [ "--network=nextcloud-net" ];
+  #   };
+  #
+  #   # 2. Redis (CRITICAL for stability/speed with photos)
+  #   nextcloud-redis = {
+  #     image = "docker.io/library/redis:alpine";
+  #     extraOptions = [ "--network=nextcloud-net" ];
+  #   };
+  #
+  #   # 3. Nextcloud App (Pinned Version!)
   #   nextcloud-app = {
-  #     image = "docker.io/library/nextcloud:latest";
-  #     ports = [ "8082:80" ]; # Maps container port 80 to host port 8082
+  #     # NEVER use :latest. Pin to a specific stable version.
+  #     image = "docker.io/library/nextcloud:33.0.0-apache";
+  #     ports = [ "8082:80" ];
   #     volumes = [
   #       "/nextcloud/html:/var/www/html"
   #       "/nextcloud/data:/var/www/html/data"
@@ -502,21 +515,26 @@ in
   #       OVERWRITEPROTOCOL = "https";
   #       OVERWRITEHOST = "cloud.salh.xyz";
   #       TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
+  #       # Add Redis for file locking and caching
+  #       REDIS_HOST = "nextcloud-redis";
   #     };
   #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
   #     extraOptions = [ "--network=nextcloud-net" ];
   #   };
   #
-  #   # Nextcloud Dedicated Database
-  #   nextcloud-db = {
-  #     image = "docker.io/library/postgres:16-alpine";
+  #   homeassistant = {
+  #     image = "ghcr.io/home-assistant/home-assistant:stable";
+  #     volumes = [
+  #       "/homeassistant:/config"
+  #       "/etc/localtime:/etc/localtime:ro"
+  #     ];
   #     environment = {
-  #       POSTGRES_DB = "nextcloud";
-  #       POSTGRES_USER = "nextcloud";
+  #       TZ = "America/New_York"; # Set your timezone
   #     };
-  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
-  #     volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
-  #     extraOptions = [ "--network=nextcloud-net" ];
+  #     ports = [ "8123:8123" ];
+  #     extraOptions = [
+  #       "--network=hass-net"
+  #     ];
   #   };
   # };
 
@@ -567,6 +585,26 @@ in
     requires = [ "init-nextcloud-network.service" "podman-nextcloud-redis.service" ];
   };
 
+  # Nextcloud Background Jobs (Cron)
+  systemd.services.nextcloud-cron = {
+    description = "Nextcloud cron job";
+    after = [ "podman-nextcloud-app.service" ];
+    requires = [ "podman-nextcloud-app.service" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      ${pkgs.podman}/bin/podman exec -u 33 nextcloud-app php -f cron.php
+    '';
+  };
+
+  systemd.timers.nextcloud-cron = {
+    description = "Run Nextcloud cron job every 5 minutes";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*:0/5";
+      Persistent = true;
+    };
+  };
+
   networking.firewall.allowedTCPPorts = [
     9443
     9000
@@ -611,10 +649,10 @@ in
     "z /nextcloud/data 0755 33 33 - -"
     "z /nextcloud/config 0755 33 33 - -"
 
-    # Database Folder (UID 999 is postgres inside the container)
-    # 'd' creates it if missing; 'z' ensures the 999:999 ownership recursively
-    "d /nextcloud/db 0700 999 999 - -"
-    "z /nextcloud/db 0700 999 999 - -"
+    # Database Folder (UID 70 is postgres inside the container)
+    # 'd' creates it if missing; 'z' ensures the ownership recursively
+    "d /nextcloud/db 0700 70 70 - -"
+    "z /nextcloud/db 0700 70 70 - -"
 
     "d /homeassistant 0755 salhashemi2 users - -"
 
@@ -753,32 +791,6 @@ in
     description = "Run Logseq Digest every day at 8 PM";
     timerConfig = {
       OnCalendar = "0/2:00:00";
-      Persistent = true;
-    };
-    wantedBy = [ "timers.target" ];
-  };
-
-  # Trading Bot Service (Replaces OpenClaw-based cron)
-  systemd.services.coinbase-trader = {
-    description = "Run Coinbase Trading Bot";
-    path = [
-      pkgs.nix
-      pkgs.git
-    ]; # Ensure nix and git are in path for flake operations
-    stopIfChanged = false;
-    serviceConfig = {
-      Type = "oneshot";
-      User = "salhashemi2";
-      WorkingDirectory = "/home/salhashemi2/trading-bot-flake";
-      Environment = "TRADING_MODE=live";
-      ExecStart = "${pkgs.nix}/bin/nix run /home/salhashemi2/trading-bot-flake";
-    };
-  };
-
-  systemd.timers.coinbase-trader = {
-    description = "Run Coinbase Trading Bot every 5 minutes";
-    timerConfig = {
-      OnCalendar = "*:0/5";
       Persistent = true;
     };
     wantedBy = [ "timers.target" ];
