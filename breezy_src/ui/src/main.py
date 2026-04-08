@@ -21,7 +21,6 @@ import os
 import sys
 import gi
 import logging
-import argparse
 
 from logging.handlers import TimedRotatingFileHandler
 

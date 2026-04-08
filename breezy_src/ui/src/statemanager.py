@@ -16,7 +16,7 @@ class StateManager(GObject.GObject):
         'follow-mode': (bool, 'Follow Mode', 'Whether the follow mode is enabled', False, GObject.ParamFlags.READWRITE),
         'follow-threshold': (float, 'Follow Threshold', 'The follow threshold', 1.0, 45.0, 15.0, GObject.ParamFlags.READWRITE),
         'widescreen-mode': (bool, 'Widescreen Mode', 'Whether widescreen mode is enabled', False, GObject.ParamFlags.READWRITE),
-        'enabled-features-list': (object, 'Enabled Features List', 'A list of the enabled features', None, GObject.ParamFlags.READWRITE),
+        'enabled-features-list': (object, 'Enabled Features List', 'A list of the enabled features', GObject.ParamFlags.READWRITE),
         'device-supports-sbs': (bool, 'Device Supports SBS', 'Whether the connected device supports SBS', False, GObject.ParamFlags.READWRITE),
         'connected-device-full-distance-cm': (float, 'Full Distance (cm)', 'Device full distance in cm', 0.0, 10000.0, 0.0, GObject.ParamFlags.READWRITE),
         'connected-device-full-size-cm': (float, 'Full Size (cm)', 'Device full display size in cm', 0.0, 10000.0, 0.0, GObject.ParamFlags.READWRITE),

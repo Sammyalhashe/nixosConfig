@@ -47,23 +47,16 @@ breezydesktop_sources = [
   'displaydistancedialogcontent.py',
   'failedverification.py',
   'files.py',
-  'license.py',
-  'licensedialog.py',
-  'licensedialogcontent.py',
-  'licensefeaturerow.py',
-  'licensetierrow.py',
   'main.py',
   'nodevice.py',
   'nodriver.py',
   'noextension.py',
-  'nolicense.py',
   'settingsmanager.py',
   'shortcutdialog.py',
   'statemanager.py',
   'time.py',
   'virtualdisplay.py',
   'virtualdisplaymanager.py',
-  'verify.py',
   'window.py'
 ]
 
