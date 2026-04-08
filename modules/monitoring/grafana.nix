@@ -33,6 +33,7 @@ lib.mkIf config.host.enableMonitoring {
         {
           name = "Loki";
           type = "loki";
+          uid = "loki";
           url = "http://localhost:3100";
           isDefault = true;
         }
@@ -41,6 +42,12 @@ lib.mkIf config.host.enableMonitoring {
           type = "prometheus";
           uid = "prometheus";
           url = "http://localhost:9090";
+        }
+      ];
+      dashboards.settings.providers = [
+        {
+          name = "default";
+          options.path = ./dashboards;
         }
       ];
     };
