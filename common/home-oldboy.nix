@@ -15,6 +15,7 @@ in
     ./home-common.nix
     ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
+    ../homeManagerModules/claude-code.nix
     ../homeManagerModules/opencode.nix
     ../homeManagerModules/coinbase-trader.nix
   ];
