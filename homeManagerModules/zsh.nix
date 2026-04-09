@@ -57,6 +57,11 @@ in
       ];
     };
 
+    sessionVariables = {
+      ANTHROPIC_BASE_URL = "http://11.125.37.101:4000";
+      ANTHROPIC_API_KEY = "sk-no-key-required";
+    };
+
     initContent = ''
       bindkey -v
       bindkey '^R' history-incremental-search-backward

@@ -51,6 +51,8 @@ in
       $env.EDITOR = "nvim"
       $env.config.shell_integration.osc133 = false
       $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
+      $env.ANTHROPIC_BASE_URL = "http://11.125.37.101:4000"
+      $env.ANTHROPIC_API_KEY = "sk-no-key-required"
     '';
     shellAliases = {
       # common aliases
