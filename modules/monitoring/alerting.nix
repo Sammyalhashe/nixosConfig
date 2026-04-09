@@ -7,7 +7,6 @@ lib.mkIf config.host.enableMonitoring {
   };
 
   services.grafana.provision = {
-    # Provisioning contact points and policies is fine, but rules are tricky
     alerting = {
       contactPoints.settings = {
         apiVersion = 1;
@@ -42,21 +41,36 @@ lib.mkIf config.host.enableMonitoring {
           }
         ];
       };
-    };
 
-    # Alert rules are created via the Grafana UI (Alerting > Alert rules)
-    # rather than file provisioning, because Grafana validates datasource
-    # UID references during provisioning before datasources are committed
-    # to its DB, causing "datasource not found" errors on startup.
-    #
-    # Rules to create manually:
-    #   Machine Health (Prometheus):
-    #     - CPU > 90% for 5m
-    #     - Memory > 90% for 5m
-    #     - Disk > 85% for 5m
-    #     - Node Exporter down for 2m
-    #   Trading Bot (Loki):
-    #     - Critical errors: {unit="coinbase-trader-ws.service"} |~ "CRITICAL|FATAL|Exception|Traceback"
-    #     - Service failed: {unit="coinbase-trader-ws.service"} |= "Failed"
+      # The NixOS Grafana module's generateAlertingProvisioningYaml lacks a
+      # null-guard: when rules/templates/muteTimings are unset their settings
+      # default to null, producing a literal "null" YAML document that makes
+      # Grafana fail on startup. Provide explicit empty structures to avoid this.
+      rules.settings = {
+        apiVersion = 1;
+        groups = [];
+      };
+      templates.settings = {
+        apiVersion = 1;
+      };
+      muteTimings.settings = {
+        apiVersion = 1;
+        muteTimes = [];
+      };
+    };
   };
+
+  # Alert rules are created via the Grafana UI (Alerting > Alert rules)
+  # rather than file provisioning, to avoid datasource UID resolution
+  # issues at startup.
+  #
+  # Rules to create manually:
+  #   Machine Health (Prometheus):
+  #     - CPU > 90% for 5m
+  #     - Memory > 90% for 5m
+  #     - Disk > 85% for 5m
+  #     - Node Exporter down for 2m
+  #   Trading Bot (Loki):
+  #     - Critical errors: {unit="coinbase-trader-ws.service"} |~ "CRITICAL|FATAL|Exception|Traceback"
+  #     - Service failed: {unit="coinbase-trader-ws.service"} |= "Failed"
 }
