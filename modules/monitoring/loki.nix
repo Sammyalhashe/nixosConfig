@@ -1,6 +1,16 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
+  services.grafana.provision.datasources.settings.datasources = [
+    {
+      name = "Loki";
+      type = "loki";
+      uid = "loki";
+      url = "http://localhost:3100";
+      isDefault = true;
+    }
+  ];
+
   services.loki = {
     enable = true;
     configuration = {

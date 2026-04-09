@@ -6,39 +6,42 @@ lib.mkIf config.host.enableMonitoring {
     owner = "grafana";
   };
 
-  services.grafana.provision.alerting = {
-    contactPoints.settings = {
-      apiVersion = 1;
-      contactPoints = [
-        {
-          orgId = 1;
-          name = "Telegram";
-          receivers = [
-            {
-              uid = "telegram";
-              type = "telegram";
-              settings = {
-                bottoken = "$__file{/run/secrets/grafana_telegram_bot_token}";
-                chatid = "8555669756";
-              };
-            }
-          ];
-        }
-      ];
-    };
+  services.grafana.provision = {
+    # Provisioning contact points and policies is fine, but rules are tricky
+    alerting = {
+      contactPoints.settings = {
+        apiVersion = 1;
+        contactPoints = [
+          {
+            orgId = 1;
+            name = "Telegram";
+            receivers = [
+              {
+                uid = "telegram";
+                type = "telegram";
+                settings = {
+                  bottoken = "$__file{/run/secrets/grafana_telegram_bot_token}";
+                  chatid = "8555669756";
+                };
+              }
+            ];
+          }
+        ];
+      };
 
-    policies.settings = {
-      apiVersion = 1;
-      policies = [
-        {
-          orgId = 1;
-          receiver = "Telegram";
-          group_by = [ "alertname" ];
-          group_wait = "30s";
-          group_interval = "5m";
-          repeat_interval = "4h";
-        }
-      ];
+      policies.settings = {
+        apiVersion = 1;
+        policies = [
+          {
+            orgId = 1;
+            receiver = "Telegram";
+            group_by = [ "alertname" ];
+            group_wait = "30s";
+            group_interval = "5m";
+            repeat_interval = "4h";
+          }
+        ];
+      };
     };
 
     # Alert rules are created via the Grafana UI (Alerting > Alert rules)

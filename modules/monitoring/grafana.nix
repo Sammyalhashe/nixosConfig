@@ -29,21 +29,6 @@ lib.mkIf config.host.enableMonitoring {
       };
     };
     provision = {
-      datasources.settings.datasources = [
-        {
-          name = "Loki";
-          type = "loki";
-          uid = "loki";
-          url = "http://localhost:3100";
-          isDefault = true;
-        }
-        {
-          name = "Prometheus";
-          type = "prometheus";
-          uid = "prometheus";
-          url = "http://localhost:9090";
-        }
-      ];
       dashboards.settings.providers = [
         {
           name = "default";
