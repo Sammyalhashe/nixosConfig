@@ -126,6 +126,7 @@ in
             model = {
               primary = "openrouter/openrouter/free";
               fallbacks = [
+                "openrouter/meta-llama/llama-4-scout:free"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
               ];
             };

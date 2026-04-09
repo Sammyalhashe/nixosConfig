@@ -25,11 +25,55 @@ in
             "openrouter/free" = {
               name = "Auto-Free Router";
             };
-            "openrouter/qwen/qwen2.5-vl-72b-instruct:free" = {
+            # Vision + multimodal (10M ctx, MoE 17B/109B)
+            "meta-llama/llama-4-scout:free" = {
+              name = "Llama 4 Scout (Free)";
+            };
+            # Vision + multimodal, stronger reasoning (1M ctx, MoE 17B/400B)
+            "meta-llama/llama-4-maverick:free" = {
+              name = "Llama 4 Maverick (Free)";
+            };
+            # Best free code model (128k ctx)
+            "qwen/qwen-2.5-coder-32b-instruct:free" = {
+              name = "Qwen 2.5 Coder 32B (Free)";
+            };
+            # Best free reasoning model (163k ctx, chain-of-thought)
+            "deepseek/deepseek-r1:free" = {
+              name = "DeepSeek R1 (Free)";
+            };
+            # Fast multimodal (1M ctx)
+            "google/gemini-2.0-flash-exp:free" = {
+              name = "Gemini 2.0 Flash Exp (Free)";
+            };
+            # Reliable general-purpose vision (131k ctx)
+            "qwen/qwen2.5-vl-72b-instruct:free" = {
               name = "Qwen 2.5 VL 72B (Free)";
             };
-            "openrouter/qwen/qwen-2.5-7b-instruct" = {
+            "qwen/qwen-2.5-7b-instruct" = {
               name = "Qwen 2.5 7B";
+            };
+          };
+        };
+        # Groq: fastest free inference (~30 RPM, LPU hardware, no credit card)
+        groq = {
+          name = "Groq (Free)";
+          npm = "@ai-sdk/openai-compatible";
+          options = {
+            baseURL = "https://api.groq.com/openai/v1";
+            apiKey = "env:GROQ_API_KEY";
+          };
+          models = {
+            # Best option: 10M ctx, multimodal, MoE 17B active
+            "llama-4-scout-17b-16e-instruct" = {
+              name = "Llama 4 Scout (Groq)";
+            };
+            # Strong general-purpose, multilingual
+            "llama-3.3-70b-versatile" = {
+              name = "Llama 3.3 70B (Groq)";
+            };
+            # Fast small model for quick tasks
+            "llama-3.1-8b-instant" = {
+              name = "Llama 3.1 8B (Groq)";
             };
           };
         };
@@ -43,6 +87,9 @@ in
           models = {
             "qwen3-coder-next" = {
               name = "Qwen3 Coder Next";
+            };
+            "gemma-4" = {
+              name = "Gemma 4 26B";
             };
           };
         };
@@ -73,19 +120,19 @@ in
       "google_auth": false,
       "categories": {
         "quick": {
-          "model": "openrouter/qwen/qwen-2.5-7b-instruct"
+          "model": "groq/llama-4-scout-17b-16e-instruct"
         },
         "visual-engineering": {
-          "model": "openrouter/qwen/qwen2.5-vl-72b-instruct:free"
+          "model": "openrouter/meta-llama/llama-4-maverick:free"
         },
         "deep": {
-          "model": "openrouter/openrouter/free"
+          "model": "openrouter/deepseek/deepseek-r1:free"
         },
         "ultrabrain": {
-          "model": "openrouter/openrouter/free"
+          "model": "openrouter/deepseek/deepseek-r1:free"
         },
         "general": {
-          "model": "openrouter/qwen/qwen-2.5-7b-instruct"
+          "model": "groq/llama-3.3-70b-versatile"
         },
         "omni": {
           "model": "opencode/mimo-v2-omni-free"
@@ -99,22 +146,22 @@ in
           "model": "mothership/qwen3-coder-next"
         },
         "Prometheus (Planner)": {
-          "model": "openrouter/openrouter/free"
+          "model": "openrouter/deepseek/deepseek-r1:free"
         },
         "Prometheus": {
-          "model": "openrouter/openrouter/free"
+          "model": "openrouter/deepseek/deepseek-r1:free"
         },
         "oracle": {
-          "model": "openrouter/qwen/qwen2.5-vl-72b-instruct:free"
+          "model": "openrouter/meta-llama/llama-4-maverick:free"
         },
         "explore": {
-          "model": "openrouter/openrouter/free"
+          "model": "groq/llama-4-scout-17b-16e-instruct"
         },
         "librarian": {
-          "model": "openrouter/openrouter/free"
+          "model": "groq/llama-3.3-70b-versatile"
         },
         "code-reviewer": {
-          "model": "openrouter/openrouter/free"
+          "model": "openrouter/qwen/qwen-2.5-coder-32b-instruct:free"
         },
         "MiMo": {
           "model": "opencode/mimo-v2-omni-free"
