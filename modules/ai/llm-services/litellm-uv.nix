@@ -27,6 +27,7 @@ in
         "network.target"
         "llama-cpp-flash.service"
         "llama-cpp-coder.service"
+        "llama-cpp-gemma.service"
       ];
       wantedBy = [ "multi-user.target" ];
 

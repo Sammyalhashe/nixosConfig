@@ -1,19 +1,27 @@
 {
-  description = "Sammy Al Hashemi's flake for nix systems";
+  description = "Sammy Al Hashemi's multi-host NixOS & Darwin configuration flake";
 
+  # --- INPUTS: External dependencies and specialized toolsets ---
   inputs = {
+    # Main NixOS unstable branch for the latest software and ROCm 7.x support
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    
+    # User-level environment management
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # MacOS configuration management
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Specialized browsers and UI tools
     zen-browser = {
       url = "github:Sammyalhashe/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
-    };
+    hyprlock.url = "github:hyprwm/hyprlock";
+    
+    # Custom Window Managers and UI frameworks
     mangowc = {
       url = "github:DreamMaoMao/mangowc";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,24 +31,30 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim.url = "github:Sammyalhashe/nixvim";
+    
+    # Homebase Manager (Custom dashboard/management tool)
+    homebase-manager = {
+      url = "github:Sammyalhashe/homebase-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # WSL2 Integration for Windows
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+    
+    # Theming and secrets management
     stylix = {
       url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nur = {
-      url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Hardware-specific optimizations (RPi4, Laptops, etc.)
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    
+    # OpenClaw Agent and Picoclaw Tooling
     nix-picoclaw = {
       url = "github:Sammyalhashe/picoclaw";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,6 +63,8 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Flatpak and XR Driver support
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     viture-virtual-display = {
       url = "github:mgschwan/viture_virtual_display";
@@ -58,51 +74,29 @@
       url = "path:./breezy_src";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    homebase-manager = {
-      url = "github:Sammyalhashe/homebase-manager";
+
+    # Utilities
+    flake-utils.url = "github:numtide/flake-utils";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-utils.url = "github:numtide/flake-utils";
-    plugin-coding = {
-      url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
-      flake = false;
-    };
-    plugin-git = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials";
-      flake = false;
-    };
-    plugin-docker = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials";
-      flake = false;
-    };
-    plugin-system = {
-      url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor";
-      flake = false;
-    };
-    plugin-filesystem = {
-      url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem";
-      flake = false;
-    };
-    plugin-process = {
-      url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
-      flake = false;
-    };
-    plugin-polyclaw = {
-      url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw";
-      flake = false;
-    };
-    plugin-better-memory = {
-      url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
-      flake = false;
-    };
-    plugin-email = {
-      url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email";
-      flake = false;
-    };
-    plugin-cloudflare = {
-      url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
-      flake = false;
-    };
+    nur.url = "github:nix-community/NUR";
+
+    # OpenClaw Skills (Modular AI capabilities)
+    plugin-coding = { url = "github:openclaw/skills?dir=skills/steipete/coding-agent"; flake = false; };
+    plugin-git = { url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials"; flake = false; };
+    plugin-docker = { url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials"; flake = false; };
+    plugin-system = { url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor"; flake = false; };
+    plugin-filesystem = { url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem"; flake = false; };
+    plugin-process = { url = "github:openclaw/skills?dir=skills/dbhurley/process-watch"; flake = false; };
+    plugin-polyclaw = { url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw"; flake = false; };
+    plugin-better-memory = { url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory"; flake = false; };
+    plugin-email = { url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email"; flake = false; };
+    plugin-cloudflare = { url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api"; flake = false; };
+
+    # llm
+    llama-cpp.url = "github:ggml-org/llama.cpp";
   };
 
   outputs =
@@ -134,6 +128,7 @@
       plugin-email,
       plugin-cloudflare,
       flake-utils,
+      llama-cpp,
       ...
     }@inputs:
     let
@@ -165,24 +160,19 @@
         })
       ];
 
-      # Helper to get pkgs for a specific system
-      getPkgs =
-        system:
-        import nixpkgs {
-          inherit system overlays;
-          config.allowUnfree = true;
-        };
+      # Helper to initialize pkgs for a specific architecture with all overlays applied
+      getPkgs = system: import nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
 
-      # Shared base configuration
+      # --- BASE CONFIG: Shared settings across all NixOS hosts ---
       baseConfig = {
         nixpkgs = {
           inherit overlays;
           config.allowUnfree = true;
         };
-        nix.settings.experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
+        nix.settings.experimental-features = [ "nix-command" "flakes" ];
         nix.gc = {
           automatic = true;
           dates = "weekly";
@@ -244,6 +234,12 @@
             host.enableMango = true;
             programs.stylix.enable = true;
           }
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [ llama-cpp.overlays.default ];
+            }
+          )
         ];
       };
 
@@ -357,6 +353,8 @@
           ./common/home-work.nix
         ];
       };
+
+      # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;

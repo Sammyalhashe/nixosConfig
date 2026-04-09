@@ -11,5 +11,6 @@
     ./qwen-coder.nix
     ./qwen-flash.nix
     ./litellm-uv.nix
+    ./gemma.nix
   ];
 }
