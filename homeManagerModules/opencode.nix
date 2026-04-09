@@ -28,14 +28,8 @@ in
             "openrouter/qwen/qwen2.5-vl-72b-instruct:free" = {
               name = "Qwen 2.5 VL 72B (Free)";
             };
-            "openrouter/amazon-canada-ai/nova" = {
-              name = "Amazon Nova";
-            };
             "openrouter/qwen/qwen-2.5-7b-instruct" = {
               name = "Qwen 2.5 7B";
-            };
-            "openrouter/xiaomi/mimo-v2-omni:free" = {
-              name = "MiMo-V2-Omni (Free)";
             };
           };
         };
@@ -79,7 +73,7 @@ in
       "google_auth": false,
       "categories": {
         "quick": {
-          "model": "openrouter/amazon-canada-ai/nova"
+          "model": "openrouter/qwen/qwen-2.5-7b-instruct"
         },
         "visual-engineering": {
           "model": "openrouter/qwen/qwen2.5-vl-72b-instruct:free"
@@ -120,7 +114,7 @@ in
           "model": "openrouter/openrouter/free"
         },
         "code-reviewer": {
-          "model": "openrouter/amazon-canada-ai/nova"
+          "model": "openrouter/openrouter/free"
         },
         "MiMo": {
           "model": "opencode/mimo-v2-omni-free"

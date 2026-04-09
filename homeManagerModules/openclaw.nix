@@ -126,7 +126,6 @@ in
             model = {
               primary = "openrouter/openrouter/free";
               fallbacks = [
-                "openrouter/amazon-canada-ai/nova"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
               ];
             };
