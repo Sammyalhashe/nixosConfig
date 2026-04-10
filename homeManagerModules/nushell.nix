@@ -53,6 +53,8 @@ in
       $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
       $env.ANTHROPIC_BASE_URL = "http://11.125.37.101:4000"
       $env.ANTHROPIC_API_KEY = "sk-no-key-required"
+      $env.OPENROUTER_API_KEY = (if ("/run/secrets/openrouter_api_key" | path exists) { open /run/secrets/openrouter_api_key | str trim } else { "" })
+      $env.GEMINI_API_KEY = (if ("/run/secrets/gemini_api_key" | path exists) { open /run/secrets/gemini_api_key | str trim } else { "" })
     '';
     shellAliases = {
       # common aliases

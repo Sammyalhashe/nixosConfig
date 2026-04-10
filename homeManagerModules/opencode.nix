@@ -18,7 +18,7 @@ in
           name = "openrouter/free";
           npm = "@ai-sdk/openai-compatible";
           options = {
-            baseURL = "https://openrouter.ai/api/v1";
+            baseUrl = "https://openrouter.ai/api/v1";
             apiKey = "env:OPENROUTER_API_KEY";
           };
           models = {
@@ -81,7 +81,7 @@ in
           npm = "@ai-sdk/openai-compatible";
           name = "Mothership (LiteLLM)";
           options = {
-            baseURL = "http://${inferenceHost}:4000/v1";
+            baseUrl = "http://${inferenceHost}:4000/v1";
             apiKey = "any";
           };
           models = {
@@ -93,19 +93,31 @@ in
             };
           };
         };
-        opencode = {
-          name = "OpenCode Free";
+        zen = {
+          name = "OpenCode Zen";
           npm = "@ai-sdk/openai-compatible";
           options = {
-            baseURL = "https://opencode.ai/v1";
+            baseUrl = "https://opencode.ai/v1";
             apiKey = "any";
           };
           models = {
+            "big-pickle" = {
+              name = "Big Pickle Free";
+            };
+            "mini-max" = {
+              name = "MiniMax M2.5 Free";
+            };
             "mimo-v2-omni-free" = {
               name = "MiMo V2 Omni Free";
             };
             "mimo-v2-pro-free" = {
               name = "MiMo V2 Pro Free";
+            };
+            "nemotron-3-super-free" = {
+              name = "Nemotron 3 Super Free";
+            };
+            "qwen-3.6-plus-free" = {
+              name = "Qwen 3.6 Plus Free";
             };
           };
         };
@@ -135,7 +147,7 @@ in
           "model": "groq/llama-3.3-70b-versatile"
         },
         "omni": {
-          "model": "opencode/mimo-v2-omni-free"
+          "model": "zen/mimo-v2-omni-free"
         }
       },
       "agents": {
@@ -164,7 +176,7 @@ in
           "model": "openrouter/qwen/qwen-2.5-coder-32b-instruct:free"
         },
         "MiMo": {
-          "model": "opencode/mimo-v2-omni-free"
+          "model": "zen/mimo-v2-omni-free"
         }
       }
     }

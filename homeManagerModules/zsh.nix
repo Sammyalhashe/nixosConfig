@@ -63,6 +63,9 @@ in
     };
 
     initContent = ''
+      export OPENROUTER_API_KEY=$(cat /run/secrets/openrouter_api_key 2>/dev/null || echo "")
+      export GEMINI_API_KEY=$(cat /run/secrets/gemini_api_key 2>/dev/null || echo "")
+      
       bindkey -v
       bindkey '^R' history-incremental-search-backward
 
