@@ -42,21 +42,12 @@ lib.mkIf config.host.enableMonitoring {
         ];
       };
 
-      # The NixOS Grafana module's generateAlertingProvisioningYaml lacks a
-      # null-guard: when rules/templates/muteTimings are unset their settings
-      # default to null, producing a literal "null" YAML document that makes
-      # Grafana fail on startup. Provide explicit empty structures to avoid this.
-      rules.settings = {
-        apiVersion = 1;
-        groups = [];
-      };
-      templates.settings = {
-        apiVersion = 1;
-      };
-      muteTimings.settings = {
-        apiVersion = 1;
-        muteTimes = [];
-      };
+      # The NixOS Grafana module has a bug where it generates literal "null" YAML
+      # files if these settings are null, which makes Grafana fail on startup.
+      # Setting these to an empty structure with apiVersion avoids this.
+      rules.settings.apiVersion = 1;
+      templates.settings.apiVersion = 1;
+      muteTimings.settings.apiVersion = 1;
     };
   };
 

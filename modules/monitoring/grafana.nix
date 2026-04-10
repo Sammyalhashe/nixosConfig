@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 lib.mkIf config.host.enableMonitoring {
   # Generate Grafana secret key if it doesn't exist
@@ -29,6 +34,25 @@ lib.mkIf config.host.enableMonitoring {
       };
     };
     provision = {
+      enable = true;
+      datasources.settings = {
+        apiVersion = 1;
+        datasources = [
+          {
+            name = "Loki";
+            type = "loki";
+            uid = "loki";
+            url = "http://localhost:3100";
+            isDefault = true;
+          }
+          {
+            name = "Prometheus";
+            type = "prometheus";
+            uid = "prometheus";
+            url = "http://localhost:9090";
+          }
+        ];
+      };
       dashboards.settings.providers = [
         {
           name = "default";

@@ -1175,7 +1175,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"FAILED\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Error\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)FAILED|Error\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1227,7 +1227,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"depeg\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"DEPEG\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)depeg\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1261,7 +1261,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Withdrawal complete\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Withdrawal confirmed\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Withdrawal FAILED\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Withdrawal complete|Withdrawal confirmed|Withdrawal FAILED)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1287,7 +1287,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Swap complete\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Swap:\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Swap confirmation failed\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Swap complete|Swap:|Swap confirmation failed)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1313,7 +1313,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Mint complete\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Mint confirmed\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Mint confirmation failed\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Mint complete|Mint confirmed|Mint confirmation failed)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1695,7 +1695,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"gas\" |= \"high\" or {user_unit=\"phar-liquidity-bot.service\"} |= \"Gas price\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)gas|Gas price\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1708,7 +1708,7 @@
   "schemaVersion": 42,
   "tags": [],
   "templating": { "list": [] },
-  "time": { "from": "now-1h", "to": "now" },
+  "time": { "from": "now-7d", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
   "title": "Main Dashboard",

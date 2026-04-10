@@ -1,48 +1,23 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
-  services.grafana.provision.datasources.settings.datasources = [
-    {
-      name = "Loki";
-      type = "loki";
-      uid = "loki";
-      url = "http://localhost:3100";
-      isDefault = true;
-    }
-  ];
-
   services.loki = {
     enable = true;
     configuration = {
       auth_enabled = false;
       server.http_listen_port = 3100;
-
       common = {
-        path_prefix = "/var/lib/loki";
-        storage.filesystem.chunks_directory = "/var/lib/loki/chunks";
-        storage.filesystem.rules_directory = "/var/lib/loki/rules";
-        replication_factor = 1;
-        instance_addr = "127.0.0.1";
-        instance_interface_names = [ ];
         ring = {
           instance_addr = "127.0.0.1";
           kvstore.store = "inmemory";
         };
-      };
-
-      frontend.address = "127.0.0.1";
-
-      # Single-node: disable memberlist clustering
-      memberlist = {
-        bind_addr = [ "127.0.0.1" ];
-        advertise_addr = "127.0.0.1";
-        abort_if_cluster_join_fails = false;
-        join_members = [ ];
+        replication_factor = 1;
+        path_prefix = "/var/lib/loki";
       };
 
       schema_config.configs = [
         {
-          from = "2024-01-01";
+          from = "2023-01-01";
           store = "tsdb";
           object_store = "filesystem";
           schema = "v13";
@@ -53,14 +28,16 @@ lib.mkIf config.host.enableMonitoring {
         }
       ];
 
-      limits_config = {
-        retention_period = "30d";
-      };
+      storage_config.filesystem.directory = "/var/lib/loki/chunks";
 
-      compactor = {
-        working_directory = "/var/lib/loki/compactor";
-        delete_request_store = "filesystem";
-        retention_enabled = true;
+      frontend.address = "127.0.0.1";
+
+      # Single-node: disable memberlist clustering
+      memberlist = {
+        bind_addr = [ "127.0.0.1" ];
+        advertise_addr = "127.0.0.1";
+        abort_if_cluster_join_fails = false;
+        join_members = [ ];
       };
     };
   };

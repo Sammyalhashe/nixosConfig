@@ -1,15 +1,6 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
-  services.grafana.provision.datasources.settings.datasources = [
-    {
-      name = "Prometheus";
-      type = "prometheus";
-      uid = "prometheus";
-      url = "http://localhost:9090";
-    }
-  ];
-
   services.prometheus = {
     enable = true;
     port = 9090;
