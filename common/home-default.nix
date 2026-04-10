@@ -22,6 +22,7 @@ in
   imports = [
     ./home-common.nix
     ./home-entertainment.nix
+    ../homeManagerModules/claude-code.nix
   ];
 
   home.username = "${user}";
