@@ -14,5 +14,6 @@
     ./security/sops.nix
     ./security/cachix.nix
     ./monitoring
+    ./hardware/breezy-desktop.nix
   ];
 }

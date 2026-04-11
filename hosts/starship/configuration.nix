@@ -22,6 +22,7 @@ in
   ];
 
   host.enableGreetd = true;
+  host.enableBreezy = true;
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
@@ -78,6 +79,8 @@ in
       "networkmanager"
       "docker"
       "wheel"
+      "video"
+      "input"
     ];
     packages = with pkgs; [ ];
     openssh.authorizedKeys.keys = [

@@ -33,5 +33,7 @@
     enableHyprland = lib.mkEnableOption "Whether to install Hyprland.";
 
     enableMonitoring = lib.mkEnableOption "Whether to enable the monitoring stack (Cockpit, Grafana, Loki, Promtail).";
+
+    enableBreezy = lib.mkEnableOption "Whether to enable Breezy Desktop XR glasses support.";
   };
 }

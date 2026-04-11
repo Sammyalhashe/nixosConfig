@@ -207,6 +207,10 @@
             cp ui/modules/PyXRLinuxDriverIPC/xrdriveripc.py kwin/src/xrdriveripc/
             mkdir -p kwin/src/kcm
             cp ui/data/icons/hicolor/scalable/apps/com.xronlinux.BreezyDesktop.svg kwin/src/kcm/
+
+            # Bypass XDG_SESSION_CLASS check — NixOS greetd doesn't always set it
+            sed -i '/const QByteArray sessionClass/,/return;/{/return;/d}' kwin/src/breezydesktopeffect.cpp
+            sed -i 's/if (sessionClass != "user")/if (false)/' kwin/src/breezydesktopeffect.cpp
           '';
 
           preConfigure = ''

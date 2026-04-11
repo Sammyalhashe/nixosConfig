@@ -20,8 +20,7 @@ in
     ../../modules/ai/llm-services
   ];
 
-  services.udev.packages = [ inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default ];
-  boot.kernelModules = [ "uinput" ];
+  host.enableBreezy = true;
 
   # Default to server/headless mode (what systemd-boot loads)
   host.isHeadless = true;
@@ -228,9 +227,6 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    inputs.breezy-desktop.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.breezy-desktop.packages.${pkgs.stdenv.hostPlatform.system}.breezy-kwin
-    inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default
     git amdgpu_top nvtopPackages.amd rocmPackages.rocminfo vulkan-tools uv yq-go playwright-driver.browsers
     (python313.withPackages (ps: with ps; [
       litellm backoff fastapi uvicorn pydantic python-dotenv apscheduler uvloop orjson pyyaml rich
