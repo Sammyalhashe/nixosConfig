@@ -1031,12 +1031,12 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"} \n  | regexp `maxFee=(?P<fee>\\d+)` \n  | unwrap fee [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Portfolio value:\"\n  | regexp `Portfolio value: (?P<value>[\\d.]+)`\n  | unwrap value [10m]\n)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Phar Fees",
+      "title": "Portfolio Value (WAVAX)",
       "type": "timeseries"
     },
     {
@@ -1287,7 +1287,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Swap complete|Swap:|Swap confirmation failed)\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Swap complete|Swap confirmed|Swap rejected|Swap failed)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1313,7 +1313,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Mint complete|Mint confirmed|Mint confirmation failed)\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Mint complete|Mint confirmed|Mint confirmation failed|Mint confirmation timed)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1643,10 +1643,62 @@
       "title": "Out-of-Range Detections",
       "type": "logs"
     },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 144 },
+      "id": 75,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Swap attempt|Swap rejected|slippage tier|prior failures)\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Slippage Retries",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 144 },
+      "id": 76,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"(?i)(Shutdown|Pending op|zero)\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Shutdown & Recovery Events",
+      "type": "logs"
+    },
 
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 144 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 151 },
       "id": 205,
       "title": "Phar Liquidity Bot — Pool & Gas",
       "type": "row"
