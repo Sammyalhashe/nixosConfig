@@ -1031,12 +1031,12 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Portfolio value:\"\n  | regexp `Portfolio value: (?P<value>[\\d.]+)`\n  | unwrap value [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Portfolio value:\"\n  | regexp `Portfolio value: [\\d.]+ WAVAX \\(\\$(?P<value_usd>[\\d.]+)\\)`\n  | unwrap value_usd [10m]\n)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Portfolio Value (WAVAX)",
+      "title": "Portfolio Value (USD)",
       "type": "timeseries"
     },
     {
@@ -1516,12 +1516,12 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"true net\"\n  | regexp `true net (?P<truenet>[\\d.-]+) WAVAX`\n  | unwrap truenet [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"true net\"\n  | regexp `true net [\\d.-]+ WAVAX \\(\\$(?P<truenet_usd>[\\d.-]+)\\)`\n  | unwrap truenet_usd [10m]\n)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "True Net P&L (fees - IL - gas)",
+      "title": "True Net P&L (USD)",
       "type": "timeseries"
     },
     {
