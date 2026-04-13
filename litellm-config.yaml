@@ -29,12 +29,18 @@ model_list:
       model: openai/gemma-4
       api_base: http://127.0.0.1:8012/v1
       api_key: none
-
+    model_info:
+      base_model: gemma-4
+      fallback_models: ["qwen-flash"]
 
 litellm_settings:
   drop_params: true
   modify_params: true
-  set_verbose: true
+  set_verbose: false
   cors_allow_origins: ["*"]
+  cache: true
+  cache_type: local
+
 router_settings:
-  routing_strategy: simple-shuffle
+  routing_strategy: latency-based-routing
+  enable_pre_call_checks: true

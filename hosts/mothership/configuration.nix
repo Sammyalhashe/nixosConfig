@@ -83,7 +83,7 @@ in
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
   services.llm-services.gpt-oss.enable = false;    # Reasoning/Large (DeepSeek-R1-671B)
   services.llm-services.qwen-coder.enable = false; # Qwen3-Coder-Next disabled for now
-  services.llm-services.qwen-flash.enable = false;  # Fast/Chat (Qwen2.5-7B) - Port 8011
+  services.llm-services.qwen-flash.enable = true;  # Fast/Chat (Qwen2.5-7B) - Port 8011
   services.llm-services.gemma.enable = true;       # Bleeding Edge (Gemma 4-31B) - Port 8012
   services.llm-services.litellm-uv.enable = true;  # Proxy/Gateway - Port 4000
 
@@ -152,7 +152,7 @@ in
       download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
       download_model "qwq_32b_q4km.gguf" "https://huggingface.co/unsloth/QwQ-32B-GGUF/resolve/main/QwQ-32B-Q4_K_M.gguf"
       download_model "qwen3_next_q3km.gguf" "https://huggingface.co/unsloth/Qwen3-Coder-Next-GGUF/resolve/main/Qwen3-Coder-Next-Q3_K_M.gguf"
-      download_model "gemma-4-31B-it-Q8_0.gguf" "https://huggingface.co/bartowski/gemma-4-31b-it-GGUF/resolve/main/gemma-4-31b-it-Q8_0.gguf"
+      download_model "google_gemma-4-31B-it-Q4_K_M.gguf" "https://huggingface.co/bartowski/google_gemma-4-31B-it-GGUF/resolve/main/google_gemma-4-31B-it-Q4_K_M.gguf"
       download_model "qwen2.5-1.5b-instruct-q8_0.gguf" "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q8_0.gguf"
     '';
     serviceConfig = {
