@@ -73,7 +73,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "avg by (user_unit) (\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    | regexp `PnL: \\$(?P<pnl_str>-?[0-9,.]+)`\n    | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n    | regexp `(?P<pnl>-?[0-9.]+)`\n    | unwrap pnl [1h]\n  )\n)",
+          "expr": "avg by (user_unit) (\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    | regexp `PnL: \\$(?P<pnl_str>[-+]?[0-9,.]+)`\n    | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n    | regexp `(?P<pnl>[-+]?[0-9.]+)`\n    | unwrap pnl [1h]\n  )\n)",
           "queryType": "range",
           "refId": "A"
         }
@@ -302,7 +302,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"exit\" |~ \"[Ss]top\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Ss]top\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -341,7 +341,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"exit\" |~ \"[Tt]ake.profit|TP[12]\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Tt]ake.profit|TP[12]\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -380,7 +380,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"exit\" |~ \"[Tt]railing\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Tt]railing\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -742,12 +742,12 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"coinbase-trader-ws.service\"} |= \"[Performance]\"",
+          "expr": "{user_unit=\"coinbase-trader-ws.service\"} |= \"PnL:\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Performance Summary",
+      "title": "Trade PnL Log",
       "type": "logs"
     },
     {
