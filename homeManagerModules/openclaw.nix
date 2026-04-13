@@ -128,6 +128,9 @@ in
               fallbacks = [
                 "openrouter/meta-llama/llama-4-scout:free"
                 "openrouter/qwen/qwen-2.5-7b-instruct"
+                "google/gemini-2.5-flash"
+                "mothership-proxy/gemma-4"
+                "mothership-proxy/gpt-4o-mini"
               ];
             };
           };
@@ -148,18 +151,23 @@ in
             "google/gemini-3-flash" = {
               alias = "gemini-3-flash";
             };
+            "google/gemini-2.5-pro" = {
+              alias = "gemini-2.5";
+            };
             "openrouter/openrouter/free" = {
               alias = "free";
             };
           };
           model = {
-            primary = "mothership-proxy/gpt-4o";
+            primary = "mothership-proxy/gemma-4";
             fallbacks = [
+              "mothership-proxy/gpt-4o"
               "mothership-proxy/gpt-4o-mini"
-              "moonshotai/kimi-k2.5"
+              "google/gemini-2.5-pro"
+              "nvidia/moonshotai/kimi-k2.5"
               "openrouter/openrouter/free"
-              # "google/gemini-3-flash"
-              # "google/gemini-3.1-pro-preview"
+              "google/gemini-3-flash"
+              "google/gemini-3.1-pro-preview"
             ];
           };
         };
@@ -207,6 +215,10 @@ in
                 {
                   id = "gpt-4o-mini";
                   name = "Qwen2.5 Coder 7B (Flash)";
+                }
+                {
+                  id = "gemma-4";
+                  name = "Gemma 4 (Strix)";
                 }
                 {
                   id = "qwq-32b";
