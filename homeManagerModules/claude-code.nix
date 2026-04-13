@@ -17,6 +17,8 @@ let
       # LiteLLM doesn't require a real key; any non-empty string works.
       ANTHROPIC_AUTH_TOKEN = "sk-no-key-required";
       ANTHROPIC_API_KEY = "sk-no-key-required";
+      # Fix for 90% slowdown in local models: Disable attribution header to preserve KV cache
+      CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
       # Strip anthropic-beta headers that LiteLLM may reject.
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
@@ -31,18 +33,38 @@ let
     };
   };
 
-  claudeOnboarding = {
-    hasCompletedOnboarding = true;
-    primaryApiKey = "sk-no-key-required";
-  };
+  # Andrej Karpathy Coding Skills/Principles for Claude Code (Applied via CLAUDE.md)
+  karpathySkills = ''
+    # Andrej Karpathy's Coding Principles
+    
+    ## 1. Think Before Coding
+    - State assumptions clearly.
+    - Present multiple interpretations of the task.
+    - If a task is ambiguous, STOP and ask for clarification instead of guessing.
+    
+    ## 2. Simplicity First
+    - Write the minimum amount of code required to solve the problem.
+    - Avoid speculative features, premature abstractions, or "just-in-case" logic.
+    - Favor standard libraries and established patterns over clever tricks.
+    
+    ## 3. Surgical Changes
+    - Touch ONLY the lines necessary for the requested change.
+    - Match the existing style, indentation, and naming conventions of the file perfectly.
+    - Do not perform unrelated refactors or "cleanups" unless explicitly asked.
+    
+    ## 4. Goal-Driven Execution
+    - Transform every task into a verifiable goal.
+    - If fixing a bug, first write a test that reproduces it, then implement the fix.
+    - Verification is mandatory. A task is not done until it is proven correct.
+  '';
 in
 {
   home.packages = [ pkgs.claude-code ];
 
+  # Global Karpathy Principles for all projects
+  home.file."CLAUDE.md".text = karpathySkills;
+
   # Use activation script to create writable configuration files.
-  # Claude Code tries to write to its configuration files on every startup 
-  # (e.g., to update lock files or session state), which fails if they 
-  # are symlinked to the read-only Nix store.
   home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $HOME/.claude
     
