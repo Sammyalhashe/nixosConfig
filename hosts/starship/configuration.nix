@@ -16,6 +16,9 @@ in
   imports = [
     ./hardware-configuration.nix
     ./bluetooth.nix
+    ./asus.nix
+    # ./graphics.nix
+    ./wireguard.nix
     inputs.home-manager.nixosModules.default
     inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
@@ -160,6 +163,8 @@ in
     enable = true;
     allowedTCPPorts = [ 11434 ];
   };
+
+  sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   security.pki.certificateFiles = [
     (builtins.toFile "wildcard.picloud.crt" (builtins.readFile ../../certs/wildcard.picloud.crt))
