@@ -104,7 +104,34 @@ in
     };
   };
 
-  # 4. Systemd user service for the trading report (optional but good to have)
+  # 4. Systemd user service + daily timer for OKX derivatives data collection
+  systemd.user.services.derivatives-collector = {
+    Unit = {
+      Description = "Collect OKX derivatives data for backtesting";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      WorkingDirectory = repoDir;
+      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#collect-derivatives --extra-experimental-features 'nix-command flakes'";
+    };
+  };
+
+  systemd.user.timers.derivatives-collector = {
+    Unit = {
+      Description = "Daily OKX derivatives data collection";
+    };
+    Timer = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    Install = {
+      WantedBy = [ "timers.target" ];
+    };
+  };
+
+  # 5. Systemd user service for the trading report (optional but good to have)
   systemd.user.services.coinbase-report = {
     Unit = {
       Description = "Run Coinbase Trading Report";
