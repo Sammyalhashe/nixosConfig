@@ -18,6 +18,7 @@ in
     ../homeManagerModules/claude-code.nix
     ../homeManagerModules/opencode.nix
     ../homeManagerModules/coinbase-trader.nix
+    ../homeManagerModules/phar-liquidity-bot.nix
   ];
 
   home.username = "${user}";
