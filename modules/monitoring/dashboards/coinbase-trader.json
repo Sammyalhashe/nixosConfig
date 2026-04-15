@@ -1401,7 +1401,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{user_unit=\"coinbase-trader-ws.service\"} |= \"Regime change confirmed\"",
+          "expr": "{user_unit=\"coinbase-trader-ws.service\"} |~ \"Regime (change confirmed|signal)\"",
           "queryType": "range",
           "refId": "A"
         }
