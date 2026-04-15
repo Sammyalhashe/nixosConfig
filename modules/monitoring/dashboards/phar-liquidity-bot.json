@@ -110,7 +110,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 1
       },
@@ -201,9 +201,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 9
+        "w": 8,
+        "x": 8,
+        "y": 1
       },
       "id": 210,
       "options": {
@@ -298,8 +298,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 16,
         "y": 1
       },
       "id": 4,
@@ -612,7 +612,7 @@
         "x": 0,
         "y": 24
       },
-      "id": 206,
+      "id": 211,
       "title": "Phar Liquidity Bot — Activity Breakdown",
       "type": "row"
     },
@@ -1189,7 +1189,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 25
+        "y": 39
       },
       "id": 50,
       "options": {
@@ -1226,7 +1226,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 25
+        "y": 39
       },
       "id": 51,
       "options": {
@@ -1263,7 +1263,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 25
+        "y": 39
       },
       "id": 52,
       "options": {
@@ -1300,7 +1300,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 46
       },
       "id": 53,
       "options": {
@@ -1334,7 +1334,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 53
       },
       "id": 203,
       "title": "Phar Liquidity Bot — IL & P&L",
@@ -1401,7 +1401,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 54
       },
       "id": 60,
       "options": {
@@ -1496,8 +1496,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 48
+        "x": 12,
+        "y": 54
       },
       "id": 77,
       "options": {
@@ -1588,8 +1588,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 48
+        "x": 0,
+        "y": 62
       },
       "id": 78,
       "options": {
@@ -1629,45 +1629,8 @@
       "gridPos": {
         "h": 7,
         "w": 12,
-        "x": 0,
-        "y": 56
-      },
-      "id": 63,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"IL Monitor: Position opened\"",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Position Opens",
-      "type": "logs"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
         "x": 12,
-        "y": 48
+        "y": 62
       },
       "id": 64,
       "options": {
@@ -1702,9 +1665,46 @@
       },
       "gridPos": {
         "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 70
+      },
+      "id": 63,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"IL Monitor: Position opened\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Position Opens",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 7,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 77
       },
       "id": 65,
       "options": {
@@ -1738,7 +1738,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 84
       },
       "id": 204,
       "title": "Phar Liquidity Bot — Adaptive Behavior",
@@ -1753,7 +1753,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 63
+        "y": 85
       },
       "id": 70,
       "options": {
@@ -1790,7 +1790,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 63
+        "y": 85
       },
       "id": 71,
       "options": {
@@ -1827,7 +1827,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 63
+        "y": 85
       },
       "id": 72,
       "options": {
@@ -1864,7 +1864,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 70
+        "y": 92
       },
       "id": 75,
       "options": {
@@ -1901,7 +1901,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 70
+        "y": 92
       },
       "id": 76,
       "options": {
@@ -1935,7 +1935,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 77
+        "y": 99
       },
       "id": 205,
       "title": "Phar Liquidity Bot — Pool & Gas",
@@ -1950,7 +1950,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 71
+        "y": 100
       },
       "id": 73,
       "options": {
@@ -1987,7 +1987,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 71
+        "y": 100
       },
       "id": 74,
       "options": {
@@ -2021,9 +2021,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 107
       },
-      "id": 206,
+      "id": 212,
       "title": "Phar Liquidity Bot — PHAR Rewards",
       "type": "row"
     },
@@ -2088,7 +2088,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 79
+        "y": 108
       },
       "id": 207,
       "options": {
@@ -2182,7 +2182,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 79
+        "y": 108
       },
       "id": 208,
       "options": {
@@ -2224,7 +2224,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 116
       },
       "id": 209,
       "options": {
