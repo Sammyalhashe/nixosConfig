@@ -124,13 +124,11 @@ in
           subagents = {
             maxConcurrent = 32; # Swarm support: more parallel subtasks
             model = {
-              primary = "openrouter/openrouter/free";
+              primary = "mothership-proxy/gemma-4";
               fallbacks = [
-                "openrouter/meta-llama/llama-4-scout:free"
-                "openrouter/qwen/qwen-2.5-7b-instruct"
-                "google/gemini-2.5-flash"
-                "mothership-proxy/gemma-4"
                 "mothership-proxy/gpt-4o-mini"
+                "openrouter/openrouter/free"
+                "google/gemini-2.5-flash"
               ];
             };
           };
@@ -144,6 +142,9 @@ in
             };
             "mothership-proxy/gpt-4o-mini" = {
               alias = "flash";
+            };
+            "mothership-proxy/gemma-4" = {
+              alias = "strix";
             };
             "google/gemini-3.1-pro-preview" = {
               alias = "gemini-3.1";
@@ -214,11 +215,15 @@ in
                 }
                 {
                   id = "gpt-4o-mini";
-                  name = "Qwen2.5 Coder 7B (Flash)";
+                  name = "Qwen2.5 7B (Flash)";
+                }
+                {
+                  id = "qwen-flash";
+                  name = "Qwen2.5 7B (Flash - Native)";
                 }
                 {
                   id = "gemma-4";
-                  name = "Gemma 4 (Strix)";
+                  name = "Gemma 4 (Strix - 13 TPS)";
                 }
                 {
                   id = "qwq-32b";

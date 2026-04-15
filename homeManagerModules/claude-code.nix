@@ -33,6 +33,11 @@ let
     };
   };
 
+  claudeOnboarding = {
+    hasCompletedOnboarding = true;
+    primaryApiKey = "sk-no-key-required";
+  };
+
   # Andrej Karpathy Coding Skills/Principles for Claude Code (Applied via CLAUDE.md)
   karpathySkills = ''
     # Andrej Karpathy's Coding Principles

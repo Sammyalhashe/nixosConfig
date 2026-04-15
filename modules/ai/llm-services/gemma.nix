@@ -63,8 +63,9 @@ in
           in
           "${llama-pkg}/bin/llama-server "
           + "--model ${cfg.modelPath} "
-          + "--draft /var/lib/llama-cpp-models/qwen2.5-1.5b-instruct-q8_0.gguf "
-          + "--draft-n 5 "
+          + "--model-draft /var/lib/llama-cpp-models/qwen2.5-1.5b-instruct-q8_0.gguf "
+          + "--draft 5 "
+          + "--threads-draft 4 "
           + "--port 8012 "
           + "--host 0.0.0.0 "
           + "--n-gpu-layers 999 "  # Force full GPU offload (Strix Halo has 128GB Unified Memory)
