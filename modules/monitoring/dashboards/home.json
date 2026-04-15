@@ -1,0 +1,69 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "bolt",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Coinbase Trader",
+      "tooltip": "Open Coinbase Trader dashboard",
+      "type": "link",
+      "url": "/d/coinbase-trader/coinbase-trader"
+    },
+    {
+      "asDropdown": false,
+      "icon": "bolt",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Phar Liquidity Bot",
+      "tooltip": "Open Phar Liquidity Bot dashboard",
+      "type": "link",
+      "url": "/d/phar-liquidity-bot/phar-liquidity-bot"
+    }
+  ],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Dashboards\n\n- [Coinbase Trader](/d/coinbase-trader/coinbase-trader)\n- [Phar Liquidity Bot](/d/phar-liquidity-bot/phar-liquidity-bot)",
+        "mode": "markdown"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "title": "Home",
+  "uid": "home",
+  "version": 1
+}

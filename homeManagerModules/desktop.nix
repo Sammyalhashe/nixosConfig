@@ -427,6 +427,9 @@
   #   }];
   # };
 
+  systemd.user.services.hyprpaper.Unit.ConditionEnvironment = "HYPRLAND_INSTANCE_SIGNATURE";
+  systemd.user.services.mako.Unit.ConditionEnvironment = "HYPRLAND_INSTANCE_SIGNATURE";
+
   services.mako = {
     enable = true;
     backgroundColor = lib.mkForce "#11111b";
@@ -575,9 +578,7 @@
     "$mod" = "SUPER";
     "$term" = "alacritty";
     exec-once = [
-      "waybar"
       "uwsm finalize"
-      "hyprpaper"
       "hyprlock"
       "nextcloud"
     ];

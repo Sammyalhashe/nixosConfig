@@ -32,6 +32,7 @@ lib.mkIf config.host.enableMonitoring {
         enabled = true;
         org_role = "Admin";
       };
+      dashboards.default_home_dashboard_path = ./dashboards/home.json;
     };
     provision = {
       enable = true;
