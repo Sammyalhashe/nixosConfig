@@ -1646,7 +1646,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 114 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 114 },
       "id": 60,
       "options": {
         "legend": { "calcs": ["last"], "displayMode": "list", "placement": "bottom", "showLegend": true },
@@ -1662,90 +1662,6 @@
         }
       ],
       "title": "Impermanent Loss %",
-      "type": "timeseries"
-    },
-    {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text",
-            "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6,
-            "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2,
-            "pointSize": 5, "scaleDistribution": { "type": "linear" },
-            "showPoints": "auto", "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
-          },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 114 },
-      "id": 61,
-      "options": {
-        "legend": { "calcs": ["last"], "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "single", "sort": "none" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Fees earned:\"\n  | regexp `Fees earned: (?P<fees>[\\d.-]+) WAVAX`\n  | unwrap fees [10m]\n)",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Fees Earned (WAVAX)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text",
-            "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6,
-            "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2,
-            "pointSize": 5, "scaleDistribution": { "type": "linear" },
-            "showPoints": "auto", "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "line" }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "red", "value": null },
-              { "color": "green", "value": 0 }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 114 },
-      "id": 62,
-      "options": {
-        "legend": { "calcs": ["last"], "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "single", "sort": "none" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Net P&L:\"\n  | regexp `Net P&L: (?P<pnl>[\\d.-]+) WAVAX`\n  | unwrap pnl [10m]\n)",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Net P&L per Position (WAVAX)",
       "type": "timeseries"
     },
     {
@@ -1902,7 +1818,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Cumulative:\" |= \"net\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Cumulative:\" |= \"true net\"",
           "queryType": "range",
           "refId": "A"
         }
