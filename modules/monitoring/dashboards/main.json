@@ -1741,7 +1741,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"true net\"\n  | regexp `true net [\\d.-]+ WAVAX \\(\\$(?P<truenet_usd>[\\d.-]+)\\)`\n  | unwrap truenet_usd [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"Cumulative (USD)\"\n  | regexp `= net \\$(?P<truenet_usd>[\\d.-]+)`\n  | unwrap truenet_usd [10m]\n)",
           "queryType": "range",
           "refId": "A"
         }
@@ -1858,7 +1858,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Cumulative:\" |= \"true net\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Cumulative (\"",
           "queryType": "range",
           "refId": "A"
         }
