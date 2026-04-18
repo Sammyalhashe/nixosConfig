@@ -8,11 +8,16 @@ let
   user = "salhashemi2";
   repoDir = "/home/${user}/Projects/phar-liquidity-bot";
 
-  # Pool to trade. Must match a key in POOL_REGISTRY in config.ts:
-  #   weth-wavax   Vol/Liq 1.79x  IL=Medium    Rebalances=High    ← current
-  #   wavax-usdc   Vol/Liq 4.56x  IL=Medium    Rebalances=High    ← highest fee APR
-  #   savax-wavax  Vol/Liq 1.03x  IL=VeryLow   Rebalances=VeryLow ← lowest gas spend
-  currentPool = "weth-wavax"; # ← change this to switch pools
+  # DEX to trade on. Must match a key in DEX_REGISTRY in config.ts:
+  #   pharaoh   — Algebra Integral concentrated liquidity, PHAR rewards via gauge
+  #   blackhole — Algebra Integral (same math as Pharaoh), BLACK rewards
+  #   lfj       — Trader Joe Liquidity Book (discrete bins), fees accrue in-place
+  currentDex = "lfj"; # ← change this to switch DEX
+
+  # Pool to trade. Must match a key in DEX_REGISTRY[dex].pools in config.ts:
+  #   pharaoh:  weth-wavax, wavax-usdc, savax-wavax
+  #   lfj:      avax-usdc
+  currentPool = "avax-usdc"; # ← change this to switch pools
 in
 {
   home.packages = with pkgs; [
@@ -48,6 +53,7 @@ in
       RestartSec = "30s";
       WorkingDirectory = repoDir;
       Environment = [
+        "DEX_NAME=${currentDex}"
         "POOL_NAME=${currentPool}"
       ];
       EnvironmentFile = "${repoDir}/.env";
