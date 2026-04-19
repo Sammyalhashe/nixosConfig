@@ -25,7 +25,8 @@ let
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
     };
     # Must match a model_name exposed by LiteLLM.
-    model = "gemma-4";
+    # model = "gemma-4";
+    model = "qwen3.6";
     # Suppress co-authored-by attribution in commits/PRs.
     attribution = {
       commit = "";

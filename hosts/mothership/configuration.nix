@@ -82,9 +82,9 @@ in
   # --- LOCAL AI STACK CONFIGURATION ---
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
   services.llm-services.gpt-oss.enable = false;    # Reasoning/Large (DeepSeek-R1-671B)
-  services.llm-services.qwen-coder.enable = false; # Qwen3-Coder-Next disabled for now
+  services.llm-services.qwen-coder.enable = true; # Qwen3.6
   services.llm-services.qwen-flash.enable = true;  # Fast/Chat (Qwen2.5-7B) - Port 8011
-  services.llm-services.gemma.enable = true;       # Bleeding Edge (Gemma 4-31B) - Port 8012
+  services.llm-services.gemma.enable = false;       # Bleeding Edge (Gemma 4-31B) - Port 8012
   services.llm-services.litellm-uv.enable = true;  # Proxy/Gateway - Port 4000
 
   powerManagement.cpuFreqGovernor = "performance";
