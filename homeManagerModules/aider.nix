@@ -25,6 +25,18 @@ let
 
     # Don't check for updates constantly
     check-update = false;
+
+    # Define context window sizes for models
+    models = {
+      "openai/qwen3.6" = {
+        context-window = 131072;
+        max-tokens = 4096;
+      };
+      "openai/qwen-flash" = {
+        context-window = 65536;
+        max-tokens = 4096;
+      };
+    };
   };
 in
 {
