@@ -15,10 +15,10 @@ let
     openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
 
-    # Use the Qwen3 Coder Next model for everything now (prefix with openai/ for LiteLLM)
-    model = "openai/qwen3-coder-next";
-    editor-model = "openai/qwen3-coder-next";
-    weak-model = "openai/qwen3-coder-next";
+    # Use openai/ prefix so LiteLLM knows the provider for routing
+    model = "openai/qwen3.6";
+    editor-model = "openai/qwen3.6";
+    weak-model = "openai/qwen-flash";
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;
