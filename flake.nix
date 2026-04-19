@@ -162,7 +162,8 @@
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
       getPkgs = system: import nixpkgs {
-        inherit system overlays;
+        system = system;
+        overlays = overlays;
         config.allowUnfree = true;
       };
 
@@ -183,7 +184,7 @@
     {
       nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        stdenv.hostPlatform.system = "aarch64-linux";
+        system = "aarch64-linux";
         modules = [
           baseConfig
           nixos-hardware.nixosModules.raspberry-pi-4
@@ -201,7 +202,7 @@
 
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        stdenv.hostPlatform.system = "x86_64-linux";
+        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -219,7 +220,7 @@
 
       nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        stdenv.hostPlatform.system = "x86_64-linux";
+        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango

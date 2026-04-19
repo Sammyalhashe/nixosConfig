@@ -20,7 +20,7 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs { system = system; };
+        pkgs = import nixpkgs { inherit system; };
       in
       {
         packages.breezy-vulkan = pkgs.stdenv.mkDerivation rec {
