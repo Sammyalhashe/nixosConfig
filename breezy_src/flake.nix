@@ -20,7 +20,7 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs { system = system; };
       in
       {
         packages.breezy-vulkan = pkgs.stdenv.mkDerivation rec {
@@ -39,8 +39,8 @@
           buildInputs = with pkgs; [
             vulkan-loader
             vulkan-headers
-            libX11
-            libXext
+            libx11
+            libxext
             wayland
             libdrm
             xr-driver.packages.${system}.default
