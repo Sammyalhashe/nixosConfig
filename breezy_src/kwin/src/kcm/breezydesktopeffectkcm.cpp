@@ -1099,81 +1099,17 @@ void BreezyDesktopEffectConfig::refreshLicenseUi(const QJsonObject &rootObj) {
     auto donate = tab->findChild<QLabel*>("labelDonateLink");
     auto globalWarn = widget()->findChild<QLabel*>("labelGlobalWarning");
 
-    QString status = tr("disabled");
+    QString status = tr("active");
     QString renewalDescriptor = QStringLiteral("");
-    auto uiView = rootObj.value(QStringLiteral("ui_view")).toObject();
-    auto license = uiView.value(QStringLiteral("license")).toObject();
     bool warningState = false;
     bool expired = false;
-    if (!license.isEmpty()) {
-        auto tiers = license.value(QStringLiteral("tiers")).toObject();
-        QJsonValue prodTier = tiers.value(QStringLiteral("subscriber"));
-        QJsonObject prodTierObj = prodTier.isUndefined() ? QJsonObject() : prodTier.toObject();
-
-        auto features = license.value(QStringLiteral("features")).toObject();
-        QJsonValue prodFeature = features.value(QStringLiteral("productivity_basic"));
-        QJsonObject prodFeatureObj = prodFeature.isUndefined() ? QJsonObject() : prodFeature.toObject();
-        if (!prodTierObj.isEmpty() && !prodFeatureObj.isEmpty()) {
-            const QString activePeriod = prodTierObj.value(QStringLiteral("active_period")).toString();
-            const bool isActive = !activePeriod.isEmpty();
-            if (isActive) {
-                status = tr("active");
-
-                QString periodDescriptor = activePeriod.contains(QStringLiteral("lifetime"), Qt::CaseInsensitive) ? 
-                    tr("lifetime") : 
-                    tr("%1 license").arg(activePeriod);
-
-                QString timeDescriptor;
-                auto secsVal = prodTierObj.value(QStringLiteral("funds_needed_in_seconds"));
-                if (secsVal.isDouble()) {
-                    qint64 secs = static_cast<qint64>(secsVal.toDouble());
-                    QString remaining = secondsToRemainingString(secs);
-                    if (!remaining.isEmpty()) {
-                        timeDescriptor = tr("%1 remaining").arg(remaining);
-                    }
-                }
-                renewalDescriptor = tr(" (%1)").arg(periodDescriptor);
-                warningState = !timeDescriptor.isEmpty();
-                if (warningState) {
-                    auto fundsNeeded = prodTierObj.value(QStringLiteral("funds_needed_by_period")).toObject().value(activePeriod).toDouble();
-                    if (fundsNeeded > 0.0) {
-                        QString fundsNeededDescriptor = tr("$%1 USD to renew").arg(fundsNeeded);
-                        renewalDescriptor = tr(" (%1, %2, %3)").arg(periodDescriptor, fundsNeededDescriptor, timeDescriptor);
-                    }
-                }
-            } else {
-                QJsonValue isEnabled = prodFeatureObj.value(QStringLiteral("is_enabled"));
-                QJsonValue isTrial = prodFeatureObj.value(QStringLiteral("is_trial"));
-                if (isEnabled.toBool()) {
-                    if (isTrial.toBool()) {
-                        status = tr("in trial");
-                        auto secsVal = prodFeatureObj.value(QStringLiteral("funds_needed_in_seconds"));
-                        if (secsVal.isDouble()) {
-                            qint64 secs = static_cast<qint64>(secsVal.toDouble());
-                            QString remaining = secondsToRemainingString(secs);
-                            warningState = !remaining.isEmpty();
-                            if (warningState) {
-                                QString timeDescriptor = tr("%1 remaining").arg(remaining);
-                                renewalDescriptor = tr(" (%1)").arg(timeDescriptor);
-                            }
-                        }
-                    }
-                } else {
-                    expired = true;
-                }
-            }
-        }
-    }
     const QString message = tr("Productivity Tier features are %1%2").arg(status, renewalDescriptor);
     labelSummary->setText(message);
 
-    if (donate) donate->setVisible(warningState || expired);
+    if (donate) donate->setVisible(false);
 
     if (globalWarn && !globalWarn->isVisible()) {
-        if (warningState || expired) {
-            globalWarn->setText(message + (expired ? tr(" — effect disabled") : QString()));
-            globalWarn->setVisible(true);
-        } else {
+        {
             globalWarn->clear();
             globalWarn->setVisible(false);
         }
