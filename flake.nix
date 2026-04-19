@@ -183,7 +183,7 @@
     {
       nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "aarch64-linux";
+        stdenv.hostPlatform.system = "aarch64-linux";
         modules = [
           baseConfig
           nixos-hardware.nixosModules.raspberry-pi-4

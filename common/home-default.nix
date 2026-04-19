@@ -60,7 +60,7 @@ in
     kitty
     mupdf
     nextcloud-client
-    protonvpn-gui
+    proton-vpn
     telegram-desktop
     thunar
     thunderbird

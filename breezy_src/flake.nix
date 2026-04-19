@@ -197,7 +197,7 @@
             kdePackages.qtdeclarative
             kdePackages.qtquick3d
             libepoxy
-            xorg.libxcb
+            libxcb
             xr-driver.packages.${system}.default
           ];
 

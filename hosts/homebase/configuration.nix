@@ -143,8 +143,8 @@ in
   fonts.packages = with pkgs; [
     monoid
     source-code-pro
-    xorg.fontadobe100dpi
-    xorg.fontadobe75dpi
+    fontadobe100dpi
+    fontadobe75dpi
   ];
 
   fonts.fontDir.enable = true;
