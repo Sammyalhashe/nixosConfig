@@ -359,7 +359,12 @@ in
       name=$1
       src=$2
       target="$HOME/.openclaw/workspace/skills/$name"
-      
+
+      if [ ! -d "$src" ]; then
+        echo "Skipping skill $name: source $src not found"
+        return 0
+      fi
+
       # Sync source to target, making files writable and excluding build artifacts
       ${pkgs.rsync}/bin/rsync -avz --chmod=u+w --exclude 'node_modules' --exclude '.venv' --exclude 'package-lock.json' --exclude 'uv.lock' "$src/" "$target/"
     }

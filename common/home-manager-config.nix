@@ -28,6 +28,7 @@ in
 
       users.${cfg.username} = {
         imports = stylixModule ++ [
+          inputs.plasma-manager.homeManagerModules.plasma-manager
           (./. + "/home-${cfg.homeManagerHostname}.nix")
           inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
         ];
