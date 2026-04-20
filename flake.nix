@@ -412,6 +412,30 @@
                 sudo nixos-rebuild ${action} --flake .#${flakeAttr}
               '';
 
+            mkDeployScript =
+              name: flakeAttr: targetHost:
+              pkgs.writeScriptBin name ''
+                #!/bin/sh
+                set -e
+                ACTION="''${1:-switch}"
+
+                echo "Building .#nixosConfigurations.${flakeAttr}..."
+                OUT_PATH=$(nix build .#nixosConfigurations.${flakeAttr}.config.system.build.toplevel --json --no-link | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Copying closure to ${targetHost}..."
+                nix copy --to "ssh-ng://root@${targetHost}" "''${OUT_PATH}"
+
+                echo "Activating ($ACTION) on ${targetHost}..."
+                ssh root@${targetHost} "nix-env -p /nix/var/nix/profiles/system --set ''\'''${OUT_PATH}' && ''\'''${OUT_PATH}/bin/switch-to-configuration' '$ACTION'"
+
+                echo "Done deploying to ${targetHost}."
+              '';
+
             scripts = [
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
@@ -437,6 +461,14 @@
 
               (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
               (mkHostScript "test-filestore" "filestore" "filestore" "test")
+
+              # Remote deploy scripts (build locally, push + activate on remote host)
+              # Usage: deploy-<host> [switch|test|boot|dry-activate]
+              (mkDeployScript "deploy-homebase" "homebase" "homebase")
+              (mkDeployScript "deploy-starship" "starship" "starship")
+              (mkDeployScript "deploy-oldboy" "oldboy" "oldboy")
+              (mkDeployScript "deploy-filestore" "filestore" "filestore")
+              (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
 
               # Home manager scripts
               (mkScript "switch-home-work" "home-manager switch --flake .#work")
@@ -590,7 +622,9 @@
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
                                       echo "  push-mothership - Build mothership system config and push to cachix"
-                                      echo "  switch-<host>    - Switch NixOS configuration"              echo "  test-<host>   - Test NixOS configuration"
+                                      echo "  deploy-<host> [action] - Build locally, push and activate on remote host (default: switch)"
+              echo "  switch-<host>    - Switch NixOS configuration locally"
+              echo "  test-<host>      - Test NixOS configuration locally"
               echo ""
               echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
               echo "Home Configs: work"
