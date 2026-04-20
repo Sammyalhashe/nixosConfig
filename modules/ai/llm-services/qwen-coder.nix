@@ -15,14 +15,14 @@ in
     enable = mkEnableOption "Qwen3-Coder-Next Service (Port 8014)";
     modelPath = mkOption {
       type = types.str;
-      default = "/var/lib/llama-cpp-models/qwen3_next_q4km.gguf";
+      default = "/var/lib/llama-cpp-models/Qwen3.6-35B-A3B-MXFP4_MOE.gguf";
       description = "Path to the Qwen3-Coder-Next GGUF model.";
     };
   };
 
   config = mkIf cfg.enable {
     systemd.services.llama-cpp-coder = {
-      description = "LLaMA C++ server (Qwen3-Coder-Next - Port 8014)";
+      description = "LLaMA C++ server (Qwen3.6 - Port 8014)";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
@@ -58,6 +58,10 @@ in
           + "--parallel 1 "
           + "--threads 16 "
           + "--flash-attn 1 "
+          + "--temp 0.6 "
+          + "--top-p 0.95 "
+          + "--top-k 20 "
+          + "--min-p 0.00 "
           + "--no-mmap";         # MANDATORY for Strix Halo to prevent paging stalls
         
         Restart = "on-failure";

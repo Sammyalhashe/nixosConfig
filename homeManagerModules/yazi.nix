@@ -1,6 +1,7 @@
 { lib, inputs, ... }:
 {
   programs.yazi = {
+    shellWrapperName = "y";
     enable = true;
     settings = {
       manager = {

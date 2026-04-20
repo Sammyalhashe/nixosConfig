@@ -20,8 +20,8 @@ pkgs.writeShellScriptBin "aider-search" ''
     echo "Starting Agentic Aider with Brave Search MCP..."
     trap 'rm -f "$TEMP_CONFIG"' EXIT
     exec ${pkgs.aider-chat-with-browser}/bin/aider \
-      --model openai/qwen3-coder \
-      --openai-api-base http://127.0.0.1:8012/v1 \
+      --model openai/qwen3.6 \
+      --openai-api-base http://127.0.0.1:4000/v1 \
       --no-auto-commits \
       --config "$TEMP_CONFIG" \
       --map-tokens 2048 \

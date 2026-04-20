@@ -39,8 +39,8 @@
           buildInputs = with pkgs; [
             vulkan-loader
             vulkan-headers
-            libX11
-            libXext
+            libx11
+            libxext
             wayland
             libdrm
             xr-driver.packages.${system}.default
@@ -197,7 +197,7 @@
             kdePackages.qtdeclarative
             kdePackages.qtquick3d
             libepoxy
-            xorg.libxcb
+            libxcb
             xr-driver.packages.${system}.default
           ];
 

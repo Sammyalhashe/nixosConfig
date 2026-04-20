@@ -23,7 +23,10 @@ in
     ./home-common.nix
     ./home-entertainment.nix
     ../homeManagerModules/claude-code.nix
+    ../homeManagerModules/aider.nix
   ];
+
+  programs.aider.enable = true;
 
   home.username = "${user}";
 
@@ -57,7 +60,7 @@ in
     kitty
     mupdf
     nextcloud-client
-    protonvpn-gui
+    proton-vpn
     telegram-desktop
     thunar
     thunderbird
@@ -67,6 +70,9 @@ in
     # unfree applications
     obsidian
     discord
+
+    # AI
+    python313Packages.huggingface-hub
 
     # terminal utilities
     blesh

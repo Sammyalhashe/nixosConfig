@@ -15,7 +15,7 @@ in
     enable = mkEnableOption "Gemma 4 Service (Port 8012)";
     modelPath = mkOption {
       type = types.str;
-      default = "/var/lib/llama-cpp-models/gemma-4-26B-A4B-it-Q8_0.gguf";
+      default = "/var/lib/llama-cpp-models/google_gemma-4-31B-it-Q4_K_M.gguf";
       description = "Path to the model GGUF file.";
     };
   };
@@ -63,12 +63,15 @@ in
           in
           "${llama-pkg}/bin/llama-server "
           + "--model ${cfg.modelPath} "
+          + "--model-draft /var/lib/llama-cpp-models/qwen2.5-1.5b-instruct-q8_0.gguf "
+          + "--draft 5 "
+          + "--threads-draft 4 "
           + "--port 8012 "
           + "--host 0.0.0.0 "
           + "--n-gpu-layers 999 "  # Force full GPU offload (Strix Halo has 128GB Unified Memory)
-          + "--ctx-size 262144 "   # Gemma 4's native context window
+          + "--ctx-size 65536 "   # Reduced context for "usable" daily speed
           + "--parallel 1 "
-          + "--threads 16 "
+          + "--threads 12 "       # Headroom for GPU command processor
           + "--flash-attn 1 "
           + "--no-mmap";         # Crucial for Unified Memory to prevent paging stalls and kernel freezes
         

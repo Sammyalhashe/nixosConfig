@@ -162,7 +162,8 @@
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
       getPkgs = system: import nixpkgs {
-        inherit system overlays;
+        system = system;
+        overlays = overlays;
         config.allowUnfree = true;
       };
 
@@ -245,7 +246,7 @@
 
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
+        stdenv.hostPlatform.system = "x86_64-linux";
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
@@ -259,7 +260,7 @@
 
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
+        stdenv.hostPlatform.system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -281,7 +282,7 @@
 
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
+        stdenv.hostPlatform.system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -310,7 +311,7 @@
 
       nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
+        stdenv.hostPlatform.system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
