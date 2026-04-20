@@ -21,7 +21,7 @@ in
 
     qt = {
       enable = true;
-      style.name = "kvantum";
+      style.name = lib.mkForce "kvantum";
       platformTheme.name = "kde";
     };
 
