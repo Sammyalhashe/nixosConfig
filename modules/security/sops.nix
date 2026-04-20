@@ -55,6 +55,8 @@
   sops.secrets.coinbase_api_key_clawdbot = { };
   sops.secrets.coinbase_api_id_clawdbot = { };
   sops.secrets.coinbase_api_secret_clawdbot = { };
+  sops.secrets.coinbase_api_id_coinbase_trader = { };
+  sops.secrets.coinbase_api_secret_coinbase_trader = { };
 
   sops.secrets.icloud_email = {
     owner = config.host.username;
@@ -110,6 +112,18 @@
     '';
     owner = config.host.username;
     path = "/home/${config.host.username}/cdb_api_key.json";
+  };
+
+
+  sops.templates."coinbase-trader-api-json" = {
+    content = ''
+      {
+         "name": "${config.sops.placeholder.coinbase_api_id_coinbase_trader}",
+         "privateKey": "${config.sops.placeholder.coinbase_api_secret_coinbase_trader}"
+      }
+    '';
+    owner = config.host.username;
+    path = "/home/${config.host.username}/cdb_trader_api_key.json";
   };
 
   sops.templates."picoclaw-env" = {

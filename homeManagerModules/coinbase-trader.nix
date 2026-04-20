@@ -79,7 +79,7 @@ in
       Environment = [
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=false"
-        "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
+        "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
         "STRATEGY=trend_following"
         "SHORT_WINDOW=21"
         "LONG_WINDOW=55"
