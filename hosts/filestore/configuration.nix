@@ -347,7 +347,7 @@ in
     tunnels = {
       "picloud" = {
         # This points to the file sops-nix created
-        tokenFile = config.sops.secrets.picloud_cloudflare_tunnel_token.path;
+        credentialsFile = config.sops.secrets.picloud_cloudflare_tunnel_token.path;
         default = "http_status:404"; # Fallback
       };
     };
@@ -486,7 +486,6 @@ in
     nmap
     openssl
     logseq-supernote-sync
-    health-check
     nodejs_25
     btop
     gemini-cli
@@ -518,104 +517,6 @@ in
       X11Forwarding = true;
       AllowTcpForwarding = true; # Required for the X11 tunnel
     };
-  };
-
-  systemd.services.supernote-digest = {
-    description = "Generate Daily Task Digest for Supernote";
-    path = [ pkgs.git ];
-    after = [
-      "network.target"
-    ];
-    stopIfChanged = false;
-    serviceConfig = {
-      Type = "oneshot";
-      User = "salhashemi2";
-      # This runs the extraction, installs pysn-digest in a temp venv, and generates the PDF
-      ExecStart = pkgs.writeShellScript "run-pysn-digest" ''
-        export PATH="${pysnEnv}/bin:$PATH"
-
-        # 1. Run our embedded python extractor
-        ${extractTodos}/bin/extract-logseq-todos
-
-        # 2. Clone/Update the repo
-        REPO_DIR="/tmp/pysn_digest_repo"
-        if [ ! -d "$REPO_DIR" ]; then
-             ${pkgs.git}/bin/git clone https://gitlab.com/mmujynya/pysn-digest.git "$REPO_DIR"
-        else
-             cd "$REPO_DIR" && ${pkgs.git}/bin/git pull
-        fi
-
-        # 3. Setup a temporary environment for pysn-digest
-        # We rely on nix-provided packages in pysnEnv, but create a venv to allow
-        # pip to install any missing minor deps or to satisfy the script's expectations
-        # if it tries to self-manage. However, with --system-site-packages we can use nix libs.
-        TEMP_VENV="/tmp/pysn_venv"
-        if [ ! -d "$TEMP_VENV" ]; then
-          python -m venv --system-site-packages "$TEMP_VENV"
-          # Install remaining requirements (ignoring those already in system site-packages)
-          "$TEMP_VENV/bin/pip" install -r "$REPO_DIR/requirements_pysn.txt"
-        fi
-
-        # 4. Generate the PDF onto the SSD
-        cd "$REPO_DIR"
-        "$TEMP_VENV/bin/python" digest.py \
-          --input /tmp/daily_focus.md \
-          --output /SupernoteSync/Digests/Daily_Focus.pdf
-      '';
-    };
-  };
-
-  # 5. The Timer (Runs every morning at 8:00 AM)
-  systemd.timers.supernote-digest = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "*-*-* 08:00:00";
-      Persistent = true; # Run immediately if the Pi was off at 8 AM
-    };
-  };
-
-  systemd.services.supernote-sync = {
-    description = "Sync Supernote Cloud to /SupernoteSync";
-    stopIfChanged = false;
-    serviceConfig = {
-      Type = "oneshot";
-      User = "salhashemi2";
-    };
-    script = ''
-      export SN_EMAIL="$(cat ${config.sops.secrets.supernote_email.path})"
-      export SN_PASSWORD="$(cat ${config.sops.secrets.supernote_password.path})"
-      exec ${supernote-sync-script}/bin/supernote-sync
-    '';
-  };
-
-  systemd.timers.supernote-sync = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "hourly";
-      Persistent = true;
-    };
-  };
-
-  systemd.user.services.logseq-digest = {
-    description = "Sync Logseq Daily Journal to Supernote";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${logseq-supernote-sync}/bin/logseq-sync";
-    };
-    # Ensure the script has the tools it needs in its PATH
-    path = [
-      pkgs.bash
-      pkgs.coreutils
-    ];
-  };
-
-  systemd.user.timers.logseq-digest = {
-    description = "Run Logseq Digest every day at 8 PM";
-    timerConfig = {
-      OnCalendar = "0/2:00:00";
-      Persistent = true;
-    };
-    wantedBy = [ "timers.target" ];
   };
 
   services.syncthing = {
@@ -697,10 +598,6 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUptk+nhbHYTfUJvGT3/X4vkKWRotT5ckw8BiQuADml sammy@salh.xyz"
     ];
   };
-
-  programs.bash.interactiveShellInit = ''
-    ${health-check}/bin/sys-health
-  '';
 
   # services.restic.backups.logseq = {
   #   paths = [ "/logseq-data" ];
