@@ -11,39 +11,6 @@ let
   interface = "wlan0";
   hostname = "filestore";
 
-  health-check = pkgs.writeShellScriptBin "sys-health" ''
-    echo "--- Systemd Service Health ---"
-    SERVICES="syncthing.service nginx.service logseq-digest.timer"
-
-    for svc in $SERVICES; do
-      status=$(systemctl is-active "$svc")
-      if [ "$status" = "active" ]; then
-        echo "✅ $svc: $status"
-      else
-        echo "❌ $svc: $status"
-      fi
-    done
-
-    # Check for any failed services across the whole system
-    FAILED_COUNT=$(systemctl list-units --state=failed --no-legend | wc -l)
-    if [ "$FAILED_COUNT" -gt 0 ]; then
-      echo "⚠️  Alert: $FAILED_COUNT services have FAILED!"
-      systemctl list-units --state=failed --no-legend
-    fi
-
-    # Check Podman/Docker pods if they exist
-    if command -v podman &> /dev/null; then
-      echo -e "\n--- Container/Pod Health ---"
-      podman ps --format \"{{.Names}}: {{.Status}}\" | sed 's/^/📦 /'
-    fi
-
-    echo -e "\n--- Storage Health ---"
-    df -h / | grep -v Filesystem
-
-    echo -e "\n--- Last Logseq Sync ---"
-    systemctl --user list-timers logseq-digest.timer --no-legend
-  '';
-
   # 1. Define the Python environment (Pinned to 3.12 for pysn-digest compatibility)
   pysnEnv = pkgs.python312.withPackages (
     ps: with ps; [
@@ -94,36 +61,6 @@ let
     ${pkgs.podman}/bin/podman exec homeassistant wget -O - https://get.hacs.xyz | bash -
   '';
 
-  # 2. The Extraction Script (Embedded Python)
-  # This script pulls TODOs from your Logseq Journals on your SSD
-  extractTodos = pkgs.writeScriptBin "extract-logseq-todos" ''
-    #!${pysnEnv}/bin/python
-    import re
-    from datetime import date
-    from pathlib import Path
-
-    LOGSEQ_JOURNALS = Path("/Logseq/journals")
-    OUTPUT_MD = Path("/tmp/daily_focus.md")
-
-    def extract():
-        today_file = LOGSEQ_JOURNALS / f"{date.today().strftime('%Y_%m_%d')}.md"
-        if not today_file.exists():
-            OUTPUT_MD.write_text("# Daily Focus\n\nNo journal entry found for today.")
-            return
-        
-        content = today_file.read_text()
-        todos = re.findall(r'^\s*- (TODO|LATER|NOW) (.*)', content, re.MULTILINE)
-        
-        output = f"# Daily Focus - {date.today()}\n\n"
-        if not todos:
-            output += "No active tasks found."
-        for status, task in todos:
-            output += f"- [ ] **{status}**: {task}\n"
-        OUTPUT_MD.write_text(output)
-
-    if __name__ == "__main__":
-        extract()
-  '';
   # Define the sync script
   logseq-supernote-sync = pkgs.writeShellScriptBin "logseq-sync" ''
     # Paths (Using environment variables or hardcoded Nix paths)
@@ -141,79 +78,6 @@ let
     else
         echo "No journal entry found for today yet."
     fi
-  '';
-
-  # sncloud derivation
-  sncloud = pkgs.python3Packages.buildPythonPackage rec {
-    pname = "sncloud";
-    version = "0.2.1";
-    pyproject = true;
-    src = pkgs.fetchFromGitHub {
-      owner = "julianprester";
-      repo = "sncloud";
-      rev = "master";
-      sha256 = "1v8cm06lrsskfpf62jv6zgs6dz70sk6wh8sy18cn6mxans4i3apw";
-    };
-    nativeBuildInputs = with pkgs.python3Packages; [
-      hatchling
-    ];
-    propagatedBuildInputs = with pkgs.python3Packages; [
-      click
-      httpx
-      pydantic
-    ];
-  };
-
-  # Sync script
-  supernote-sync-script = pkgs.writeScriptBin "supernote-sync" ''
-    #!${pkgs.python3.withPackages (ps: [ sncloud ])}/bin/python
-    import os
-    import sys
-    from sncloud import SNClient
-    from sncloud.models import Directory
-    from pathlib import Path
-
-    EMAIL = os.environ.get("SN_EMAIL")
-    PASSWORD = os.environ.get("SN_PASSWORD")
-    TARGET_DIR = Path("/SupernoteSync")
-
-    if not EMAIL or not PASSWORD:
-        print("Error: SN_EMAIL or SN_PASSWORD not set")
-        sys.exit(1)
-
-    print(f"Logging in as {EMAIL}...")
-    try:
-        sn = SNClient()
-        sn.login(email=EMAIL, password=PASSWORD)
-        print("Login successful.")
-        
-        def sync_folder(parent_id, local_path):
-            local_path.mkdir(parents=True, exist_ok=True)
-            print(f"Listing folder {parent_id}...")
-            items = sn.ls(parent_id)
-            for item in items:
-                # Sanitize name
-                safe_name = item.file_name.replace("/", "_")
-                item_path = local_path / safe_name
-                
-                if isinstance(item, Directory):
-                    sync_folder(item.id, item_path)
-                else:
-                    if not item_path.exists(): # Simple check
-                        print(f"Downloading {item.file_name} to {item_path}...")
-                        try:
-                            sn.get(item, local_path)
-                        except Exception as e:
-                            print(f"Failed to download {item.file_name}: {e}")
-                    else:
-                        pass
-
-        sync_folder(None, TARGET_DIR)
-        print("Sync complete.")
-
-    except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
   '';
 in
 {
@@ -477,66 +341,17 @@ in
       extraOptions = [ "--network=nextcloud-net" ];
     };
   };
-  # virtualisation.oci-containers.containers = {
-  #   # 1. The Database (Pinned to 16)
-  #   nextcloud-db = {
-  #     image = "docker.io/library/postgres:16-alpine";
-  #     environment = {
-  #       POSTGRES_DB = "nextcloud";
-  #       POSTGRES_USER = "nextcloud";
-  #     };
-  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
-  #     volumes = [ "/nextcloud/db:/var/lib/postgresql/data" ];
-  #     extraOptions = [ "--network=nextcloud-net" ];
-  #   };
-  #
-  #   # 2. Redis (CRITICAL for stability/speed with photos)
-  #   nextcloud-redis = {
-  #     image = "docker.io/library/redis:alpine";
-  #     extraOptions = [ "--network=nextcloud-net" ];
-  #   };
-  #
-  #   # 3. Nextcloud App (Pinned Version!)
-  #   nextcloud-app = {
-  #     # NEVER use :latest. Pin to a specific stable version.
-  #     image = "docker.io/library/nextcloud:33.0.0-apache";
-  #     ports = [ "8082:80" ];
-  #     volumes = [
-  #       "/nextcloud/html:/var/www/html"
-  #       "/nextcloud/data:/var/www/html/data"
-  #       "/nextcloud/config:/var/www/html/config"
-  #     ];
-  #     environment = {
-  #       POSTGRES_HOST = "nextcloud-db";
-  #       POSTGRES_DB = "nextcloud";
-  #       POSTGRES_USER = "nextcloud";
-  #       NEXTCLOUD_ADMIN_USER = "salhashemi2";
-  #       NEXTCLOUD_TRUSTED_DOMAINS = "cloud.salh.xyz";
-  #       OVERWRITEPROTOCOL = "https";
-  #       OVERWRITEHOST = "cloud.salh.xyz";
-  #       TRUSTED_PROXIES = "127.0.0.1 10.88.0.1";
-  #       # Add Redis for file locking and caching
-  #       REDIS_HOST = "nextcloud-redis";
-  #     };
-  #     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
-  #     extraOptions = [ "--network=nextcloud-net" ];
-  #   };
-  #
-  #   homeassistant = {
-  #     image = "ghcr.io/home-assistant/home-assistant:stable";
-  #     volumes = [
-  #       "/homeassistant:/config"
-  #       "/etc/localtime:/etc/localtime:ro"
-  #     ];
-  #     environment = {
-  #       TZ = "America/New_York"; # Set your timezone
-  #     };
-  #     ports = [ "8123:8123" ];
-  #     extraOptions = [
-  #       "--network=hass-net"
-  #     ];
-  #   };
-  # };
+
+  services.cloudflared = {
+    enable = true;
+    tunnels = {
+      "picloud" = {
+        # This points to the file sops-nix created
+        tokenFile = config.sops.secrets.picloud_cloudflare_tunnel_token.path;
+        default = "http_status:404"; # Fallback
+      };
+    };
+  };
 
   systemd.services.init-hass-network = {
     description = "Create the internal network for Home Assistant";
@@ -581,8 +396,15 @@ in
     requires = [ "init-nextcloud-network.service" ];
   };
   systemd.services."podman-nextcloud-app" = {
-    after = [ "init-nextcloud-network.service" "podman-nextcloud-db.service" "podman-nextcloud-redis.service" ];
-    requires = [ "init-nextcloud-network.service" "podman-nextcloud-redis.service" ];
+    after = [
+      "init-nextcloud-network.service"
+      "podman-nextcloud-db.service"
+      "podman-nextcloud-redis.service"
+    ];
+    requires = [
+      "init-nextcloud-network.service"
+      "podman-nextcloud-redis.service"
+    ];
   };
 
   # Nextcloud Background Jobs (Cron)

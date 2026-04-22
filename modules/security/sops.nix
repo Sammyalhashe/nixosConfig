@@ -70,6 +70,9 @@
   sops.secrets.cloudflare_token = {
     owner = config.host.username;
   };
+  sops.secrets.picloud_cloudflare_tunnel_token = {
+    owner = config.host.username;
+  };
 
   sops.templates."openclaw-env" = {
     content = ''
@@ -113,7 +116,6 @@
     owner = config.host.username;
     path = "/home/${config.host.username}/cdb_api_key.json";
   };
-
 
   sops.templates."coinbase-trader-api-json" = {
     content = ''
