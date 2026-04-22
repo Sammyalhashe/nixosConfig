@@ -33,7 +33,7 @@
   "timezone": "browser",
   "title": "Phar Liquidity Bot",
   "uid": "phar-liquidity-bot",
-  "version": 1,
+  "version": 2,
   "weekStart": "",
   "panels": [
     {
@@ -45,7 +45,7 @@
         "y": 0
       },
       "id": 200,
-      "title": "Phar Liquidity Bot — Overview",
+      "title": "Phar Liquidity Bot \u2014 Overview",
       "type": "row"
     },
     {
@@ -328,7 +328,7 @@
           "refId": "A"
         }
       ],
-      "title": "PHAR Rewards",
+      "title": "Reward Tracking",
       "type": "timeseries"
     },
     {
@@ -340,7 +340,7 @@
         "y": 9
       },
       "id": 201,
-      "title": "Phar Liquidity Bot — Health",
+      "title": "Phar Liquidity Bot \u2014 Health",
       "type": "row"
     },
     {
@@ -613,7 +613,7 @@
         "y": 24
       },
       "id": 211,
-      "title": "Phar Liquidity Bot — Activity Breakdown",
+      "title": "Phar Liquidity Bot \u2014 Activity Breakdown",
       "type": "row"
     },
     {
@@ -1177,7 +1177,7 @@
         "y": 38
       },
       "id": 202,
-      "title": "Phar Liquidity Bot — Transactions",
+      "title": "Phar Liquidity Bot \u2014 Transactions",
       "type": "row"
     },
     {
@@ -1337,7 +1337,7 @@
         "y": 53
       },
       "id": 203,
-      "title": "Phar Liquidity Bot — IL & P&L",
+      "title": "Phar Liquidity Bot \u2014 IL & P&L",
       "type": "row"
     },
     {
@@ -1425,12 +1425,12 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"IL:\"\n  | regexp `IL: (?P<il_wavax>[\\d.-]+) WAVAX \\((?P<il_pct>[\\d.-]+)%\\)`\n  | unwrap il_pct [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |~ \"Active IL:|IL: \"\n  | regexp `(?:Active )?IL: (?P<il_wavax>-?[\\d.]+) WAVAX`\n  | unwrap il_wavax [10m]\n)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Impermanent Loss %",
+      "title": "Active IL (WAVAX)",
       "type": "timeseries"
     },
     {
@@ -1650,7 +1650,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"IL Monitor: Position closed\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"IL Monitor:.* Position closed\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1687,7 +1687,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"IL Monitor: Position opened\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"IL Monitor:.* Position opened\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -1741,7 +1741,7 @@
         "y": 84
       },
       "id": 204,
-      "title": "Phar Liquidity Bot — Adaptive Behavior",
+      "title": "Phar Liquidity Bot \u2014 Adaptive Behavior",
       "type": "row"
     },
     {
@@ -1938,7 +1938,7 @@
         "y": 99
       },
       "id": 205,
-      "title": "Phar Liquidity Bot — Pool & Gas",
+      "title": "Phar Liquidity Bot \u2014 Pool & Gas",
       "type": "row"
     },
     {
@@ -2024,7 +2024,7 @@
         "y": 107
       },
       "id": 212,
-      "title": "Phar Liquidity Bot — PHAR Rewards",
+      "title": "Phar Liquidity Bot \u2014 Reward Tracking",
       "type": "row"
     },
     {
@@ -2112,13 +2112,13 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"PHAR received\"\n  | regexp `cumulative: (?P<phar>[\\d.]+) PHAR`\n  | unwrap phar [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"received\" |= \"cumulative:\"\n  | regexp `cumulative: (?P<reward>[\\d.]+)`\n  | unwrap reward [10m]\n)",
           "legendFormat": "Cumulative PHAR",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Cumulative PHAR Received (tokens)",
+      "title": "Cumulative Reward Received (tokens)",
       "type": "timeseries"
     },
     {
@@ -2206,13 +2206,13 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"PHAR received\"\n  | regexp `\\(\\$(?P<usd>[\\d.]+)\\)`\n  | unwrap usd [10m]\n)",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"received\" |= \"cumulative:\"\n  | regexp `\\(\\$(?P<usd>[\\d.]+)\\)`\n  | unwrap usd [10m]\n)",
           "legendFormat": "Cumulative PHAR (USD)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Cumulative PHAR Value (USD)",
+      "title": "Cumulative Reward Value (USD)",
       "type": "timeseries"
     },
     {
@@ -2244,12 +2244,426 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"PHAR received\"",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"received\" |= \"cumulative:\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "PHAR Received Events",
+      "title": "Reward Received Events",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 124
+      },
+      "id": 220,
+      "title": "Phar Liquidity Bot \u2014 Regime Detection",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 125
+      },
+      "id": 221,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Regime:\" |~ \"BTC=\" | line_format \"{{.line}}\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Regime",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 125
+      },
+      "id": 222,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"Regime (signal|change confirmed):\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Regime Signals & Confirmations",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 130
+      },
+      "id": 223,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "refId": "A",
+          "queryType": "range",
+          "expr": "last_over_time(\n  {user_unit=\"phar-liquidity-bot.service\"}\n  |= \"RSI=\"\n  | regexp `RSI=(?P<rsi>[\\d.]+)`\n  | unwrap rsi [35m]\n)"
+        }
+      ],
+      "title": "AVAX RSI (1h candles)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 130
+      },
+      "id": 224,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Regime change confirmed:\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Regime Change History",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 137
+      },
+      "id": 225,
+      "title": "Phar Liquidity Bot \u2014 Pool Migration",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 138
+      },
+      "id": 226,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"Migration|migrating|Stranded\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Migration Events",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 145
+      },
+      "id": 227,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |= \"Regime:\" |~ \"BTC=\" | line_format \"Pool: {{.currentPool}} | {{.line}}\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Pool (from Regime Logs)",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 145
+      },
+      "id": 228,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"Completing stranded|stranded migration\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Stranded Migration Recovery",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 150
+      },
+      "id": 229,
+      "title": "Phar Liquidity Bot \u2014 State Snapshot (every 10 cycles)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 151
+      },
+      "id": 230,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{user_unit=\"phar-liquidity-bot.service\"} |~ \"STATE SNAPSHOT|PORTFOLIO|CUMULATIVE P&L|REGIME & POOL|<\u2500\u2500\u2500\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Periodic State Snapshots",
       "type": "logs"
     }
   ]
