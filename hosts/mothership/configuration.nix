@@ -248,6 +248,14 @@ in
     pulse.enable = true;
   };
 
+  networking.extraHosts = ''
+    11.125.37.101 mothership
+    11.125.37.175 oldboy
+    11.125.37.99  raspberrypi
+    11.125.37.98  filestore
+    11.125.37.135 homebase
+  '';
+
   networking.firewall.enable = false;
   system.stateVersion = "24.11";
 }

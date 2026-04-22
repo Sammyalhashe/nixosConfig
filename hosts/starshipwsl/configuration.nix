@@ -34,8 +34,10 @@ in
   wsl.wslConf.network.generateHosts = false;
   # ...so we can write to it.
   networking.extraHosts = ''
-    11.125.37.235 picloud.local
-    11.125.37.99  raspberrypi.local
+    11.125.37.101 mothership
+    11.125.37.175 oldboy
+    11.125.37.99  raspberrypi
+    11.125.37.98  filestore
     11.125.37.135 homebase
   '';
 
