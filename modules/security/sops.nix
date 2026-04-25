@@ -1,9 +1,9 @@
 { config, pkgs, ... }:
 {
   sops.defaultSopsFile = ../../secrets.yaml;
-  sops.age.keyFile = "/var/lib/sops/age/key.txt";
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-  sops.age.generateKey = true;
+  # sops.age.keyFile = "/var/lib/sops/age/key.txt";
+  # sops.age.generateKey = true;
 
   sops.secrets.gemini_api_key = {
     owner = config.host.username;
