@@ -48,6 +48,9 @@
       zellij
       zoxide
 
+      # nix stuff
+      nil
+
       # fonts
       iosevka
     ]

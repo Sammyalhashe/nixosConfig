@@ -40,7 +40,7 @@ in
         colorScheme = "BreezeDark";
         cursor = {
           theme = "Bibata-Modern-Classic";
-          size = 64;
+          size = 24;
         };
         iconTheme = "breeze-dark";
       };

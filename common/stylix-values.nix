@@ -11,24 +11,35 @@
   image = ./assets/BLACK_VII_desktop.jpg;
   polarity = "dark";
   fonts = {
-    serif = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
-    };
-
+    # 1. UI/System Font (Menus, Taskbar, Windows)
     sansSerif = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
+      package = pkgs.inter;
+      name = "Inter";
     };
 
+    # 2. Document Font (Serif)
+    serif = {
+      package = pkgs.noto-fonts;
+      name = "Noto Serif";
+    };
+
+    # 3. Terminal/Code Font
     monospace = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
+      package = pkgs.jetbrains-mono;
+      name = "JetBrains Mono";
+    };
+
+    # 4. Global Font Size
+    sizes = {
+      applications = 10;
+      terminal = 11;
+      desktop = 10;
+      popups = 10;
     };
   };
   cursor = {
     package = pkgs.bibata-cursors;
     name = "Bibata-Modern-Classic";
-    size = 64;
+    size = 24;
   };
 }

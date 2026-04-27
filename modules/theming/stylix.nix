@@ -17,6 +17,9 @@ in
     {
       stylix.enable = true;
 
+      # disable system targets
+      stylix.targets.plymouth.enable = false;
+
       # Provide fallback configuration using weak priority (1100).
       stylix.base16Scheme = mkOverride 1100 theme.base16Scheme;
       stylix.image = mkOverride 1100 theme.image;

@@ -43,5 +43,13 @@ in
       stylix.fonts = lib.mkOverride 1100 theme.fonts;
       stylix.cursor = lib.mkOverride 1100 theme.cursor;
     })
+    (lib.mkIf (osConfig != null && osConfig.host.enableKDE or false) {
+      stylix.iconTheme = {
+        enable = true;
+        package = pkgs.papirus-icon-theme;
+        dark = "Papirus-Dark";
+        light = "Papirus-Light";
+      };
+    })
   ];
 }

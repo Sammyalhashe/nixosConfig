@@ -34,10 +34,39 @@ in
   system.autoUpgrade.allowReboot = true;
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 1;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot = {
+    loader = {
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 1;
+      };
+      efi.canTouchEfiVariables = true;
+    };
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
+
+    # splashscreen
+    plymouth = {
+      enable = true;
+      # This uses the UEFI-provided logo (ASUS) as the base
+      theme = "bgrt";
+    };
+
+    # kernel parameters
+    kernelParams = [
+      "quiet" # Reduces kernel log output
+      "splash" # Enables the splash screen
+      "boot.shell_on_fail=false" # Prevents shell popping up on boot failure
+      "loglevel=3" # Only show errors and above
+      "rd.systemd.show_status=false" # Hides systemd status messages in initrd
+      "rd.udev.log_level=3" # Reduces udev logging
+      "udev.log_priority=3" # Further reduces udev noise
+    ];
+
+    consoleLogLevel = 0;
+    initrd = {
+      verbose = false;
+    };
+  };
 
   networking.hostName = "starship"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -92,19 +121,6 @@ in
     ];
   };
 
-  services.ollama = {
-    package = pkgs.ollama-cuda;
-    enable = true;
-    host = "0.0.0.0";
-    loadModels = [
-      "qwen2.5-coder:7b"
-      "llama3.1:8b"
-      "deepseek-r1:7b"
-      "qwen2.5:7b"
-      "MFDoom/deepseek-r1-tool-calling:8b"
-    ];
-  };
-
   services.open-webui = {
     enable = true;
   };
@@ -135,6 +151,12 @@ in
   fonts.packages = with pkgs; [
     monoid
     source-code-pro
+    inter
+    jetbrains-mono
+    noto-fonts
+    fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.symbols-only
   ];
 
   fonts.fontDir.enable = true;

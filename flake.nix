@@ -5,7 +5,7 @@
   inputs = {
     # Main NixOS unstable branch for the latest software and ROCm 7.x support
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    
+
     # User-level environment management
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +20,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprlock.url = "github:hyprwm/hyprlock";
-    
+
     # Custom Window Managers and UI frameworks
     mangowc = {
       url = "github:DreamMaoMao/mangowc";
@@ -31,7 +31,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim.url = "github:Sammyalhashe/nixvim";
-    
+
     # Homebase Manager (Custom dashboard/management tool)
     homebase-manager = {
       url = "github:Sammyalhashe/homebase-manager";
@@ -40,7 +40,7 @@
 
     # WSL2 Integration for Windows
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
-    
+
     # Theming and secrets management
     stylix = {
       url = "github:nix-community/stylix";
@@ -58,7 +58,7 @@
 
     # Hardware-specific optimizations (RPi4, Laptops, etc.)
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    
+
     # OpenClaw Agent and Picoclaw Tooling
     nix-picoclaw = {
       url = "github:Sammyalhashe/picoclaw";
@@ -89,16 +89,46 @@
     nur.url = "github:nix-community/NUR";
 
     # OpenClaw Skills (Modular AI capabilities)
-    plugin-coding = { url = "github:openclaw/skills?dir=skills/steipete/coding-agent"; flake = false; };
-    plugin-git = { url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials"; flake = false; };
-    plugin-docker = { url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials"; flake = false; };
-    plugin-system = { url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor"; flake = false; };
-    plugin-filesystem = { url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem"; flake = false; };
-    plugin-process = { url = "github:openclaw/skills?dir=skills/dbhurley/process-watch"; flake = false; };
-    plugin-polyclaw = { url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw"; flake = false; };
-    plugin-better-memory = { url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory"; flake = false; };
-    plugin-email = { url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email"; flake = false; };
-    plugin-cloudflare = { url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api"; flake = false; };
+    plugin-coding = {
+      url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
+      flake = false;
+    };
+    plugin-git = {
+      url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials";
+      flake = false;
+    };
+    plugin-docker = {
+      url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials";
+      flake = false;
+    };
+    plugin-system = {
+      url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor";
+      flake = false;
+    };
+    plugin-filesystem = {
+      url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem";
+      flake = false;
+    };
+    plugin-process = {
+      url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
+      flake = false;
+    };
+    plugin-polyclaw = {
+      url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw";
+      flake = false;
+    };
+    plugin-better-memory = {
+      url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
+      flake = false;
+    };
+    plugin-email = {
+      url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email";
+      flake = false;
+    };
+    plugin-cloudflare = {
+      url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
+      flake = false;
+    };
 
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
@@ -166,11 +196,13 @@
       ];
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
-      getPkgs = system: import nixpkgs {
-        system = system;
-        overlays = overlays;
-        config.allowUnfree = true;
-      };
+      getPkgs =
+        system:
+        import nixpkgs {
+          system = system;
+          overlays = overlays;
+          config.allowUnfree = true;
+        };
 
       # --- BASE CONFIG: Shared settings across all NixOS hosts ---
       baseConfig = {
@@ -178,7 +210,10 @@
           inherit overlays;
           config.allowUnfree = true;
         };
-        nix.settings.experimental-features = [ "nix-command" "flakes" ];
+        nix.settings.experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
         nix.gc = {
           automatic = true;
           dates = "weekly";
@@ -327,6 +362,9 @@
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
+            host.enableKDE = true;
+            host.enableMango = true;
+            host.enableHyprland = false;
             programs.stylix.enable = true;
           }
         ];

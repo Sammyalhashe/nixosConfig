@@ -22,14 +22,16 @@ lib.mkIf config.host.enableBreezy {
   # Required kernel module for virtual input devices
   boot.kernelModules = [ "uinput" ];
 
-  # xr-driver systemd user service — runs the driver daemon per-user
-  systemd.user.services.xr-driver = {
+  # xr-driver systemd system service — runs the driver daemon
+  systemd.services.xr-driver = {
     description = "XR user-space driver";
-    after = [ "graphical-session.target" ];
-    wantedBy = [ "graphical-session.target" ];
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/xr_driver";
+      User = config.host.username;
+      Group = "input";
       Restart = "always";
       RestartSec = 3;
     };

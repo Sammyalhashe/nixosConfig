@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if ! systemctl --user --quiet is-active xr-driver >/dev/null 2>&1; then
+if ! systemctl --user --quiet is-active xr-driver >/dev/null 2>&1 && ! systemctl --quiet is-active xr-driver >/dev/null 2>&1; then
     if [ -z "$IGNORE_SYSTEMD_ERRORS" ]; then
         echo "xr-driver service is not active. Start it with:" >&2
-        echo "  systemctl --user start xr-driver" >&2
+        echo "  systemctl start xr-driver (or systemctl --user start xr-driver)" >&2
         echo ""
         echo "If the issue persists, please create an issue on the wheaney/XRLinuxDriver repository."
         echo ""
