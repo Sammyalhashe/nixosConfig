@@ -15,10 +15,16 @@
         $directory $jj$git_branch$git_commit$git_state$git_status$git_metrics $character
       '';
 
-      jj = {
-        disabled = false;
-        format = " [🌀 $change_id](bold magenta) [($bookmarks)](bold blue)";
-        symbol = "";
+      custom.jj = {
+        # Only run this if we are actually in a JJ repo
+        command = "jj log -r @ -T '\"🌀 \" ++ change_id.short() ++ if(bookmarks, \" (\" ++ bookmarks ++ \")\")' --no-graph";
+        when = "jj root"; # This is the fastest way to check if we're in a jj repo
+        shell = [
+          "sh"
+          "-c"
+        ];
+        style = "bold magenta";
+        format = "[$output]($style) ";
       };
 
       git_metrics = {
