@@ -12,8 +12,14 @@
       package.disabled = true;
 
       format = ''
-        $directory $git_branch$git_commit$git_state$git_status$git_metrics $character
+        $directory $jj$git_branch$git_commit$git_state$git_status$git_metrics $character
       '';
+
+      jj = {
+        disabled = false;
+        format = " [🌀 $change_id](bold magenta) [($bookmarks)](bold blue)";
+        symbol = "";
+      };
 
       git_metrics = {
         disabled = false;
