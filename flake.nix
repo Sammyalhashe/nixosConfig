@@ -641,6 +641,27 @@
                 echo "Pushing ''${OUT_PATH} to cachix..."
                 cachix push starllama "''${OUT_PATH}"
               '')
+              (mkScript "push-oldboy" ''
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
+                fi
+
+                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
+                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
+                  exit 1
+                fi
+
+                echo "Building oldboy system configuration..."
+                OUT_PATH=$(nix build .#nixosConfigurations.oldboy.config.system.build.toplevel --json | jq -r '.[].outputs.out')
+
+                if [ -z "''${OUT_PATH}" ]; then
+                  echo "Error: Build failed or produced no output."
+                  exit 1
+                fi
+
+                echo "Pushing ''${OUT_PATH} to cachix..."
+                cachix push starllama "''${OUT_PATH}"
+              '')
             ];
           in
           pkgs.mkShell {
