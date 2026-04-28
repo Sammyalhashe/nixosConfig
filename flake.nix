@@ -480,6 +480,14 @@
               '';
 
             scripts = [
+              (pkgs.stdenv.mkDerivation {
+                name = "push-to-cachix";
+                dontUnpack = true;
+                propogatedBuildInputs = [pkgs.nushell pkgs.sops];
+                installPhase = ''
+                  install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
+                '';
+              })
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
 
@@ -515,153 +523,6 @@
 
               # Home manager scripts
               (mkScript "switch-home-work" "home-manager switch --flake .#work")
-              (mkScript "push-work" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building work home configuration..."
-                OUT_PATH=$(nix build .#homeConfigurations.work.activationPackage --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-homebase" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building homebase system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.homebase.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-mothership" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building mothership system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.mothership.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-starship" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building starship system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.starship.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-starshipwsl" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building starshipwsl system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.starshipwsl.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-filestore" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building filestore system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.filestore.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-oldboy" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building oldboy system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.oldboy.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
             ];
           in
           pkgs.mkShell {
