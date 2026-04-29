@@ -260,6 +260,7 @@
 
       nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -281,6 +282,26 @@
               nixpkgs.overlays = [ llama-cpp.overlays.default ];
             }
           )
+          (self.pkgs.stdenv.mkDerivation {
+            name = "push-to-cachix";
+            dontUnpack = true;
+            propogatedBuildInputs = [
+              self.pkgs.nushell
+              self.pkgs.sops
+            ];
+            installPhase = ''
+              install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
+            '';
+          })
+          ({
+            systemd.timers."push-to-cachix" = {
+              wantedBy = [ "timers.target" ];
+              timerConfig = {
+                  OnCalendar = "weekly";
+                  Persistent = true;
+              };
+            };
+          })
         ];
       };
 
@@ -400,6 +421,7 @@
 
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
+      homeModules.starship = ./homeManagerModules;
       homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
@@ -480,14 +502,6 @@
               '';
 
             scripts = [
-              (pkgs.stdenv.mkDerivation {
-                name = "push-to-cachix";
-                dontUnpack = true;
-                propogatedBuildInputs = [pkgs.nushell pkgs.sops];
-                installPhase = ''
-                  install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
-                '';
-              })
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
 

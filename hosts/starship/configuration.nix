@@ -26,7 +26,7 @@ in
 
   host.enableGreetd = true;
   host.enableBreezy = true;
-  host.homeManagerHostname = "default";
+  host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade
