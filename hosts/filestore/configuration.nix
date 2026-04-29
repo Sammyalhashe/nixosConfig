@@ -95,6 +95,7 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     inputs.sops-nix.nixosModules.sops
+    ./supernote-cloud.nix
   ];
 
   # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
