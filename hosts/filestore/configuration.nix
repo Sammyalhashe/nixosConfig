@@ -340,18 +340,61 @@ in
       environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
       extraOptions = [ "--network=nextcloud-net" ];
     };
-  };
 
-  services.cloudflared = {
-    enable = true;
-    tunnels = {
-      "picloud" = {
-        # This points to the file sops-nix created
-        credentialsFile = config.sops.secrets.picloud_cloudflare_tunnel_token.path;
-        default = "http_status:404"; # Fallback
+    homeassistant = {
+      image = "ghcr.io/home-assistant/home-assistant:stable";
+      volumes = [
+        "/homeassistant:/config"
+        "/etc/localtime:/etc/localtime:ro"
+      ];
+      environment = {
+        TZ = "America/New_York"; # Set your timezone
       };
+      ports = [ "8123:8123" ];
+      extraOptions = [
+        "--network=hass-net"
+      ];
     };
   };
+
+  sops.secrets.picloud_cloudflare_tunnel_token = {
+    owner = "cloudflared";
+  };
+
+  systemd.services.cloudflared-tunnel-picloud = {
+    description = "Cloudflare Tunnel (Remote Managed)";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      User = "cloudflared";
+      Group = "cloudflared";
+
+      ExecStart = pkgs.writeShellScript "start-cloudflared" ''
+        TOKEN=$(cat ${config.sops.secrets.picloud_cloudflare_tunnel_token.path})
+        # Strip "TUNNEL_TOKEN=" prefix if it exists, just in case
+
+        exec ${pkgs.cloudflared}/bin/cloudflared tunnel --no-autoupdate run --token "$TOKEN"
+      '';
+
+      Restart = "always";
+      RestartSec = "5s";
+
+      # Security Hardening
+      CapabilityBoundingSet = "";
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectHome = true;
+      ProtectSystem = "strict";
+    };
+  };
+
+  users.users.cloudflared = {
+    group = "cloudflared";
+    isSystemUser = true;
+  };
+  users.groups.cloudflared = { };
 
   systemd.services.init-hass-network = {
     description = "Create the internal network for Home Assistant";
