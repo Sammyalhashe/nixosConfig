@@ -42,7 +42,11 @@ def push [host: string] {
   cachix push starllama $out_path
 }
 
-def main [] {
-  get-nixosConfigurations | columns | par-each { |e| push ($e)}
+def main [host?: string] {
+  if ($host | is-empty) {
+    get-nixosConfigurations | columns | par-each { |e| push ($e)}
+  } else {
+    push $host
+  }
 }
 

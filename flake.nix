@@ -121,7 +121,6 @@
       baseConfig = {
         nixpkgs = {
           inherit overlays;
-          config.allowUnfree = true;
         };
         nix.settings.experimental-features = [
           "nix-command"
@@ -171,7 +170,7 @@
         ];
       };
 
-      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem rec {
         specialArgs = { inherit inputs sops-nix; };
         pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
@@ -195,19 +194,27 @@
               nixpkgs.overlays = [ llama-cpp.overlays.default ];
             }
           )
-          (self.pkgs.stdenv.mkDerivation {
-            name = "push-to-cachix";
-            dontUnpack = true;
-            propogatedBuildInputs = [
-              self.pkgs.nushell
-              self.pkgs.sops
+          ({ pkgs, ... }: {
+            environment.systemPackages = [
+              (pkgs.stdenv.mkDerivation {
+                name = "push-to-cachix";
+                dontUnpack = true;
+                buildInputs = [ pkgs.nushell pkgs.sops pkgs.cachix ];
+                installPhase = ''
+                  install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
+                '';
+              })
             ];
-            installPhase = ''
-              install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
-            '';
-          })
-          ({
-            systemd.timers."push-to-cachix" = {
+            systemd.services.push-to-cachix = {
+              description = "Push NixOS configurations to Cachix";
+              serviceConfig = {
+                Type = "oneshot";
+                ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
+                User = "root"; # Or a specific user if needed, but root is usually safer for nix build
+              };
+              path = [ pkgs.nix pkgs.sops pkgs.cachix pkgs.git pkgs.nushell ];
+            };
+            systemd.timers.push-to-cachix = {
               wantedBy = [ "timers.target" ];
               timerConfig = {
                 OnCalendar = "weekly";
@@ -417,6 +424,14 @@
             scripts = [
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
+
+              # Push to cachix scripts
+              (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
+              (mkScript "push-mothership" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} mothership")
+              (mkScript "push-homebase" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} homebase")
+              (mkScript "push-starship" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starship")
+              (mkScript "push-starshipwsl" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starshipwsl")
+              (mkScript "push-work" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} work")
 
               # Host switch/test scripts
               (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
