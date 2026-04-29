@@ -76,7 +76,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     breezy-desktop = {
-      url = "path:./breezy_src";
+      url = "github:Sammyalhashe/breezy_src";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

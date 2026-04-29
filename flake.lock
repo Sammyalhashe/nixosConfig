@@ -77,14 +77,18 @@
         "xr-driver": "xr-driver"
       },
       "locked": {
-        "path": "./breezy_src",
-        "type": "path"
+        "lastModified": 1777499884,
+        "narHash": "sha256-H129QaEmvmtOYW5OHO7j30wcY/OpOefSXDo2+El6zbI=",
+        "owner": "Sammyalhashe",
+        "repo": "breezy_src",
+        "rev": "abbcc43a8d5b3b9a60e229de79c697f4b9fc0f7e",
+        "type": "github"
       },
       "original": {
-        "path": "./breezy_src",
-        "type": "path"
-      },
-      "parent": []
+        "owner": "Sammyalhashe",
+        "repo": "breezy_src",
+        "type": "github"
+      }
     },
     "darwin": {
       "inputs": {
@@ -1738,16 +1742,18 @@
         ]
       },
       "locked": {
-        "path": "../xr_driver_src",
-        "type": "path"
+        "lastModified": 1777499647,
+        "narHash": "sha256-M68iOdaQ5kvm+x/YSqMuCE/kfjNtjlWi+LJZywKjBbw=",
+        "owner": "Sammyalhashe",
+        "repo": "xr_driver_src",
+        "rev": "b1d950034976c6e65e36b37614e2babe880e0088",
+        "type": "github"
       },
       "original": {
-        "path": "../xr_driver_src",
-        "type": "path"
-      },
-      "parent": [
-        "breezy-desktop"
-      ]
+        "owner": "Sammyalhashe",
+        "repo": "xr_driver_src",
+        "type": "github"
+      }
     },
     "zen-browser": {
       "inputs": {
