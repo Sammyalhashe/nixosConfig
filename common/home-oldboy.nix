@@ -13,7 +13,7 @@ in
 {
   imports = [
     ./home-common.nix
-    ../homeManagerModules/openclaw.nix
+    # ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
     ../homeManagerModules/claude-code.nix
     ../homeManagerModules/opencode.nix

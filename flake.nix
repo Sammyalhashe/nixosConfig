@@ -59,16 +59,6 @@
     # Hardware-specific optimizations (RPi4, Laptops, etc.)
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # OpenClaw Agent and Picoclaw Tooling
-    nix-picoclaw = {
-      url = "github:Sammyalhashe/picoclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Flatpak and XR Driver support
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     viture-virtual-display = {
@@ -87,48 +77,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur.url = "github:nix-community/NUR";
-
-    # OpenClaw Skills (Modular AI capabilities)
-    plugin-coding = {
-      url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
-      flake = false;
-    };
-    plugin-git = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials";
-      flake = false;
-    };
-    plugin-docker = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials";
-      flake = false;
-    };
-    plugin-system = {
-      url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor";
-      flake = false;
-    };
-    plugin-filesystem = {
-      url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem";
-      flake = false;
-    };
-    plugin-process = {
-      url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
-      flake = false;
-    };
-    plugin-polyclaw = {
-      url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw";
-      flake = false;
-    };
-    plugin-better-memory = {
-      url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
-      flake = false;
-    };
-    plugin-email = {
-      url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email";
-      flake = false;
-    };
-    plugin-cloudflare = {
-      url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
-      flake = false;
-    };
 
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
@@ -150,18 +98,6 @@
       nur,
       sops-nix,
       nixos-hardware,
-      nix-openclaw,
-      nix-picoclaw,
-      plugin-coding,
-      plugin-git,
-      plugin-docker,
-      plugin-system,
-      plugin-filesystem,
-      plugin-process,
-      plugin-polyclaw,
-      plugin-better-memory,
-      plugin-email,
-      plugin-cloudflare,
       flake-utils,
       llama-cpp,
       ...
@@ -170,29 +106,6 @@
       # Define overlays that should be available on all systems
       overlays = [
         nur.overlays.default
-        nix-openclaw.overlays.default
-        nix-picoclaw.overlays.default
-        (final: prev: {
-          openclaw-gateway = prev.openclaw-gateway.overrideAttrs (old: {
-            installPhase = ''
-              ${old.installPhase}
-              cp -r docs $out/lib/openclaw/
-              # Fix for missing plugin manifests in dist/extensions
-              if [ -d "$out/lib/openclaw/extensions" ]; then
-                find "$out/lib/openclaw/extensions" -name "openclaw.plugin.json" | while read manifest; do
-                  plugin_name=$(basename $(dirname "$manifest"))
-                  target_dir="$out/lib/openclaw/dist/extensions/$plugin_name"
-                  if [ -d "$target_dir" ]; then
-                    cp "$manifest" "$target_dir/"
-                  fi
-                done
-              fi
-            '';
-          });
-          openclaw = prev.openclaw.override {
-            openclaw-gateway = final.openclaw-gateway;
-          };
-        })
       ];
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
@@ -409,7 +322,7 @@
         extraSpecialArgs = {
           inherit inputs sops-nix;
           user = "salhashemi2";
-          homeDir = "/root";
+          homeDir = "/home/salhashemi2/";
         };
         modules = [
           baseConfig
