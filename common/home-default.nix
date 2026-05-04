@@ -153,5 +153,17 @@ in
     nativeMessagingHosts = [
       pkgs.kdePackages.plasma-browser-integration
     ];
+    profiles.default = {
+      name = "default";
+      isDefault = true;
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        ublock-origin
+        bitwarden
+        sponsorblock
+        darkreader
+      ];
+    };
   };
+
+  stylix.targets.firefox.profileNames = [ "default" ];
 }

@@ -2,6 +2,7 @@
 {
   imports = [
     # ./desktop.nix
+    ./git.nix
     ./alacritty.nix
     ./direnv.nix
     ./mods.nix

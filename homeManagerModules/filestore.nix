@@ -23,13 +23,6 @@
   ];
 
   programs.starship.enable = true;
-  programs.git = {
-    enable = true;
-    settings = {
-      user.name = "Sammy Al Hashemi";
-      user.email = "sammy@salh.xyz";
-    };
-  };
 
   # Disable Stylix targets that might pull in graphical dependencies on headless Pi
 

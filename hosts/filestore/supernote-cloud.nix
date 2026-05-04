@@ -46,7 +46,7 @@
     ];
     log-driver = "journald";
     extraOptions = [
-      "--health-cmd=mysqladmin ping -h localhost -u root -p$MYSQL_ROOT_PASSWORD || exit 1"
+      "--health-cmd=mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"
       "--health-interval=10s"
       "--health-retries=10"
       "--health-start-period=30s"
@@ -90,7 +90,7 @@
     ];
     log-driver = "journald";
     extraOptions = [
-      "--health-cmd=[\"redis-cli\", \"ping\"]"
+      "--health-cmd=redis-cli ping"
       "--health-interval=10s"
       "--health-retries=3"
       "--health-timeout=3s"
