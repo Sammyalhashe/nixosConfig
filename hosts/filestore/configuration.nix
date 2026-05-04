@@ -95,6 +95,7 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     inputs.sops-nix.nixosModules.sops
+    ./supernote-cloud.nix
   ];
 
   # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
@@ -146,7 +147,9 @@ in
   # }];
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
-    kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
+    # Using linuxPackages_rpi4 instead of pkgs.linuxKernel.packages.linux_rpi4
+    # to silence the "linux-rpi series will be removed" evaluation warning.
+    kernelPackages = pkgs.linuxPackages_rpi4;
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"
@@ -520,6 +523,12 @@ in
     "z /nextcloud/db 0700 70 70 - -"
 
     "d /homeassistant 0755 salhashemi2 users - -"
+
+    "d /supernote 0755 salhashemi2 users - -"
+    "d /supernote/sndata 0755 salhashemi2 users - -"
+    "d /supernote/sndata/db_data 0700 70 70 - -"
+    "d /supernote/sndata/redis_data 0755 999 999 - -"
+    "d /supernote/sndata/logs 0755 33 33 - -"
 
     # Purge files in /tmp older than 1 day
     "q /tmp 1777 root root 1d -"

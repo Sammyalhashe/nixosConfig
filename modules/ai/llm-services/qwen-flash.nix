@@ -58,7 +58,7 @@ in
           + "--threads 8 "
           + "--flash-attn 1 "
           + "--no-mmap";
-        
+
         Restart = "on-failure";
         RestartSec = "5s";
       };

@@ -59,16 +59,6 @@
     # Hardware-specific optimizations (RPi4, Laptops, etc.)
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # OpenClaw Agent and Picoclaw Tooling
-    nix-picoclaw = {
-      url = "github:Sammyalhashe/picoclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Flatpak and XR Driver support
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     viture-virtual-display = {
@@ -76,7 +66,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     breezy-desktop = {
-      url = "path:./breezy_src";
+      url = "github:Sammyalhashe/breezy_src";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -87,48 +77,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur.url = "github:nix-community/NUR";
-
-    # OpenClaw Skills (Modular AI capabilities)
-    plugin-coding = {
-      url = "github:openclaw/skills?dir=skills/steipete/coding-agent";
-      flake = false;
-    };
-    plugin-git = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/git-essentials";
-      flake = false;
-    };
-    plugin-docker = {
-      url = "github:openclaw/skills?dir=skills/arnarsson/docker-essentials";
-      flake = false;
-    };
-    plugin-system = {
-      url = "github:openclaw/skills?dir=skills/zerofire03/system-monitor";
-      flake = false;
-    };
-    plugin-filesystem = {
-      url = "github:openclaw/skills?dir=skills/gtrusler/clawdbot-filesystem";
-      flake = false;
-    };
-    plugin-process = {
-      url = "github:openclaw/skills?dir=skills/dbhurley/process-watch";
-      flake = false;
-    };
-    plugin-polyclaw = {
-      url = "github:openclaw/skills?dir=skills/akegaviar/polyclaw";
-      flake = false;
-    };
-    plugin-better-memory = {
-      url = "github:openclaw/skills?dir=skills/dvntydigital/better-memory";
-      flake = false;
-    };
-    plugin-email = {
-      url = "github:openclaw/skills?dir=skills/gzlicanyi/imap-smtp-email";
-      flake = false;
-    };
-    plugin-cloudflare = {
-      url = "github:openclaw/skills?dir=skills/stopmoclay/cloudflare-api";
-      flake = false;
-    };
 
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
@@ -150,18 +98,6 @@
       nur,
       sops-nix,
       nixos-hardware,
-      nix-openclaw,
-      nix-picoclaw,
-      plugin-coding,
-      plugin-git,
-      plugin-docker,
-      plugin-system,
-      plugin-filesystem,
-      plugin-process,
-      plugin-polyclaw,
-      plugin-better-memory,
-      plugin-email,
-      plugin-cloudflare,
       flake-utils,
       llama-cpp,
       ...
@@ -170,29 +106,6 @@
       # Define overlays that should be available on all systems
       overlays = [
         nur.overlays.default
-        nix-openclaw.overlays.default
-        nix-picoclaw.overlays.default
-        (final: prev: {
-          openclaw-gateway = prev.openclaw-gateway.overrideAttrs (old: {
-            installPhase = ''
-              ${old.installPhase}
-              cp -r docs $out/lib/openclaw/
-              # Fix for missing plugin manifests in dist/extensions
-              if [ -d "$out/lib/openclaw/extensions" ]; then
-                find "$out/lib/openclaw/extensions" -name "openclaw.plugin.json" | while read manifest; do
-                  plugin_name=$(basename $(dirname "$manifest"))
-                  target_dir="$out/lib/openclaw/dist/extensions/$plugin_name"
-                  if [ -d "$target_dir" ]; then
-                    cp "$manifest" "$target_dir/"
-                  fi
-                done
-              fi
-            '';
-          });
-          openclaw = prev.openclaw.override {
-            openclaw-gateway = final.openclaw-gateway;
-          };
-        })
       ];
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
@@ -208,7 +121,6 @@
       baseConfig = {
         nixpkgs = {
           inherit overlays;
-          config.allowUnfree = true;
         };
         nix.settings.experimental-features = [
           "nix-command"
@@ -242,6 +154,7 @@
 
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -260,6 +173,7 @@
 
       nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -281,12 +195,54 @@
               nixpkgs.overlays = [ llama-cpp.overlays.default ];
             }
           )
+          (
+            { pkgs, ... }:
+            {
+              environment.systemPackages = [
+                (pkgs.stdenv.mkDerivation {
+                  name = "push-to-cachix";
+                  dontUnpack = true;
+                  buildInputs = [
+                    pkgs.nushell
+                    pkgs.sops
+                    pkgs.cachix
+                  ];
+                  installPhase = ''
+                    install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
+                  '';
+                })
+              ];
+              systemd.services.push-to-cachix = {
+                description = "Push NixOS configurations to Cachix";
+                serviceConfig = {
+                  Type = "oneshot";
+                  ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
+                  User = "root"; # Or a specific user if needed, but root is usually safer for nix build
+                };
+                path = [
+                  pkgs.nix
+                  pkgs.sops
+                  pkgs.cachix
+                  pkgs.git
+                  pkgs.nushell
+                ];
+              };
+              systemd.timers.push-to-cachix = {
+                wantedBy = [ "timers.target" ];
+                timerConfig = {
+                  OnCalendar = "weekly";
+                  Persistent = true;
+                };
+              };
+            }
+          )
         ];
       };
 
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
@@ -301,6 +257,7 @@
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -322,6 +279,7 @@
 
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -352,6 +310,7 @@
       nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -373,6 +332,7 @@
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-darwin";
+        pkgs = getPkgs "x86_64-darwin";
         modules = [
           baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
@@ -388,7 +348,7 @@
         extraSpecialArgs = {
           inherit inputs sops-nix;
           user = "salhashemi2";
-          homeDir = "/root";
+          homeDir = "/home/salhashemi2/";
         };
         modules = [
           baseConfig
@@ -400,6 +360,7 @@
 
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
+      homeModules.starship = ./homeManagerModules;
       homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
@@ -483,6 +444,14 @@
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
 
+              # Push to cachix scripts
+              (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
+              (mkScript "push-mothership" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} mothership")
+              (mkScript "push-homebase" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} homebase")
+              (mkScript "push-starship" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starship")
+              (mkScript "push-starshipwsl" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starshipwsl")
+              (mkScript "push-work" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} work")
+
               # Host switch/test scripts
               (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
               (mkHostScript "test-homebase" "homebase" "homebase" "test")
@@ -515,153 +484,6 @@
 
               # Home manager scripts
               (mkScript "switch-home-work" "home-manager switch --flake .#work")
-              (mkScript "push-work" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building work home configuration..."
-                OUT_PATH=$(nix build .#homeConfigurations.work.activationPackage --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-homebase" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building homebase system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.homebase.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-mothership" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building mothership system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.mothership.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-starship" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building starship system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.starship.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-starshipwsl" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building starshipwsl system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.starshipwsl.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-filestore" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building filestore system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.filestore.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
-              (mkScript "push-oldboy" ''
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  export CACHIX_AUTH_TOKEN=$(sops -d --extract '["cachix_token"]' secrets.yaml)
-                fi
-
-                if [ -z "''${CACHIX_AUTH_TOKEN}" ]; then
-                  echo "Error: Could not retrieve CACHIX_AUTH_TOKEN from secrets.yaml"
-                  exit 1
-                fi
-
-                echo "Building oldboy system configuration..."
-                OUT_PATH=$(nix build .#nixosConfigurations.oldboy.config.system.build.toplevel --json | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Pushing ''${OUT_PATH} to cachix..."
-                cachix push starllama "''${OUT_PATH}"
-              '')
             ];
           in
           pkgs.mkShell {

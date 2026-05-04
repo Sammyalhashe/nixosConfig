@@ -55,9 +55,11 @@ in
   # prevent the laptop from hibernating when lid is closed
   services.getty.autologinUser = "${user}";
 
-  services.logind.lidSwitch = "ignore";
-  services.logind.lidSwitchExternalPower = "ignore";
-  services.logind.lidSwitchDocked = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitchDocked = "ignore";
+  };
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;

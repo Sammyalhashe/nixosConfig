@@ -29,7 +29,9 @@ lib.mkIf config.host.enableBreezy {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/xr_driver";
+      ExecStart = "${
+        inputs.breezy-desktop.inputs.xr-driver.packages.${pkgs.stdenv.hostPlatform.system}.default
+      }/bin/xr_driver";
       User = config.host.username;
       Group = "input";
       Restart = "always";

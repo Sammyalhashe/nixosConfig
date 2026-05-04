@@ -68,13 +68,13 @@ in
           + "--threads-draft 4 "
           + "--port 8012 "
           + "--host 0.0.0.0 "
-          + "--n-gpu-layers 999 "  # Force full GPU offload (Strix Halo has 128GB Unified Memory)
-          + "--ctx-size 65536 "   # Reduced context for "usable" daily speed
+          + "--n-gpu-layers 999 " # Force full GPU offload (Strix Halo has 128GB Unified Memory)
+          + "--ctx-size 65536 " # Reduced context for "usable" daily speed
           + "--parallel 1 "
-          + "--threads 12 "       # Headroom for GPU command processor
+          + "--threads 12 " # Headroom for GPU command processor
           + "--flash-attn 1 "
-          + "--no-mmap";         # Crucial for Unified Memory to prevent paging stalls and kernel freezes
-        
+          + "--no-mmap"; # Crucial for Unified Memory to prevent paging stalls and kernel freezes
+
         Restart = "on-failure";
         RestartSec = "5s";
       };

@@ -20,19 +20,20 @@
       pkgs.nur.repos.charmbracelet.gum
 
       # terminal utilities
-      nmap
       alacritty
       bat
       cowsay
       delta
       dua
+      fastfetch
       fd
       fortune
       fzf
       gemini-cli
       gh
       grim
-      fastfetch
+      jujutsu
+      nmap
       notejot
       pandoc
       ripgrep

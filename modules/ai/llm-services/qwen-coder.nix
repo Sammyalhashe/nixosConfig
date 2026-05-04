@@ -62,8 +62,8 @@ in
           + "--top-p 0.95 "
           + "--top-k 20 "
           + "--min-p 0.00 "
-          + "--no-mmap";         # MANDATORY for Strix Halo to prevent paging stalls
-        
+          + "--no-mmap"; # MANDATORY for Strix Halo to prevent paging stalls
+
         Restart = "on-failure";
         RestartSec = "5s";
       };
