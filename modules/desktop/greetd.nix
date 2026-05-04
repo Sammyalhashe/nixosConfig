@@ -10,7 +10,7 @@
     # ReGreet is a modern GTK4-based greeter for greetd.
     programs.regreet = {
       enable = true;
-      
+
       # Use a modern font and theme
       font = {
         package = lib.mkForce pkgs.lexend;

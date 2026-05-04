@@ -7,9 +7,7 @@
 }:
 let
   isKDE =
-    osConfig != null
-    && (osConfig.host.enableKDE or false)
-    && !(osConfig.host.isHeadless or false);
+    osConfig != null && (osConfig.host.enableKDE or false) && !(osConfig.host.isHeadless or false);
 in
 {
   config = lib.mkIf isKDE {
@@ -77,7 +75,11 @@ in
       kwin = {
         titlebarButtons = {
           left = [ "on-all-desktops" ];
-          right = [ "minimize" "maximize" "close" ];
+          right = [
+            "minimize"
+            "maximize"
+            "close"
+          ];
         };
       };
 

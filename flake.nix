@@ -210,8 +210,8 @@
             systemd.timers."push-to-cachix" = {
               wantedBy = [ "timers.target" ];
               timerConfig = {
-                  OnCalendar = "weekly";
-                  Persistent = true;
+                OnCalendar = "weekly";
+                Persistent = true;
               };
             };
           })

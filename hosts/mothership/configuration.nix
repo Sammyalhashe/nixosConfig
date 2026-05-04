@@ -36,7 +36,7 @@ in
       host.enableMango = lib.mkForce true;
     };
   };
-  
+
   host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
@@ -81,11 +81,11 @@ in
 
   # --- LOCAL AI STACK CONFIGURATION ---
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
-  services.llm-services.gpt-oss.enable = false;    # Reasoning/Large (DeepSeek-R1-671B)
+  services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
   services.llm-services.qwen-coder.enable = true; # Qwen3.6
-  services.llm-services.qwen-flash.enable = true;  # Fast/Chat (Qwen2.5-7B) - Port 8011
-  services.llm-services.gemma.enable = false;       # Bleeding Edge (Gemma 4-31B) - Port 8012
-  services.llm-services.litellm-uv.enable = true;  # Proxy/Gateway - Port 4000
+  services.llm-services.qwen-flash.enable = true; # Fast/Chat (Qwen2.5-7B) - Port 8011
+  services.llm-services.gemma.enable = false; # Bleeding Edge (Gemma 4-31B) - Port 8012
+  services.llm-services.litellm-uv.enable = true; # Proxy/Gateway - Port 4000
 
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -137,7 +137,11 @@ in
     description = "Download and verify GGUF models in background";
     after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.aria2 pkgs.coreutils pkgs.systemd ];
+    path = [
+      pkgs.aria2
+      pkgs.coreutils
+      pkgs.systemd
+    ];
     script = ''
       MODEL_DIR="/var/lib/llama-cpp-models"
       mkdir -p "$MODEL_DIR"
@@ -190,7 +194,11 @@ in
   networking = {
     hostName = "mothership";
     networkmanager.enable = true;
-    nameservers = [ "11.125.37.99" "11.125.37.1" "1.1.1.1" ];
+    nameservers = [
+      "11.125.37.99"
+      "11.125.37.1"
+      "1.1.1.1"
+    ];
   };
 
   services.resolved = {
@@ -214,7 +222,14 @@ in
   users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
-    extraGroups = [ "networkmanager" "docker" "wheel" "video" "render" "input" ];
+    extraGroups = [
+      "networkmanager"
+      "docker"
+      "wheel"
+      "video"
+      "render"
+      "input"
+    ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPx5JBI3FNtugjdVeb1Gg4lUEJvGa/eiZ6rnsIN/oC3f sammy@salh.xyz"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZKrkpzxAf0u3+fn59xouUtVHtklRuGwCwfPpR0Y8nc sammy.alhashemi@mail.utoronto.ca"
@@ -228,15 +243,41 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    git amdgpu_top nvtopPackages.amd rocmPackages.rocminfo vulkan-tools uv yq-go playwright-driver.browsers
-    (python313.withPackages (ps: with ps; [
-      litellm backoff fastapi uvicorn pydantic python-dotenv apscheduler uvloop orjson pyyaml rich
-      python-multipart cryptography pyjwt boto3 aiohttp httpx email-validator
-    ]))
+    git
+    amdgpu_top
+    nvtopPackages.amd
+    rocmPackages.rocminfo
+    vulkan-tools
+    uv
+    yq-go
+    playwright-driver.browsers
+    (python313.withPackages (
+      ps: with ps; [
+        litellm
+        backoff
+        fastapi
+        uvicorn
+        pydantic
+        python-dotenv
+        apscheduler
+        uvloop
+        orjson
+        pyyaml
+        rich
+        python-multipart
+        cryptography
+        pyjwt
+        boto3
+        aiohttp
+        httpx
+        email-validator
+      ]
+    ))
     (import ../../common/scripts/aider-search.nix { inherit pkgs; })
     (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
     (import ../../common/scripts/agent-chainer.nix { inherit pkgs; })
-    gnome-keyring libsecret
+    gnome-keyring
+    libsecret
   ];
 
   services.gnome.gnome-keyring.enable = true;
