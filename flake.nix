@@ -154,6 +154,7 @@
 
       nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -170,7 +171,7 @@
         ];
       };
 
-      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
@@ -194,40 +195,54 @@
               nixpkgs.overlays = [ llama-cpp.overlays.default ];
             }
           )
-          ({ pkgs, ... }: {
-            environment.systemPackages = [
-              (pkgs.stdenv.mkDerivation {
-                name = "push-to-cachix";
-                dontUnpack = true;
-                buildInputs = [ pkgs.nushell pkgs.sops pkgs.cachix ];
-                installPhase = ''
-                  install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
-                '';
-              })
-            ];
-            systemd.services.push-to-cachix = {
-              description = "Push NixOS configurations to Cachix";
-              serviceConfig = {
-                Type = "oneshot";
-                ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
-                User = "root"; # Or a specific user if needed, but root is usually safer for nix build
+          (
+            { pkgs, ... }:
+            {
+              environment.systemPackages = [
+                (pkgs.stdenv.mkDerivation {
+                  name = "push-to-cachix";
+                  dontUnpack = true;
+                  buildInputs = [
+                    pkgs.nushell
+                    pkgs.sops
+                    pkgs.cachix
+                  ];
+                  installPhase = ''
+                    install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
+                  '';
+                })
+              ];
+              systemd.services.push-to-cachix = {
+                description = "Push NixOS configurations to Cachix";
+                serviceConfig = {
+                  Type = "oneshot";
+                  ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
+                  User = "root"; # Or a specific user if needed, but root is usually safer for nix build
+                };
+                path = [
+                  pkgs.nix
+                  pkgs.sops
+                  pkgs.cachix
+                  pkgs.git
+                  pkgs.nushell
+                ];
               };
-              path = [ pkgs.nix pkgs.sops pkgs.cachix pkgs.git pkgs.nushell ];
-            };
-            systemd.timers.push-to-cachix = {
-              wantedBy = [ "timers.target" ];
-              timerConfig = {
-                OnCalendar = "weekly";
-                Persistent = true;
+              systemd.timers.push-to-cachix = {
+                wantedBy = [ "timers.target" ];
+                timerConfig = {
+                  OnCalendar = "weekly";
+                  Persistent = true;
+                };
               };
-            };
-          })
+            }
+          )
         ];
       };
 
       nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           ./hosts/oldboy/configuration.nix
@@ -242,6 +257,7 @@
       nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -263,6 +279,7 @@
 
       nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
+        pkgs = getPkgs "x86_64-linux";
         system = "x86_64-linux";
         modules = [
           baseConfig
@@ -293,6 +310,7 @@
       nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-linux";
+        pkgs = getPkgs "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -314,6 +332,7 @@
       darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "x86_64-darwin";
+        pkgs = getPkgs "x86_64-darwin";
         modules = [
           baseConfig
           ./hosts/Sammys-MacBook-Pro/configuration.nix
