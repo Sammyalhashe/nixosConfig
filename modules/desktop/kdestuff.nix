@@ -43,7 +43,6 @@
       };
       programs.kdeconnect = {
         enable = true;
-        package = pkgs.kdePackages.kdeconnect;
       };
       networking.firewall = {
         allowedTCPPortRanges = [
