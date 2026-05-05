@@ -28,7 +28,7 @@ in
     enable = mkEnableOption "One-API Proxy Service (Port 3000)";
     port = mkOption {
       type = types.port;
-      default = 3000;
+      default = 3001;
       description = "Port for One-API to listen on.";
     };
     dataDir = mkOption {
