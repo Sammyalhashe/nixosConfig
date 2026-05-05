@@ -95,6 +95,7 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     inputs.sops-nix.nixosModules.sops
+    ./adguard.nix
   ];
 
   # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
@@ -444,10 +445,12 @@ in
     22000
     18789
     22
+    3001
   ];
   networking.firewall.allowedUDPPorts = [
     22000
     21027
+    53
   ];
   networking.firewall.extraCommands = ''
     iptables -t filter -I INPUT 1 -p tcp --dport 443 -j ACCEPT
