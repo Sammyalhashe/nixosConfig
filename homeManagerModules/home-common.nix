@@ -3,6 +3,7 @@
   imports = [
     # ./desktop.nix
     ./git.nix
+    ./jj.nix
     ./alacritty.nix
     ./direnv.nix
     ./mods.nix
