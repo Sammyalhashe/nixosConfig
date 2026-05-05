@@ -14,7 +14,14 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     ../../modules
+    inputs.sops-nix.nixosModules.sops
+    ./supernote-cloud.nix
   ];
+
+  sops.secrets.filestore_container_env = { };
+  sops.secrets.picloud_cloudflare_tunnel_token = {
+    owner = "cloudflared";
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -73,6 +80,62 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+    oci-containers.backend = "podman";
+  };
+
+  systemd.services.cloudflared-tunnel-picloud = {
+    description = "Cloudflare Tunnel (Remote Managed)";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      User = "cloudflared";
+      Group = "cloudflared";
+
+      ExecStart = pkgs.writeShellScript "start-cloudflared" ''
+        TOKEN=$(cat ${config.sops.secrets.picloud_cloudflare_tunnel_token.path})
+        exec ${pkgs.cloudflared}/bin/cloudflared tunnel --no-autoupdate run --token "$TOKEN"
+      '';
+
+      Restart = "always";
+      RestartSec = "5s";
+
+      CapabilityBoundingSet = "";
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectHome = true;
+      ProtectSystem = "strict";
+    };
+  };
+
+  users.users.cloudflared = {
+    group = "cloudflared";
+    isSystemUser = true;
+  };
+  users.groups.cloudflared = { };
+
+  systemd.tmpfiles.rules = [
+    "d /supernote 0755 salhashemi2 users - -"
+    "d /supernote/sndata 0755 salhashemi2 users - -"
+    "d /supernote/sndata/db_data 0700 70 70 - -"
+    "d /supernote/sndata/redis_data 0755 999 999 - -"
+    "d /supernote/sndata/logs 0755 33 33 - -"
+    "d /supernote/sndata/logs/app 0755 33 33 - -"
+    "d /supernote/sndata/logs/cloud 0755 33 33 - -"
+    "d /supernote/sndata/logs/web 0755 33 33 - -"
+    "d /supernote/sndata/convert 0755 salhashemi2 users - -"
+    "d /supernote/sndata/recycle 0755 salhashemi2 users - -"
+    "d /supernote/sndata/cert 0755 salhashemi2 users - -"
+    "d /supernote/supernote_data 0755 salhashemi2 users - -"
+  ];
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
@@ -87,6 +150,9 @@ in
     3000 # Grafana
     3100 # Loki
     9090 # Prometheus
+    19072 # Supernote Web
+    19443 # Supernote HTTPS
+    18072 # Supernote Sync
   ];
 
 }

@@ -95,7 +95,6 @@ in
     inputs.home-manager.nixosModules.default
     ../../common/home-manager-config.nix
     inputs.sops-nix.nixosModules.sops
-    ./supernote-cloud.nix
   ];
 
   # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
@@ -354,52 +353,12 @@ in
         TZ = "America/New_York"; # Set your timezone
       };
       ports = [ "8123:8123" ];
-      extraOptions = [
-        "--network=hass-net"
-      ];
-    };
-  };
+      extraOptions = [ "--network=hass-net" ];
+      };
+      };
 
-  sops.secrets.picloud_cloudflare_tunnel_token = {
-    owner = "cloudflared";
-  };
+      systemd.services.init-hass-network = {
 
-  systemd.services.cloudflared-tunnel-picloud = {
-    description = "Cloudflare Tunnel (Remote Managed)";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      User = "cloudflared";
-      Group = "cloudflared";
-
-      ExecStart = pkgs.writeShellScript "start-cloudflared" ''
-        TOKEN=$(cat ${config.sops.secrets.picloud_cloudflare_tunnel_token.path})
-        # Strip "TUNNEL_TOKEN=" prefix if it exists, just in case
-
-        exec ${pkgs.cloudflared}/bin/cloudflared tunnel --no-autoupdate run --token "$TOKEN"
-      '';
-
-      Restart = "always";
-      RestartSec = "5s";
-
-      # Security Hardening
-      CapabilityBoundingSet = "";
-      NoNewPrivileges = true;
-      PrivateTmp = true;
-      ProtectHome = true;
-      ProtectSystem = "strict";
-    };
-  };
-
-  users.users.cloudflared = {
-    group = "cloudflared";
-    isSystemUser = true;
-  };
-  users.groups.cloudflared = { };
-
-  systemd.services.init-hass-network = {
     description = "Create the internal network for Home Assistant";
     after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
@@ -523,12 +482,6 @@ in
     "z /nextcloud/db 0700 70 70 - -"
 
     "d /homeassistant 0755 salhashemi2 users - -"
-
-    "d /supernote 0755 salhashemi2 users - -"
-    "d /supernote/sndata 0755 salhashemi2 users - -"
-    "d /supernote/sndata/db_data 0700 70 70 - -"
-    "d /supernote/sndata/redis_data 0755 999 999 - -"
-    "d /supernote/sndata/logs 0755 33 33 - -"
 
     # Purge files in /tmp older than 1 day
     "q /tmp 1777 root root 1d -"
