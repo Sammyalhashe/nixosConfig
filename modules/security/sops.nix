@@ -70,9 +70,6 @@
   sops.secrets.cloudflare_token = {
     owner = config.host.username;
   };
-  sops.secrets.picloud_cloudflare_tunnel_token = {
-    owner = "cloudflared";
-  };
 
   sops.templates."openclaw-env" = {
     content = ''

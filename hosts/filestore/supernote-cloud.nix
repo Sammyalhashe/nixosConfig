@@ -46,11 +46,6 @@
     ];
     log-driver = "journald";
     extraOptions = [
-      "--health-cmd=mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"
-      "--health-interval=10s"
-      "--health-retries=10"
-      "--health-start-period=30s"
-      "--health-timeout=5s"
       "--network-alias=mariadb"
       "--network=supernote-net"
     ];
@@ -67,9 +62,11 @@
     };
     after = [
       "podman-network-supernote-net.service"
+      "supernote-db-init.service"
     ];
     requires = [
       "podman-network-supernote-net.service"
+      "supernote-db-init.service"
     ];
     partOf = [
       "podman-compose-supernote-cloud-root.target"
@@ -77,6 +74,27 @@
     wantedBy = [
       "podman-compose-supernote-cloud-root.target"
     ];
+  };
+
+  systemd.services."supernote-db-init" = {
+    description = "Download Supernote database schema if missing";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    before = [ "podman-supernote-mariadb.service" ];
+    path = [ pkgs.curl ];
+    wantedBy = [ "podman-compose-supernote-cloud-root.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    partOf = [ "podman-compose-supernote-cloud-root.target" ];
+    script = ''
+      if [ ! -f /supernote/supernotedb.sql ]; then
+        curl -L https://supernote-private-cloud.supernote.com/cloud/supernotedb.sql -o /supernote/supernotedb.sql
+        chown salhashemi2:users /supernote/supernotedb.sql
+        chmod 644 /supernote/supernotedb.sql
+      fi
+    '';
   };
   virtualisation.oci-containers.containers."supernote-redis" = {
     image = "redis:7.4.7";
@@ -142,6 +160,7 @@
     ];
     log-driver = "journald";
     extraOptions = [
+      "--arch=amd64"
       "--network-alias=supernote-service"
       "--network=supernote-net"
     ];
