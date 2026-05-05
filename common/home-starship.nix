@@ -2,7 +2,7 @@
   pkgs,
   user,
   ...
-}@inputs:
+}:
 {
   imports = [
     ./home-default.nix
@@ -16,5 +16,6 @@
 
   home.packages = with pkgs; [
     onlyoffice-desktopeditors
+    cloudflare-warp
   ];
 }

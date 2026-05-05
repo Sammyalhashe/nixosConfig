@@ -325,6 +325,7 @@
             host.enableMango = true;
             host.enableHyprland = false;
             programs.stylix.enable = true;
+            host.enableCloudflareWarp = true;
           }
         ];
       };

@@ -1,6 +1,7 @@
 { config, lib, ... }:
 {
   imports = [
+    ./cloudflare-warp.nix
     ./syncthing.nix
   ];
 

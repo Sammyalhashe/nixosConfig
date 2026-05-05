@@ -35,5 +35,7 @@
     enableMonitoring = lib.mkEnableOption "Whether to enable the monitoring stack (Cockpit, Grafana, Loki, Alloy).";
 
     enableBreezy = lib.mkEnableOption "Whether to enable Breezy Desktop XR glasses support.";
+
+    enableCloudflareWarp = lib.mkEnableOption "Whether to enable cloudflare-warp daemon and install the client application";
   };
 }
