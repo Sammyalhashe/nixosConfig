@@ -8,6 +8,17 @@
 {
   virtualisation.oci-containers.backend = "podman";
 
+  systemd.tmpfiles.rules = [
+    "d /supernote/sndata/logs 0755 1000 1000 -"
+    "d /supernote/sndata/logs/app 0755 1000 1000 -"
+    "d /supernote/sndata/logs/cloud 0755 1000 1000 -"
+    "d /supernote/sndata/logs/web 0755 1000 1000 -"
+    "d /supernote/sndata/cert 0755 1000 1000 -"
+    "d /supernote/sndata/convert 0755 1000 1000 -"
+    "d /supernote/sndata/recycle 0755 1000 1000 -"
+    "d /supernote/supernote_data 0755 1000 1000 -"
+  ];
+
   # Containers
   virtualisation.oci-containers.containers."notelib" = {
     image = "docker.io/supernote/notelib:6.9.3";
@@ -52,7 +63,7 @@
     environment = {
       DB_HOSTNAME = "supernote-mariadb";
       MYSQL_DATABASE = "supernotedb";
-      MYSQL_USER = "salhashemi2";
+      MYSQL_USER = "enote";
     };
     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
   };
