@@ -3,6 +3,7 @@
   imports = [
     ./cloudflare-warp.nix
     ./syncthing.nix
+    ./wireguard.nix
   ];
 
   # Conditional nameserver setting

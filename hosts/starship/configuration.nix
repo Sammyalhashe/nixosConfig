@@ -18,7 +18,6 @@ in
     ./bluetooth.nix
     ./asus.nix
     # ./graphics.nix
-    ./wireguard.nix
     inputs.home-manager.nixosModules.default
     inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix

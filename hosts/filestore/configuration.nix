@@ -354,10 +354,10 @@ in
       };
       ports = [ "8123:8123" ];
       extraOptions = [ "--network=hass-net" ];
-      };
-      };
+    };
+  };
 
-      systemd.services.init-hass-network = {
+  systemd.services.init-hass-network = {
 
     description = "Create the internal network for Home Assistant";
     after = [ "network.target" ];
