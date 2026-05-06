@@ -54,6 +54,9 @@
 
       # fonts
       iosevka
+
+      # mcp
+      inputs.mcp-hub.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })

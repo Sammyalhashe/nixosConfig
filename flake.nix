@@ -80,6 +80,9 @@
 
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
+
+    # mcp
+    mcp-hub.url = "github:ravitemer/mcp-hub";
   };
 
   outputs =
@@ -100,6 +103,7 @@
       nixos-hardware,
       flake-utils,
       llama-cpp,
+      mcp-hub,
       ...
     }@inputs:
     let
