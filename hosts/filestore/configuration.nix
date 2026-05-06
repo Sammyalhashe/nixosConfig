@@ -246,6 +246,7 @@ in
       };
       containers.vaultwarden = {
         image = "vaultwarden/server:latest";
+        pull = "always"; # always pull in the latest image.
         ports = [ "8090:80" ]; # Vaultwarden internal 80 → host 8090
         volumes = [ "vw-data:/data" ];
         environment = {
@@ -573,7 +574,7 @@ in
     settings.server = {
       DOMAIN = "git.salh.xyz";
       ROOT_URL = "https://git.salh.xyz/";
-      HTTP_PORT = 3000;
+      HTTP_PORT = 3001;
     };
   };
 
