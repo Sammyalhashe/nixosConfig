@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778779019,
-        "narHash": "sha256-mB6fE6c7LZAd8H/xd34fN5Vc/Ug8c0zDdx+iwMBhja0=",
+        "lastModified": 1779082465,
+        "narHash": "sha256-LNDXdskMHE9tzcv55b0CRBuXv6Tc6koLrAaRWFYhAVk=",
         "owner": "Sammyalhashe",
         "repo": "skills",
-        "rev": "54c96b142b542432cc8891ed8a0907b863197fde",
+        "rev": "d76a7f42df3f8f01a928d6260dfc3baaab0a07e6",
         "type": "github"
       },
       "original": {
@@ -1047,11 +1047,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1779080954,
-        "narHash": "sha256-8aJ3E0Ty9PQIhd3STCKAQGpKCt1ApzOzHDrhi/DOT7w=",
+        "lastModified": 1779083383,
+        "narHash": "sha256-YVLoP34EqiBqqI0iPx6fThz1wfoW7xDXr3xYgrLD4T0=",
         "owner": "Sammyalhashe",
         "repo": "nixvim",
-        "rev": "c987455985b88564dbc239614df441527110a8a4",
+        "rev": "73ba54ce884994867706884ea26f226966b18f34",
         "type": "github"
       },
       "original": {

@@ -37,6 +37,7 @@
       nmap
       notejot
       pandoc
+      presenterm
       ripgrep
       russ
       slurp
