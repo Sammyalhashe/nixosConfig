@@ -61,7 +61,6 @@
       "--network=supernote-net"
     ];
     environment = {
-      DB_HOSTNAME = "supernote-mariadb";
       MYSQL_DATABASE = "supernotedb";
       MYSQL_USER = "enote";
     };
@@ -152,7 +151,8 @@
     image = "docker.io/supernote/supernote-service:26.02.23";
     volumes = [
       "/etc/localtime:/etc/localtime:ro"
-      "/supernote/sndata/cert:/etc/nginx/cert:rw"
+      "${builtins.toString ./../../certs/fullchain1.pem}:/etc/nginx/cert/server.crt:ro"
+      "${config.sops.secrets.supernote_private_key.path}:/etc/nginx/cert/server.key:ro"
       "/supernote/sndata/convert:/home/supernote/convert:rw"
       "/supernote/sndata/logs/app:/home/supernote/logs:rw"
       "/supernote/sndata/logs/cloud:/home/supernote/cloud/logs:rw"
@@ -174,6 +174,14 @@
       "--network-alias=supernote-service"
       "--network=supernote-net"
     ];
+    environment = {
+      DB_HOSTNAME = "mariadb";
+      MYSQL_DATABASE = "supernotedb";
+      MYSQL_USER = "enote";
+      REDIS_HOST = "redis";
+      REDIS_PASSWORD = "supernoteprivatecloud";
+    };
+    environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
   };
   systemd.services."podman-supernote-service" = {
     serviceConfig = {

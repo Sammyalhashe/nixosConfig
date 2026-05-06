@@ -19,6 +19,9 @@ in
   ];
 
   sops.secrets.filestore_container_env = { };
+  sops.secrets.supernote_email = { };
+  sops.secrets.supernote_password = { };
+  sops.secrets.supernote_private_key = { };
   sops.secrets.picloud_cloudflare_tunnel_token = {
     owner = "cloudflared";
   };
@@ -75,8 +78,9 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     git
+    unzip
+    python3
   ];
-
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
