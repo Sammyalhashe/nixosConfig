@@ -15,6 +15,7 @@ in
 {
   home.packages = with pkgs; [
     gh
+    jujutsu
     extended-nixvim
     fd
     fzf
