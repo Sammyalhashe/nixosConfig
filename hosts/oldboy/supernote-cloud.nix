@@ -56,6 +56,9 @@
       "--bind-address=0.0.0.0"
     ];
     log-driver = "journald";
+    ports = [
+      "127.0.0.1:3306:3306/tcp"
+    ];
     extraOptions = [
       "--network-alias=mariadb"
       "--network=supernote-net"
