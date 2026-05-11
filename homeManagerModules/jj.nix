@@ -25,7 +25,6 @@
 
       git = {
         auto-local-branch = true;
-        push = "bookmark";
       };
 
       revsets = {
