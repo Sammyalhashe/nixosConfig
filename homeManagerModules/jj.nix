@@ -27,10 +27,6 @@
         auto-local-branch = true;
       };
 
-      revsets = {
-        log = "mine() | main@origin";
-      };
-
       revset-aliases = {
         # Shows your current work and recent changes clearly
         "l" = "ancestors(remote_bookmarks().. @, 3) | remote_bookmarks().. @";
