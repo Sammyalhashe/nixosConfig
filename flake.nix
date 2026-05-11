@@ -83,6 +83,12 @@
 
     # mcp
     mcp-hub.url = "github:ravitemer/mcp-hub";
+
+    # AI skills and agents
+    ai-skills = {
+      url = "github:Sammyalhashe/skills";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -104,6 +110,7 @@
       flake-utils,
       llama-cpp,
       mcp-hub,
+      ai-skills,
       ...
     }@inputs:
     let

@@ -4,6 +4,7 @@
     # ./desktop.nix
     ./git.nix
     ./jj.nix
+    ./ai-skills.nix
     ./alacritty.nix
     ./direnv.nix
     ./mods.nix
