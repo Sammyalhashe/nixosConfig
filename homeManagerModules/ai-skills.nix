@@ -15,7 +15,17 @@ in
 
   config = lib.mkIf cfg.enable {
     home.file.".claude/plugins/marketplaces/user" = {
-      source = "${cfg.package}/plugins/user";
+      source = "${cfg.package}/claude";
+      recursive = true;
+    };
+
+    home.file.".gemini/skills" = {
+      source = "${cfg.package}/gemini";
+      recursive = true;
+    };
+
+    home.file.".openai/skills" = {
+      source = "${cfg.package}/openai";
       recursive = true;
     };
   };

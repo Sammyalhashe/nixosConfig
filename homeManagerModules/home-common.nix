@@ -25,4 +25,6 @@
   };
 
   programs.neovim.enable = false;
+
+  ai-skills.enable = true;
 }

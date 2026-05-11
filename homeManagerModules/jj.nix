@@ -13,6 +13,8 @@
         diff-editor = "scm-diff-editor";
 
         color = "always";
+
+        default-command = "log";
       };
 
       templates = {
@@ -23,12 +25,35 @@
 
       git = {
         auto-local-branch = true;
+        push = "bookmark";
+      };
 
+      revsets = {
+        log = "mine() | main@origin";
       };
 
       revset-aliases = {
         # Shows your current work and recent changes clearly
         "l" = "ancestors(remote_bookmarks().. @, 3) | remote_bookmarks().. @";
+      };
+
+      aliases = {
+        # Quick aliases for common operations
+        l = [
+          "log"
+          "-r"
+          "all()"
+        ];
+        s = [ "status" ];
+        d = [ "describe" ];
+        n = [ "new" ];
+        u = [ "undo" ];
+        # 'Evolve' is a common alias for rebasing onto the remote head
+        ev = [
+          "rebase"
+          "-d"
+          "main@origin"
+        ];
       };
     };
   };
