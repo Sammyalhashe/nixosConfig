@@ -29,9 +29,11 @@ in
       users.${cfg.username} = {
         imports = stylixModule ++ [
           inputs.plasma-manager.homeModules.plasma-manager
+          inputs.todo.homeManagerModules.default
           (./. + "/home-${cfg.homeManagerHostname}.nix")
           inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
         ];
+        services.todo.enable = false;
       };
 
       backupFileExtension = "backup";

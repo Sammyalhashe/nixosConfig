@@ -57,6 +57,9 @@
 
       # mcp
       inputs.mcp-hub.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+      # todo cli
+      inputs.todo.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })

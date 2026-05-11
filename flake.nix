@@ -89,6 +89,12 @@
       url = "github:Sammyalhashe/skills";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Todo CLI with SQLite/MariaDB backend
+    todo = {
+      url = "github:Sammyalhashe/simple-zig-todo-sqlite";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -111,6 +117,7 @@
       llama-cpp,
       mcp-hub,
       ai-skills,
+      todo,
       ...
     }@inputs:
     let
