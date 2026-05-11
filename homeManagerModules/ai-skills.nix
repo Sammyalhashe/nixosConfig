@@ -14,7 +14,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file.".claude/plugins/marketplaces/user" = {
+    home.file.".claude/skills" = {
       source = "${cfg.package}/claude";
       recursive = true;
     };
