@@ -5,23 +5,36 @@
   ...
 }:
 let
-  font = "";
+  font = "JetBrains Mono";
+  shell = {
+    program = if config.environments.wsl.enable then "nu" else "zellij";
+    args = if config.environments.wsl.enable then [
+      "~"
+      "-e"
+      "nu"
+    ] else [
+      "-l"
+      "welcome"
+    ];
+  };
 in
 {
   programs.alacritty = {
     enable = true;
     settings = {
-      terminal.shell = {
-        program = "zellij";
-        args = [
-          "-l"
-          "welcome"
-        ];
+      terminal = {
+        inherit shell;
       };
       env = {
         TERM = "xterm-256color";
       };
-
+      font = {
+        size = 14.0;
+        normal = {
+          family = "${font}";
+          style = "Regular";
+        };
+      };
       keyboard.bindings = [
         {
           chars = "\u0002&";

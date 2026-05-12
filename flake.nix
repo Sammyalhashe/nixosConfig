@@ -374,6 +374,12 @@
           sops-nix.homeManagerModules.sops
           ./homeManagerModules/work.nix
           ./common/home-work.nix
+          {
+            environments.wsl = {
+              enable = true;
+              windowsUsername = "salhashemi2";
+            };
+          }
         ];
       };
 

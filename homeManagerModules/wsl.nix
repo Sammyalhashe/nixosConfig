@@ -21,7 +21,7 @@ let
     };
     window = (alacrittySettings.window or { }) // {
       startup_mode = "Maximized";
-      decorations = "None";
+      decorations = "transparent";
     };
   };
 
