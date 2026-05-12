@@ -53,6 +53,11 @@ in
       recursive = true;
     };
 
+    home.file.".claude/hooks" = {
+      source = "${cfg.package}/claude/hooks";
+      recursive = true;
+    };
+
     home.file.".claude/settings.json" = {
       force = true;
       text = builtins.toJSON {
