@@ -32,6 +32,7 @@
       gemini-cli
       gh
       grim
+      jjui
       jujutsu
       nmap
       notejot

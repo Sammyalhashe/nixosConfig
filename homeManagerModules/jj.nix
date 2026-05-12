@@ -1,5 +1,19 @@
 { pkgs, ... }:
 {
+  programs.jjui = {
+    enable = true;
+    settings = {
+      bindings = [
+        {
+          action = "ui.cancel";
+          key = "alt+c";
+          scope = "revisions";
+          desc = "Cancel";
+        }
+      ];
+    };
+  };
+
   programs.jujutsu = {
     enable = true;
     settings = {

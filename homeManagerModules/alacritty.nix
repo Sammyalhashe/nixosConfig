@@ -5,14 +5,10 @@
   ...
 }:
 let
-  font = "JetBrains Mono";
+  font = "JetBrainsMono NF";
   shell = {
     program = if config.environments.wsl.enable then "nu" else "zellij";
-    args = if config.environments.wsl.enable then [
-      "~"
-      "-e"
-      "nu"
-    ] else [
+    args = if config.environments.wsl.enable then [] else [
       "-l"
       "welcome"
     ];
