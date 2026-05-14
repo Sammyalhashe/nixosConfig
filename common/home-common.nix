@@ -41,6 +41,7 @@
       russ
       slurp
       sops
+      spotify-player
       starship
       texliveSmall
       tmux
