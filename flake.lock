@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778778368,
-        "narHash": "sha256-J4E978IjHf2rAY6bELjr4zaYCN0mQuFUZXUnXznJKA8=",
+        "lastModified": 1778779019,
+        "narHash": "sha256-mB6fE6c7LZAd8H/xd34fN5Vc/Ug8c0zDdx+iwMBhja0=",
         "owner": "Sammyalhashe",
         "repo": "skills",
-        "rev": "c5c900ad9603b3339517e957cc2803f2d7215f74",
+        "rev": "54c96b142b542432cc8891ed8a0907b863197fde",
         "type": "github"
       },
       "original": {
