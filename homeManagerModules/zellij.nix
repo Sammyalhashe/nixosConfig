@@ -211,8 +211,28 @@ in
             bind "Alt +" { Resize "Increase"; }
             bind "Alt -" { Resize "Decrease"; }
             bind "Alt =" { Resize "Increase"; }
-            bind "Alt [" { PreviousSwapLayout; }
-            bind "Alt ]" { NextSwapLayout; }
+            bind "Alt ," { PreviousSwapLayout; }
+            bind "Alt ." { NextSwapLayout; }
+            bind "Alt d" {
+                NewTab {
+                    layout "dev"
+                    name "Dev"
+                }
+                SwitchToMode "normal"
+            }
+            bind "Alt r" {
+                Run "bash" "-c" "SELECTED=$(printf 'momdv-ob-189\nsundev2\noldboy.salh.xyz\nmothership.salh.xyz\nfilestore.salh.xyz\npicloud.salh.xyz' | gum filter --placeholder 'Select SSH target...') && [ -n \"$SELECTED\" ] && case \"$SELECTED\" in *.salh.xyz) exec ssh salhashemi2@$SELECTED ;; *) exec ssh $SELECTED ;; esac" {
+                    floating true
+                    name "SSH"
+                }
+            }
+            bind "Alt M" {
+                Run "spotify_player" {
+                    floating true
+                    name "Spotify"
+                }
+                SwitchToMode "normal"
+            }
             bind "Alt f" { ToggleFloatingPanes; }
             bind "Alt g" { SwitchToMode "locked"; }
             bind "Alt i" { MoveTab "left"; }
@@ -231,7 +251,7 @@ in
                     close_on_exit true
                 }
             }
-            bind "Ctrl s" {
+            bind "Alt e" {
                 Run "bash" "-c" "skate list @api-keys | gum filter | awk '{print $1}' | xargs -I{} skate get {}@api-keys | tr -d '\n' | system-copy" {
                     floating true
                     name "Skate"
@@ -569,6 +589,126 @@ in
   '';
   home.file."${config.xdg.configHome}/zellij/layouts/default.kdl".text = /* kdl */ ''
     layout {
+        swap_tiled_layout name="vertical" {
+            tab max_panes=5 {
+                pane split_direction="vertical" {
+                    pane
+                    pane { children; }
+                }
+            }
+            tab max_panes=8 {
+                pane split_direction="vertical" {
+                    pane
+                    pane split_direction="horizontal" {
+                        pane
+                        pane { children; }
+                    }
+                }
+            }
+            tab max_panes=12 {
+                pane split_direction="vertical" {
+                    pane
+                    pane split_direction="horizontal" {
+                        pane
+                        pane
+                        pane { children; }
+                    }
+                }
+            }
+        }
+
+        swap_tiled_layout name="horizontal" {
+            tab max_panes=5 {
+                pane split_direction="horizontal" {
+                    pane
+                    pane { children; }
+                }
+            }
+            tab max_panes=8 {
+                pane split_direction="horizontal" {
+                    pane
+                    pane split_direction="vertical" {
+                        pane
+                        pane { children; }
+                    }
+                }
+            }
+            tab max_panes=12 {
+                pane split_direction="horizontal" {
+                    pane
+                    pane split_direction="vertical" {
+                        pane
+                        pane
+                        pane { children; }
+                    }
+                }
+            }
+        }
+
+        swap_tiled_layout name="stacked" {
+            tab min_panes=2 {
+                pane split_direction="vertical" {
+                    pane
+                    pane stacked=true { children; }
+                }
+            }
+        }
+
+        swap_floating_layout name="fullscreen" {
+            floating_panes max_panes=10 {
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+                pane { x 0; y 0; width "100%"; height "100%"; }
+            }
+        }
+
+        swap_floating_layout name="staggered" {
+            floating_panes
+        }
+
+        swap_floating_layout name="enlarged" {
+            floating_panes max_panes=10 {
+                pane { x "5%"; y 1; width "90%"; height "90%"; }
+                pane { x "5%"; y 2; width "90%"; height "90%"; }
+                pane { x "5%"; y 3; width "90%"; height "90%"; }
+                pane { x "5%"; y 4; width "90%"; height "90%"; }
+                pane { x "5%"; y 5; width "90%"; height "90%"; }
+                pane { x "5%"; y 6; width "90%"; height "90%"; }
+                pane { x "5%"; y 7; width "90%"; height "90%"; }
+                pane { x "5%"; y 8; width "90%"; height "90%"; }
+                pane { x "5%"; y 9; width "90%"; height "90%"; }
+                pane { x "5%"; y 10; width "90%"; height "90%"; }
+            }
+        }
+
+        swap_floating_layout name="spread" {
+            floating_panes max_panes=1 {
+                pane { y "50%"; x "50%"; }
+            }
+            floating_panes max_panes=2 {
+                pane { x "1%"; y "25%"; width "45%"; height "45%"; }
+                pane { x "50%"; y "25%"; width "45%"; height "45%"; }
+            }
+            floating_panes max_panes=3 {
+                pane { y "55%"; width "45%"; height "45%"; }
+                pane { x "1%"; y "1%"; width "45%"; }
+                pane { x "50%"; y "1%"; width "45%"; }
+            }
+            floating_panes max_panes=4 {
+                pane { x "1%"; y "1%"; width "45%"; height "45%"; }
+                pane { x "50%"; y "1%"; width "45%"; height "45%"; }
+                pane { x "1%"; y "50%"; width "45%"; height "45%"; }
+                pane { x "50%"; y "50%"; width "45%"; height "45%"; }
+            }
+        }
+
         default_tab_template {
             children
             pane size=1 borderless=true {
@@ -607,6 +747,56 @@ in
                     datetime_format "%H:%M"
                     datetime_timezone "America/New_York"
                 }
+            }
+        }
+    }
+  '';
+  home.file."${config.xdg.configHome}/zellij/layouts/dev.kdl".text = /* kdl */ ''
+    layout {
+        pane split_direction="vertical" {
+            pane size="75%" command="sh" {
+                args "-c" "exec $EDITOR ."
+            }
+            pane split_direction="horizontal" size="25%" {
+                pane
+                pane command="jjui"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                format_left   "#[fg=#89b4fa,bg=#11111b]#[fg=#11111b,bg=#89b4fa,bold]{mode}#[fg=#89b4fa,bg=#11111b]"
+                format_center "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{tabs}#[fg=#25253a,bg=#11111b]"
+                format_right  "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{command_git_branch}#[fg=#89b4fa,bg=#25253a] {datetime}#[fg=#25253a,bg=#11111b]"
+                format_space  "#[bg=#11111b]"
+
+                border_enabled  "false"
+
+                mode_normal        " NORMAL "
+                mode_locked        " LOCKED "
+                mode_resize        " RESIZE "
+                mode_pane          " PANE "
+                mode_tab           " TAB "
+                mode_scroll        " SCROLL "
+                mode_enter_search  " ENT-SEARCH "
+                mode_search        " SEARCH "
+                mode_rename_tab    " RENAME-TAB "
+                mode_rename_pane   " RENAME-PANE "
+                mode_session       " SESSION "
+                mode_move          " MOVE "
+                mode_prompt        " PROMPT "
+                mode_tmux          " TMUX "
+
+                tab_normal                 "#[fg=#6c7086,bg=#25253a] {name} "
+                tab_active                 "#[fg=#89b4fa,bg=#25253a,bold] {name} "
+
+                command_git_branch_command     "git branch --show-current"
+                command_git_branch_format      "#[fg=#a6e3a1,bg=#25253a] {stdout}  "
+                command_git_branch_interval    "10"
+                command_git_branch_rendermode  "static"
+
+                datetime        "#[fg=#cba6f7,bg=#25253a,bold] {format} "
+                datetime_format "%H:%M"
+                datetime_timezone "America/New_York"
             }
         }
     }
