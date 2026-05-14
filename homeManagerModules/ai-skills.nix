@@ -58,6 +58,21 @@ in
       recursive = true;
     };
 
+    home.file.".claude/agents" = {
+      source = "${cfg.package}/claude/agents";
+      recursive = true;
+    };
+
+    home.file.".gemini/agents" = {
+      source = "${cfg.package}/gemini/agents";
+      recursive = true;
+    };
+
+    home.file.".openai/agents" = {
+      source = "${cfg.package}/openai/agents";
+      recursive = true;
+    };
+
     home.file.".claude/settings.json" = {
       force = true;
       text = builtins.toJSON {
