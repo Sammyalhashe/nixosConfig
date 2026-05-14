@@ -15,25 +15,51 @@ in
   home.activation.syncSkateKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     SKATE_BIN="${pkgs.nur.repos.charmbracelet.skate}/bin/skate"
 
-    # Sync pop-resend-key
-    SECRET_FILE="/run/secrets/pop_resend_key"
-    if [ -f "$SECRET_FILE" ]; then
-      SECRET_VAL=$(cat "$SECRET_FILE")
-      CURRENT_VAL=$($SKATE_BIN get pop-resend-key@api-keys 2>/dev/null || echo "")
-      if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
-        run $SKATE_BIN set pop-resend-key@api-keys "$SECRET_VAL"
+    sync_key() {
+      local secret_name="$1"
+      local skate_name="$2"
+      local secret_file="/run/secrets/$secret_name"
+      if [ -f "$secret_file" ] && [ -r "$secret_file" ]; then
+        SECRET_VAL=$(cat "$secret_file")
+        CURRENT_VAL=$($SKATE_BIN get "$skate_name@api-keys" 2>/dev/null || echo "")
+        if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
+          run $SKATE_BIN set "$skate_name@api-keys" "$SECRET_VAL"
+        fi
       fi
-    fi
+    }
 
-    # Sync perplexity-api-key
-    SECRET_FILE="/run/secrets/perplexity_api_key"
-    if [ -f "$SECRET_FILE" ]; then
-      SECRET_VAL=$(cat "$SECRET_FILE")
-      CURRENT_VAL=$($SKATE_BIN get perplexity-api-key@api-keys 2>/dev/null || echo "")
-      if [ "$SECRET_VAL" != "$CURRENT_VAL" ]; then
-        run $SKATE_BIN set perplexity-api-key@api-keys "$SECRET_VAL"
-      fi
-    fi
+    sync_key "pop_resend_key" "pop-resend-key"
+    sync_key "perplexity_api_key" "perplexity-api-key"
+    sync_key "gemini_api_key" "gemini-api-key"
+    sync_key "brave_api_key" "brave-api-key"
+    sync_key "openrouter_api_key" "openrouter-api-key"
+    sync_key "chainstack_api_key" "chainstack-api-key"
+    sync_key "nvidia_api_key" "nvidia-api-key"
+    sync_key "telegram_bot_token" "telegram-bot-token"
+    sync_key "cloudflare_token" "cloudflare-token"
+    sync_key "polyclaw_private_key" "polyclaw-private-key"
+    sync_key "eth_rpc_url" "eth-rpc-url"
+    sync_key "eth_private_key" "eth-private-key"
+    sync_key "coinbase_api_key_clawdbot" "coinbase-api-key-clawdbot"
+    sync_key "coinbase_api_id_clawdbot" "coinbase-api-id-clawdbot"
+    sync_key "coinbase_api_secret_clawdbot" "coinbase-api-secret-clawdbot"
+    sync_key "coinbase_api_id_coinbase_trader" "coinbase-api-id-coinbase-trader"
+    sync_key "coinbase_api_secret_coinbase_trader" "coinbase-api-secret-coinbase-trader"
+    sync_key "icloud_email" "icloud-email"
+    sync_key "icloud_password" "icloud-password"
+    sync_key "openclaw_icloud_user" "openclaw-icloud-user"
+    sync_key "filestore_user_password" "filestore-user-password"
+    sync_key "filestore_wifi_ssid" "filestore-wifi-ssid"
+    sync_key "filestore_wifi_password" "filestore-wifi-password"
+    sync_key "filestore_authentik_secret" "filestore-authentik-secret"
+    sync_key "filestore_postgres_password" "filestore-postgres-password"
+    sync_key "vaultwarden_sso_client_secret" "vaultwarden-sso-client-secret"
+    sync_key "vaultwarden_admin_token" "vaultwarden-admin-token"
+    sync_key "nextcloud_admin_password" "nextcloud-admin-password"
+    sync_key "syncthing_gui_password" "syncthing-gui-password"
+    sync_key "cachix_token" "cachix-token"
+    sync_key "supernote_email" "supernote-email"
+    sync_key "supernote_password" "supernote-password"
   '';
 
   programs.nushell = {
