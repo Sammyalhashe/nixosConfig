@@ -12,7 +12,7 @@
       package.disabled = true;
 
       format = ''
-        $directory $jj$git_branch$git_commit$git_state$git_status$git_metrics $character
+        $directory $jj$git_commit$git_state$git_status$git_metrics $character
       '';
 
       custom.jj = {
@@ -52,9 +52,7 @@
         deleted = "x ";
       };
 
-      git_branch = {
-        format = " [ $branch](bold blue)";
-      };
+      git_branch.disabled = true;
     };
   };
 }
