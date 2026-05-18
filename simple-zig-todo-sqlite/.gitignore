@@ -1,6 +1,0 @@
-# Zig build artefacts
-zig-out/
-zig-cache/
-
-# SQLite database (optional – keep if you want persistence)
-todo.db
