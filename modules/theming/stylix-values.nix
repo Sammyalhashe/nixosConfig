@@ -11,18 +11,18 @@
   polarity = "dark";
   fonts = {
     serif = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
+      package = "${pkgs.maple-mono.NF}";
+      name = "MapleMono NF";
     };
 
     sansSerif = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
+      package = "${pkgs.maple-mono.NF}";
+      name = "MapleMono NF";
     };
 
     monospace = {
-      package = "${pkgs.nerd-fonts.victor-mono}";
-      name = "VictorMono Nerd Font Mono";
+      package = "${pkgs.maple-mono.NF}";
+      name = "MapleMono NF";
     };
   };
   cursor = {

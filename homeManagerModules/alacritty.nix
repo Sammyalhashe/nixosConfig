@@ -5,13 +5,17 @@
   ...
 }:
 let
-  font = "JetBrainsMono NF";
+  font = "JetbrainsMono NF";
   shell = {
     program = if config.environments.wsl.enable then "nu" else "zellij";
-    args = if config.environments.wsl.enable then [] else [
-      "-l"
-      "welcome"
-    ];
+    args =
+      if config.environments.wsl.enable then
+        [ ]
+      else
+        [
+          "-l"
+          "welcome"
+        ];
   };
 in
 {
@@ -23,13 +27,6 @@ in
       };
       env = {
         TERM = "xterm-256color";
-      };
-      font = {
-        size = 14.0;
-        normal = {
-          family = "${font}";
-          style = "Regular";
-        };
       };
       keyboard.bindings = [
         {
@@ -101,5 +98,19 @@ in
         };
       };
     };
-  };
+  }
+  // (
+    if config.environments.wsl.enable then
+      {
+        font = {
+          size = 14.0;
+          normal = {
+            family = "${font}";
+            style = "Regular";
+          };
+        };
+      }
+    else
+      { }
+  );
 }
