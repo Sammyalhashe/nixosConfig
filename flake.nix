@@ -10,9 +10,14 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # MacOS configuration management
-    darwin.url = "github:lnl7/nix-darwin";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
+    # MacOS configuration management (FlakeHub URL required for Determinate Nix)
+    # nix-darwin 25.11 from FlakeHub requires nixpkgs-25.11-darwin — not nixos-unstable
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+    darwin.url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
+    darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
+
+    # Determinate Nix system management
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
 
     # Specialized browsers and UI tools
     zen-browser = {
@@ -135,6 +140,15 @@
           config.allowUnfree = true;
         };
 
+      # Darwin uses nixpkgs-unstable (not nixos-unstable) to satisfy nix-darwin's branch check
+      getDarwinPkgs =
+        system:
+        import inputs.nixpkgs-darwin {
+          system = system;
+          overlays = overlays;
+          config.allowUnfree = true;
+        };
+
       # --- BASE CONFIG: Shared settings across all NixOS hosts ---
       baseConfig = {
         nixpkgs = {
@@ -148,6 +162,13 @@
           automatic = true;
           dates = "weekly";
           options = "--delete-older-than 7d";
+        };
+      };
+
+      # Darwin config without nix settings — Determinate Nix owns those
+      darwinBaseConfig = {
+        nixpkgs = {
+          inherit overlays;
         };
       };
     in
@@ -348,15 +369,31 @@
         ];
       };
 
-      darwinConfigurations.Sammys-MacBook-Pro = darwin.lib.darwinSystem {
+      darwinConfigurations.KQ7DV474L1 = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-darwin";
-        pkgs = getPkgs "x86_64-darwin";
+        system = "aarch64-darwin";
+        pkgs = getDarwinPkgs "aarch64-darwin";
         modules = [
-          baseConfig
-          ./hosts/Sammys-MacBook-Pro/configuration.nix
+          darwinBaseConfig
+          inputs.determinate.darwinModules.default
+          stylix.darwinModules.stylix
+          (
+            { pkgs, ... }:
+            let
+              theme = import ./modules/theming/stylix-values.nix { inherit pkgs; };
+            in
+            {
+              stylix.enable = true;
+              stylix.base16Scheme = theme.base16Scheme;
+              stylix.image = theme.image;
+              stylix.polarity = theme.polarity;
+              stylix.fonts = theme.fonts;
+            }
+          )
+          ./hosts/KQ7DV474L1/configuration.nix
           ./modules/options.nix
           sops-nix.darwinModules.sops
+          { determinateNix.enable = true; }
         ];
       };
 
@@ -386,7 +423,7 @@
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
-      homeModules.Sammys-MacBook-Pro = ./homeManagerModules/Sammys-MacBook-Pro.nix;
+      homeModules.KQ7DV474L1 = ./homeManagerModules/KQ7DV474L1.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
@@ -439,6 +476,14 @@
 
                 echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
                 sudo nixos-rebuild ${action} --flake .#${flakeAttr}
+              '';
+
+            mkDarwinScript =
+              name: flakeAttr: action:
+              pkgs.writeScriptBin name ''
+                #!/bin/sh
+                echo "Running: darwin-rebuild ${action} --flake .#${flakeAttr}"
+                darwin-rebuild ${action} --flake .#${flakeAttr}
               '';
 
             mkDeployScript =
@@ -507,6 +552,10 @@
               (mkDeployScript "deploy-filestore" "filestore" "filestore")
               (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
 
+              # Darwin scripts
+              (mkDarwinScript "switch-KQ7DV474L1" "KQ7DV474L1" "switch")
+              (mkDarwinScript "test-KQ7DV474L1" "KQ7DV474L1" "check")
+
               # Home manager scripts
               (mkScript "switch-home-work" "home-manager switch --flake .#work")
             ];
@@ -538,6 +587,7 @@
               echo "  test-<host>      - Test NixOS configuration locally"
               echo ""
               echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
+              echo "Darwin Hosts: KQ7DV474L1"
               echo "Home Configs: work"
             '';
           };
