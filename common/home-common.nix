@@ -31,23 +31,19 @@
       fzf
       gemini-cli
       gh
-      grim
       jjui
       jujutsu
       nmap
-      notejot
       pandoc
       presenterm
       ripgrep
       russ
-      slurp
+      socat
       sops
       spotify-player
       starship
       texliveSmall
       tmux
-      wl-clipboard
-      xclip
       yazi
       zellij
       zoxide
@@ -60,10 +56,15 @@
 
       # mcp
       inputs.mcp-hub.packages.${pkgs.stdenv.hostPlatform.system}.default
-
-      # todo cli
       inputs.todo.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
+    ++ lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+      grim
+      notejot
+      slurp
+      wl-clipboard
+      xclip
+    ])
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })
       (import ./scripts/hgrep.nix { inherit pkgs; })

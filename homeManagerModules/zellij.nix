@@ -1,5 +1,22 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
+  zjstatus-wasm = pkgs.fetchurl {
+    url = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
+    sha256 = "1zv173qh67x4bf4k4m5fpz22vy0pbp6f88c0c7dkjhjj4c9901p0";
+  };
+  zellij-forgot-wasm = pkgs.fetchurl {
+    url = "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm";
+    sha256 = "1ns9wjn1ncjapqpp9nn9kyhqydvl0fbnyiavd0lc3gcxa52l269i";
+  };
+  monocle-wasm = pkgs.fetchurl {
+    url = "https://github.com/imsnif/monocle/releases/latest/download/monocle.wasm";
+    sha256 = "0b3r2d3wz42lffdsh28a4kwjxrhdgx7f94swfm75p5rdj76f5dsc";
+  };
+  zjstatus-hints-wasm = pkgs.fetchurl {
+    url = "https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm";
+    sha256 = "17bir2z85ip7x6zndy94x5wdrpqv2py3wf116kadn3jw0blmav4k";
+  };
+
   swap_floating_layouts = /* kdl */ ''
         swap_floating_layout name="fullscreen" {
             floating_panes max_panes=10 {
@@ -59,7 +76,7 @@ let
 
   zjstatus_bar = /* kdl */ ''
         pane size=1 borderless=true {
-            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+            plugin location="file:${zjstatus-wasm}" {
                 format_left   "#[fg=#89b4fa,bg=#11111b]#[fg=#11111b,bg=#89b4fa,bold]{mode}#[fg=#89b4fa,bg=#11111b]"
                 format_center "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{tabs}#[fg=#25253a,bg=#11111b]"
                 format_right  "#[fg=#25253a,bg=#11111b]#[bg=#25253a]{command_git_branch}#[fg=#89b4fa,bg=#25253a] {datetime}#[fg=#25253a,bg=#11111b]"
@@ -85,7 +102,7 @@ let
                 tab_normal                 "#[fg=#6c7086,bg=#25253a] {name} "
                 tab_active                 "#[fg=#89b4fa,bg=#25253a,bold] {name} "
 
-                command_git_branch_command     "git branch --show-current"
+                command_git_branch_command     "${pkgs.git}/bin/git branch --show-current"
                 command_git_branch_format      "#[fg=#a6e3a1,bg=#25253a] {stdout}  "
                 command_git_branch_interval    "10"
                 command_git_branch_rendermode  "static"
@@ -100,7 +117,7 @@ let
   plug_bar = /* kdl */ ''
     default_tab_template {
         pane size=1 borderless=true {
-            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"{
+            plugin location="file:${zjstatus-wasm}"{
                 format_left   "{mode} #[fg=#89B4FA,bold]{session}"
                 format_center "{tabs}"
                 format_right  "{command_git_name}{command_git_branch}{command_git_files}{command_git_add}{command_git_sub}{datetime}"
@@ -159,7 +176,7 @@ in
     enable = true;
   };
   home.file."${config.xdg.configHome}/zellij/config.kdl".text = /* kdl */ ''
-        default_shell "nu"
+        default_shell "${pkgs.nushell}/bin/nu"
         keybinds clear-defaults=true {
         locked {
             bind "Alt g" { SwitchToMode "normal"; }
@@ -318,7 +335,7 @@ in
                 SwitchToMode "normal"
             }
             bind "Alt r" {
-                Run "bash" "-c" "SELECTED=$(printf 'momdv-ob-189\nsundev2\noldboy.salh.xyz\nmothership.salh.xyz\nfilestore.salh.xyz\npicloud.salh.xyz' | gum filter --placeholder 'Select SSH target...') && [ -n \"$SELECTED\" ] && case \"$SELECTED\" in *.salh.xyz) exec ssh salhashemi2@$SELECTED ;; *) exec ssh $SELECTED ;; esac" {
+                Run "${pkgs.bash}/bin/bash" "-c" "SELECTED=$(printf 'momdv-ob-189\nsundev2\noldboy.salh.xyz\nmothership.salh.xyz\nfilestore.salh.xyz\npicloud.salh.xyz' | gum filter --placeholder 'Select SSH target...') && [ -n \"$SELECTED\" ] && case \"$SELECTED\" in *.salh.xyz) exec ssh salhashemi2@$SELECTED ;; *) exec ssh $SELECTED ;; esac" {
                     floating true
                     name "SSH"
                 }
@@ -342,14 +359,14 @@ in
                 }
             }
             bind "Ctrl p" {
-                Run "bash" "-c" "RESEND_API_KEY=$(skate get pop-resend-key@api-keys | tr -d '\n') pop --from sammy@salh.xyz" {
+                Run "${pkgs.bash}/bin/bash" "-c" "RESEND_API_KEY=$(skate get pop-resend-key@api-keys | tr -d '\n') pop --from sammy@salh.xyz" {
                     floating true
                     name "Pop"
                     close_on_exit true
                 }
             }
             bind "Alt e" {
-                Run "bash" "-c" "skate list @api-keys | gum filter | awk '{print $1}' | xargs -I{} skate get {}@api-keys | tr -d '\n' | system-copy" {
+                Run "${pkgs.bash}/bin/bash" "-c" "skate list @api-keys | gum filter | awk '{print $1}' | xargs -I{} skate get {}@api-keys | tr -d '\n' | system-copy" {
                     floating true
                     name "Skate"
                     close_on_exit true
@@ -476,8 +493,8 @@ in
         welcome-screen location="zellij:session-manager" {
             welcome_screen false
         }
-        forgot location="https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm"
-        zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
+        forgot location="file:${zellij-forgot-wasm}"
+        zjstatus-hints location="file:${zjstatus-hints-wasm}" {
             pipe_name "zjstatus_hints"
         }
     }
@@ -486,9 +503,8 @@ in
     // eg. "file:/path/to/my-plugin.wasm"
     // eg. "https://example.com/my-plugin.wasm"
     load_plugins {
-      https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm
-      https://github.com/imsnif/monocle/releases/latest/download/monocle.wasm
-      zjstatus-hints
+      "file:${zellij-forgot-wasm}"
+      "file:${monocle-wasm}"
     }
      
     // Use a simplified UI without special fonts (arrow glyphs)
@@ -501,7 +517,7 @@ in
     // Choose the theme that is specified in the themes section.
     // Default: default
     // 
-    theme "ao"
+    theme "stylix"
      
     // Choose the base input mode of zellij.
     // Default: normal
@@ -755,7 +771,11 @@ ${swap_floating_layouts}
 
         default_tab_template {
             children
-${zjstatus_bar}
+${if pkgs.stdenv.isDarwin then ''
+            pane size=1 borderless=true {
+                plugin location="compact-bar"
+            }
+'' else zjstatus_bar}
         }
     }
   '';
@@ -765,7 +785,7 @@ ${zjstatus_bar}
 ${swap_floating_layouts}
 
         pane split_direction="vertical" {
-            pane size="75%" command="sh" {
+            pane size="75%" command="${pkgs.bash}/bin/bash" {
                 args "-c" "exec $EDITOR ."
             }
             pane split_direction="horizontal" size="25%" {

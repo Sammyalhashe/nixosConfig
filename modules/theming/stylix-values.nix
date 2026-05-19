@@ -1,28 +1,32 @@
 { pkgs }:
+let
+  mapleMonoName = if pkgs.stdenv.isDarwin then "Maple Mono NF" else "MapleMono NF";
+in
 {
-  base16Scheme = {
-    yaml = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/EdenEast/nightfox.nvim/refs/heads/main/extra/carbonfox/base16.yaml";
-      sha256 = "sha256-GWk0t8V93+lCcxilH9wX3EaE5zozZgWE/Zr6FIb9cXs=";
-    };
-    use-ifd = "always";
-  };
+  base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
   image = ./assets/BLACK_VII_desktop.jpg;
   polarity = "dark";
   fonts = {
     serif = {
       package = "${pkgs.maple-mono.NF}";
-      name = "MapleMono NF";
+      name = mapleMonoName;
     };
 
     sansSerif = {
       package = "${pkgs.maple-mono.NF}";
-      name = "MapleMono NF";
+      name = mapleMonoName;
     };
 
     monospace = {
       package = "${pkgs.maple-mono.NF}";
-      name = "MapleMono NF";
+      name = mapleMonoName;
+    };
+
+    sizes = {
+      applications = 10;
+      terminal = 14;
+      desktop = 10;
+      popups = 10;
     };
   };
   cursor = {

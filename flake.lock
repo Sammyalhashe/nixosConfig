@@ -114,20 +114,21 @@
     "darwin": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs-darwin"
+          "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1772129556,
-        "narHash": "sha256-Utk0zd8STPsUJPyjabhzPc5BpPodLTXrwkpXBHYnpeg=",
-        "rev": "ebec37af18215214173c98cf6356d0aca24a2585",
-        "revCount": 2293,
-        "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/nix-darwin/nix-darwin/0.2511.2293%2Brev-ebec37af18215214173c98cf6356d0aca24a2585/019c9b29-24a7-7bb8-a961-4fc176ed0edd/source.tar.gz"
+        "lastModified": 1779036909,
+        "narHash": "sha256-zXcwYQGCT6pzinK+1dBB2ekTVtfxGZAapb3Evdcu4fY=",
+        "owner": "LnL7",
+        "repo": "nix-darwin",
+        "rev": "56c666e108467d87d13508936aade6d567f2a501",
+        "type": "github"
       },
       "original": {
-        "type": "tarball",
-        "url": "https://flakehub.com/f/nix-darwin/nix-darwin/0"
+        "owner": "LnL7",
+        "repo": "nix-darwin",
+        "type": "github"
       }
     },
     "determinate": {
@@ -993,22 +994,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-darwin": {
-      "locked": {
-        "lastModified": 1778893784,
-        "narHash": "sha256-EDThl5ard0jh2t9FWZB/vdSzA5Qqea9l26lz5tbxzQQ=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e0e08612300f19308b83668861c2fabaceba8967",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-25.11-darwin",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1730504152,
@@ -1263,11 +1248,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1779083383,
-        "narHash": "sha256-YVLoP34EqiBqqI0iPx6fThz1wfoW7xDXr3xYgrLD4T0=",
+        "lastModified": 1779242116,
+        "narHash": "sha256-IDSgV9f21jG4Y1MunEYmaeFcDyuUv5bihkc3TbTmHRU=",
         "owner": "Sammyalhashe",
         "repo": "nixvim",
-        "rev": "73ba54ce884994867706884ea26f226966b18f34",
+        "rev": "3e02a0664fcb1b89c6dd372e8732fe37786490e8",
         "type": "github"
       },
       "original": {
@@ -1401,7 +1386,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_8",
-        "nixpkgs-darwin": "nixpkgs-darwin",
         "nixvim": "nixvim",
         "nur": "nur",
         "plasma-manager": "plasma-manager",
@@ -1709,11 +1693,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778536435,
-        "narHash": "sha256-nKWwDiodEvpev1C89PhOXApfxinCnlWvYnJHwi0l1/A=",
+        "lastModified": 1779242966,
+        "narHash": "sha256-QZtTuKezniwEioe/K00eaHzn4H9NKm/yUaEtGW+bJ8U=",
         "owner": "Sammyalhashe",
         "repo": "simple-zig-todo-sqlite",
-        "rev": "0836d515631cd502951ca3b4ec48f61d76d794bc",
+        "rev": "4b6479e17f6cff3e32da8382cb5711a5dcd8d4bc",
         "type": "github"
       },
       "original": {
