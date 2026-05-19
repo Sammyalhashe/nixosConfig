@@ -771,11 +771,7 @@ ${swap_floating_layouts}
 
         default_tab_template {
             children
-${if pkgs.stdenv.isDarwin then ''
-            pane size=1 borderless=true {
-                plugin location="compact-bar"
-            }
-'' else zjstatus_bar}
+${zjstatus_bar}
         }
     }
   '';

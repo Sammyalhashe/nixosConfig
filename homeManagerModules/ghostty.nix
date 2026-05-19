@@ -1,6 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
-  xdg.configFile."ghostty/config".text = ''
-    command = ${pkgs.nushell}/bin/nu --login
-  '';
+  programs.ghostty = {
+    enable = true;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
+    settings = {
+      command = "${pkgs.nushell}/bin/nu --login";
+      font-size = 14;
+    };
+  };
 }

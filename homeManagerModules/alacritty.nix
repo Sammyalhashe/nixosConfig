@@ -7,15 +7,8 @@
 let
   font = "JetbrainsMono NF";
   shell = {
-    program = if config.environments.wsl.enable then "nu" else "zellij";
-    args =
-      if config.environments.wsl.enable then
-        [ ]
-      else
-        [
-          "-l"
-          "welcome"
-        ];
+    program = if config.environments.wsl.enable then "${pkgs.nushell}/bin/nu" else "${pkgs.zellij}/bin/zellij";
+    args = [ ];
   };
 in
 {

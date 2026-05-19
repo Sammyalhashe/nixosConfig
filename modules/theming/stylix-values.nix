@@ -3,7 +3,7 @@ let
   mapleMonoName = if pkgs.stdenv.isDarwin then "Maple Mono NF" else "MapleMono NF";
 in
 {
-  base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
+  base16Scheme = "${pkgs.base16-schemes}/share/themes/everforest.yaml";
   image = ./assets/BLACK_VII_desktop.jpg;
   polarity = "dark";
   fonts = {

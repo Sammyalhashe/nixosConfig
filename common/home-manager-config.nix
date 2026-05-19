@@ -27,8 +27,9 @@ in
       };
 
       users.${cfg.username} = {
-        imports = stylixModule ++ [
+        imports = stylixModule ++ lib.optionals pkgs.stdenv.isLinux [
           inputs.plasma-manager.homeModules.plasma-manager
+        ] ++ [
           inputs.todo.homeManagerModules.default
           (./. + "/home-${cfg.homeManagerHostname}.nix")
           inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }

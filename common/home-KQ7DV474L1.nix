@@ -43,7 +43,27 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      name = "default";
+      isDefault = true;
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        ublock-origin
+        bitwarden
+        sponsorblock
+        darkreader
+      ];
+    };
+  };
+  stylix.targets.firefox.profileNames = [ "default" ];
+
   # Stylix theming — darwin stylix propagates the HM module; we just opt in here.
   stylix.enable = true;
   stylix.targets.alacritty.enable = true;
+  stylix.targets.ghostty.enable = true;
+  # Disable Linux-only Stylix targets
+  stylix.targets.gtk.enable = false;
+  stylix.targets.xresources.enable = false;
+  stylix.targets.sxiv.enable = false;
 }

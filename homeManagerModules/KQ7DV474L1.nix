@@ -4,6 +4,8 @@ let
     ./home-common.nix
     ./neovim.nix
     ./aider.nix
+    ./ghostty.nix
+    ./aerospace.nix
   ];
 in
 {
