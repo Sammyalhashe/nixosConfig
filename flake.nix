@@ -10,11 +10,9 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # MacOS configuration management (FlakeHub URL required for Determinate Nix)
-    # nix-darwin 25.11 from FlakeHub requires nixpkgs-25.11-darwin — not nixos-unstable
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
-    darwin.url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
-    darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
+    # MacOS configuration management — tracking nix-darwin unstable to match nixpkgs-unstable
+    darwin.url = "github:LnL7/nix-darwin";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     # Determinate Nix system management
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
@@ -140,14 +138,6 @@
           config.allowUnfree = true;
         };
 
-      # Darwin uses nixpkgs-unstable (not nixos-unstable) to satisfy nix-darwin's branch check
-      getDarwinPkgs =
-        system:
-        import inputs.nixpkgs-darwin {
-          system = system;
-          overlays = overlays;
-          config.allowUnfree = true;
-        };
 
       # --- BASE CONFIG: Shared settings across all NixOS hosts ---
       baseConfig = {
@@ -372,7 +362,7 @@
       darwinConfigurations.KQ7DV474L1 = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "aarch64-darwin";
-        pkgs = getDarwinPkgs "aarch64-darwin";
+        pkgs = getPkgs "aarch64-darwin";
         modules = [
           darwinBaseConfig
           inputs.determinate.darwinModules.default
