@@ -23,6 +23,10 @@ let
             name = "Qwen3 Coder Next";
             id = "qwen3-coder-next";
           }
+          {
+            name = "Qwen3.6";
+            id = "qwen3.6";
+          }
         ];
       };
       openrouter = {
