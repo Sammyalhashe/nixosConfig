@@ -18,10 +18,13 @@ in
           name = "openrouter/free";
           npm = "@ai-sdk/openai-compatible";
           options = {
-            baseUrl = "https://openrouter.ai/api/v1";
-            apiKey = "env:OPENROUTER_API_KEY";
+            baseURL = "https://openrouter.ai/api/v1";
+            apiKey = "{env:OPENROUTER_API_KEY}";
           };
           models = {
+            "deepseek/deepseek-v4-pro" = {
+              name = "deepseek-v4-pro";
+            };
             "openrouter/free" = {
               name = "Auto-Free Router";
             };
@@ -60,7 +63,7 @@ in
           npm = "@ai-sdk/openai-compatible";
           options = {
             baseURL = "https://api.groq.com/openai/v1";
-            apiKey = "env:GROQ_API_KEY";
+            apiKey = "{env:GROQ_API_KEY}";
           };
           models = {
             # Best option: 10M ctx, multimodal, MoE 17B active
@@ -81,12 +84,12 @@ in
           npm = "@ai-sdk/openai-compatible";
           name = "Mothership (LiteLLM)";
           options = {
-            baseUrl = "http://${inferenceHost}:4000/v1";
+            baseURL = "http://${inferenceHost}:4000/v1";
             apiKey = "any";
           };
           models = {
-            "qwen3-coder-next" = {
-              name = "Qwen3 Coder Next";
+            "qwen3.6" = {
+              name = "qwen3.6";
             };
             "gemma-4" = {
               name = "Gemma 4 26B";
@@ -97,7 +100,7 @@ in
           name = "OpenCode Zen";
           npm = "@ai-sdk/openai-compatible";
           options = {
-            baseUrl = "https://opencode.ai/v1";
+            baseURL = "https://opencode.ai/v1";
             apiKey = "any";
           };
           models = {
@@ -122,7 +125,7 @@ in
           };
         };
       };
-      model = "mothership/qwen3-coder-next";
+      model = "mothership/qwen3.6";
     };
   };
 
@@ -152,16 +155,16 @@ in
       },
       "agents": {
         "Sisyphus": {
-          "model": "mothership/qwen3-coder-next"
+          "model": "mothership/qwen3.6"
         },
         "Sisyphus-Junior": {
-          "model": "mothership/qwen3-coder-next"
+          "model": "mothership/qwen3.6"
         },
         "Prometheus (Planner)": {
-          "model": "openrouter/deepseek/deepseek-r1:free"
+          "model": "openrouter/deepseek/deepseek-v4-pro"
         },
         "Prometheus": {
-          "model": "openrouter/deepseek/deepseek-r1:free"
+          "model": "openrouter/deepseek/deepseek-v4-pro"
         },
         "oracle": {
           "model": "openrouter/meta-llama/llama-4-maverick:free"

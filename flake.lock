@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779381102,
-        "narHash": "sha256-BnNUWOU2BpAMaQbt4mwGr/HSU6OhXO12Yxc0cDfgLUE=",
+        "lastModified": 1779559698,
+        "narHash": "sha256-qnoLxBwSwODR4vQdwpnzqRDAZwm472YsG4ROs0hAXKQ=",
         "owner": "Sammyalhashe",
         "repo": "skills",
-        "rev": "eca1ec22ae0d4742a6b7503840ccb918c22e2c1e",
+        "rev": "6bd6d4153bfb8a4ddfad10706c68e924e1e913ab",
         "type": "github"
       },
       "original": {
@@ -1693,11 +1693,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779242966,
-        "narHash": "sha256-QZtTuKezniwEioe/K00eaHzn4H9NKm/yUaEtGW+bJ8U=",
+        "lastModified": 1779670811,
+        "narHash": "sha256-89DgEsN+E4oitIaZ7zp5Zvr60BCRYxRM25MZkBU+xLM=",
         "owner": "Sammyalhashe",
         "repo": "simple-zig-todo-sqlite",
-        "rev": "4b6479e17f6cff3e32da8382cb5711a5dcd8d4bc",
+        "rev": "a6f41ae792a1966b78ef2aae1aaddb5b086d7238",
         "type": "github"
       },
       "original": {
