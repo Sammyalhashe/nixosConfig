@@ -16,19 +16,15 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [ pkgs.nodejs_22 ];
 
-    services.claude-code.mcpServers.coinbase = {
+    programs.claude-code.mcpServers.coinbase = {
       command = "${pkgs.nodejs_22}/bin/npx";
       args = [
         "-y"
         "@coinbase/coinbase-cli"
         "mcp"
+        "--key-file"
+        "${keyFilePath}"
       ];
     };
-
-    home.activation.setupCoinbaseCli = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ -f "${keyFilePath}" ] && command -v coinbase &>/dev/null; then
-        $DRY_RUN_CMD coinbase env live --key-file "${keyFilePath}" 2>/dev/null || true
-      fi
-    '';
   };
 }

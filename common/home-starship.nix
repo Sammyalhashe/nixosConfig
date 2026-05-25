@@ -9,6 +9,7 @@
   ];
 
   programs.aider.enable = true;
+  programs.coinbase-cli.enable = true;
 
   home.username = "${user}";
 

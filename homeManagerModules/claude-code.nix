@@ -109,12 +109,10 @@ in
   options.services.claude-code.mcpServers = lib.mkOption {
     type = lib.types.attrs;
     default = { };
-    description = "MCP servers to configure in Claude Code settings.";
+    description = "MCP servers to configure in Claude Code settings (passed through to built-in programs.claude-code).";
   };
 
   config = {
-    home.packages = [ pkgs.claude-code ];
-
     home.file."CLAUDE.md".text = karpathySkills;
 
     home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -125,11 +123,35 @@ in
 
       $DRY_RUN_CMD ${pkgs.python3}/bin/python3 ${mergeClaudeJsonScript} ${lib.escapeShellArg (builtins.toJSON claudeJson)}
     '';
+    programs.claude-code = {
+      enable = true;
+      package = pkgs.claude-code;
+      settings = {
+        "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+        env = {
+          ANTHROPIC_BASE_URL = litellmUrl;
+          ANTHROPIC_API_KEY = "sk-no-key-required";
+          CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
+          CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
+          CLAUDE_CODE_ENABLE_TELEMETRY = "0";
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+          ENABLE_PROMPT_CACHING_1H = "1";
+        };
+        model = "qwen3.6";
+        attribution = {
+          commit = "";
+          pr = "";
+        };
+      };
+      context = karpathySkills;
+    };
 
     home.sessionVariables = {
       ANTHROPIC_BASE_URL = litellmUrl;
       ANTHROPIC_API_KEY = "sk-no-key-required";
       CLAUDE_CODE_DISABLE_TELEMETRY = "0";
     };
+
+    programs.claude-code.mcpServers = cfg.mcpServers;
   };
 }
