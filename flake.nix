@@ -105,7 +105,6 @@
       self,
       nixpkgs,
       home-manager,
-      darwin,
       zen-browser,
       hyprlock,
       mangowc,
@@ -138,7 +137,6 @@
           config.allowUnfree = true;
         };
 
-
       # --- BASE CONFIG: Shared settings across all NixOS hosts ---
       baseConfig = {
         nixpkgs = {
@@ -155,12 +153,6 @@
         };
       };
 
-      # Darwin config without nix settings — Determinate Nix owns those
-      darwinBaseConfig = {
-        nixpkgs = {
-          inherit overlays;
-        };
-      };
     in
     {
       nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
@@ -359,82 +351,9 @@
         ];
       };
 
-      darwinConfigurations.KQ7DV474L1 = darwin.lib.darwinSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        system = "aarch64-darwin";
-        pkgs = getPkgs "aarch64-darwin";
-        modules = [
-          darwinBaseConfig
-          inputs.determinate.darwinModules.default
-          stylix.darwinModules.stylix
-          (
-            { pkgs, ... }:
-            let
-              theme = import ./modules/theming/stylix-values.nix { inherit pkgs; };
-            in
-            {
-              stylix.enable = true;
-              stylix.base16Scheme = theme.base16Scheme;
-              stylix.image = theme.image;
-              stylix.polarity = theme.polarity;
-              stylix.fonts = theme.fonts;
-            }
-          )
-          ./hosts/KQ7DV474L1/configuration.nix
-          ./modules/options.nix
-          sops-nix.darwinModules.sops
-          { determinateNix.enable = true; }
-        ];
-      };
-
-      # Home-manager-only config for work
-      homeConfigurations.work = home-manager.lib.homeManagerConfiguration {
-        # inherit pkgs; # <--- Removing this to define nixpkgs explicitly
-        pkgs = getPkgs "x86_64-linux";
-        extraSpecialArgs = {
-          inherit inputs sops-nix;
-          user = "salhashemi2";
-          homeDir = "/home/salhashemi2/";
-        };
-        modules = [
-          baseConfig
-          sops-nix.homeManagerModules.sops
-          ./homeManagerModules/work.nix
-          ./common/home-work.nix
-          {
-            environments.wsl = {
-              enable = true;
-              windowsUsername = "salhashemi2";
-            };
-          }
-        ];
-      };
-
-      # Home-manager-only config for work (non-WSL)
-      homeConfigurations.work-spaces = home-manager.lib.homeManagerConfiguration {
-        pkgs = getPkgs "x86_64-linux";
-        extraSpecialArgs = {
-          inherit inputs sops-nix;
-          user = "salhashemi2";
-          homeDir = "/home/salhashemi2/";
-        };
-        modules = [
-          baseConfig
-          sops-nix.homeManagerModules.sops
-          ./homeManagerModules/work.nix
-          ./common/home-work.nix
-          {
-            environments.wsl = {
-              enable = false;
-            };
-          }
-        ];
-      };
-
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
-      homeModules.KQ7DV474L1 = ./homeManagerModules/KQ7DV474L1.nix;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
@@ -531,7 +450,6 @@
               (mkScript "push-homebase" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} homebase")
               (mkScript "push-starship" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starship")
               (mkScript "push-starshipwsl" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starshipwsl")
-              (mkScript "push-work" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} work")
 
               # Host switch/test scripts
               (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
@@ -563,12 +481,6 @@
               (mkDeployScript "deploy-filestore" "filestore" "filestore")
               (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
 
-              # Darwin scripts
-              (mkDarwinScript "switch-KQ7DV474L1" "KQ7DV474L1" "switch")
-              (mkDarwinScript "test-KQ7DV474L1" "KQ7DV474L1" "check")
-
-              # Home manager scripts
-              (mkScript "switch-home-work" "home-manager switch --flake .#work")
             ];
           in
           pkgs.mkShell {
@@ -588,8 +500,7 @@
               echo "Available commands:"
                           echo "  check         - Run nix flake check"
                           echo "  fmt           - Run nix fmt"
-                          echo "  push-work     - Build work home config and push to cachix"
-                                      echo "  push-homebase    - Build homebase system config and push to cachix"
+                          echo "  push-homebase    - Build homebase system config and push to cachix"
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
                                       echo "  push-mothership - Build mothership system config and push to cachix"
@@ -598,8 +509,6 @@
               echo "  test-<host>      - Test NixOS configuration locally"
               echo ""
               echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
-              echo "Darwin Hosts: KQ7DV474L1"
-              echo "Home Configs: work"
             '';
           };
       }

@@ -5,9 +5,9 @@
   ...
 }:
 let
-  font = "JetbrainsMono NF";
   shell = {
-    program = if config.environments.wsl.enable then "${pkgs.nushell}/bin/nu" else "${pkgs.zellij}/bin/zellij";
+    program =
+      if config.environments.wsl.enable then "${pkgs.nushell}/bin/nu" else "${pkgs.zellij}/bin/zellij";
     args = [ ];
   };
 in
@@ -91,19 +91,5 @@ in
         };
       };
     };
-  }
-  // (
-    if config.environments.wsl.enable then
-      {
-        settings.font = {
-          size = 14.0;
-          normal = {
-            family = "${font}";
-            style = "Regular";
-          };
-        };
-      }
-    else
-      { }
-  );
+  };
 }

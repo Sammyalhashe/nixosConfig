@@ -27,13 +27,16 @@ in
       };
 
       users.${cfg.username} = {
-        imports = stylixModule ++ lib.optionals pkgs.stdenv.isLinux [
-          inputs.plasma-manager.homeModules.plasma-manager
-        ] ++ [
-          inputs.todo.homeManagerModules.default
-          (./. + "/home-${cfg.homeManagerHostname}.nix")
-          inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
-        ];
+        imports =
+          stylixModule
+          ++ lib.optionals pkgs.stdenv.isLinux [
+            inputs.plasma-manager.homeModules.plasma-manager
+          ]
+          ++ [
+            inputs.todo.homeManagerModules.default
+            (./. + "/home-${cfg.homeManagerHostname}.nix")
+            inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
+          ];
         services.todo.enable = false;
       };
 

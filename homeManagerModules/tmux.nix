@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   sessionx = pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "sessionx";
@@ -71,7 +76,9 @@ in
        set-window-option -g mode-keys vi
        bind-key -T copy-mode-vi v send -X begin-selection
        bind-key -T copy-mode-vi V send -X select-line
-       bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel '${if pkgs.stdenv.isDarwin then "pbcopy" else "xclip -in -selection clipboard"}'
+       bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel '${
+         if pkgs.stdenv.isDarwin then "pbcopy" else "xclip -in -selection clipboard"
+       }'
 
        bind-key m set-option mouse \; display-message "mouse #{?mouse,on,off}"
 

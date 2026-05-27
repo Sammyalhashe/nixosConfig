@@ -6,28 +6,27 @@
   ...
 }:
 let
+  cfg = config.services.claude-code;
   hostname = osConfig.networking.hostName or "unknown";
   inferenceHost = if hostname == "mothership" then "127.0.0.1" else "11.125.37.101";
   litellmUrl = "http://${inferenceHost}:4000";
 
   claudeSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+  }
+  // lib.optionalAttrs cfg.useLocalLLM {
     env = {
       ANTHROPIC_BASE_URL = litellmUrl;
-      # LiteLLM doesn't require a real key; any non-empty string works.
       ANTHROPIC_AUTH_TOKEN = "sk-no-key-required";
       ANTHROPIC_API_KEY = "sk-no-key-required";
-      # Fix for 90% slowdown in local models: Disable attribution header to preserve KV cache
       CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
-      # Strip anthropic-beta headers that LiteLLM may reject.
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
     };
-    # Must match a model_name exposed by LiteLLM.
-    # model = "gemma-4";
     model = "qwen3.6";
-    # Suppress co-authored-by attribution in commits/PRs.
+  }
+  // {
     attribution = {
       commit = "";
       pr = "";
@@ -36,10 +35,11 @@ let
 
   claudeOnboarding = {
     hasCompletedOnboarding = true;
+  }
+  // lib.optionalAttrs cfg.useLocalLLM {
     primaryApiKey = "sk-no-key-required";
   };
 
-  # Andrej Karpathy Coding Skills/Principles for Claude Code (Applied via CLAUDE.md)
   karpathySkills = ''
     # Andrej Karpathy's Coding Principles
 
@@ -65,28 +65,31 @@ let
   '';
 in
 {
-  home.packages = [ pkgs.claude-code ];
+  options.services.claude-code.useLocalLLM = lib.mkOption {
+    type = lib.types.bool;
+    default = true;
+    description = "Whether to configure Claude Code to use the local LiteLLM proxy.";
+  };
 
-  # Global Karpathy Principles for all projects
-  home.file."CLAUDE.md".text = karpathySkills;
+  config = {
+    home.packages = [ pkgs.claude-code ];
 
-  # Use activation script to create writable configuration files.
-  home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD mkdir -p $HOME/.claude
+    home.file."CLAUDE.md".text = karpathySkills;
 
-    # Create ~/.claude/settings.json as a writable file
-    $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-settings.json" (builtins.toJSON claudeSettings)} $HOME/.claude/settings.json
-    $DRY_RUN_CMD chmod +w $HOME/.claude/settings.json
+    home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p $HOME/.claude
 
-    # Create ~/.claude.json as a writable file
-    $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-onboarding.json" (builtins.toJSON claudeOnboarding)} $HOME/.claude.json
-    $DRY_RUN_CMD chmod +w $HOME/.claude.json
-  '';
+      $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-settings.json" (builtins.toJSON claudeSettings)} $HOME/.claude/settings.json
+      $DRY_RUN_CMD chmod +w $HOME/.claude/settings.json
 
-  # Set environment variables directly to ensure they are available to the shell.
-  home.sessionVariables = {
-    ANTHROPIC_BASE_URL = litellmUrl;
-    ANTHROPIC_API_KEY = "sk-no-key-required";
-    CLAUDE_CODE_DISABLE_TELEMETRY = "0";
+      $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-onboarding.json" (builtins.toJSON claudeOnboarding)} $HOME/.claude.json
+      $DRY_RUN_CMD chmod +w $HOME/.claude.json
+    '';
+
+    home.sessionVariables = lib.optionalAttrs cfg.useLocalLLM {
+      ANTHROPIC_BASE_URL = litellmUrl;
+      ANTHROPIC_API_KEY = "sk-no-key-required";
+      CLAUDE_CODE_DISABLE_TELEMETRY = "0";
+    };
   };
 }

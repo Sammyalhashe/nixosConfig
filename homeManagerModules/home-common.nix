@@ -6,6 +6,7 @@
     ./jj.nix
     ./ai-skills.nix
     ./alacritty.nix
+    ./claude-code.nix
     ./direnv.nix
     ./mods.nix
     ./nushell.nix

@@ -11,7 +11,6 @@ keys:
   - &mothership_user "age1mypdj8sj85nfz4kgncqmrnc6aceacf0tugm87tean67jddqx6qhqksxp0d"
   - &oldboy "age123sd3m8zy4yp0sak5tcq3nzd3afw6xh7pvvnrn9dvwudryhx3g9qdzkcv5"
   - &homebasewsl "age136sr38ddk6ngzdekvrcjwsfz5n2dkax35u578ze0krgjw5h6us7s5vacnd"
-  - &bb_darwin "age1k0zkjkskfshk5l28m65c5c399v2j03gtexvlqfc4r8dyzsv0wexq4twgm2"
 
 creation_rules:
   - path_regex: .*secrets.*\.yaml$
@@ -28,4 +27,3 @@ creation_rules:
           - *mothership_user
           - *oldboy
           - *homebasewsl
-          - *bb_darwin
