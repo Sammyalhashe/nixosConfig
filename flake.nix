@@ -410,6 +410,27 @@
         ];
       };
 
+      # Home-manager-only config for work (non-WSL)
+      homeConfigurations.work-spaces = home-manager.lib.homeManagerConfiguration {
+        pkgs = getPkgs "x86_64-linux";
+        extraSpecialArgs = {
+          inherit inputs sops-nix;
+          user = "salhashemi2";
+          homeDir = "/home/salhashemi2/";
+        };
+        modules = [
+          baseConfig
+          sops-nix.homeManagerModules.sops
+          ./homeManagerModules/work.nix
+          ./common/home-work.nix
+          {
+            environments.wsl = {
+              enable = false;
+            };
+          }
+        ];
+      };
+
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
