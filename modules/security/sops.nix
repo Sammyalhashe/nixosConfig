@@ -127,6 +127,17 @@
     path = "/home/${config.host.username}/cdb_trader_api_key.json";
   };
 
+  sops.templates."cb_hardware_maker-json" = {
+    content = ''
+      {
+        "name": "${config.sops.placeholder.cb_hardware_maker_org_name}",
+        "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}"
+      }
+    '';
+    owner = config.host.username;
+    path = "/home/${config.host.username}/hardware_maker_api_key.json";
+  };
+
   sops.templates."picoclaw-env" = {
     content = ''
       GEMINI_API_KEY=${config.sops.placeholder.gemini_api_key}
