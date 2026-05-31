@@ -57,6 +57,8 @@
   sops.secrets.coinbase_api_secret_clawdbot = { };
   sops.secrets.coinbase_api_id_coinbase_trader = { };
   sops.secrets.coinbase_api_secret_coinbase_trader = { };
+  sops.secrets.cb_hardware_maker_org_name = {};
+  sops.secrets.cb_hardware_maker_key = {};
 
   sops.secrets.icloud_email = {
     owner = config.host.username;
