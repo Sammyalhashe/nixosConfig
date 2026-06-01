@@ -1693,11 +1693,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779670811,
-        "narHash": "sha256-89DgEsN+E4oitIaZ7zp5Zvr60BCRYxRM25MZkBU+xLM=",
+        "lastModified": 1780286043,
+        "narHash": "sha256-qapScapSvcGDppmiaedZd0BtLQpSC4PEsAiq0k3uzuA=",
         "owner": "Sammyalhashe",
         "repo": "simple-zig-todo-sqlite",
-        "rev": "a6f41ae792a1966b78ef2aae1aaddb5b086d7238",
+        "rev": "911d39c1ea8e7494428bc46c7a8b033c604f0888",
         "type": "github"
       },
       "original": {
