@@ -73,24 +73,14 @@ in
       edit_mode = "vi";
     };
     extraEnv = ''
-      $env.PATH = ($env.PATH | prepend "${pkgs.zoxide}/bin" | prepend ($env.HOME | path join ".local" "bin") | prepend ($env.HOME | path join ".nix-profile" "bin") | prepend "/run/current-system/sw/bin" | prepend "/nix/var/nix/profiles/default/bin" | prepend $"/etc/profiles/per-user/($env.USER)/bin" | prepend "/opt/homebrew/bin")
+      $env.PATH = ($env.PATH | prepend "${pkgs.zoxide}/bin")
       $env.EDITOR = "nvim"
       $env.config.shell_integration.osc133 = false
-      ${lib.optionalString pkgs.stdenv.isLinux ''
-        $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
-        $env.OPENROUTER_API_KEY = (if ("/run/secrets/openrouter_api_key" | path exists) { open /run/secrets/openrouter_api_key | str trim } else { "" })
-        $env.GEMINI_API_KEY = (if ("/run/secrets/gemini_api_key" | path exists) { open /run/secrets/gemini_api_key | str trim } else { "" })
-      ''}
+      $env.PERPLEXITY_API_KEY = (if ("/run/secrets/perplexity_api_key" | path exists) { open /run/secrets/perplexity_api_key | str trim } else { "" })
+      $env.OPENROUTER_API_KEY = (if ("/run/secrets/openrouter_api_key" | path exists) { open /run/secrets/openrouter_api_key | str trim } else { "" })
+      $env.GEMINI_API_KEY = (if ("/run/secrets/gemini_api_key" | path exists) { open /run/secrets/gemini_api_key | str trim } else { "" })
       $env.ANTHROPIC_BASE_URL = "http://11.125.37.101:4000"
       $env.ANTHROPIC_API_KEY = "sk-no-key-required"
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
-        $env.http_proxy = "http://proxy.bloomberg.com:81"
-        $env.https_proxy = "http://proxy.bloomberg.com:81"
-        $env.HTTP_PROXY = "http://proxy.bloomberg.com:81"
-        $env.HTTPS_PROXY = "http://proxy.bloomberg.com:81"
-        $env.no_proxy = "127.0.0.1,127.0.0.0/8,localhost,.dev.bloomberg.com,.dev.query.bms.bloomberg.com,.dx.bloomberg.com,.inf.bloomberg.com,.stg.bloomberg.com,.bcs.bloomberg.com,.bpv.bloomberg.com,.blpprofessional.com,.sec.infra.bloomberg,bssodev.bloomberg.com,seshttp.bdns.bloomberg.com,bas-web-dev.bdns.bloomberg.com,bashd.bdns.bloomberg.com,basvdp.bdns.bloomberg.com,.bcos.prod-util.query.bms.bloomberg.com,beg.alpha.bloomberg.com,beg.beta.bloomberg.com,beg.prod.bloomberg.com,beg-dx.prod.bloomberg.com"
-        $env.NO_PROXY = $env.no_proxy
-      ''}
     '';
     shellAliases = {
       # common aliases
