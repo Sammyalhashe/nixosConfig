@@ -7,6 +7,7 @@ let
     ./stylix.nix
     ./aider.nix
     {
+      programs.coinbase-cli.enable = true;
       environments.wsl.enable = true;
       environments.wsl.windowsUsername = "sammy";
     }

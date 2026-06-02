@@ -13,8 +13,6 @@ let
 
   claudeSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
-  }
-  // lib.optionalAttrs cfg.useLocalLLM {
     env = {
       ANTHROPIC_BASE_URL = litellmUrl;
       ANTHROPIC_AUTH_TOKEN = "sk-no-key-required";
@@ -25,18 +23,17 @@ let
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
     };
     model = "qwen3.6";
-  }
-  // {
     attribution = {
       commit = "";
       pr = "";
     };
+  }
+  // lib.optionalAttrs (cfg.mcpServers != { }) {
+    mcpServers = cfg.mcpServers;
   };
 
   claudeOnboarding = {
     hasCompletedOnboarding = true;
-  }
-  // lib.optionalAttrs cfg.useLocalLLM {
     primaryApiKey = "sk-no-key-required";
   };
 
@@ -65,10 +62,10 @@ let
   '';
 in
 {
-  options.services.claude-code.useLocalLLM = lib.mkOption {
-    type = lib.types.bool;
-    default = true;
-    description = "Whether to configure Claude Code to use the local LiteLLM proxy.";
+  options.services.claude-code.mcpServers = lib.mkOption {
+    type = lib.types.attrs;
+    default = { };
+    description = "MCP servers to configure in Claude Code settings.";
   };
 
   config = {
@@ -86,7 +83,7 @@ in
       $DRY_RUN_CMD chmod +w $HOME/.claude.json
     '';
 
-    home.sessionVariables = lib.optionalAttrs cfg.useLocalLLM {
+    home.sessionVariables = {
       ANTHROPIC_BASE_URL = litellmUrl;
       ANTHROPIC_API_KEY = "sk-no-key-required";
       CLAUDE_CODE_DISABLE_TELEMETRY = "0";

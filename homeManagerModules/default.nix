@@ -15,6 +15,7 @@ let
     ./opencode.nix
     ./plasma.nix
     {
+      programs.coinbase-cli.enable = true;
       stylix.targets.gtk.enable = false;
       stylix.targets.kde.enable = false;
       stylix.targets.qt.enable = false;
