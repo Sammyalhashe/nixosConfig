@@ -59,6 +59,11 @@
   sops.secrets.coinbase_api_secret_coinbase_trader = { };
   sops.secrets.cb_hardware_maker_org_name = { };
   sops.secrets.cb_hardware_maker_key = { };
+  sops.secrets.TANGEM_AVAX = { };
+  sops.secrets.KEYSTONE_ETH = { };
+  sops.secrets.KEYSTONE_BTC = { };
+  sops.secrets.TANGEM_SOL = { };
+  sops.secrets.TANGEM_SUI = { };
 
   sops.secrets.icloud_email = {
     owner = config.host.username;
@@ -131,7 +136,21 @@
     content = ''
       {
         "name": "${config.sops.placeholder.cb_hardware_maker_org_name}",
-        "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}"
+        "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}",
+        "addresses": {
+          "AVAX": "${config.sops.placeholder.TANGEM_AVAX}",
+          "ETH": "${config.sops.placeholder.KEYSTONE_ETH}",
+          "BTC": "${config.sops.placeholder.KEYSTONE_BTC}",
+          "SOL": "${config.sops.placeholder.TANGEM_SOL}",
+          "SUI": "${config.sops.placeholder.TANGEM_SUI}"
+        },
+        "networks": {
+          "BTC": "bitcoin",
+          "SOL": "solana",
+          "SUI": "sui",
+          "ETH": "ethereum",
+          "AVAX": "avalanche"
+        }
       }
     '';
     owner = config.host.username;

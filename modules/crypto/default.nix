@@ -1,0 +1,9 @@
+{
+  ...
+}:
+
+{
+  imports = [
+    ./coinbase-sweep.nix
+  ];
+}

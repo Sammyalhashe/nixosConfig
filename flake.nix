@@ -450,6 +450,7 @@
               (mkScript "push-homebase" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} homebase")
               (mkScript "push-starship" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starship")
               (mkScript "push-starshipwsl" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starshipwsl")
+              (mkScript "push-oldboy" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} oldboy")
 
               # Host switch/test scripts
               (mkHostScript "switch-homebase" "homebase" "homebase" "switch")

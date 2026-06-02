@@ -8,7 +8,7 @@ def get-nixosConfigurations [] {
 
 def push [host: string] {
   # 1. Handle the Cachix Auth Token
-  if ($env | get -i CACHIX_AUTH_TOKEN | is-empty) {
+  if ($env | get -o CACHIX_AUTH_TOKEN | is-empty) {
       let token = (sops -d --extract '["cachix_token"]' secrets.yaml | str trim)
   
       if ($token | is-empty) {
