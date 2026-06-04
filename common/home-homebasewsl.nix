@@ -13,6 +13,5 @@
 
   home.packages = with pkgs; [
     lazygit
-    thunar
   ];
 }

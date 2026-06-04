@@ -34,10 +34,11 @@ in
       host.enableGreetd = lib.mkForce true;
       host.enableKDE = lib.mkForce true;
       host.enableMango = lib.mkForce true;
+      host.homeManagerHostname = lib.mkForce "default";
     };
   };
 
-  host.homeManagerHostname = "default";
+  host.homeManagerHostname = "mothership";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   boot = {

@@ -20,7 +20,6 @@
       pkgs.nur.repos.charmbracelet.gum
 
       # terminal utilities
-      alacritty
       bat
       cowsay
       delta
@@ -58,16 +57,6 @@
       inputs.mcp-hub.packages.${pkgs.stdenv.hostPlatform.system}.default
       inputs.todo.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux (
-      with pkgs;
-      [
-        grim
-        notejot
-        slurp
-        wl-clipboard
-        xclip
-      ]
-    )
     ++ [
       (import ./scripts/test.nix { inherit pkgs; })
       (import ./scripts/hgrep.nix { inherit pkgs; })

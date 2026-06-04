@@ -27,22 +27,15 @@ in
     gcc
 
     # applications
-    brave
     emacs
-    kitty
-    mupdf
     extended-nixvim
-    ghostty
 
     # terminal utilities
     blesh
-    blueman
     cargo
     cava
-    pavucontrol
     spotify-player
     stow
-    wezterm
 
     (import ./scripts/start_wireguard.nix { inherit pkgs; })
     (import ./scripts/stop_wireguard.nix { inherit pkgs; })
@@ -59,7 +52,6 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
-    NIXOS_OZONE_WL = "1";
   };
 
   programs.home-manager.enable = true;

@@ -75,6 +75,7 @@ in
     python313Packages.huggingface-hub
 
     # terminal utilities
+    alacritty
     blesh
     blueman
     cargo
@@ -86,13 +87,17 @@ in
     wezterm
     waypipe
 
+    # GUI utilities (moved from home-common.nix)
+    grim
+    notejot
+    slurp
+    wl-clipboard
+    xclip
+
     # jupyter
     python3
     python3Packages.jupyter
     python3Packages.ipykernel
-
-    # https://discourse.nixos.org/t/how-to-support-clipboard-for-neovim/9534/3
-    wl-clipboard
 
     # fonts
 
