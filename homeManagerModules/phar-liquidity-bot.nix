@@ -30,9 +30,9 @@ in
     PATH=$PATH:${pkgs.openssh}/bin:${pkgs.iputils}/bin
     if ${pkgs.iputils}/bin/ping -c 1 github.com &>/dev/null; then
       if [ ! -d "${repoDir}" ]; then
-        ${pkgs.git}/bin/git clone git@github.com:Sammyalhashe/phar-liquidity-bot.git "${repoDir}"
+        ${pkgs.jujutsu}/bin/jj git clone git@github.com:Sammyalhashe/phar-liquidity-bot.git "${repoDir}"
       else
-        cd "${repoDir}" && ${pkgs.git}/bin/git pull
+        cd "${repoDir}" && ${pkgs.jujutsu}/bin/jj git fetch && ${pkgs.jujutsu}/bin/jj rebase -o master@origin
       fi
       # npm deps are bundled by the flake — no npm install needed here
     else

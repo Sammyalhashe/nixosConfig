@@ -19,6 +19,7 @@ in
     ../homeManagerModules/opencode.nix
     ../homeManagerModules/coinbase-trader.nix
     ../homeManagerModules/phar-liquidity-bot.nix
+    ../homeManagerModules/coinbase-cli.nix
   ];
 
   home.username = "${user}";
@@ -45,6 +46,8 @@ in
     enable = true;
     nix-direnv.enable = true;
   };
+
+  programs.coinbase-cli.enable = true;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

@@ -98,6 +98,9 @@
       url = "github:Sammyalhashe/simple-zig-todo-sqlite";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hermes-agent.url = "github:NousResearch/hermes-agent/v2026.6.5";
+ 
   };
 
   outputs =
@@ -120,6 +123,7 @@
       mcp-hub,
       ai-skills,
       todo,
+      hermes-agent,
       ...
     }@inputs:
     let
@@ -150,13 +154,6 @@
           automatic = true;
           dates = "weekly";
           options = "--delete-older-than 7d";
-        };
-      };
-
-      # --- HOME BASE CONFIG: For standalone homeConfigurations (no nix.gc.dates) ---
-      homeBaseConfig = {
-        nixpkgs = {
-          inherit overlays;
         };
       };
 
@@ -275,6 +272,8 @@
           baseConfig
           ./hosts/oldboy/configuration.nix
           ./modules
+          ./modules/ai/hermes/hermes.nix
+          hermes-agent.nixosModules.default
           sops-nix.nixosModules.sops
           {
             host.isHeadless = true;
@@ -358,30 +357,12 @@
         ];
       };
 
-      homeConfigurations.server = home-manager.lib.homeManagerConfiguration {
-        pkgs = getPkgs "x86_64-linux";
-        extraSpecialArgs = {
-          inherit inputs;
-          user = "salhashemi2";
-          homeDir = "/home/salhashemi2";
-        };
-        modules = [
-          homeBaseConfig
-          sops-nix.homeManagerModules.sops
-          stylix.homeModules.stylix
-          ./homeManagerModules/server.nix
-          ./common/home-server.nix
-        ];
-      };
-
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
-      homeModules.mothership = ./homeManagerModules/mothership.nix;
-      homeModules.server = ./homeManagerModules/server.nix;
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
@@ -498,9 +479,6 @@
 
               (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
               (mkHostScript "test-filestore" "filestore" "filestore" "test")
-
-              # Standalone home-manager switch scripts
-              (mkScript "switch-home-server" "home-manager switch --flake .#server")
 
               # Remote deploy scripts (build locally, push + activate on remote host)
               # Usage: deploy-<host> [switch|test|boot|dry-activate]
