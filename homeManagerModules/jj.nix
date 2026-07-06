@@ -55,7 +55,8 @@
       ui = {
         editor = "nvim";
 
-        diff-editor = "scm-diff-editor";
+        diff-editor = ["nvim" "-c" "DiffEditor $left $right $output"];
+        diff-instructions = false;
 
         color = "always";
 

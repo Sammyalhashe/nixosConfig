@@ -37,7 +37,9 @@ let
     mcpServers = cfg.mcpServers;
   };
 
-  mergeClaudeJsonScript = pkgs.writeText "merge-claude-json.py" ''
+  mergeClaudeJsonScript = pkgs.writeText "merge-claude-json.py"
+    # python
+    ''
     import json, os, sys
 
     path = os.path.expanduser("~/.claude.json")
@@ -54,7 +56,9 @@ let
         json.dump(existing, f, indent=2)
   '';
 
-  karpathySkills = ''
+  karpathySkills =
+    # markdown
+    ''
     # Andrej Karpathy's Coding Principles
 
     ## 1. Think Before Coding
