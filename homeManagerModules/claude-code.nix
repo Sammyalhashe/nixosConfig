@@ -27,15 +27,32 @@ let
       commit = "";
       pr = "";
     };
+  };
+
+  claudeJson = {
+    hasCompletedOnboarding = true;
+    primaryApiKey = "sk-no-key-required";
   }
   // lib.optionalAttrs (cfg.mcpServers != { }) {
     mcpServers = cfg.mcpServers;
   };
 
-  claudeOnboarding = {
-    hasCompletedOnboarding = true;
-    primaryApiKey = "sk-no-key-required";
-  };
+  mergeClaudeJsonScript = pkgs.writeText "merge-claude-json.py" ''
+    import json, os, sys
+
+    path = os.path.expanduser("~/.claude.json")
+    desired = json.loads(sys.argv[1])
+
+    existing = {}
+    if os.path.exists(path):
+        with open(path) as f:
+            existing = json.load(f)
+
+    existing.update(desired)
+
+    with open(path, "w") as f:
+        json.dump(existing, f, indent=2)
+  '';
 
   karpathySkills = ''
     # Andrej Karpathy's Coding Principles
@@ -79,8 +96,7 @@ in
       $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-settings.json" (builtins.toJSON claudeSettings)} $HOME/.claude/settings.json
       $DRY_RUN_CMD chmod +w $HOME/.claude/settings.json
 
-      $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-onboarding.json" (builtins.toJSON claudeOnboarding)} $HOME/.claude.json
-      $DRY_RUN_CMD chmod +w $HOME/.claude.json
+      $DRY_RUN_CMD ${pkgs.python3}/bin/python3 ${mergeClaudeJsonScript} ${lib.escapeShellArg (builtins.toJSON claudeJson)}
     '';
 
     home.sessionVariables = {
