@@ -35,6 +35,7 @@ in
 
   host.isHeadless = true;
   host.enableMonitoring = true;
+  host.enableCoinbaseSweep = true;
 
   # Thermal management for lid-closed operation
   services.thermald.enable = true;

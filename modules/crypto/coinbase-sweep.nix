@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   pythonEnv = pkgs.python313.withPackages (
@@ -8,7 +8,7 @@ let
     ]
   );
 in
-{
+lib.mkIf config.host.enableCoinbaseSweep {
   # 1. Define the automation execution runner service
   systemd.services.coinbase-weekly-sweep = {
     description = "Automated weekly 5% crypto reduction transfer to self-custody";
@@ -17,8 +17,7 @@ in
 
     serviceConfig = {
       Type = "oneshot";
-      # Ensure this matches your actual local username
-      User = "your_username";
+      User = config.host.username;
 
       # Directly call the custom Python interpreter and feed it the script file path
       ExecStart = "${pythonEnv}/bin/python ${./withdraw_to_hardware.py}";

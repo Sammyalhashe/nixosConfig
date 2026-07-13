@@ -37,5 +37,7 @@
     enableBreezy = lib.mkEnableOption "Whether to enable Breezy Desktop XR glasses support.";
 
     enableCloudflareWarp = lib.mkEnableOption "Whether to enable cloudflare-warp daemon and install the client application";
+
+    enableCoinbaseSweep = lib.mkEnableOption "Whether to enable the automated weekly Coinbase self-custody sweep service.";
   };
 }
