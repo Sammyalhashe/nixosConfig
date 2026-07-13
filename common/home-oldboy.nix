@@ -32,7 +32,6 @@ in
     nixvim-package
     fzf
     git
-    neovim
     podman
     ripgrep
     tmux
