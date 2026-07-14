@@ -55,7 +55,11 @@
       ui = {
         editor = "nvim";
 
-        diff-editor = ["nvim" "-c" "DiffEditor $left $right $output"];
+        diff-editor = [
+          "nvim"
+          "-c"
+          "DiffEditor $left $right $output"
+        ];
         diff-instructions = false;
 
         color = "always";

@@ -100,7 +100,7 @@
     };
 
     hermes-agent.url = "github:NousResearch/hermes-agent/v2026.6.5";
- 
+
   };
 
   outputs =

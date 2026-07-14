@@ -37,50 +37,51 @@ let
     mcpServers = cfg.mcpServers;
   };
 
-  mergeClaudeJsonScript = pkgs.writeText "merge-claude-json.py"
-    # python
-    ''
-    import json, os, sys
+  mergeClaudeJsonScript =
+    pkgs.writeText "merge-claude-json.py"
+      # python
+      ''
+        import json, os, sys
 
-    path = os.path.expanduser("~/.claude.json")
-    desired = json.loads(sys.argv[1])
+        path = os.path.expanduser("~/.claude.json")
+        desired = json.loads(sys.argv[1])
 
-    existing = {}
-    if os.path.exists(path):
-        with open(path) as f:
-            existing = json.load(f)
+        existing = {}
+        if os.path.exists(path):
+            with open(path) as f:
+                existing = json.load(f)
 
-    existing.update(desired)
+        existing.update(desired)
 
-    with open(path, "w") as f:
-        json.dump(existing, f, indent=2)
-  '';
+        with open(path, "w") as f:
+            json.dump(existing, f, indent=2)
+      '';
 
   karpathySkills =
     # markdown
     ''
-    # Andrej Karpathy's Coding Principles
+      # Andrej Karpathy's Coding Principles
 
-    ## 1. Think Before Coding
-    - State assumptions clearly.
-    - Present multiple interpretations of the task.
-    - If a task is ambiguous, STOP and ask for clarification instead of guessing.
+      ## 1. Think Before Coding
+      - State assumptions clearly.
+      - Present multiple interpretations of the task.
+      - If a task is ambiguous, STOP and ask for clarification instead of guessing.
 
-    ## 2. Simplicity First
-    - Write the minimum amount of code required to solve the problem.
-    - Avoid speculative features, premature abstractions, or "just-in-case" logic.
-    - Favor standard libraries and established patterns over clever tricks.
+      ## 2. Simplicity First
+      - Write the minimum amount of code required to solve the problem.
+      - Avoid speculative features, premature abstractions, or "just-in-case" logic.
+      - Favor standard libraries and established patterns over clever tricks.
 
-    ## 3. Surgical Changes
-    - Touch ONLY the lines necessary for the requested change.
-    - Match the existing style, indentation, and naming conventions of the file perfectly.
-    - Do not perform unrelated refactors or "cleanups" unless explicitly asked.
+      ## 3. Surgical Changes
+      - Touch ONLY the lines necessary for the requested change.
+      - Match the existing style, indentation, and naming conventions of the file perfectly.
+      - Do not perform unrelated refactors or "cleanups" unless explicitly asked.
 
-    ## 4. Goal-Driven Execution
-    - Transform every task into a verifiable goal.
-    - If fixing a bug, first write a test that reproduces it, then implement the fix.
-    - Verification is mandatory. A task is not done until it is proven correct.
-  '';
+      ## 4. Goal-Driven Execution
+      - Transform every task into a verifiable goal.
+      - If fixing a bug, first write a test that reproduces it, then implement the fix.
+      - Verification is mandatory. A task is not done until it is proven correct.
+    '';
 in
 {
   options.services.claude-code.mcpServers = lib.mkOption {
