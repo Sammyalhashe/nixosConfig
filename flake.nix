@@ -363,6 +363,8 @@
       homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
+      homeModules.mothership = ./homeManagerModules/mothership.nix;
+      homeModules.server = ./homeManagerModules/server.nix;
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
