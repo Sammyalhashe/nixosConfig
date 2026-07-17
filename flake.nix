@@ -17,11 +17,6 @@
     # Determinate Nix system management
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
 
-    # Specialized browsers and UI tools
-    zen-browser = {
-      url = "github:Sammyalhashe/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprlock.url = "github:hyprwm/hyprlock";
 
     # Custom Window Managers and UI frameworks
@@ -64,14 +59,6 @@
 
     # Flatpak and XR Driver support
     nix-flatpak.url = "github:gmodena/nix-flatpak";
-    viture-virtual-display = {
-      url = "github:mgschwan/viture_virtual_display";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    breezy-desktop = {
-      url = "github:Sammyalhashe/breezy_src";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # Utilities
     flake-utils.url = "github:numtide/flake-utils";
@@ -114,7 +101,6 @@
       self,
       nixpkgs,
       home-manager,
-      zen-browser,
       hyprlock,
       mangowc,
       fromscratch,
@@ -202,7 +188,9 @@
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
-            programs.stylix.enable = true;
+            host.enableMango = false;
+            host.enableHyprland = false;
+            host.setNameservers = true;
           }
         ];
       };

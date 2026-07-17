@@ -118,6 +118,8 @@ in
     home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p $HOME/.claude
 
+      $DRY_RUN_CMD rm -f $HOME/.claude/settings.json
+
       $DRY_RUN_CMD cp -f ${pkgs.writeText "claude-settings.json" (builtins.toJSON claudeSettings)} $HOME/.claude/settings.json
       $DRY_RUN_CMD chmod +w $HOME/.claude/settings.json
 

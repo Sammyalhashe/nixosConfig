@@ -32,7 +32,6 @@ in
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
     jujutsu
     inputs.fromscratch.packages."${pkgs.stdenv.hostPlatform.system}".default
     inputs.homebase-manager.packages."${pkgs.stdenv.hostPlatform.system}".default
@@ -46,13 +45,13 @@ in
     tofi
 
     # applications
-    bottles
+    beeper
     brave
     cachix
+    deskflow
     devenv
     emacs
     extended-nixvim
-    firefox
     hyprlock
     hyprpaper
     kdePackages.partitionmanager
@@ -74,7 +73,6 @@ in
     python313Packages.huggingface-hub
 
     # terminal utilities
-    alacritty
     blesh
     blueman
     cargo
@@ -83,7 +81,6 @@ in
     pavucontrol
     spotify-player
     stow
-    wezterm
     waypipe
 
     # GUI utilities (moved from home-common.nix)
@@ -157,6 +154,7 @@ in
     nativeMessagingHosts = [
       pkgs.kdePackages.plasma-browser-integration
     ];
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
     profiles.default = {
       name = "default";
       isDefault = true;

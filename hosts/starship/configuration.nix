@@ -24,7 +24,6 @@ in
   ];
 
   host.enableGreetd = true;
-  host.enableBreezy = true;
   host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];
 

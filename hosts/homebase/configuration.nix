@@ -39,6 +39,12 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/a3535553-fd1c-4f64-a6ea-6f5cd39a8dd2";
+    fsType = "ext4";
+  };
+
+
   networking.hostName = "homebase"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -78,6 +84,26 @@ in
     options = "caps:swapescape";
   };
 
+
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
+
+  # Enable sound with pipewire.
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.${user} = {
     isNormalUser = true;
@@ -94,24 +120,7 @@ in
     ];
   };
 
-  services.ollama = {
-    package = pkgs.ollama-cuda;
-    enable = true;
-    host = "0.0.0.0";
-    loadModels = [
-      "qwen2.5-coder:7b"
-      "llama3.1:8b"
-      "deepseek-r1:7b"
-      "qwen2.5:7b"
-      "MFDoom/deepseek-r1-tool-calling:8b"
-    ];
-  };
-
-  services.open-webui = {
-    enable = true;
-  };
-
-  programs.mango.enable = true;
+  programs.mango.enable = false;
 
   # Enable automatic login for the user.
   services.getty.autologinUser = "${user}";
@@ -198,7 +207,8 @@ in
   # networking.firewall.enable = false;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 11434 ];
+    allowedTCPPorts = [ 11434 24800 ];
+    allowedUDPPorts = [ 24800 ];
     allowedTCPPortRanges = [
       {
         from = 1714;
@@ -213,6 +223,8 @@ in
     ];
   };
 
+  programs.stylix.enable = true;
+
   # certificates
   security.pki.certificateFiles = [
     (builtins.toFile "wildcard.picloud.crt" (builtins.readFile ../../certs/wildcard.picloud.crt))
@@ -225,6 +237,6 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
 }
