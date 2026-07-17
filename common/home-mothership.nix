@@ -28,6 +28,9 @@ in
 
   home.stateVersion = "24.05";
 
+  # Keep the pre-26.05 default now that it is opt-in (silences HM warning).
+  gtk.gtk4.theme = config.gtk.theme;
+
   home.packages = with pkgs; [
     extended-nixvim
     jujutsu
