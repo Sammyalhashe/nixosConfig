@@ -29,9 +29,32 @@ let
     };
   };
 
+  locallyDefinedMcps = {
+    HA = {
+      type = "http";
+      url = "https://homeassistant.salh.xyz/api/mcp";
+      oauth = {
+        # Note: Do not change this clientId to your Home Assistant URL.
+        # It must point to the local loopback address Claude Code binds during OAuth.
+        clientId = "http://localhost:12345";
+        client_id = "http://localhost:12345"; # Fallback for CLI version variations
+
+        callbackPort = 12345;
+        callback_port = 12345; # Fallback for CLI version variations
+      };
+    };
+    robinhood-trading = {
+      url = "https://agent.robinhood.com/mcp/trading";
+      auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
+    };
+  };
+
   claudeJson = {
     hasCompletedOnboarding = true;
     primaryApiKey = "sk-no-key-required";
+  }
+  // lib.optionalAttrs (locallyDefinedMcps != { }) {
+    mcpServers = locallyDefinedMcps;
   }
   // lib.optionalAttrs (cfg.mcpServers != { }) {
     mcpServers = cfg.mcpServers;
