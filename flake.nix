@@ -199,7 +199,6 @@
       nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         pkgs = getPkgs "x86_64-linux";
-        system = "x86_64-linux";
         modules = [
           baseConfig
           mangowc.nixosModules.mango
@@ -210,8 +209,6 @@
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
           {
-            host.enableKDE = true;
-            host.enableMango = true;
             programs.stylix.enable = true;
           }
           (

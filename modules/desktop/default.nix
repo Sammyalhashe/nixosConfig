@@ -21,6 +21,19 @@
 
       # Modern D-Bus implementation
       services.dbus.implementation = "broker";
+
+      # Contract: a headless host must never enable a desktop. This catches the
+      # mistake of forcing enableKDE/enableMango on a box that sets isHeadless,
+      # which would pull the whole GUI stack into its closure.
+      assertions = [
+        {
+          assertion = !(
+            config.host.isHeadless
+            && (config.host.enableKDE || config.host.enableMango || config.host.enableHyprland)
+          );
+          message = "host.isHeadless is set but a desktop (enableKDE/enableMango/enableHyprland) is also enabled; headless hosts must not enable a desktop.";
+        }
+      ];
     }
     (lib.mkIf (!config.host.isWsl && !config.host.isHeadless) {
       # Audio (PipeWire)

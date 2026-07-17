@@ -22,21 +22,9 @@ in
 
   host.enableBreezy = true;
 
-  # Default to server/headless mode (what systemd-boot loads)
+  # Headless AI machine: no desktop/GUI is ever built or installed.
   host.isHeadless = true;
   host.enableGreetd = false;
-
-  # Specialisation allows switching to a full Desktop environment via the boot menu
-  specialisation = {
-    desktop.configuration = {
-      system.nixos.tags = [ "desktop" ];
-      host.isHeadless = lib.mkForce false;
-      host.enableGreetd = lib.mkForce true;
-      host.enableKDE = lib.mkForce true;
-      host.enableMango = lib.mkForce true;
-      host.homeManagerHostname = lib.mkForce "default";
-    };
-  };
 
   host.homeManagerHostname = "mothership";
   host.fallbackNameservers = [ "11.125.37.1" ];
