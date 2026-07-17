@@ -16,7 +16,7 @@ let
     env = {
       ANTHROPIC_BASE_URL = litellmUrl;
       ANTHROPIC_AUTH_TOKEN = "sk-no-key-required";
-      ANTHROPIC_API_KEY = "sk-no-key-required";
+      ANTHROPIC_API_KEY = "";
       CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
@@ -51,7 +51,6 @@ let
 
   claudeJson = {
     hasCompletedOnboarding = true;
-    primaryApiKey = "sk-no-key-required";
   }
   // lib.optionalAttrs (locallyDefinedMcps != { }) {
     mcpServers = locallyDefinedMcps;

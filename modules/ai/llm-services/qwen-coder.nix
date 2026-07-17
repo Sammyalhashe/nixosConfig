@@ -54,7 +54,7 @@ in
           + "--port 8014 "
           + "--host 0.0.0.0 "
           + "--n-gpu-layers 999 "
-          + "--ctx-size 131072 "
+          + "--ctx-size 200000 "
           + "--parallel 1 "
           + "--threads 16 "
           + "--flash-attn 1 "
