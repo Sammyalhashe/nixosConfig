@@ -64,6 +64,7 @@
   sops.secrets.KEYSTONE_BTC = { };
   sops.secrets.TANGEM_SOL = { };
   sops.secrets.TANGEM_SUI = { };
+  sops.secrets.KEYSTONE_SUI = { };
 
   sops.secrets.icloud_email = {
     owner = config.host.username;
@@ -142,7 +143,7 @@
           "ETH": "${config.sops.placeholder.KEYSTONE_ETH}",
           "BTC": "${config.sops.placeholder.KEYSTONE_BTC}",
           "SOL": "${config.sops.placeholder.TANGEM_SOL}",
-          "SUI": "${config.sops.placeholder.TANGEM_SUI}"
+          "SUI": "${config.sops.placeholder.KEYSTONE_SUI}"
         },
         "networks": {
           "BTC": "bitcoin",
