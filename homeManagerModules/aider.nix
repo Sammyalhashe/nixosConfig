@@ -15,10 +15,11 @@ let
     openai-api-base = "http://${inferenceHost}:4000/v1";
     openai-api-key = "none";
 
-    # Use openai/ prefix so LiteLLM knows the provider for routing
-    model = "openai/qwen3.6";
-    editor-model = "openai/qwen3.6";
-    weak-model = "openai/qwen-flash";
+    # Use openai/ prefix so LiteLLM knows the provider for routing.
+    # sonnet/haiku are LiteLLM aliases (sonnet -> qwen3.6, haiku -> qwen-flash).
+    model = "openai/sonnet";
+    editor-model = "openai/sonnet";
+    weak-model = "openai/haiku";
 
     # Always auto-commit changes (optional, but good for workflow)
     auto-commits = true;
@@ -28,11 +29,11 @@ let
 
     # Define context window sizes for models
     models = {
-      "openai/qwen3.6" = {
+      "openai/sonnet" = {
         context-window = 131072;
         max-tokens = 4096;
       };
-      "openai/qwen-flash" = {
+      "openai/haiku" = {
         context-window = 65536;
         max-tokens = 4096;
       };

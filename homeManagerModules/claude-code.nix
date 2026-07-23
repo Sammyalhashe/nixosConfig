@@ -21,6 +21,12 @@ let
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+      # Resolve the opus/sonnet/haiku aliases (used by ai-skills persona agents)
+      # to LiteLLM model_name entries instead of the default Anthropic model IDs,
+      # so subagent delegation hits models the local LiteLLM proxy actually serves.
+      ANTHROPIC_DEFAULT_OPUS_MODEL = "opus";
+      ANTHROPIC_DEFAULT_SONNET_MODEL = "sonnet";
+      ANTHROPIC_DEFAULT_HAIKU_MODEL = "haiku";
     };
     model = "qwen3.6";
     attribution = {

@@ -32,6 +32,23 @@ model_list:
     model_info:
       base_model: gemma-4
       fallback_models: ["qwen-flash"]
+  # Claude Code model aliases (used by ai-skills persona agents). opus/sonnet map
+  # to qwen3.6; haiku maps to the smaller qwen-flash for cheap/mechanical tasks.
+  - model_name: opus
+    litellm_params:
+      model: openai/qwen3.6
+      api_base: http://127.0.0.1:8014/v1
+      api_key: none
+  - model_name: sonnet
+    litellm_params:
+      model: openai/qwen3.6
+      api_base: http://127.0.0.1:8014/v1
+      api_key: none
+  - model_name: haiku
+    litellm_params:
+      model: openai/qwen-flash
+      api_base: http://127.0.0.1:8011/v1
+      api_key: none
 
 litellm_settings:
   drop_params: true

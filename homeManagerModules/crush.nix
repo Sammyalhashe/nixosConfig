@@ -23,8 +23,8 @@ let
         api_key = "none";
         models = [
           {
-            name = "Qwen3.6";
-            id = "qwen3.6";
+            name = "Sonnet (qwen3.6)";
+            id = "sonnet";
             cost_per_1m_in = 0.0;
             cost_per_1m_out = 0.0;
             cost_per_1m_in_cached = 0.0;
