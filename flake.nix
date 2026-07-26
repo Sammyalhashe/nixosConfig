@@ -101,6 +101,12 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent/v2026.6.5";
 
+    vicinae.url = "github:vicinaehq/vicinae";
+    vicinae-extensions = {
+      url = "github:vicinaehq/extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -124,6 +130,8 @@
       ai-skills,
       todo,
       hermes-agent,
+      vicinae,
+      vicinae-extensions,
       ...
     }@inputs:
     let
@@ -159,6 +167,9 @@
 
     in
     {
+
+      extra-substituters = [ "https://vicinae.cachix.org" ];
+      extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
       nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs sops-nix; };
         system = "aarch64-linux";

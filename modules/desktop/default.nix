@@ -10,6 +10,7 @@
     ./hyprland.nix
     ./kdestuff.nix
     ./greetd.nix
+    ./vicinae.nix
   ];
 
   config = lib.mkMerge [
@@ -27,10 +28,11 @@
       # which would pull the whole GUI stack into its closure.
       assertions = [
         {
-          assertion = !(
-            config.host.isHeadless
-            && (config.host.enableKDE || config.host.enableMango || config.host.enableHyprland)
-          );
+          assertion =
+            !(
+              config.host.isHeadless
+              && (config.host.enableKDE || config.host.enableMango || config.host.enableHyprland)
+            );
           message = "host.isHeadless is set but a desktop (enableKDE/enableMango/enableHyprland) is also enabled; headless hosts must not enable a desktop.";
         }
       ];

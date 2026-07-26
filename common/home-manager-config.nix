@@ -26,11 +26,16 @@ in
         hostname = cfg.homeManagerHostname;
       };
 
+      # Shared across all modules
+      sharedModules = [
+      ];
+
       users.${cfg.username} = {
         imports =
           stylixModule
           ++ lib.optionals pkgs.stdenv.isLinux [
             inputs.plasma-manager.homeModules.plasma-manager
+            inputs.vicinae.homeManagerModules.default
           ]
           ++ [
             inputs.todo.homeManagerModules.default

@@ -39,5 +39,7 @@
     enableCloudflareWarp = lib.mkEnableOption "Whether to enable cloudflare-warp daemon and install the client application";
 
     enableCoinbaseSweep = lib.mkEnableOption "Whether to enable the automated weekly Coinbase self-custody sweep service.";
+
+    enableVicinae = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";
   };
 }

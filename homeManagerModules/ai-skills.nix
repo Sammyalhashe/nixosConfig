@@ -79,18 +79,18 @@ in
       recursive = true;
     };
 
-    home.file.".claude/settings.json" = {
-      force = true;
-      text = builtins.toJSON {
-        model = cfg.claude.model;
-        statusLine = {
-          type = "command";
-          command = "bash \"${cfg.package}/claude/bin/statusline.sh\"";
-        };
-        enabledPlugins = cfg.claude.plugins;
-        skipDangerousModePermissionPrompt = cfg.claude.skipDangerousPrompt;
-        theme = cfg.claude.theme;
-      };
-    };
+    # home.file.".claude/settings.json" = {
+    #   force = true;
+    #   text = builtins.toJSON {
+    #     model = cfg.claude.model;
+    #     statusLine = {
+    #       type = "command";
+    #       command = "bash \"${cfg.package}/claude/bin/statusline.sh\"";
+    #     };
+    #     enabledPlugins = cfg.claude.plugins;
+    #     skipDangerousModePermissionPrompt = cfg.claude.skipDangerousPrompt;
+    #     theme = cfg.claude.theme;
+    #   };
+    # };
   };
 }

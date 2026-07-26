@@ -1,19 +1,20 @@
 { lib, inputs, ... }:
 let
   my_imports = [
-    ./home-common.nix
-    ./wofi.nix
-    ./stylix.nix
-    ./gemini-cli.nix
-    ./startup-fix.nix
-    ./mods.nix
-    ./mangowc.nix
-    ./ghostty.nix
-    ./waybar.nix
-    ./crush.nix
     ./aider.nix
+    ./crush.nix
+    ./gemini-cli.nix
+    ./ghostty.nix
+    ./home-common.nix
+    ./mangowc.nix
+    ./mods.nix
     ./opencode.nix
+    ./options.nix
     ./plasma.nix
+    ./startup-fix.nix
+    ./stylix.nix
+    ./waybar.nix
+    ./wofi.nix
     {
       programs.coinbase-cli.enable = true;
       stylix.targets.gtk.enable = false;
