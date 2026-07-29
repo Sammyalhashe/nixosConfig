@@ -32,6 +32,7 @@
       gh
       jjui
       jujutsu
+      inputs.keybr-tui.packages.${pkgs.stdenv.hostPlatform.system}.default
       nmap
       pandoc
       presenterm
@@ -58,12 +59,13 @@
       inputs.todo.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ [
-      (import ./scripts/test.nix { inherit pkgs; })
-      (import ./scripts/hgrep.nix { inherit pkgs; })
       (import ./scripts/crypto.nix { inherit pkgs; })
-      (import ./scripts/tmux-cht.nix { inherit pkgs; })
       (import ./scripts/fzf-man.nix { inherit pkgs; })
+      (import ./scripts/hgrep.nix { inherit pkgs; })
+      (import ./scripts/sn-install.nix { inherit pkgs; })
       (import ./scripts/system-copy.nix { inherit pkgs; })
+      (import ./scripts/test.nix { inherit pkgs; })
+      (import ./scripts/tmux-cht.nix { inherit pkgs; })
     ];
 
   systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.isLinux {

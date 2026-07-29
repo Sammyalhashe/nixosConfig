@@ -44,7 +44,6 @@ in
     fsType = "ext4";
   };
 
-
   networking.hostName = "homebase"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -83,7 +82,6 @@ in
     variant = "";
     options = "caps:swapescape";
   };
-
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -140,6 +138,14 @@ in
     }))
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
+    (appimageTools.wrapType2 {
+      pname = "onekey-wallet";
+      version = "4.20.0"; # Replace with latest version tag
+      src = fetchurl {
+        url = "https://github.com/OneKeyHQ/app-monorepo/releases/download/v6.5.0/OneKey-Wallet-6.5.0-linux-x86_64.AppImage";
+        hash = "sha256-pxbzIAFQjWSOtj/isoUBm141jS3Ec7zUaWTKWRKoeVE=";
+      };
+    })
   ];
 
   # xdg env variables
@@ -207,7 +213,10 @@ in
   # networking.firewall.enable = false;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 11434 24800 ];
+    allowedTCPPorts = [
+      11434
+      24800
+    ];
     allowedUDPPorts = [ 24800 ];
     allowedTCPPortRanges = [
       {

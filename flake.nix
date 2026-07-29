@@ -93,7 +93,11 @@
       url = "github:vicinaehq/extensions";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    keybr-tui.url = "github:y0sif/keybr-tui";
+    nix-snapd = {
+      url = "github:nix-community/nix-snapd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -118,6 +122,7 @@
       hermes-agent,
       vicinae,
       vicinae-extensions,
+      nix-snapd,
       ...
     }@inputs:
     let
@@ -187,10 +192,12 @@
           stylix.nixosModules.stylix
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
+          nix-snapd.nixosModules.default
           {
             host.enableMango = false;
             host.enableHyprland = false;
             host.setNameservers = true;
+            host.enableSnap = true;
           }
         ];
       };

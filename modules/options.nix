@@ -41,5 +41,7 @@
     enableCoinbaseSweep = lib.mkEnableOption "Whether to enable the automated weekly Coinbase self-custody sweep service.";
 
     enableVicinae = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";
+
+    enableSnap = lib.mkEnableOption "Whether to enable snap.";
   };
 }
