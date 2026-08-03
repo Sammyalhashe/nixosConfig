@@ -6,6 +6,7 @@
   imports = [
     ./crypto
     ./desktop
+    ./hardware-wallets.nix
     ./hardware/breezy-desktop.nix
     ./monitoring
     ./networking

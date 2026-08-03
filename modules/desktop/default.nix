@@ -20,8 +20,6 @@
       host.enableKDE = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
       host.enableMango = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
       host.enableHyprland = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);
-      host.enableSnap = lib.mkDefault (config.host.enableSnap);
-
       # Modern D-Bus implementation
       services.dbus.implementation = "broker";
 

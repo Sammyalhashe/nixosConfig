@@ -350,6 +350,7 @@
           stylix.nixosModules.stylix
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
+          nix-snapd.nixosModules.default
           {
             host.enableKDE = true;
             host.enableMango = true;

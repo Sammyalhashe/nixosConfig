@@ -42,6 +42,8 @@
 
     enableVicinae = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";
 
+    enableHardwareWallets = lib.mkEnableOption "Whether to enable hardware wallet support (Ledger, Trezor, OneKey).";
+
     enableSnap = lib.mkEnableOption "Whether to enable snap.";
   };
 }

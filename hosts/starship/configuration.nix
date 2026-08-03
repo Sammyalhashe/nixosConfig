@@ -26,6 +26,7 @@ in
   host.enableGreetd = true;
   host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];
+  host.enableHardwareWallets = true;
 
   # auto upgrade
   system.autoUpgrade.enable = true;
