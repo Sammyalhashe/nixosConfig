@@ -4,10 +4,10 @@
   # --- INPUTS: External dependencies and specialized toolsets ---
   inputs = {
     # Main NixOS unstable branch for the latest software and ROCm 7.x support
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
     # User-level environment management
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # MacOS configuration management — tracking nix-darwin unstable to match nixpkgs-unstable
@@ -197,7 +197,6 @@
             host.enableMango = false;
             host.enableHyprland = false;
             host.setNameservers = true;
-            host.enableSnap = true;
           }
         ];
       };

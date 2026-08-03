@@ -21,7 +21,7 @@ in
     ../../common/home-manager-config.nix
   ];
 
-  host.enableGreetd = true;
+  host.enableGreetd = false;
   host.enableSnap = true;
   host.enableHardwareWallets = true;
 
@@ -133,13 +133,6 @@ in
   environment.systemPackages = with pkgs; [
     git
     nvidia-vaapi-driver
-    (vivaldi.overrideAttrs (oldAttrs: {
-      dontWrapQtApps = false;
-      dontPatchELF = true;
-      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.kdePackages.wrapQtAppsHook ];
-    }))
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
     (appimageTools.wrapType2 {
       pname = "onekey-wallet";
       version = "4.20.0"; # Replace with latest version tag

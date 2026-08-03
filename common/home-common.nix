@@ -44,6 +44,7 @@
       starship
       texliveSmall
       tmux
+      ttyper
       yazi
       zellij
       zoxide
