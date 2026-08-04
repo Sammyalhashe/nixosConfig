@@ -397,13 +397,26 @@
               mkEvalAllScript
               buildTargets
               hosts
+              hostNames
+              pushHosts
               ;
+
+            # switch-<host> / test-<host> for every host (with hostname guard).
+            hostScripts = builtins.concatMap (host: [
+              (mkHostScript "switch-${host}" host hostNames.${host} "switch")
+              (mkHostScript "test-${host}" host hostNames.${host} "test")
+            ]) hosts;
 
             # Per-host build/eval convenience scripts (build-<host>, eval-<host>).
             perHostScripts = builtins.concatMap (host: [
               (mkScript "build-${host}" "nix build .#nixosConfigurations.${host}.config.system.build.toplevel --no-link")
               (mkScript "eval-${host}" "nix eval .#nixosConfigurations.${host}.config.system.build.toplevel.drvPath --raw")
             ]) hosts;
+
+            # push-<host> cachix scripts.
+            pushScripts = map (
+              host: mkScript "push-${host}" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} ${host}"
+            ) pushHosts;
 
             scripts = [
               (mkScript "check" "nix flake check")
@@ -415,35 +428,8 @@
               # Attempt to evaluate (not build) the top-level of every host
               (mkEvalAllScript "checkX" buildTargets)
 
-              # Push to cachix scripts
+              # Push all hosts to cachix
               (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
-              (mkScript "push-mothership" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} mothership")
-              (mkScript "push-homebase" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} homebase")
-              (mkScript "push-starship" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starship")
-              (mkScript "push-starshipwsl" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} starshipwsl")
-              (mkScript "push-oldboy" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} oldboy")
-
-              # Host switch/test scripts
-              (mkHostScript "switch-homebase" "homebase" "homebase" "switch")
-              (mkHostScript "test-homebase" "homebase" "homebase" "test")
-
-              (mkHostScript "switch-mothership" "mothership" "mothership" "switch")
-              (mkHostScript "test-mothership" "mothership" "mothership" "test")
-
-              (mkHostScript "switch-oldboy" "oldboy" "oldboy" "switch")
-              (mkHostScript "test-oldboy" "oldboy" "oldboy" "test")
-
-              (mkHostScript "switch-starshipwsl" "starshipwsl" "starship_wsl" "switch")
-              (mkHostScript "test-starshipwsl" "starshipwsl" "starship_wsl" "test")
-
-              (mkHostScript "switch-homebasewsl" "homebasewsl" "nixos" "switch")
-              (mkHostScript "test-homebasewsl" "homebasewsl" "nixos" "test")
-
-              (mkHostScript "switch-starship" "starship" "starship" "switch")
-              (mkHostScript "test-starship" "starship" "starship" "test")
-
-              (mkHostScript "switch-filestore" "filestore" "filestore" "switch")
-              (mkHostScript "test-filestore" "filestore" "filestore" "test")
 
               # Remote deploy scripts (build locally, push + activate on remote host)
               # Usage: deploy-<host> [switch|test|boot|dry-activate]
@@ -452,8 +438,9 @@
               (mkDeployScript "deploy-oldboy" "oldboy" "oldboy")
               (mkDeployScript "deploy-filestore" "filestore" "filestore")
               (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
-
             ]
+            ++ hostScripts
+            ++ pushScripts
             ++ perHostScripts;
           in
           pkgs.mkShell {

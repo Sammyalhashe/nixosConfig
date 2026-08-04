@@ -2,19 +2,32 @@
   pkgs,
 }:
 let
+  # Maps each flake attribute (nixosConfigurations.<attr>) to the machine's
+  # actual hostname, used for the safety check in switch/test scripts.
+  hostNames = {
+    homebase = "homebase";
+    mothership = "mothership";
+    oldboy = "oldboy";
+    starship = "starship";
+    starshipwsl = "starship_wsl";
+    homebasewsl = "nixos";
+    filestore = "filestore";
+  };
+
   # All NixOS hosts defined in this flake.
-  hosts = [
-    "homebase"
+  hosts = builtins.attrNames hostNames;
+
+  # Hosts that get a cachix push script (push-<host>).
+  pushHosts = [
     "mothership"
-    "oldboy"
+    "homebase"
     "starship"
     "starshipwsl"
-    "homebasewsl"
-    "filestore"
+    "oldboy"
   ];
 in
 {
-  inherit hosts;
+  inherit hosts hostNames pushHosts;
 
   # All host configs, as top-level build targets for `buildX` / `checkX`.
   buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hosts;
