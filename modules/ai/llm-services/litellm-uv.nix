@@ -33,7 +33,7 @@ in
 
       path = [
         pkgs.uv
-        pkgs.python3
+        pkgs.python312
         pkgs.bash
         pkgs.coreutils
       ];
@@ -42,8 +42,13 @@ in
         User = "salhashemi2";
         Group = "users";
         # Use UV to run litellm with proxy dependencies.
+        # Pin the interpreter to Python 3.12: litellm[proxy] does not resolve a
+        # working FastAPI on the default python3 (3.13), which fails with
+        # "No module named 'proxy_server'" / "cannot import name
+        # get_flat_dependant". `--from` (not `--with`) ensures the [proxy] extra
+        # is installed for the litellm command itself.
         # Note: Escaping double quotes for bash.
-        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.uv}/bin/uv tool run --with \"litellm[proxy]\" litellm --config ${cfg.configPath} --port 4000 --host 0.0.0.0'";
+        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.uv}/bin/uv tool run --python ${pkgs.python312}/bin/python3.12 --from \"litellm[proxy]\" litellm --config ${cfg.configPath} --port 4000 --host 0.0.0.0'";
         Restart = "on-failure";
         RestartSec = "5s";
         # Required for uv to store its tools and for binaries to find libraries
