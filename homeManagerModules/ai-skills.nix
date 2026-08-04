@@ -13,8 +13,8 @@ in
     enable = lib.mkEnableOption "Install AI skills and agents from the skills flake";
     package = lib.mkOption {
       type = lib.types.package;
-      default = inputs.ai-skills.packages.${pkgs.system}.ai-skills;
-      defaultText = lib.literalExpression "inputs.ai-skills.packages.\${pkgs.system}.ai-skills";
+      default = inputs.ai-skills.packages.${pkgs.stdenv.hostPlatform.system}.ai-skills;
+      defaultText = lib.literalExpression "inputs.ai-skills.packages.\${pkgs.stdenv.hostPlatform.system}.ai-skills";
       description = "The AI skills derivation to install";
     };
 

@@ -45,7 +45,7 @@
   services.hermes-agent = {
     enable = true;
 
-    package = inputs.hermes-agent.packages.${pkgs.system}.default;
+    package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     environmentFiles = [
       config.sops.templates."hermes-agent-secrets.env".path
