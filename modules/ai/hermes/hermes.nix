@@ -77,7 +77,7 @@
         }
         {
           # If OpenRouter is totally down, try to use the local Strix Halo machine
-          provider = "custom:mothership-server";
+          provider = "custom:mothership";
           model = "qwen3.6";
         }
       ];
@@ -106,15 +106,15 @@
 
       auxiliary = {
         compression = {
-          provider = "custom:mothership-server";
+          provider = "custom:mothership";
           model = "qwen-flash";
         };
         web_extract = {
-          provider = "custom:mothership-server";
+          provider = "custom:mothership";
           model = "qwen-flash";
         };
         title_generation = {
-          provider = "custom:mothership-server";
+          provider = "custom:mothership";
           model = "qwen-flash";
         };
       };
