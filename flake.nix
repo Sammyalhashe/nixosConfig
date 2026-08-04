@@ -387,73 +387,20 @@
 
         devShells.default =
           let
-            mkScript =
-              name: script:
-              pkgs.writeScriptBin name ''
-                #!/bin/sh
-                ${script}
-              '';
-
-            mkHostScript =
-              name: flakeAttr: hostname: action:
-              pkgs.writeScriptBin name ''
-                #!/bin/sh
-                CURRENT_HOST=$(hostname)
-                TARGET_HOST="${hostname}"
-
-                if [ "$CURRENT_HOST" != "$TARGET_HOST" ]; then
-                  echo "⚠️  WARNING: Current host ($CURRENT_HOST) does not match target host ($TARGET_HOST)."
-                  printf "Are you sure you want to proceed? [y/N] "
-                  read -r response
-                  case "$response" in
-                    [yY][eE][sS]|[yY])
-                        ;;
-                    *)
-                        echo "Aborted."
-                        exit 1
-                        ;;
-                  esac
-                fi
-
-                echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
-                sudo nixos-rebuild ${action} --flake .#${flakeAttr}
-              '';
-
-            mkDarwinScript =
-              name: flakeAttr: action:
-              pkgs.writeScriptBin name ''
-                #!/bin/sh
-                echo "Running: darwin-rebuild ${action} --flake .#${flakeAttr}"
-                darwin-rebuild ${action} --flake .#${flakeAttr}
-              '';
-
-            mkDeployScript =
-              name: flakeAttr: targetHost:
-              pkgs.writeScriptBin name ''
-                #!/bin/sh
-                set -e
-                ACTION="''${1:-switch}"
-
-                echo "Building .#nixosConfigurations.${flakeAttr}..."
-                OUT_PATH=$(nix build .#nixosConfigurations.${flakeAttr}.config.system.build.toplevel --json --no-link | jq -r '.[].outputs.out')
-
-                if [ -z "''${OUT_PATH}" ]; then
-                  echo "Error: Build failed or produced no output."
-                  exit 1
-                fi
-
-                echo "Copying closure to ${targetHost}..."
-                nix copy --to "ssh-ng://root@${targetHost}" "''${OUT_PATH}"
-
-                echo "Activating ($ACTION) on ${targetHost}..."
-                ssh root@${targetHost} "nix-env -p /nix/var/nix/profiles/system --set ''\'''${OUT_PATH}' && ''\'''${OUT_PATH}/bin/switch-to-configuration' '$ACTION'"
-
-                echo "Done deploying to ${targetHost}."
-              '';
+            inherit (import ./common/utils/devshellFuncs.nix { inherit pkgs; })
+              mkScript
+              mkHostScript
+              mkDeployScript
+              mkBuildAllScript
+              buildTargets
+              ;
 
             scripts = [
               (mkScript "check" "nix flake check")
               (mkScript "fmt" "nix fmt")
+
+              # Attempt to build the top-level of every host
+              (mkBuildAllScript "buildX" buildTargets)
 
               # Push to cachix scripts
               (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
@@ -512,6 +459,7 @@
               echo "Available commands:"
                           echo "  check         - Run nix flake check"
                           echo "  fmt           - Run nix fmt"
+                          echo "  buildX        - Attempt to build the top-level of every host"
                           echo "  push-homebase    - Build homebase system config and push to cachix"
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
