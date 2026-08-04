@@ -54,13 +54,10 @@
     extraDependencyGroups = [ "messaging" ];
 
     settings = {
-      model = {
-        # default = "~anthropic/claude-sonnet-latest";
-        model = {
-          provider = "custom:clinepass";
-          default = "cline-pass/qwen3.7-max";
-        };
-      };
+      # Active provider + model. `provider`/`model` are plain strings, matching
+      # the shape used in fallback_providers / auxiliary below.
+      provider = "custom:clinepass";
+      model = "cline-pass/qwen3.7-max";
 
       mcp_servers = {
         robinhood-trading = {
