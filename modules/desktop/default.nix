@@ -2,11 +2,13 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
 {
   imports = [
+    inputs.nix-snapd.nixosModules.default
     ./hyprland.nix
     ./kdestuff.nix
     ./greetd.nix

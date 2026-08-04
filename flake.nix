@@ -149,6 +149,11 @@
           "nix-command"
           "flakes"
         ];
+        # Binary cache for the vicinae launcher (avoids compiling it from source).
+        nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
+        nix.settings.extra-trusted-public-keys = [
+          "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+        ];
         nix.gc = {
           automatic = true;
           dates = "weekly";
@@ -156,22 +161,41 @@
         };
       };
 
+      # Modules shared by every host.
+      commonModules = [
+        baseConfig
+        ./modules
+        sops-nix.nixosModules.sops
+      ];
+
+      # Stylix theming, opted into per-host (see `modules`).
+      stylixModules = [
+        stylix.nixosModules.stylix
+        ./modules/theming/stylix.nix
+      ];
+
+      # Factory for a NixOS host: assembles the common modules with the host's
+      # own configuration and any extra modules it needs.
+      mkHost =
+        {
+          name,
+          system ? "x86_64-linux",
+          modules ? [ ],
+        }:
+        nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs sops-nix; };
+          pkgs = getPkgs system;
+          modules = commonModules ++ [ ./hosts/${name}/configuration.nix ] ++ modules;
+        };
+
     in
     {
 
-      extra-substituters = [ "https://vicinae.cachix.org" ];
-      extra-trusted-public-keys = [ "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc=" ];
-      nixosConfigurations.filestore = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
+      nixosConfigurations.filestore = mkHost {
+        name = "filestore";
         system = "aarch64-linux";
-        modules = [
-          baseConfig
+        modules = stylixModules ++ [
           nixos-hardware.nixosModules.raspberry-pi-4
-          ./hosts/filestore/configuration.nix
-          ./modules
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
-          sops-nix.nixosModules.sops
           {
             programs.stylix.enable = true;
             host.isHeadless = true;
@@ -179,20 +203,11 @@
         ];
       };
 
-      nixosConfigurations.homebase = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        pkgs = getPkgs "x86_64-linux";
-        system = "x86_64-linux";
-        modules = [
-          baseConfig
+      nixosConfigurations.homebase = mkHost {
+        name = "homebase";
+        modules = stylixModules ++ [
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
-          ./hosts/homebase/configuration.nix
-          ./modules
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
-          sops-nix.nixosModules.sops
-          nix-snapd.nixosModules.default
           {
             host.enableMango = false;
             host.enableHyprland = false;
@@ -201,19 +216,11 @@
         ];
       };
 
-      nixosConfigurations.mothership = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        pkgs = getPkgs "x86_64-linux";
-        modules = [
-          baseConfig
+      nixosConfigurations.mothership = mkHost {
+        name = "mothership";
+        modules = stylixModules ++ [
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
-          ./hosts/mothership/configuration.nix
-          ./modules
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
-          sops-nix.nixosModules.sops
-          nix-snapd.nixosModules.default
           {
             programs.stylix.enable = true;
           }
@@ -267,53 +274,35 @@
         ];
       };
 
-      nixosConfigurations.oldboy = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
-        pkgs = getPkgs "x86_64-linux";
+      nixosConfigurations.oldboy = mkHost {
+        name = "oldboy";
         modules = [
-          baseConfig
-          ./hosts/oldboy/configuration.nix
-          ./modules
           ./modules/ai/hermes/hermes.nix
           hermes-agent.nixosModules.default
-          sops-nix.nixosModules.sops
-          nix-snapd.nixosModules.default
           {
             host.isHeadless = true;
           }
         ];
       };
 
-      nixosConfigurations.starshipwsl = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
-        pkgs = getPkgs "x86_64-linux";
-        modules = [
-          baseConfig
+      nixosConfigurations.starshipwsl = mkHost {
+        name = "starshipwsl";
+        modules = stylixModules ++ [
           mangowc.nixosModules.mango
           nixos-wsl.nixosModules.default
-          ./hosts/starshipwsl/configuration.nix
-          ./modules
           ./modules/wsl
-          sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
           }
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
 
-      nixosConfigurations.homebasewsl = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        pkgs = getPkgs "x86_64-linux";
-        system = "x86_64-linux";
-        modules = [
-          baseConfig
+      nixosConfigurations.homebasewsl = mkHost {
+        name = "homebasewsl";
+        modules = stylixModules ++ [
           mangowc.nixosModules.mango
           {
             nixpkgs.overlays = [
@@ -323,35 +312,21 @@
             ];
           }
           nixos-wsl.nixosModules.default
-          ./hosts/homebasewsl/configuration.nix
-          ./modules
           ./modules/wsl
-          sops-nix.nixosModules.sops
           {
             environments.wsl.enable = true;
           }
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
           {
             programs.stylix.enable = true;
           }
         ];
       };
 
-      nixosConfigurations.starship = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs sops-nix; };
-        system = "x86_64-linux";
-        pkgs = getPkgs "x86_64-linux";
-        modules = [
-          baseConfig
+      nixosConfigurations.starship = mkHost {
+        name = "starship";
+        modules = stylixModules ++ [
           mangowc.nixosModules.mango
           inputs.nix-flatpak.nixosModules.nix-flatpak
-          ./hosts/starship/configuration.nix
-          ./modules
-          stylix.nixosModules.stylix
-          ./modules/theming/stylix.nix
-          sops-nix.nixosModules.sops
-          nix-snapd.nixosModules.default
           {
             host.enableKDE = true;
             host.enableMango = true;
