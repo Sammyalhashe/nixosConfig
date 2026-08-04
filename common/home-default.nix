@@ -23,6 +23,7 @@ in
     ./home-common.nix
     ./home-entertainment.nix
     ../homeManagerModules/aider.nix
+    ../homeManagerModules/zeal.nix
   ];
 
   programs.aider.enable = true;
@@ -168,4 +169,22 @@ in
   };
 
   stylix.targets.firefox.profileNames = [ "default" ];
+
+  programs.zeal = {
+    enable = true;
+    docsets = {
+      Python_3 = {
+        url = "https://sanfrancisco.kapeli.com/feeds/Python_3.tgz";
+        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+      };
+      JavaScript = {
+        url = "https://sanfrancisco.kapeli.com/feeds/JavaScript.tgz";
+        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+      };
+      Cpp = {
+        url = "https://sanfrancisco.kapeli.com/feeds/C++.tgz](https://sanfrancisco.kapeli.com/feeds/C++.tgz";
+        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+      };
+    };
+  };
 }
