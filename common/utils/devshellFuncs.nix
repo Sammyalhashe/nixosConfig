@@ -1,9 +1,9 @@
 {
   pkgs,
 }:
-{
-  # All host configs, as top-level build targets for `buildX`.
-  buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") [
+let
+  # All NixOS hosts defined in this flake.
+  hosts = [
     "homebase"
     "mothership"
     "oldboy"
@@ -12,6 +12,12 @@
     "homebasewsl"
     "filestore"
   ];
+in
+{
+  inherit hosts;
+
+  # All host configs, as top-level build targets for `buildX` / `checkX`.
+  buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hosts;
 
   mkDarwinScript =
     name: flakeAttr: action:

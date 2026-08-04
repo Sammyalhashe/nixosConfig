@@ -394,7 +394,14 @@
               mkBuildAllScript
               mkEvalAllScript
               buildTargets
+              hosts
               ;
+
+            # Per-host build/eval convenience scripts (build-<host>, eval-<host>).
+            perHostScripts = builtins.concatMap (host: [
+              (mkScript "build-${host}" "nix build .#nixosConfigurations.${host}.config.system.build.toplevel --no-link")
+              (mkScript "eval-${host}" "nix eval .#nixosConfigurations.${host}.config.system.build.toplevel.drvPath --raw")
+            ]) hosts;
 
             scripts = [
               (mkScript "check" "nix flake check")
@@ -444,7 +451,8 @@
               (mkDeployScript "deploy-filestore" "filestore" "filestore")
               (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
 
-            ];
+            ]
+            ++ perHostScripts;
           in
           pkgs.mkShell {
             nativeBuildInputs = [
@@ -472,6 +480,8 @@
                                       echo "  deploy-<host> [action] - Build locally, push and activate on remote host (default: switch)"
               echo "  switch-<host>    - Switch NixOS configuration locally"
               echo "  test-<host>      - Test NixOS configuration locally"
+              echo "  build-<host>     - Build a single host's top-level"
+              echo "  eval-<host>      - Evaluate a single host's top-level (no build)"
               echo ""
               echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
             '';
