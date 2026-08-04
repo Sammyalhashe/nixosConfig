@@ -392,6 +392,7 @@
               mkHostScript
               mkDeployScript
               mkBuildAllScript
+              mkEvalAllScript
               buildTargets
               ;
 
@@ -401,6 +402,9 @@
 
               # Attempt to build the top-level of every host
               (mkBuildAllScript "buildX" buildTargets)
+
+              # Attempt to evaluate (not build) the top-level of every host
+              (mkEvalAllScript "checkX" buildTargets)
 
               # Push to cachix scripts
               (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
@@ -460,6 +464,7 @@
                           echo "  check         - Run nix flake check"
                           echo "  fmt           - Run nix fmt"
                           echo "  buildX        - Attempt to build the top-level of every host"
+                          echo "  checkX        - Attempt to evaluate the top-level of every host"
                           echo "  push-homebase    - Build homebase system config and push to cachix"
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
