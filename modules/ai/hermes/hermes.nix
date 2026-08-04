@@ -13,7 +13,7 @@
   };
 
   sops.secrets.CLINE_HERMES_API_KEY = {
-    restartUnits = [ "hermes-agent.services" ];
+    restartUnits = [ "hermes-agent.service" ];
   };
 
   sops.secrets.telegram_bot_token = {

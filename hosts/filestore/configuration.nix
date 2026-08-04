@@ -495,7 +495,7 @@ in
     nmap
     openssl
     logseq-supernote-sync
-    nodejs_25
+    nodejs
     btop
     gemini-cli
     python3
