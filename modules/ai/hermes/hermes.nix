@@ -12,6 +12,10 @@
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.CLINE_HERMES_API_KEY = {
+    restartUnits = [ "hermes-agent.services" ];
+  };
+
   sops.secrets.telegram_bot_token = {
     # Automatically restarts the agent if you rotate the key in sops
     restartUnits = [ "hermes-agent.service" ];
@@ -30,7 +34,12 @@
     TELEGRAM_ALLOWED_USERS="8555669756"
     HERMES_MAX_TOKENS=8192
     BRAVE_SEARCH_API_KEY="${config.sops.placeholder.brave_api_key}"
+    CLINEPASS_API_KEY="${config.sops.placeholder.CLINE_HERMES_API_KEY}"
   '';
+
+  users.users.hermes = {
+    extraGroups = [ "wheel" ];
+  };
 
   # 3. Configure the Hermes Agent Service
   services.hermes-agent = {
@@ -46,7 +55,11 @@
 
     settings = {
       model = {
-        default = "~anthropic/claude-sonnet-latest";
+        # default = "~anthropic/claude-sonnet-latest";
+        model = {
+          provider = "custom:clinepass";
+          default = "cline-pass/qwen3.7-max";
+        };
       };
 
       mcp_servers = {
@@ -73,6 +86,16 @@
       ];
 
       custom_providers = [
+        {
+          name = "clinepass";
+          base_url = "https://api.cline.bot/v1";
+          key_env = "CLINEPASS_API_KEY"; # Tells Hermes to pull CLINEPASS_API_KEY from .env
+          models = [
+            "cline-pass/qwen3.7-max"
+            "cline-pass/deepseek-v4-pro"
+            "cline-pass/glm-5.2"
+          ];
+        }
         {
           name = "mothership";
           base_url = "http://mothership.salh.xyz:4000/v1";

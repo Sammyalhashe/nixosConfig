@@ -20,8 +20,6 @@ in
     ../../modules/ai/llm-services
   ];
 
-  host.enableBreezy = true;
-
   # Headless AI machine: no desktop/GUI is ever built or installed.
   # Default to server/headless mode (what systemd-boot loads)
   host.isHeadless = true;

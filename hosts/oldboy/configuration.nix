@@ -18,6 +18,8 @@ in
     ./supernote-cloud.nix
   ];
 
+  host.enableSnap = false;
+
   sops.secrets.filestore_container_env = { };
   sops.secrets.supernote_email = { };
   sops.secrets.supernote_password = { };

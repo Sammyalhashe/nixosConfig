@@ -65,6 +65,9 @@
   sops.secrets.TANGEM_SOL = { };
   sops.secrets.TANGEM_SUI = { };
   sops.secrets.KEYSTONE_SUI = { };
+  sops.secrets.CLINE_HERMES_API_KEY = {
+    owner = config.host.username;
+  };
 
   sops.secrets.icloud_email = {
     owner = config.host.username;

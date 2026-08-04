@@ -213,6 +213,7 @@
           stylix.nixosModules.stylix
           ./modules/theming/stylix.nix
           sops-nix.nixosModules.sops
+          nix-snapd.nixosModules.default
           {
             programs.stylix.enable = true;
           }
@@ -277,6 +278,7 @@
           ./modules/ai/hermes/hermes.nix
           hermes-agent.nixosModules.default
           sops-nix.nixosModules.sops
+          nix-snapd.nixosModules.default
           {
             host.isHeadless = true;
           }
