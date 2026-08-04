@@ -38,43 +38,12 @@ in
         Group = "users";
         ExecStart =
           let
+            # Use litellm's own `proxy` optional-dependencies from nixpkgs
+            # (equivalent to the PyPI `litellm[proxy]` extra) rather than a
+            # hand-maintained package list — reproducible and always in sync
+            # with the packaged litellm version.
             pythonEnv = pkgs.python313.withPackages (
-              ps: with ps; [
-                litellm
-                backoff
-                fastapi
-                uvicorn
-                pydantic
-                python-dotenv
-                pyyaml
-                orjson
-                aiohttp
-                httpx
-                rich
-                python-multipart
-                cryptography
-                pyjwt
-                apscheduler
-                gunicorn
-                uvloop
-                tiktoken
-                requests
-                beautifulsoup4
-                markdownify
-                lxml
-                loguru
-                rank-bm25
-                scikit-learn
-                scipy
-                torch
-                sentence-transformers
-                transformers
-                regex
-                boto3
-                email-validator
-                fastapi_sso
-                python-jose
-              ]
+              ps: [ ps.litellm ] ++ ps.litellm.optional-dependencies.proxy
             );
           in
           "${pythonEnv}/bin/litellm --config ${cfg.configPath} --port 4000 --host 0.0.0.0";

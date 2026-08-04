@@ -21,6 +21,7 @@ let
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+      ENABLE_PROMPT_CACHING_1H = "1";
     };
     model = "qwen3.6";
     attribution = {
@@ -128,23 +129,12 @@ in
     programs.claude-code = {
       enable = true;
       package = pkgs.claude-code;
-      settings = {
-        "$schema" = "https://json.schemastore.org/claude-code-settings.json";
-        env = {
-          ANTHROPIC_BASE_URL = litellmUrl;
-          ANTHROPIC_API_KEY = "sk-no-key-required";
-          CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
-          CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
-          CLAUDE_CODE_ENABLE_TELEMETRY = "0";
-          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
-          ENABLE_PROMPT_CACHING_1H = "1";
-        };
-        model = "qwen3.6";
-        attribution = {
-          commit = "";
-          pr = "";
-        };
-      };
+      # NOTE: settings.json is written (mutably) by the home.activation script
+      # above so Claude Code can rewrite it at runtime. Do NOT set the built-in
+      # `settings` here — that makes home-manager manage settings.json as its own
+      # file, which then collides with the activation copy on every rebuild
+      # ("~/.claude/settings.json would be clobbered"). mcpServers (.mcp.json)
+      # and context (CLAUDE.md) are separate files and are fine to keep.
       context = karpathySkills;
     };
 

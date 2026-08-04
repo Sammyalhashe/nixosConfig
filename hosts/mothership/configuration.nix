@@ -73,7 +73,8 @@ in
   services.llm-services.qwen-coder.enable = true; # Qwen3.6
   services.llm-services.qwen-flash.enable = true; # Fast/Chat (Qwen2.5-7B) - Port 8011
   services.llm-services.gemma.enable = false; # Bleeding Edge (Gemma 4-31B) - Port 8012
-  services.llm-services.litellm-uv.enable = true; # Proxy/Gateway - Port 4000
+  services.llm-services.litellm-uv.enable = false; # (uv/PyPI runtime resolution — non-reproducible, drifted/broke)
+  services.llm-services.litellm.enable = true; # Proxy/Gateway - Port 4000 (Nix-native, reproducible)
 
   powerManagement.cpuFreqGovernor = "performance";
 
