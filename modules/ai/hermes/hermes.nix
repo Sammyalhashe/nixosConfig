@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
@@ -121,6 +122,9 @@
 
       terminal = {
         backend = "local";
+        # Canonical working-directory setting (replaces the deprecated
+        # MESSAGING_CWD env var, which the module still sets and we unset below).
+        cwd = config.services.hermes-agent.workingDirectory;
       };
 
       gateway = {
@@ -144,6 +148,10 @@
   systemd.services.hermes-agent = {
 
     environment.PYTHONPATH = "${pkgs.python3Packages.python-telegram-bot}/${pkgs.python3.sitePackages}";
+
+    # The hermes-agent module still sets the deprecated MESSAGING_CWD env var;
+    # unset it (the value now lives in settings.terminal.cwd → config.yaml).
+    environment.MESSAGING_CWD = lib.mkForce null;
 
     serviceConfig = {
       EnvironmentFile = [ config.sops.templates."hermes-agent-secrets.env".path ];
