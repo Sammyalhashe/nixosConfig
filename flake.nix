@@ -68,6 +68,13 @@
     };
     nur.url = "github:nix-community/NUR";
 
+    # Remote NixOS deployment (build locally, push + activate with rollback)
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.utils.follows = "flake-utils";
+    };
+
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
 
@@ -187,6 +194,10 @@
           pkgs = getPkgs system;
           modules = commonModules ++ [ ./hosts/${name}/configuration.nix ] ++ modules;
         };
+
+      # Shared host table (hostname -> { ip, hostname, system }): single source
+      # of truth for deploy-rs nodes and the devshell per-host scripts.
+      hostsData = import ./hosts.nix;
 
     in
     {
@@ -345,6 +356,13 @@
       homeModules.filestore = ./homeManagerModules/filestore.nix;
       homeModules.mothership = ./homeManagerModules/mothership.nix;
       homeModules.server = ./homeManagerModules/server.nix;
+
+      # deploy-rs targets (build locally, copy over SSH, activate w/ rollback).
+      # Node definitions live in ./deploy.nix; run `deploy .#<host>`.
+      deploy = import ./deploy.nix {
+        inherit self inputs;
+        hosts = hostsData;
+      };
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
@@ -360,14 +378,25 @@
 
         checks = {
           formatting = treefmtEval.config.build.check self;
-        };
+        }
+        # deploy-rs' activation checks build each node's full system closure,
+        # which can't cross-compile from this machine (Linux nodes on Darwin,
+        # or the other arch from one Linux host). Keep only the arch-neutral
+        # schema check so `nix flake check` works everywhere; activation is
+        # verified by deploy-rs at deploy time.
+        // pkgs.lib.filterAttrs (name: _: pkgs.lib.hasInfix "schema" name) (
+          inputs.deploy-rs.lib.${system}.deployChecks self.deploy
+        );
 
         devShells.default =
           let
-            inherit (import ./common/utils/devshellFuncs.nix { inherit pkgs; })
+            inherit
+              (import ./common/utils/devshellFuncs.nix {
+                inherit pkgs;
+                hosts = hostsData;
+              })
               mkScript
               mkHostScript
-              mkDeployScript
               mkBuildAllScript
               mkEvalAllScript
               buildTargets
@@ -406,13 +435,7 @@
               # Push all hosts to cachix
               (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
 
-              # Remote deploy scripts (build locally, push + activate on remote host)
-              # Usage: deploy-<host> [switch|test|boot|dry-activate]
-              (mkDeployScript "deploy-homebase" "homebase" "homebase")
-              (mkDeployScript "deploy-starship" "starship" "starship")
-              (mkDeployScript "deploy-oldboy" "oldboy" "oldboy")
-              (mkDeployScript "deploy-filestore" "filestore" "filestore")
-              (mkDeployScript "deploy-starshipwsl" "starshipwsl" "starship_wsl")
+              # Remote deploys are handled by deploy-rs: `deploy .#<host>`
             ]
             ++ hostScripts
             ++ pushScripts
@@ -427,6 +450,7 @@
               pkgs.ssh-to-age
               pkgs.cachix
               pkgs.jq
+              inputs.deploy-rs.packages.${system}.default
             ]
             ++ scripts;
 
@@ -441,7 +465,7 @@
                                       echo "  push-starship    - Build starship system config and push to cachix"
                                       echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
                                       echo "  push-mothership - Build mothership system config and push to cachix"
-                                      echo "  deploy-<host> [action] - Build locally, push and activate on remote host (default: switch)"
+                                      echo "  deploy .#<host>  - Deploy (build locally, push + activate w/ rollback) via deploy-rs"
               echo "  switch-<host>    - Switch NixOS configuration locally"
               echo "  test-<host>      - Test NixOS configuration locally"
               echo "  build-<host>     - Build a single host's top-level"

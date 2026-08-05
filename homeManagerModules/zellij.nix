@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   zjstatus-wasm = pkgs.fetchurl {
     url = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
@@ -16,6 +21,35 @@ let
     url = "https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm";
     sha256 = "17bir2z85ip7x6zndy94x5wdrpqv2py3wf116kadn3jw0blmav4k";
   };
+
+  # Pre-grant zellij plugin permissions so the status bar (zjstatus) renders on
+  # first launch instead of showing an approval prompt inside its 1-line pane.
+  # Zellij caches grants keyed by the plugin's absolute /nix/store path, so each
+  # version/hash bump would otherwise re-trigger the prompt. Generating this from
+  # the same store paths keeps the grant matched to the current build.
+  plugin_permissions = /* kdl */ ''
+    "${zjstatus-wasm}" {
+        ChangeApplicationState
+        RunCommands
+        ReadApplicationState
+    }
+    "${monocle-wasm}" {
+        ChangeApplicationState
+        OpenFiles
+        OpenTerminalsOrPlugins
+    }
+    "${zellij-forgot-wasm}" {
+        ReadApplicationState
+        ChangeApplicationState
+    }
+    "${zjstatus-hints-wasm}" {
+        ReadApplicationState
+    }
+  '';
+
+  # zellij stores its cache (incl. permissions.kdl) under the platform cache dir.
+  zellijCacheDir =
+    if pkgs.stdenv.isDarwin then "Library/Caches/org.Zellij-Contributors.Zellij" else ".cache/zellij";
 
   swap_floating_layouts = /* kdl */ ''
     swap_floating_layout name="fullscreen" {
@@ -791,5 +825,14 @@ in
             }
     ${zjstatus_bar}
         }
+  '';
+
+  # Write the pre-granted plugin permissions into zellij's mutable cache. Using
+  # an activation script (not home.file) keeps the file writable so zellij can
+  # still append ad-hoc grants, and avoids clobbering the existing cache file.
+  home.activation.zellijPluginPermissions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run mkdir -p "$HOME/${zellijCacheDir}"
+    run install -m 600 ${pkgs.writeText "zellij-permissions.kdl" plugin_permissions} \
+      "$HOME/${zellijCacheDir}/permissions.kdl"
   '';
 }

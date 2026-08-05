@@ -1,21 +1,14 @@
 {
   pkgs,
+  hosts,
 }:
 let
+  # All NixOS hosts defined in this flake (keys of the shared host table).
+  hostList = builtins.attrNames hosts;
+
   # Maps each flake attribute (nixosConfigurations.<attr>) to the machine's
   # actual hostname, used for the safety check in switch/test scripts.
-  hostNames = {
-    homebase = "homebase";
-    mothership = "mothership";
-    oldboy = "oldboy";
-    starship = "starship";
-    starshipwsl = "starship_wsl";
-    homebasewsl = "nixos";
-    filestore = "filestore";
-  };
-
-  # All NixOS hosts defined in this flake.
-  hosts = builtins.attrNames hostNames;
+  hostNames = builtins.mapAttrs (_: h: h.hostname) hosts;
 
   # Hosts that get a cachix push script (push-<host>).
   pushHosts = [
@@ -27,10 +20,11 @@ let
   ];
 in
 {
-  inherit hosts hostNames pushHosts;
+  inherit hostNames pushHosts;
+  hosts = hostList;
 
   # All host configs, as top-level build targets for `buildX` / `checkX`.
-  buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hosts;
+  buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hostList;
 
   mkDarwinScript =
     name: flakeAttr: action:
@@ -120,29 +114,5 @@ in
 
       echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
       sudo nixos-rebuild ${action} --flake .#${flakeAttr}
-    '';
-
-  mkDeployScript =
-    name: flakeAttr: targetHost:
-    pkgs.writeScriptBin name ''
-      #!/bin/sh
-      set -e
-      ACTION="''${1:-switch}"
-
-      echo "Building .#nixosConfigurations.${flakeAttr}..."
-      OUT_PATH=$(nix build .#nixosConfigurations.${flakeAttr}.config.system.build.toplevel --json --no-link | jq -r '.[].outputs.out')
-
-      if [ -z "''${OUT_PATH}" ]; then
-        echo "Error: Build failed or produced no output."
-        exit 1
-      fi
-
-      echo "Copying closure to ${targetHost}..."
-      nix copy --to "ssh-ng://root@${targetHost}" "''${OUT_PATH}"
-
-      echo "Activating ($ACTION) on ${targetHost}..."
-      ssh root@${targetHost} "nix-env -p /nix/var/nix/profiles/system --set ''\'''${OUT_PATH}' && ''\'''${OUT_PATH}/bin/switch-to-configuration' '$ACTION'"
-
-      echo "Done deploying to ${targetHost}."
     '';
 }

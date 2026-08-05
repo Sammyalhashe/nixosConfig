@@ -108,6 +108,7 @@ in
       npkgs = "nix repl -f '<nixpkgs>'";
       ncg = "nix-collect-garbage -d";
       cleanup = "sudo nix-collect-garbage -d";
+      bookokrat = "nix run github:bugzmanov/bookokrat --"; # terminal epub reader
 
       # git aliases
       grv = "git remote -v";

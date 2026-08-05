@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ./backend
     ./gpt-oss.nix
     ./qwen-coder.nix
     ./qwen-flash.nix

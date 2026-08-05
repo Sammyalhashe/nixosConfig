@@ -28,9 +28,8 @@ in
 
       environment = {
         XDG_CACHE_HOME = "/var/cache/llama-cpp-coder";
-        HSA_OVERRIDE_GFX_VERSION = "11.5.1";
-        HSA_ENABLE_SDMA = "0";
-      };
+      }
+      // config.services.llm-services.backend.environment;
 
       serviceConfig = {
         User = "salhashemi2";
@@ -43,18 +42,14 @@ in
         PrivateDevices = false;
 
         ExecStart =
-          let
-            # --- STABLE AI STACK ---
-            # Qwen3 uses the optimized ROCm stack provided by the OpenClaw overlay.
-            # This is pinned to a 'known-good' revision for heavy development work.
-            llama-rocm = pkgs.pkgsRocm.llama-cpp;
-          in
-          "${llama-rocm}/bin/llama-server "
+          # llama.cpp build (ROCm or Vulkan) is selected by
+          # services.llm-services.backend — see ./backend.
+          "${config.services.llm-services.backend.package}/bin/llama-server "
           + "--model ${cfg.modelPath} "
           + "--port 8014 "
           + "--host 0.0.0.0 "
           + "--n-gpu-layers 999 "
-          + "--ctx-size 200000 "
+          + "--ctx-size 131072 "
           + "--parallel 1 "
           + "--threads 16 "
           + "--flash-attn 1 "

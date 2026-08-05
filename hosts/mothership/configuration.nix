@@ -32,10 +32,11 @@ in
     initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
-      "amd_iommu=off" # Disable IOMMU to prevent SDMA/VMM pagefaults on Strix Halo
+      # ROCm-specific kernel params (amd_iommu=off, amdgpu.cwsr_enable=0,
+      # amdgpu.runpm=0) live in modules/ai/llm-services/backend/rocm.nix so they
+      # drop automatically when the Vulkan backend is selected.
       "iommu=pt"
       "amdgpu.gpu_recovery=1"
-      "amdgpu.cwsr_enable=0" # Disable compute wave save/restore for ROCm stability
       "initcall_blacklist=simpledrm_platform_driver_init"
 
       # --- STRIX HALO HARDWARE FIXES (GFX 11.5.1) ---
@@ -43,7 +44,6 @@ in
       "amdgpu.dcfeaturemask=0x0" # Disable PSR (Prevents pageflip timeouts on high-refresh panels)
       "amdgpu.dcdebugmask=0x10" # Disable unstable DC features
       "amdgpu.abmlevel=0" # Prevents panel backlight interference
-      "amdgpu.runpm=0" # Keeps GPU awake for ROCm discovery
 
       # --- UNIFIED MEMORY MANAGEMENT ---
       # Leaving ~24GB for CPU/OS prevents the "Pageflip timeout" freezes when GPU is under heavy load
@@ -69,6 +69,11 @@ in
 
   # --- LOCAL AI STACK CONFIGURATION ---
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
+  # Local GPU inference backend (Strix Halo / gfx1151). Flip these two to switch
+  # the whole llama.cpp stack between ROCm and Vulkan (see backend module).
+  services.llm-services.backend.enableRocm = true;
+  services.llm-services.backend.enableVulkan = false;
+
   services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
   services.llm-services.qwen-coder.enable = true; # Qwen3.6
   services.llm-services.qwen-flash.enable = true; # Fast/Chat (Qwen2.5-7B) - Port 8011
