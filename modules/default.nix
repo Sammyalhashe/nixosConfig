@@ -4,6 +4,7 @@
 
 {
   imports = [
+    ./constants.nix
     ./crypto
     ./desktop
     ./hardware-wallets.nix

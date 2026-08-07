@@ -32,8 +32,15 @@ in
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.allowReboot = true;
+  system.autoUpgrade = {
+    enable = true;
+    allowReboot = true;
+    flake = "~/nixosConfig";
+    flags = [
+      "--print-build-logs"
+      "--commit-lock-file" # If you want to automatically commit the updated flake.lock
+    ];
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -115,6 +122,7 @@ in
     ];
     packages = with pkgs; [ ];
     openssh.authorizedKeys.keys = [
+      config.hostKeys.homebase
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPx5JBI3FNtugjdVeb1Gg4lUEJvGa/eiZ6rnsIN/oC3f sammy@salh.xyz"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZKrkpzxAf0u3+fn59xouUtVHtklRuGwCwfPpR0Y8nc sammy.alhashemi@mail.utoronto.ca"
     ];
