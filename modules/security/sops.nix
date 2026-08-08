@@ -65,6 +65,12 @@
   sops.secrets.TANGEM_SOL = { };
   sops.secrets.TANGEM_SUI = { };
   sops.secrets.KEYSTONE_SUI = { };
+  sops.secrets.ROCKETSHIP_SUI = { };
+  sops.secrets.ROCKETSHIP_SOL = { };
+  sops.secrets.ROCKETSHIP_ETH = { };
+  sops.secrets.ROCKETSHIP_BTC = { };
+  sops.secrets.SAFE_DEFI_VAULT = { };
+  sops.secrets.SQUADS_SOL_VAULT = { };
   sops.secrets.CLINE_HERMES_API_KEY = {
     owner = config.host.username;
   };
@@ -143,10 +149,17 @@
         "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}",
         "addresses": {
           "AVAX": "${config.sops.placeholder.TANGEM_AVAX}",
-          "ETH": "${config.sops.placeholder.KEYSTONE_ETH}",
+          "ETH": {
+            50: "${config.sops.placeholder.ROCKETSHIP_ETH}",
+            50: "${config.sops.placeholder.SAFE_DEFI_VAULT}",
+          }
           "BTC": "${config.sops.placeholder.KEYSTONE_BTC}",
-          "SOL": "${config.sops.placeholder.TANGEM_SOL}",
-          "SUI": "${config.sops.placeholder.KEYSTONE_SUI}"
+          "SOL": {
+            25:"${config.sops.placeholder.TANGEM_SOL}",
+            70:"${config.sops.placeholder.ROCKETSHIP_SOL}",
+            5:"${config.sops.placeholder.SQUADS_SOL_VAULT}",
+          }
+          "SUI": "${config.sops.placeholder.ROCKETSHIP_SUI}"
         },
         "networks": {
           "BTC": "bitcoin",
