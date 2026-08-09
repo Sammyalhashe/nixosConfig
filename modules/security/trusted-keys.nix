@@ -10,5 +10,24 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZKrkpzxAf0u3+fn59xouUtVHtklRuGwCwfPpR0Y8nc sammy.alhashemi@mail.utoronto.ca"
   ];
 
-  users.users.salhashemi2.openssh.authorizedKeys.keys = hostKeys;
+  users.users.salhashemi2 = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "sudo"
+    ];
+    openssh.authorizedKeys.keys = hostKeys;
+  };
+
+  security.sudo.extraRules = [
+    {
+      groups = [ "wheel" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 }
