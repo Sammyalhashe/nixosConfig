@@ -23,7 +23,7 @@ in
     ../../common/home-manager-config.nix
   ];
 
-  host.enableGreetd = true;
+  host.enableGreetd = false;
   host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];
   host.enableHardwareWallets = true;
