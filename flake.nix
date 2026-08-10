@@ -105,6 +105,12 @@
       url = "github:nix-community/nix-snapd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Self-hosted TRMNL server (terminus) as a podman OCI module
+    terminus = {
+      url = "github:Sammyalhashe/terminus-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

@@ -1677,6 +1677,7 @@
         "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
+        "terminus": "terminus",
         "todo": "todo",
         "treefmt-nix": "treefmt-nix",
         "vicinae": "vicinae",
@@ -1945,6 +1946,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "terminus": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786311365,
+        "narHash": "sha256-Rz9ulTCaPK+L5zNAnEOj7KaDnLA/y1j+9HzLbYNxiF0=",
+        "owner": "Sammyalhashe",
+        "repo": "terminus-nix",
+        "rev": "35f7f739271e321c12e5a64622aa847646bee8a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sammyalhashe",
+        "repo": "terminus-nix",
         "type": "github"
       }
     },

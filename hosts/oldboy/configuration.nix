@@ -16,11 +16,15 @@ in
     ../../modules
     inputs.sops-nix.nixosModules.sops
     ./supernote-cloud.nix
+    inputs.terminus.nixosModules.terminus
   ];
 
   host.enableSnap = false;
 
   sops.secrets.filestore_container_env = { };
+  sops.secrets.terminus_env = {
+    sopsFile = ../../secrets-terminus.yaml;
+  };
   sops.secrets.supernote_email = { };
   sops.secrets.supernote_password = { };
   sops.secrets.supernote_private_key = { };
@@ -102,6 +106,15 @@ in
       defaultNetwork.settings.dns_enabled = true;
     };
     oci-containers.backend = "podman";
+  };
+
+  # Self-hosted TRMNL server (podman OCI stack). LAN-accessible on :2300;
+  # exposed remotely via the Cloudflare tunnel. Secrets come from the
+  # terminus_env sops secret (secrets-terminus.yaml).
+  services.terminus = {
+    enable = true;
+    apiUri = "http://11.125.37.175:2300";
+    environmentFile = config.sops.secrets.terminus_env.path;
   };
 
   systemd.services.cloudflared-tunnel-picloud = {
