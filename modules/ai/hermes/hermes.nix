@@ -5,6 +5,14 @@
   inputs,
   ...
 }:
+let
+  # Home directories on oldboy that the unprivileged `hermes` service user is
+  # granted read+write access to (via POSIX ACLs + ReadWritePaths below).
+  sharedDirs = [
+    "/home/salhashemi2/nixosConfig"
+    "/home/salhashemi2/projects"
+  ];
+in
 {
 
   # 1. Tell sops-nix to decrypt your existing openrouter secret
@@ -38,10 +46,6 @@
     CLINEPASS_API_KEY="${config.sops.placeholder.CLINE_HERMES_API_KEY}"
   '';
 
-  users.users.hermes = {
-    extraGroups = [ "wheel" ];
-  };
-
   # 3. Configure the Hermes Agent Service
   services.hermes-agent = {
     enable = true;
@@ -64,6 +68,12 @@
         robinhood-trading = {
           url = "https://agent.robinhood.com/mcp/trading";
           auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
+        };
+        coinbase = {
+          # Hosted CDP "Coinbase for Agents" MCP. OAuth (Coinbase sign-in),
+          # same pattern as robinhood above — no local CLI or key file needed.
+          url = "https://agents.coinbase.com/mcp";
+          auth = "oauth";
         };
       };
 
@@ -156,7 +166,28 @@
     serviceConfig = {
       EnvironmentFile = [ config.sops.templates."hermes-agent-secrets.env".path ];
       TimeoutStopSec = "240s";
+      # The hermes-agent module sets ProtectSystem=strict, which makes the whole
+      # filesystem read-only except a few paths — so POSIX ACLs alone won't allow
+      # writes. These entries merge with the module's ReadWritePaths
+      # (/var/lib/hermes*) to permit writes into the shared home directories.
+      ReadWritePaths = sharedDirs;
     };
 
   };
+
+  # 5. Grant the unprivileged hermes user read+write on the shared home dirs.
+  #    ProtectHome=false (module default) already lets the service see /home;
+  #    these ACLs open up exactly the chosen subdirs — plus traverse-only on the
+  #    home root — without exposing the rest of the home directory. The recursive
+  #    `A+` lines stamp existing files and add default ACLs so new files inherit
+  #    access for both hermes and salhashemi2 (hermes writes as hermes:hermes
+  #    under UMask=0007, which would otherwise lock you out of files it creates).
+  systemd.tmpfiles.rules = [
+    # Ensure the shared projects dir exists (nixosConfig already does).
+    "d /home/salhashemi2/projects 0755 salhashemi2 users - -"
+    # Traverse-only into the home root: descend to the shared subdirs without
+    # being able to list or read anything else in the home directory.
+    "a+ /home/salhashemi2 - - - - u:hermes:x"
+  ]
+  ++ map (dir: "A+ ${dir} - - - - u:hermes:rwX,d:u:hermes:rwX,d:u:salhashemi2:rwX") sharedDirs;
 }
