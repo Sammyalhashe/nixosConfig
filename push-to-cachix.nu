@@ -25,7 +25,7 @@ def push [host: string] {
   
   # We pipe directly to 'from json' instead of using jq
   let build_output = (
-      nix build ."#nixosConfigurations.($host).config.system.build.toplevel --json"
+      nix build $".#nixosConfigurations.($host).config.system.build.toplevel" --no-link --json
       | from json
   )
   
