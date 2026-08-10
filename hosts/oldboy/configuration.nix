@@ -22,9 +22,22 @@ in
   host.enableSnap = false;
 
   sops.secrets.filestore_container_env = { };
-  sops.secrets.terminus_env = {
-    sopsFile = ../../secrets-terminus.yaml;
-  };
+  # Terminus secrets live in the default sops file (secrets.yaml); the container
+  # env file is assembled from them via the sops template below.
+  sops.secrets.terminus_app_secret = { };
+  sops.secrets.terminus_database_password = { };
+  sops.secrets.terminus_keyvalue_password = { };
+  sops.templates."terminus-env".content = ''
+    APP_SECRET=${config.sops.placeholder.terminus_app_secret}
+    DATABASE_USER=terminus
+    DATABASE_NAME=terminus
+    DATABASE_URL=postgres://terminus:${config.sops.placeholder.terminus_database_password}@database:5432/terminus
+    KEYVALUE_URL=redis://:${config.sops.placeholder.terminus_keyvalue_password}@keyvalue:6379/0
+    POSTGRES_USER=terminus
+    POSTGRES_DB=terminus
+    POSTGRES_PASSWORD=${config.sops.placeholder.terminus_database_password}
+    KEYVALUE_PASSWORD=${config.sops.placeholder.terminus_keyvalue_password}
+  '';
   sops.secrets.supernote_email = { };
   sops.secrets.supernote_password = { };
   sops.secrets.supernote_private_key = { };
@@ -114,7 +127,7 @@ in
   services.terminus = {
     enable = true;
     apiUri = "http://11.125.37.175:2300";
-    environmentFile = config.sops.secrets.terminus_env.path;
+    environmentFile = config.sops.templates."terminus-env".path;
   };
 
   systemd.services.cloudflared-tunnel-picloud = {

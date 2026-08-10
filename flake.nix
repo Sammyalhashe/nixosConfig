@@ -270,6 +270,11 @@
                   Type = "oneshot";
                   ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
                   User = "root"; # Or a specific user if needed, but root is usually safer for nix build
+                  # push-to-cachix.nu uses relative paths (`nix build .#...`,
+                  # `sops -d secrets.yaml`), so run it from the flake checkout.
+                  WorkingDirectory = "/home/salhashemi2/nixosConfig";
+                  # Let sops decrypt secrets.yaml with mothership's host key.
+                  Environment = "SOPS_AGE_SSH_PRIVATE_KEY_FILE=/etc/ssh/ssh_host_ed25519_key";
                 };
                 path = [
                   pkgs.nix
