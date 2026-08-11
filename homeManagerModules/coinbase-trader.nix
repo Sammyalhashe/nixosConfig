@@ -145,4 +145,39 @@ in
       ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#report --extra-experimental-features 'nix-command flakes'";
     };
   };
+
+  # 6. Since-inception PnL report: realized (StateManager) + unrealized (open
+  #    positions vs. live prices) + current portfolio value. Sends to
+  #    Telegram daily and writes a JSON snapshot to ~/projects/trading-pnl
+  #    for on-demand reads (e.g. by the hermes agent, which already has
+  #    read+write ACL access there).
+  systemd.user.services.coinbase-pnl-report = {
+    Unit = {
+      Description = "Run Coinbase Trading Bot PnL Report";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      WorkingDirectory = repoDir;
+      Environment = [
+        "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
+        "PNL_SNAPSHOT_FILE=/home/${user}/projects/trading-pnl/snapshot.json"
+      ];
+      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#pnl --extra-experimental-features 'nix-command flakes'";
+    };
+  };
+
+  systemd.user.timers.coinbase-pnl-report = {
+    Unit = {
+      Description = "Run Coinbase Trading Bot PnL Report daily";
+    };
+    Timer = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    Install = {
+      WantedBy = [ "timers.target" ];
+    };
+  };
 }
