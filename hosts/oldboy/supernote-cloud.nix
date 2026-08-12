@@ -109,6 +109,18 @@
         curl -L https://supernote-private-cloud.supernote.com/cloud/supernotedb.sql -o /supernote/supernotedb.sql
         chown salhashemi2:users /supernote/supernotedb.sql
         chmod 644 /supernote/supernotedb.sql
+      elif [ ! -d /supernote/sndata/db_data/mysql ]; then
+        # supernotedb.sql already exists (this host has bootstrapped before), but
+        # db_data has no mysql/ system schema, which is MariaDB's own marker that
+        # a datadir has actually been initialized. Left alone, MariaDB would treat
+        # this as a fresh volume and silently re-run the full vendor init SQL --
+        # exactly what produced duplicate/garbled data last time. Refuse and
+        # require an explicit ack instead of silently reinitializing.
+        echo "ERROR: supernotedb.sql exists but /supernote/sndata/db_data has no mysql/ dir (looks uninitialized)." >&2
+        echo "This usually means db_data was wiped or moved unexpectedly -- MariaDB would" >&2
+        echo "otherwise silently re-run the full vendor init against a fresh database." >&2
+        echo "If a fresh re-init is genuinely intended, delete /supernote/supernotedb.sql and rerun." >&2
+        exit 1
       fi
     '';
   };

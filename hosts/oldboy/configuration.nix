@@ -16,6 +16,7 @@ in
     ../../modules
     inputs.sops-nix.nixosModules.sops
     ./supernote-cloud.nix
+    ./supernote-backup.nix
     inputs.terminus.nixosModules.terminus
   ];
 
