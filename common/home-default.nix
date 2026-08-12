@@ -187,4 +187,57 @@ in
       };
     };
   };
+
+  # Deskflow (KVM software sharing this machine's keyboard/mouse) as the
+  # server. homebase boots KDE Plasma (services.displayManager.defaultSession
+  # = "plasma"), which natively honors XDG autostart entries. (An earlier
+  # Hyprland exec-once approach was inert here -- Hyprland is disabled and the
+  # session is Plasma.)
+  xdg.configFile."autostart/deskflow.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Deskflow
+    Comment=Share this machine's keyboard and mouse (server)
+    Exec=${pkgs.deskflow}/bin/deskflow
+    Terminal=false
+    X-KDE-autostart-phase=2
+  '';
+
+  # Seed the server config only if missing, since Deskflow rewrites this
+  # file with its own settings once it has run (don't clobber user-adjusted
+  # state on every activation). KQ7DV474L1 is the Bloomberg corporate Mac
+  # connecting in as a client (see bbNixosConfig's home-KQ7DV474L1.nix).
+  home.activation.seedDeskflowConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    CONF_DIR="${homeDir}/.config/Deskflow"
+    CONF="$CONF_DIR/Deskflow.conf"
+    SERVER_CONF="$CONF_DIR/server.conf"
+    if [ ! -f "$CONF" ]; then
+      mkdir -p "$CONF_DIR"
+      cat > "$SERVER_CONF" <<'EOF'
+section: screens
+	homebase:
+	KQ7DV474L1:
+end
+
+section: links
+	homebase:
+		right = KQ7DV474L1
+	KQ7DV474L1:
+		left = homebase
+end
+EOF
+      cat > "$CONF" <<EOF
+[core]
+coreMode=2
+computerName=homebase
+
+[gui]
+startCoreWithGui=true
+
+[server]
+externalConfig=true
+externalConfigFile=$SERVER_CONF
+EOF
+    fi
+  '';
 }
