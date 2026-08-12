@@ -7,7 +7,7 @@
 #   system   - build architecture (defaults to x86_64-linux when omitted).
 {
   homebase = {
-    ip = null;
+    ip = "11.125.37.135";
     hostname = "homebase";
   };
   starship = {
