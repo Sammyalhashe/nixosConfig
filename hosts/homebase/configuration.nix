@@ -148,6 +148,21 @@ in
         hash = "sha256-pxbzIAFQjWSOtj/isoUBm141jS3Ec7zUaWTKWRKoeVE=";
       };
     })
+    (appimageTools.wrapType2 {
+      pname = "display-pilot-2";
+      version = "1.1.4.0";
+      # BenQ ships this as a zip containing a single AppImage (no top-level
+      # dir), so unpack with fetchzip and point src at the file inside.
+      src =
+        let
+          zip = fetchzip {
+            url = "https://esupportdownload.benq.com/esupport/VERTICAL%20&%20PROFESSIONAL%20DISPLAY/Software/Display%20Pilot%202/Display%20Pilot%202_Display%20Pilot%202%20for%20Linux_V1.1.4.0_Linux_260407094616.zip";
+            hash = "sha256-xX+LpCsXJtEhLwlOJ1zvG08w7mzCqcRltvPsH5PgWvE=";
+            stripRoot = false;
+          };
+        in
+        "${zip}/Display Pilot 2-1.1.4.0-release.AppImage";
+    })
   ];
 
   # xdg env variables
