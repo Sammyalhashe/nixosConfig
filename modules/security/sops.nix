@@ -74,6 +74,9 @@
   sops.secrets.CLINE_HERMES_API_KEY = {
     owner = config.host.username;
   };
+  sops.secrets.composio_api_key = {
+    owner = config.host.username;
+  };
 
   sops.secrets.icloud_email = {
     owner = config.host.username;
