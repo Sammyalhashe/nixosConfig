@@ -48,6 +48,12 @@ let
       url = "https://agent.robinhood.com/mcp/trading";
       auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
     };
+    coinbase = {
+      # Hosted CDP "Coinbase for Agents" MCP. OAuth (Coinbase sign-in),
+      # same pattern as robinhood above — no local CLI or key file needed.
+      url = "https://agents.coinbase.com/mcp";
+      auth = "oauth";
+    };
   };
 
   claudeJson = {

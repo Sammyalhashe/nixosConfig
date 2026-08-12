@@ -35,6 +35,19 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  # Coinbase CDP credentials for hermes
+  sops.templates."hermes-coinbase-key" = {
+    content = ''
+      {
+        "name": "${config.sops.placeholder.cb_hardware_maker_org_name}",
+        "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}"
+      }
+    '';
+    owner = "hermes";
+    path = "/var/lib/hermes/coinbase_api_key.json";
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   # 2. Use a sops template to dynamically generate a systemd-compatible env file
   sops.templates."hermes-agent-secrets.env".content = ''
     OPENROUTER_API_KEY="${config.sops.placeholder.openrouter_api_key}"
@@ -44,6 +57,8 @@ in
     HERMES_MAX_TOKENS=8192
     BRAVE_SEARCH_API_KEY="${config.sops.placeholder.brave_api_key}"
     CLINEPASS_API_KEY="${config.sops.placeholder.CLINE_HERMES_API_KEY}"
+    COMPOSIO_API_KEY="${config.sops.placeholder.composio_api_key}"
+    GATEWAY_ALLOW_ALL_USERS=true
   '';
 
   # 3. Configure the Hermes Agent Service
@@ -65,15 +80,17 @@ in
       model = "cline-pass/qwen3.7-max";
 
       mcp_servers = {
+        composio = {
+          url = "https://connect.composio.dev/mcp";
+          headers = {
+            "x-consumer-api-key" = "\${COMPOSIO_API_KEY}";
+          };
+          connect_timeout = 60;
+          timeout = 180;
+        };
         robinhood-trading = {
           url = "https://agent.robinhood.com/mcp/trading";
           auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
-        };
-        coinbase = {
-          # Hosted CDP "Coinbase for Agents" MCP. OAuth (Coinbase sign-in),
-          # same pattern as robinhood above — no local CLI or key file needed.
-          url = "https://agents.coinbase.com/mcp";
-          auth = "oauth";
         };
       };
 
@@ -96,7 +113,7 @@ in
       custom_providers = [
         {
           name = "clinepass";
-          base_url = "https://api.cline.bot/v1";
+          base_url = "https://api.cline.bot/api/v1";
           key_env = "CLINEPASS_API_KEY"; # Tells Hermes to pull CLINEPASS_API_KEY from .env
           models = [
             "cline-pass/qwen3.7-max"
@@ -157,6 +174,22 @@ in
   # 4. Inject the generated environment file into the Hermes systemd service
   systemd.services.hermes-agent = {
 
+    preStart = ''
+      mkdir -p /var/lib/hermes/.hermes
+      cp -f ${
+        (pkgs.formats.yaml { }).generate "hermes-config.yaml" config.services.hermes-agent.settings
+      } /var/lib/hermes/.hermes/config.yaml
+      chmod 600 /var/lib/hermes/.hermes/config.yaml
+
+      # Set up Coinbase CLI default environment from the hardware maker key
+      if [ ! -f /var/lib/hermes/.config/coinbase/config.json ]; then
+        ${pkgs.nodejs}/bin/npx -y @coinbase/coinbase-cli env hermes \
+          --key-file /var/lib/hermes/coinbase_api_key.json \
+          --url https://api.coinbase.com \
+          --allow-plaintext-secrets || true
+      fi
+    '';
+
     environment.PYTHONPATH = "${pkgs.python3Packages.python-telegram-bot}/${pkgs.python3.sitePackages}";
 
     # The hermes-agent module still sets the deprecated MESSAGING_CWD env var;
@@ -183,6 +216,8 @@ in
   #    access for both hermes and salhashemi2 (hermes writes as hermes:hermes
   #    under UMask=0007, which would otherwise lock you out of files it creates).
   systemd.tmpfiles.rules = [
+    # Enforce 0711 mode so the ACL mask permits directory traversal
+    "z /home/salhashemi2 0711 salhashemi2 users - -"
     # Ensure the shared projects dir exists (nixosConfig already does).
     "d /home/salhashemi2/projects 0755 salhashemi2 users - -"
     # Traverse-only into the home root: descend to the shared subdirs without

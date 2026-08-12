@@ -9,6 +9,8 @@
   virtualisation.oci-containers.backend = "podman";
 
   systemd.tmpfiles.rules = [
+    "d /supernote/sndata/db_data 0700 70 70 -"
+    "d /supernote/sndata/redis_data 0755 999 999 -"
     "d /supernote/sndata/logs 0755 1000 1000 -"
     "d /supernote/sndata/logs/app 0755 1000 1000 -"
     "d /supernote/sndata/logs/cloud 0755 1000 1000 -"
@@ -66,6 +68,7 @@
     environment = {
       MYSQL_DATABASE = "supernotedb";
       MYSQL_USER = "enote";
+      MYSQL_PASSWORD_FILE = config.sops.secrets.filestore_container_env.path;
     };
     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
   };
