@@ -43,6 +43,11 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.fastmail_hermes_api_key = {
+    # Automatically restarts the agent if you rotate the key in sops
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
