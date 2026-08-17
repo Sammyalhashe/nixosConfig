@@ -68,7 +68,6 @@
     environment = {
       MYSQL_DATABASE = "supernotedb";
       MYSQL_USER = "enote";
-      MYSQL_PASSWORD_FILE = config.sops.secrets.filestore_container_env.path;
     };
     environmentFiles = [ config.sops.secrets.filestore_container_env.path ];
   };

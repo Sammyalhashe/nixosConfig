@@ -208,36 +208,36 @@ in
   # state on every activation). KQ7DV474L1 is the Bloomberg corporate Mac
   # connecting in as a client (see bbNixosConfig's home-KQ7DV474L1.nix).
   home.activation.seedDeskflowConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    CONF_DIR="${homeDir}/.config/Deskflow"
-    CONF="$CONF_DIR/Deskflow.conf"
-    SERVER_CONF="$CONF_DIR/server.conf"
-    if [ ! -f "$CONF" ]; then
-      mkdir -p "$CONF_DIR"
-      cat > "$SERVER_CONF" <<'EOF'
-section: screens
-	homebase:
-	KQ7DV474L1:
-end
+        CONF_DIR="${homeDir}/.config/Deskflow"
+        CONF="$CONF_DIR/Deskflow.conf"
+        SERVER_CONF="$CONF_DIR/server.conf"
+        if [ ! -f "$CONF" ]; then
+          mkdir -p "$CONF_DIR"
+          cat > "$SERVER_CONF" <<'EOF'
+    section: screens
+    	homebase:
+    	KQ7DV474L1:
+    end
 
-section: links
-	homebase:
-		right = KQ7DV474L1
-	KQ7DV474L1:
-		left = homebase
-end
-EOF
-      cat > "$CONF" <<EOF
-[core]
-coreMode=2
-computerName=homebase
+    section: links
+    	homebase:
+    		right = KQ7DV474L1
+    	KQ7DV474L1:
+    		left = homebase
+    end
+    EOF
+          cat > "$CONF" <<EOF
+    [core]
+    coreMode=2
+    computerName=homebase
 
-[gui]
-startCoreWithGui=true
+    [gui]
+    startCoreWithGui=true
 
-[server]
-externalConfig=true
-externalConfigFile=$SERVER_CONF
-EOF
-    fi
+    [server]
+    externalConfig=true
+    externalConfigFile=$SERVER_CONF
+    EOF
+        fi
   '';
 }
