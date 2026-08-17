@@ -68,6 +68,7 @@ in
     COMPOSIO_API_KEY="${config.sops.placeholder.composio_api_key}"
     HA_MCP_URL="${config.sops.placeholder.ha_mcp_webhook_url}"
     GATEWAY_ALLOW_ALL_USERS=true
+    FASTMAIL_API_KEY="${config.sops.placeholder.fastmail_hermes_api_key}"
   '';
 
   # 3. Configure the Hermes Agent Service
@@ -108,6 +109,13 @@ in
           url = "\${HA_MCP_URL}";
           connect_timeout = 30;
           timeout = 180;
+        };
+        fastmail = {
+          url = "https://api.fastmail.com/mcp";
+          headers = {
+            # Note the literal "Bearer " string before the variable interpolation
+            Authorization = "Bearer \${FASTMAIL_API_KEY}";
+          };
         };
       };
 
