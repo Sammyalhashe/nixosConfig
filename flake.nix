@@ -111,6 +111,8 @@
       url = "github:Sammyalhashe/terminus-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
   outputs =
@@ -136,6 +138,7 @@
       vicinae,
       vicinae-extensions,
       nix-snapd,
+      nix-cachyos-kernel,
       ...
     }@inputs:
     let
@@ -230,6 +233,15 @@
             host.enableHyprland = false;
             host.setNameservers = true;
           }
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [
+                nix-cachyos-kernel.overlays.pinned
+              ];
+              boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+            }
+          )
         ];
       };
 
