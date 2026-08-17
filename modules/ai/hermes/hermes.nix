@@ -35,6 +35,14 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  # HA-MCP exposes its MCP endpoint as a secret webhook URL — the URL *is* the
+  # credential, so it must not land in the world-readable Nix store via
+  # `settings` below.
+  sops.secrets.ha_mcp_webhook_url = {
+    # Automatically restarts the agent if you rotate the key in sops
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
@@ -58,6 +66,7 @@ in
     BRAVE_SEARCH_API_KEY="${config.sops.placeholder.brave_api_key}"
     CLINEPASS_API_KEY="${config.sops.placeholder.CLINE_HERMES_API_KEY}"
     COMPOSIO_API_KEY="${config.sops.placeholder.composio_api_key}"
+    HA_MCP_URL="${config.sops.placeholder.ha_mcp_webhook_url}"
     GATEWAY_ALLOW_ALL_USERS=true
   '';
 
@@ -91,6 +100,14 @@ in
         robinhood-trading = {
           url = "https://agent.robinhood.com/mcp/trading";
           auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
+        };
+        home-assistant = {
+          # HA-MCP custom component (homeassistant-ai/ha-mcp), not HA's built-in
+          # /api/mcp — the custom one also covers automations, dashboards,
+          # traces and logs. Secret webhook URL comes from the env file.
+          url = "\${HA_MCP_URL}";
+          connect_timeout = 30;
+          timeout = 180;
         };
       };
 

@@ -59,11 +59,12 @@ let
   claudeJson = {
     hasCompletedOnboarding = true;
   }
-  // lib.optionalAttrs (locallyDefinedMcps != { }) {
-    mcpServers = locallyDefinedMcps;
-  }
-  // lib.optionalAttrs (cfg.mcpServers != { }) {
-    mcpServers = cfg.mcpServers;
+  // lib.optionalAttrs (locallyDefinedMcps != { } || cfg.mcpServers != { }) {
+    # `//` replaces the whole `mcpServers` key rather than merging into it, so
+    # the two sources have to be combined here — otherwise setting
+    # `services.claude-code.mcpServers` silently drops locallyDefinedMcps.
+    # cfg wins per-server on name collisions.
+    mcpServers = locallyDefinedMcps // cfg.mcpServers;
   };
 
   mergeClaudeJsonScript =
