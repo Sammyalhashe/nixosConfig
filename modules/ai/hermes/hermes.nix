@@ -30,6 +30,11 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.captain_of_mothership_token = {
+    # Automatically restarts the agent if you rotate the key in sops
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   sops.secrets.brave_api_key = {
     # Automatically restarts the agent if you rotate the key in sops
     restartUnits = [ "hermes-agent.service" ];
@@ -64,7 +69,7 @@ in
   # 2. Use a sops template to dynamically generate a systemd-compatible env file
   sops.templates."hermes-agent-secrets.env".content = ''
     OPENROUTER_API_KEY="${config.sops.placeholder.openrouter_api_key}"
-    TELEGRAM_BOT_TOKEN="${config.sops.placeholder.telegram_bot_token}"
+    TELEGRAM_BOT_TOKEN="${config.sops.placeholder.captain_of_mothership_token}"
     # You can append other API keys here later (e.g., Alpaca, E-Trade, Finnhub)
     TELEGRAM_ALLOWED_USERS="8555669756"
     HERMES_MAX_TOKENS=8192
