@@ -40,6 +40,8 @@
 
     enableCoinbaseSweep = lib.mkEnableOption "Whether to enable the automated weekly Coinbase self-custody sweep service.";
 
+    enableKaspaNg = lib.mkEnableOption "Whether to install the Kaspa NG desktop node/wallet.";
+
     enableVicinae = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";
 
     enableHardwareWallets = lib.mkEnableOption "Whether to enable hardware wallet support (Ledger, Trezor, OneKey).";

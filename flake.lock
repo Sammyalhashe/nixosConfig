@@ -918,6 +918,22 @@
         "type": "github"
       }
     },
+    "kaspa-ng": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782738887,
+        "narHash": "sha256-9xnnNaIUTtlyGDYhlsyenwNqwZoGJ4ZmymVeUN+kGVo=",
+        "owner": "aspectron",
+        "repo": "kaspa-ng",
+        "rev": "58d65f21af939402b36882bde7ab0d4c6ddee212",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aspectron",
+        "repo": "kaspa-ng",
+        "type": "github"
+      }
+    },
     "keybr-tui": {
       "inputs": {
         "flake-utils": "flake-utils_4",
@@ -1749,6 +1765,7 @@
         "home-manager": "home-manager_2",
         "homebase-manager": "homebase-manager",
         "hyprlock": "hyprlock",
+        "kaspa-ng": "kaspa-ng",
         "keybr-tui": "keybr-tui",
         "llama-cpp": "llama-cpp",
         "mangowc": "mangowc",

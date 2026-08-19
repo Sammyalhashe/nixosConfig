@@ -113,6 +113,11 @@
     };
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    kaspa-ng = {
+      url = "github:aspectron/kaspa-ng";
+      flake = false;
+    };
   };
 
   outputs =
@@ -139,6 +144,7 @@
       vicinae-extensions,
       nix-snapd,
       nix-cachyos-kernel,
+      kaspa-ng,
       ...
     }@inputs:
     let
