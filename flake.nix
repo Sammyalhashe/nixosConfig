@@ -114,6 +114,11 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     llm-agents.url = "github:numtide/llm-agents.nix";
+
+    kaspa-ng = {
+      url = "github:aspectron/kaspa-ng";
+      flake = false;
+    };
   };
 
   outputs =
@@ -141,6 +146,7 @@
       nix-snapd,
       nix-cachyos-kernel,
       llm-agents,
+      kaspa-ng,
       ...
     }@inputs:
     let
