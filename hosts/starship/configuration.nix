@@ -23,6 +23,13 @@ in
     ../../common/home-manager-config.nix
   ];
 
+
+  specialisation.mango.configuration = {
+    host.enableMango = lib.mkForce true;
+    host.enableKDE = lib.mkForce false;
+    host.enableGreetd = lib.mkForce true;
+  };
+
   host.enableGreetd = false;
   host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];
