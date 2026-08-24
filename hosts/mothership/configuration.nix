@@ -71,8 +71,8 @@ in
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
   # Local GPU inference backend (Strix Halo / gfx1151). Flip these two to switch
   # the whole llama.cpp stack between ROCm and Vulkan (see backend module).
-  services.llm-services.backend.enableRocm = true;
-  services.llm-services.backend.enableVulkan = false;
+  services.llm-services.backend.enableRocm = false;
+  services.llm-services.backend.enableVulkan = true;
 
   services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
   services.llm-services.qwen-coder.enable = true; # Qwen3.6
@@ -153,6 +153,7 @@ in
       download_model "google_gemma-4-31B-it-Q4_K_M.gguf" "https://huggingface.co/bartowski/google_gemma-4-31B-it-GGUF/resolve/main/google_gemma-4-31B-it-Q4_K_M.gguf"
       download_model "qwen2.5-1.5b-instruct-q8_0.gguf" "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q8_0.gguf"
       download_model "qwen2.5-7b-instruct-q8_0.gguf" "https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q8_0.gguf"
+      download_model "hermes-3-llama-3.1-70B.gguf" "https://huggingface.co/bartowski/Hermes-3-Llama-3.1-70B-GGUF/resolve/main/Hermes-3-Llama-3.1-70B-Q5_K_M/Hermes-3-Llama-3.1-70B-Q5_K_M-00001-of-00002.gguf?download=true";
     '';
     serviceConfig = {
       Type = "simple";
