@@ -17,6 +17,9 @@ let
       nixvim-package.extend config.stylix.targets.nixvim.exportedModule
     else
       nixvim-package;
+  llm-packages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+    cline
+  ];
 in
 {
   imports = [
@@ -32,90 +35,93 @@ in
 
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
-  home.packages = with pkgs; [
-    jujutsu
-    inputs.fromscratch.packages."${pkgs.stdenv.hostPlatform.system}".default
-    inputs.homebase-manager.packages."${pkgs.stdenv.hostPlatform.system}".default
+  home.packages =
+    with pkgs;
+    [
+      jujutsu
+      inputs.fromscratch.packages."${pkgs.stdenv.hostPlatform.system}".default
+      inputs.homebase-manager.packages."${pkgs.stdenv.hostPlatform.system}".default
 
-    # c compilers
-    gcc
+      # c compilers
+      gcc
 
-    # desktop
-    wofi
-    rofi
-    tofi
+      # desktop
+      wofi
+      rofi
+      tofi
 
-    # applications
-    beeper
-    brave
-    cachix
-    deskflow
-    devenv
-    emacs
-    extended-nixvim
-    hyprlock
-    hyprpaper
-    kdePackages.partitionmanager
-    kitty
-    mupdf
-    nextcloud-client
-    proton-vpn
-    telegram-desktop
-    thunar
-    thunderbird
-    wireguard-ui
-    zoom-us
+      # applications
+      beeper
+      brave
+      cachix
+      deskflow
+      devenv
+      emacs
+      extended-nixvim
+      hyprlock
+      hyprpaper
+      kdePackages.partitionmanager
+      kitty
+      mupdf
+      nextcloud-client
+      proton-vpn
+      telegram-desktop
+      thunar
+      thunderbird
+      wireguard-ui
+      zoom-us
 
-    # unfree applications
-    obsidian
-    discord
+      # unfree applications
+      obsidian
+      discord
 
-    # AI
-    python313Packages.huggingface-hub
+      # AI
+      python313Packages.huggingface-hub
 
-    # terminal utilities
-    blesh
-    blueman
-    cargo
-    cava
-    ghostty
-    pavucontrol
-    spotify-player
-    stow
-    waypipe
+      # terminal utilities
+      blesh
+      blueman
+      cargo
+      cava
+      ghostty
+      pavucontrol
+      spotify-player
+      stow
+      waypipe
 
-    # GUI utilities (moved from home-common.nix)
-    grim
-    notejot
-    slurp
-    wl-clipboard
-    xclip
+      # GUI utilities (moved from home-common.nix)
+      grim
+      notejot
+      slurp
+      wl-clipboard
+      xclip
 
-    # jupyter
-    python3
-    python3Packages.jupyter
-    python3Packages.ipykernel
+      # jupyter
+      python3
+      python3Packages.jupyter
+      python3Packages.ipykernel
 
-    # fonts
+      # fonts
 
-    # wayland stuff
-    xwayland
+      # wayland stuff
+      xwayland
 
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+      # # It is sometimes useful to fine-tune packages, for example, by applying
+      # # overrides. You can do that directly here, just don't forget the
+      # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
+      # # fonts?
+      # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-    (import ./scripts/start_wireguard.nix { inherit pkgs; })
-    (import ./scripts/stop_wireguard.nix { inherit pkgs; })
-  ];
+      # # You can also create simple shell scripts directly inside your
+      # # configuration. For example, this adds a command 'my-hello' to your
+      # # environment:
+      # (pkgs.writeShellScriptBin "my-hello" ''
+      #   echo "Hello, ${config.home.username}!"
+      # '')
+      (import ./scripts/start_wireguard.nix { inherit pkgs; })
+      (import ./scripts/stop_wireguard.nix { inherit pkgs; })
+    ]
+    ++ llm-packages;
 
   home.file = {
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in

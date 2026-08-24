@@ -113,6 +113,7 @@
     };
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -139,12 +140,14 @@
       vicinae-extensions,
       nix-snapd,
       nix-cachyos-kernel,
+      llm-agents,
       ...
     }@inputs:
     let
       # Define overlays that should be available on all systems
       overlays = [
         nur.overlays.default
+        llm-agents.overlays.shared-nixpkgs
       ];
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied
@@ -166,9 +169,13 @@
           "flakes"
         ];
         # Binary cache for the vicinae launcher (avoids compiling it from source).
-        nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
+        nix.settings.extra-substituters = [
+          "https://vicinae.cachix.org"
+          "https://cache.numtide.com"
+        ];
         nix.settings.extra-trusted-public-keys = [
           "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+          "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
         ];
         nix.gc = {
           automatic = true;
