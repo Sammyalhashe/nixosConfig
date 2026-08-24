@@ -71,15 +71,16 @@ in
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
   # Local GPU inference backend (Strix Halo / gfx1151). Flip these two to switch
   # the whole llama.cpp stack between ROCm and Vulkan (see backend module).
-  services.llm-services.backend.enableRocm = false;
-  services.llm-services.backend.enableVulkan = true;
+  services.llm-services.backend.enableRocm = true;
+  services.llm-services.backend.enableVulkan = false;
 
   services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
-  services.llm-services.qwen-coder.enable = true; # Qwen3.6
+  services.llm-services.qwen-coder.enable = false; # Qwen3.6
   services.llm-services.qwen-flash.enable = true; # Fast/Chat (Qwen2.5-7B) - Port 8011
   services.llm-services.gemma.enable = false; # Bleeding Edge (Gemma 4-31B) - Port 8012
   services.llm-services.litellm-uv.enable = false; # (uv/PyPI runtime resolution — non-reproducible, drifted/broke)
   services.llm-services.litellm.enable = true; # Proxy/Gateway - Port 4000 (Nix-native, reproducible)
+  services.llm-services.llama-cpp-hermes.enable = true; # Hermes-3-Llama-3.1
 
   powerManagement.cpuFreqGovernor = "performance";
 

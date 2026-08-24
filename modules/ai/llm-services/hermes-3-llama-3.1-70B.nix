@@ -8,14 +8,14 @@
 with lib;
 
 let
-  cfg = config.services.llm-services.qwen-coder;
+  cfg = config.services.llm-services.llama-cpp-hermes;
 in
 {
-  options.services.llm-services.qwen-coder = {
-    enable = mkEnableOption "Qwen3-Coder-Next Service (Port 8014)";
+  options.services.llm-services.llama-cpp-hermes = {
+    enable = mkEnableOption "hermes-3-llama-3.1 Service (Port 8014)";
     modelPath = mkOption {
       type = types.str;
-      default = "/var/lib/llama-cpp-models/hermes-3-llama-3.1-70B.gguf";
+      default = "/var/lib/llama-cpp-models/Hermes-3-Llama-3.1-70B-Q5_K_M-00001-of-00002.gguf";
       description = "Path to the hermes-3-llama-3.1 GGUF model.";
     };
   };
