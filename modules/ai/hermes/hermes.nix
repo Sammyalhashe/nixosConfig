@@ -12,6 +12,11 @@ let
     "/home/salhashemi2/nixosConfig"
     "/home/salhashemi2/projects"
   ];
+
+  # The same skills bundle the interactive harnesses get via the ai-skills
+  # home-manager module. `<pkg>/claude` holds one directory per skill, each with
+  # a SKILL.md; hermes walks the tree for SKILL.md files.
+  aiSkills = inputs.ai-skills.packages.${pkgs.stdenv.hostPlatform.system}.ai-skills;
 in
 {
 
@@ -129,6 +134,13 @@ in
         };
       };
 
+      # Skills from the flake are read-only extras: hermes scans these dirs in
+      # addition to /var/lib/hermes/.hermes/skills, so skills it installs at
+      # runtime still land in the state dir and win on name collisions.
+      skills = {
+        external_dirs = [ "${aiSkills}/claude" ];
+      };
+
       web = {
         backend = "brave-free";
       };
@@ -209,13 +221,14 @@ in
   # 4. Inject the generated environment file into the Hermes systemd service
   systemd.services.hermes-agent = {
 
-    preStart = ''
-      mkdir -p /var/lib/hermes/.hermes
-      cp -f ${
-        (pkgs.formats.yaml { }).generate "hermes-config.yaml" config.services.hermes-agent.settings
-      } /var/lib/hermes/.hermes/config.yaml
-      chmod 600 /var/lib/hermes/.hermes/config.yaml
+    # config.yaml is written by the hermes module's activation script, which
+    # deep-merges these settings into the existing file so keys hermes owns at
+    # runtime (skills.disabled, streaming, …) survive. Copying the generated
+    # file over it here would wipe those, so we only mirror the restart: the
+    # unit has to change for systemd to pick up a settings edit.
+    restartTriggers = [ (builtins.hashString "sha256" (builtins.toJSON config.services.hermes-agent.settings)) ];
 
+    preStart = ''
       # Set up Coinbase CLI default environment from the hardware maker key
       if [ ! -f /var/lib/hermes/.config/coinbase/config.json ]; then
         ${pkgs.nodejs}/bin/npx -y @coinbase/coinbase-cli env hermes \
