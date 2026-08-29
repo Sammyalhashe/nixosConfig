@@ -10,6 +10,7 @@ keys:
   - &mothership_user "age1mypdj8sj85nfz4kgncqmrnc6aceacf0tugm87tean67jddqx6qhqksxp0d"
   - &oldboy "age123sd3m8zy4yp0sak5tcq3nzd3afw6xh7pvvnrn9dvwudryhx3g9qdzkcv5"
   - &homebasewsl "age136sr38ddk6ngzdekvrcjwsfz5n2dkax35u578ze0krgjw5h6us7s5vacnd"
+  - &ryoku "age1488x5u9sph2kqmwh9hmyegppqadxmfa0st73d7nr87lasaydav9skwrxat"
 
 creation_rules:
   - path_regex: .*secrets.*\.yaml$
