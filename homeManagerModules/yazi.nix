@@ -2,7 +2,7 @@
 {
   programs.yazi = {
     shellWrapperName = "y";
-    enable = true;
+    enable = false;
     settings = {
       manager = {
         prepend_keymap = [

@@ -7,7 +7,7 @@
 let
   zjstatus-wasm = pkgs.fetchurl {
     url = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
-    sha256 = "1zv173qh67x4bf4k4m5fpz22vy0pbp6f88c0c7dkjhjj4c9901p0";
+    sha256 = "KCzqshnlbhkIyfrDOQckH+bD4e99hfqrPl9DjO+HuP4=";
   };
   zellij-forgot-wasm = pkgs.fetchurl {
     url = "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm";

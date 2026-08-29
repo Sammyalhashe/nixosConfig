@@ -378,6 +378,26 @@
         ];
       };
 
+      homeConfigurations.ryoku = home-manager.lib.homeManagerConfiguration {
+        pkgs = getPkgs "x86_64-linux";
+        extraSpecialArgs = {
+          inherit inputs sops-nix;
+          user = "salhashemi2";
+          homeDir = "/home/salhashemi2";
+        };
+        modules = [
+          baseConfig
+          sops-nix.homeManagerModules.sops
+          ./homeManagerModules/ryoku.nix
+          ./common/home-ryoku.nix
+          {
+            environments.wsl = {
+              enable = false;
+            };
+          }
+        ];
+      };
+
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
