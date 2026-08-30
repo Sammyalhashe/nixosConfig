@@ -74,6 +74,11 @@ in
     };
   };
 
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/fbef9932-35a9-4509-a025-ad1a128c1b1c";
+    fsType = "ext4";
+  };
+
   networking.hostName = "starship"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
