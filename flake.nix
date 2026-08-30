@@ -390,10 +390,12 @@
           sops-nix.homeManagerModules.sops
           ./homeManagerModules/ryoku.nix
           ./common/home-ryoku.nix
+          ./homeManagerModules/cloudflare-warp.nix
           {
             environments.wsl = {
               enable = false;
             };
+            networking.cloudflare-warp.enable = true;
           }
         ];
       };

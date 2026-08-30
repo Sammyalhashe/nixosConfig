@@ -8,9 +8,12 @@
 }:
 let
   nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
-  nixvim-wsl = nixvim-package.extend { nixvim.wsl = false; };
+  nixvim-wsl = nixvim-package.extend {
+    nixvim.wsl = false;
+    nixvim.light = true;
+  };
   extended-nixvim =
-    if (config.stylix or {}).enable or false then
+    if (config.stylix or { }).enable or false then
       nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
     else
       nixvim-wsl;
@@ -18,6 +21,7 @@ in
 {
   imports = [
     ./home-common.nix
+    ../homeManagerModules/firefox.nix
   ];
 
   home.username = "${user}";
@@ -30,7 +34,10 @@ in
     cloudflare-warp
     extended-nixvim
     ghostty
+    discord
+    steam
   ];
+  
 
   programs.firefox = {
     enable = true;
@@ -54,7 +61,7 @@ in
   home.sessionVariables = {
     EDITOR = "nvim";
   };
-  
+
   nix.package = pkgs.nix;
 
   programs.home-manager.enable = true;

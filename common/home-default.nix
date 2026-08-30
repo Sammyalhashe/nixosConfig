@@ -27,6 +27,7 @@ in
     ./home-entertainment.nix
     ../homeManagerModules/aider.nix
     ../homeManagerModules/zeal.nix
+    ../homeManagerModules/firefox.nix
   ];
 
   programs.aider.enable = true;
@@ -155,24 +156,6 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
   programs.mangowc.enable = true;
-
-  programs.firefox = {
-    enable = true;
-    nativeMessagingHosts = [
-      pkgs.kdePackages.plasma-browser-integration
-    ];
-    configPath = "${config.xdg.configHome}/mozilla/firefox";
-    profiles.default = {
-      name = "default";
-      isDefault = true;
-      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        bitwarden
-        sponsorblock
-        darkreader
-      ];
-    };
-  };
 
   stylix.targets.firefox.profileNames = [ "default" ];
 
