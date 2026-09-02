@@ -10,7 +10,8 @@ let
   nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
   nixvim-wsl = nixvim-package.extend {
     nixvim.wsl = false;
-    nixvim.light = true;
+    nixvim.dark = false;
+    nixvim.themeWatcher = false;
   };
   extended-nixvim =
     if (config.stylix or { }).enable or false then

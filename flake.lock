@@ -1617,11 +1617,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1788362870,
-        "narHash": "sha256-qgyaNX0HpLyHqWEUL7SVJ/qG4KcwL8IJbWNPC3wCbt8=",
+        "lastModified": 1788364599,
+        "narHash": "sha256-B82BbwlwzAza2wSJV4+vmlmeVtw35+1L0ONYfcJRuQU=",
         "owner": "Sammyalhashe",
         "repo": "nixvim",
-        "rev": "17b726fcd0ecb144ae764f6611b51d9df1015388",
+        "rev": "d1d0850617d654d6e77bfeeb23ecc9b015362a2a",
         "type": "github"
       },
       "original": {
