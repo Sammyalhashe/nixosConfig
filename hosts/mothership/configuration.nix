@@ -61,10 +61,17 @@ in
     };
   };
 
-  # Essential environment variables for GFX 11.5.1 and Playwright
+  # Dropped two stale GPU variables that used to live here:
+  #
+  #   RADV_PERFTEST = "aco"        — dead. "aco" is not in radv_perftest_options
+  #                                  in this mesa (ACO became the default backend
+  #                                  and the toggle was removed), so RADV parsed
+  #                                  it as an unknown option and ignored it.
+  #   HSA_OVERRIDE_GFX_VERSION     — redundant, and far too broad set globally.
+  #                                  llama-cpp-rocm builds gfx1151 natively, so
+  #                                  overriding gfx1151 to gfx1151 is a no-op;
+  #                                  backend/rocm.nix still sets it per-service.
   environment.variables = {
-    HSA_OVERRIDE_GFX_VERSION = "11.5.1"; # Mandatory for Strix Halo to run ROCm 7.x
-    RADV_PERFTEST = "aco";
     PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
   };

@@ -16,6 +16,9 @@ lib.mkIf cfg.enableRocm {
 
     # ROCm runtime workarounds for Strix Halo (gfx1151).
     environment = {
+      # Belt and braces only: this build already lists gfx1151 among its
+      # AMDGPU targets, so this overrides gfx1151 to gfx1151. Kept in case a
+      # future nixpkgs ROCm drops the target, but it is not load-bearing.
       HSA_OVERRIDE_GFX_VERSION = "11.5.1";
       HSA_ENABLE_SDMA = "0";
     };

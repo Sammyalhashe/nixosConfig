@@ -14,8 +14,12 @@ lib.mkIf cfg.enableVulkan {
     # Vulkan (RADV) build from the llama.cpp flake input.
     package = inputs.llama-cpp.packages.${pkgs.stdenv.hostPlatform.system}.vulkan;
 
-    # Pin the ICD to RADV so the loader cannot pick up AMDVLK/amdgpu-pro if one
-    # is ever installed. No HSA overrides: those are ROCm/KFD-only.
+    # No HSA overrides here: those are ROCm/KFD-only.
+    #
+    # AMD_VULKAN_ICD is read by AMDVLK, not by mesa — RADV contains no reference
+    # to it, and the Vulkan loader selects drivers via VK_DRIVER_FILES. With
+    # only mesa installed it is therefore inert; it is kept solely so that
+    # installing AMDVLK later cannot quietly take over these services.
     environment = {
       AMD_VULKAN_ICD = "RADV";
     };
