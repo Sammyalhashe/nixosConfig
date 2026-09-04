@@ -95,7 +95,7 @@ in
           # which silently ignored the selected backend and broke under ROCm.
           "${config.services.llm-services.backend.package}/bin/llama-server "
           + modelArgs
-          + "${draftFlags} --port 8013 --host 0.0.0.0 --n-gpu-layers 1000 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 131072 --threads 16 --flash-attn 1 --no-mmap --parallel 1";
+          + "${draftFlags} --port 8013 --host 0.0.0.0 --n-gpu-layers 1000 --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 131072 --threads 16 --flash-attn 1 --load-mode none --parallel 1";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         Restart = "on-failure";
         RestartSec = "5s";

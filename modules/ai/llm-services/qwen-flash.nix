@@ -56,6 +56,7 @@ in
         User = "salhashemi2";
         Group = "users";
         StateDirectory = "llama-cpp-models";
+        CacheDirectory = "llama-cpp-flash";
         DeviceAllow = [
           "/dev/dri/renderD128"
           "/dev/dri/card0"
@@ -75,7 +76,7 @@ in
           + "--parallel 1 "
           + "--threads 8 "
           + "--flash-attn 1 "
-          + "--no-mmap";
+          + "--load-mode none";
 
         Restart = "on-failure";
         RestartSec = "5s";

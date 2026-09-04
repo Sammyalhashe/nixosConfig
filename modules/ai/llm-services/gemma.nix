@@ -66,6 +66,7 @@ in
         User = "salhashemi2";
         Group = "users";
         StateDirectory = "llama-cpp-models";
+        CacheDirectory = "llama-cpp-gemma";
         DeviceAllow = [
           "/dev/dri/renderD128"
           "/dev/dri/card0"
@@ -89,7 +90,7 @@ in
           + "--parallel 1 "
           + "--threads 12 " # Headroom for GPU command processor
           + "--flash-attn 1 "
-          + "--no-mmap"; # Crucial for Unified Memory to prevent paging stalls and kernel freezes
+          + "--load-mode none"; # Crucial for Unified Memory to prevent paging stalls and kernel freezes
 
         Restart = "on-failure";
         RestartSec = "5s";

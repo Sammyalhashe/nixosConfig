@@ -59,6 +59,7 @@ in
         User = "salhashemi2";
         Group = "users";
         StateDirectory = "llama-cpp-models";
+        CacheDirectory = "llama-cpp-coder";
         DeviceAllow = [
           "/dev/dri/renderD128"
           "/dev/dri/card0"
@@ -82,7 +83,7 @@ in
           + "--top-p 0.95 "
           + "--top-k 20 "
           + "--min-p 0.00 "
-          + "--no-mmap"; # MANDATORY for Strix Halo to prevent paging stalls
+          + "--load-mode none"; # MANDATORY for Strix Halo to prevent paging stalls
 
         Restart = "on-failure";
         RestartSec = "5s";

@@ -66,6 +66,9 @@ in
         # Creates ${top.modelCacheDir} and chowns it to User, so llama-server
         # can write the models it downloads.
         StateDirectory = "llama-cpp-models";
+        # XDG_CACHE_HOME above points here. Without this systemd never creates
+        # it, and the RADV shader cache is silently disabled at every start.
+        CacheDirectory = "llama-cpp-hermes";
         DeviceAllow = [
           "/dev/dri/renderD128"
           "/dev/dri/card0"
@@ -93,7 +96,7 @@ in
           + "--top-p 0.95 "
           + "--top-k 20 "
           + "--min-p 0.05 " # Re-enabled (was 0.00); critical for Hermes tool-use stability
-          + "--no-mmap"; # MANDATORY for Strix Halo to prevent paging stalls
+          + "--load-mode none"; # MANDATORY for Strix Halo to prevent paging stalls
 
         Restart = "on-failure";
         RestartSec = "5s";
