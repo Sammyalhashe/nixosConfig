@@ -25,8 +25,9 @@ lib.mkIf cfg.enableRocm {
   # means selecting the Vulkan backend drops them automatically. Display and
   # unified-memory kernel params stay in the host config since they apply to
   # both backends.
+  # amd_iommu=off used to live here, but it benefits both backends and is now
+  # set in ./default.nix.
   boot.kernelParams = [
-    "amd_iommu=off" # avoid SDMA/VMM pagefaults on Strix Halo under ROCm
     "amdgpu.cwsr_enable=0" # disable compute wave save/restore for ROCm stability
     "amdgpu.runpm=0" # keep the GPU awake for ROCm/KFD device discovery
   ];

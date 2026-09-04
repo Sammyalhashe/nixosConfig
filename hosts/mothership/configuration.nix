@@ -32,10 +32,13 @@ in
     initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
-      # ROCm-specific kernel params (amd_iommu=off, amdgpu.cwsr_enable=0,
-      # amdgpu.runpm=0) live in modules/ai/llm-services/backend/rocm.nix so they
-      # drop automatically when the Vulkan backend is selected.
-      "iommu=pt"
+      # GPU kernel params live with the backend module: amd_iommu=off and the
+      # unified-memory sizing are shared in backend/default.nix, while the
+      # KFD-only workarounds (amdgpu.cwsr_enable=0, amdgpu.runpm=0) are in
+      # backend/rocm.nix and drop automatically under Vulkan.
+      #
+      # iommu=pt was dropped: amd_iommu=off turns the AMD IOMMU off outright, so
+      # asking for passthrough mode alongside it was contradictory dead config.
       "amdgpu.gpu_recovery=1"
       "initcall_blacklist=simpledrm_platform_driver_init"
 
@@ -45,10 +48,9 @@ in
       "amdgpu.dcdebugmask=0x10" # Disable unstable DC features
       "amdgpu.abmlevel=0" # Prevents panel backlight interference
 
-      # --- UNIFIED MEMORY MANAGEMENT ---
-      # Leaving ~24GB for CPU/OS prevents the "Pageflip timeout" freezes when GPU is under heavy load
-      "ttm.pages_limit=25600000"
-      "amdgpu.gartsize=102400"
+      # Unified-memory sizing (amdgpu.gttsize / ttm.pages_limit) is owned by
+      # services.llm-services.backend.gttSizeMiB — see the backend module. Both
+      # backends need it, so it follows the backend rather than the host.
     ];
     kernel.sysctl = {
       "vm.swappiness" = 10;
@@ -71,8 +73,16 @@ in
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
   # Local GPU inference backend (Strix Halo / gfx1151). Flip these two to switch
   # the whole llama.cpp stack between ROCm and Vulkan (see backend module).
-  services.llm-services.backend.enableRocm = true;
-  services.llm-services.backend.enableVulkan = false;
+  # Vulkan (RADV) is upstream's recommended backend for gfx1151 on grounds of
+  # stability and compatibility — see https://strix-halo-toolboxes.com/.
+  #
+  # It is NOT the faster one. Upstream's own benchmark data has ROCm tied on
+  # token generation (1.00x) but well ahead on prefill, and the gap grows with
+  # context: 1.34x at depth 0, 1.41x at 32k, 2.37x at 64k. Hermes runs at
+  # 131072, so the penalty here is real. Flip these two and measure prefill at
+  # a realistic depth before settling.
+  services.llm-services.backend.enableRocm = false;
+  services.llm-services.backend.enableVulkan = true;
 
   services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
   services.llm-services.qwen-coder.enable = false; # Qwen3.6
@@ -127,9 +137,12 @@ in
   ];
 
   # --- DECLARATIVE MODEL MANAGEMENT ---
-  # Background downloader that ensures GGUF files are present and verified
+  # Main models are fetched by llama-server itself via --hf-repo/--hf-file into
+  # LLAMA_CACHE (see modules/ai/llm-services), which handles split GGUFs, resume
+  # and etag verification. This job only covers the speculative-decoding draft
+  # model, which llama-server's --hf-* flags do not reach.
   systemd.services.model-downloader = {
-    description = "Download and verify GGUF models in background";
+    description = "Download the speculative-decoding draft model";
     after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
     path = [
@@ -144,17 +157,16 @@ in
         local name=$1
         local url=$2
         local target="$MODEL_DIR/$name"
-        if [ ! -f "$target" ]; then
-          aria2c -x16 -s16 -j5 -c --dir="$MODEL_DIR" -o "$name" "$url"
+        # aria2 leaves a .aria2 control file next to any partial download. A
+        # bare -f check treats a half-fetched 40GB shard as done, which is how
+        # the Hermes shards ended up unusable; resume unless the control file
+        # is gone.
+        if [ -f "$target" ] && [ ! -f "$target.aria2" ]; then
+          return 0
         fi
+        aria2c -x16 -s16 -j5 -c --dir="$MODEL_DIR" -o "$name" "$url"
       }
-      download_model "qwen_32b.gguf" "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct-GGUF/resolve/main/qwen2.5-coder-32b-instruct-q4_k_m.gguf"
-      download_model "qwq_32b_q4km.gguf" "https://huggingface.co/unsloth/QwQ-32B-GGUF/resolve/main/QwQ-32B-Q4_K_M.gguf"
-      download_model "qwen3_next_q3km.gguf" "https://huggingface.co/unsloth/Qwen3-Coder-Next-GGUF/resolve/main/Qwen3-Coder-Next-Q3_K_M.gguf"
-      download_model "google_gemma-4-31B-it-Q4_K_M.gguf" "https://huggingface.co/bartowski/google_gemma-4-31B-it-GGUF/resolve/main/google_gemma-4-31B-it-Q4_K_M.gguf"
       download_model "qwen2.5-1.5b-instruct-q8_0.gguf" "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q8_0.gguf"
-      download_model "qwen2.5-7b-instruct-q8_0.gguf" "https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q8_0.gguf"
-      download_model "hermes-3-llama-3.1-70B.gguf" "https://huggingface.co/bartowski/Hermes-3-Llama-3.1-70B-GGUF/resolve/main/Hermes-3-Llama-3.1-70B-Q5_K_M/Hermes-3-Llama-3.1-70B-Q5_K_M-00001-of-00002.gguf?download=true";
     '';
     serviceConfig = {
       Type = "simple";
