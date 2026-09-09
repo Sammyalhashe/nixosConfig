@@ -119,6 +119,10 @@
       url = "github:aspectron/kaspa-ng";
       flake = false;
     };
+
+    nix-bitcoin = {
+      url = "github:fort-nix/nix-bitcoin/release";
+    };
   };
 
   outputs =
@@ -147,6 +151,7 @@
       nix-cachyos-kernel,
       llm-agents,
       kaspa-ng,
+      nix-bitcoin,
       ...
     }@inputs:
     let
