@@ -40,6 +40,9 @@ in
     # Bitcoin wallet; point it at the node on mothership rather than a public
     # server. See modules/crypto/sparrow.nix for the connection options.
     sparrow
+    # Timelock-based recovery wallet; same backend choices as Sparrow.
+    # See modules/crypto/liana.nix.
+    liana
   ];
 
   programs.firefox = {

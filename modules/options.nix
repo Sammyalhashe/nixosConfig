@@ -48,6 +48,8 @@
 
     enableSparrow = lib.mkEnableOption "Whether to install the Sparrow Bitcoin wallet.";
 
+    enableLiana = lib.mkEnableOption "Whether to install the Liana timelock Bitcoin wallet (GUI, or lianad on headless hosts).";
+
     enableKaspad = lib.mkEnableOption "Whether to run a kaspad (rusty-kaspa) node.";
 
     exposeBitcoinToLan = lib.mkEnableOption ''

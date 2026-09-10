@@ -43,6 +43,10 @@ in
   # which could not run on a headless host.
   host.enableKaspad = true;
 
+  # Liana. This host is headless, so modules/crypto/liana.nix installs lianad
+  # (the daemon) rather than the GUI -- see the comment there.
+  host.enableLiana = true;
+
   host.homeManagerHostname = "mothership";
   host.fallbackNameservers = [ "11.125.37.1" ];
 

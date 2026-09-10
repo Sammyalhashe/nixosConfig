@@ -30,6 +30,7 @@ in
   host.fallbackNameservers = [ "11.125.37.1" ];
   host.enableHardwareWallets = true;
   host.enableSparrow = true;
+  host.enableLiana = true;
 
   # auto upgrade
   system.autoUpgrade.enable = true;
