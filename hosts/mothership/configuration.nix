@@ -95,24 +95,26 @@ in
   services.llm-services.backend.enableRocm = false;
   services.llm-services.backend.enableVulkan = true;
 
-  services.llm-services.gpt-oss.enable = false; # Reasoning/Large (DeepSeek-R1-671B)
-  services.llm-services.qwen-coder.enable = false; # Qwen3.6
-  services.llm-services.qwen-flash.enable = true; # Fast/Chat (Qwen2.5-7B) - Port 8011
-  services.llm-services.gemma.enable = false; # Bleeding Edge (Gemma 4-31B) - Port 8012
-  services.llm-services.litellm-uv.enable = false; # (uv/PyPI runtime resolution — non-reproducible, drifted/broke)
-  services.llm-services.litellm.enable = true; # Proxy/Gateway - Port 4000 (Nix-native, reproducible)
-  services.llm-services.llama-cpp-hermes.enable = true; # Hermes-3-Llama-3.1
+  # Models are declared in ../../modules/ai/llm-services/models/; each entry
+  # generates its llama-server unit and its LiteLLM routes together.
+  services.llm-services.models.qwen-flash.enable = true; # utility     - Port 8011
+  services.llm-services.models.qwen3-8-flash-next.enable = true; # coding-agent - Port 8014
+
+  services.llm-services.litellm.enable = true; # Proxy/Gateway - Port 4000
 
   powerManagement.cpuFreqGovernor = "performance";
 
-  # Open WebUI: The primary user interface for all local and remote LLMs
+  # Open WebUI: browser UI for the local and remote LLMs. Disabled -- unused in
+  # practice, and it was the thing holding 0.0.0.0:8080. Config kept so it is a
+  # one-line flip to bring back; note LND's REST API now sits on 8085, so
+  # re-enabling this no longer collides.
   services.open-webui = {
-    enable = true;
+    enable = false;
     port = 8080;
     host = "0.0.0.0";
     environment = {
       # Points to local llama-server instances and the LiteLLM gateway
-      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8014/v1;http://127.0.0.1:8012/v1;http://127.0.0.1:4000/v1";
+      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8014/v1;http://127.0.0.1:4000/v1";
       OPENAI_API_KEYS = "none;none;none";
       ENABLE_OLLAMA_API = "False";
       ENABLE_WEB_SEARCH = "True";

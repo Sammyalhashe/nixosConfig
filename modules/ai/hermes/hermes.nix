@@ -151,9 +151,11 @@ in
           model = "deepseek/deepseek-r1";
         }
         {
-          # If OpenRouter is totally down, try to use the local Strix Halo machine
+          # If OpenRouter is totally down, try to use the local Strix Halo
+          # machine. The -fast alias suppresses thinking: this is an agent
+          # loop, where the reasoning tax compounds over many short tool turns.
           provider = "custom:mothership";
-          model = "qwen3.6";
+          model = "qwen3.8-fast";
         }
       ];
 
@@ -173,7 +175,8 @@ in
           base_url = "http://mothership.salh.xyz:4000/v1";
           api_key = "none";
           models = [
-            "qwen-3.6"
+            "qwen3.8"
+            "qwen3.8-fast"
             "qwen-flash"
           ];
         }

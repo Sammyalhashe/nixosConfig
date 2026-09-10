@@ -8,13 +8,10 @@
 {
   imports = [
     ./backend
-    ./gpt-oss.nix
-    ./qwen-coder.nix
-    ./qwen-flash.nix
+    ./models.nix
+    ./models/qwen-flash.nix
+    ./models/qwen3-8-flash-next.nix
     ./litellm.nix
-    ./litellm-uv.nix
-    ./gemma.nix
-    ./hermes-3-llama-3.1-70B.nix
   ];
 
   options.services.llm-services.modelCacheDir = lib.mkOption {
