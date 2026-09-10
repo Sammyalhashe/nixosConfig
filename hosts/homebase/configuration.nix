@@ -24,6 +24,7 @@ in
   host.enableGreetd = false;
   host.enableSnap = true;
   host.enableHardwareWallets = true;
+  host.enableSparrow = true;
 
   specialisation.kde.configuration = {
     host.enableKDE = lib.mkForce true;

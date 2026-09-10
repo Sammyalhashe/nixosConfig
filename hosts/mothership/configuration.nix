@@ -29,6 +29,16 @@ in
   host.isHeadless = true;
   host.enableGreetd = false;
 
+  # Let Sparrow on homebase/starship/ryoku use this node instead of a public
+  # server. Firewall holes live in modules/crypto/lightning.nix.
+  host.exposeBitcoinToLan = true;
+
+  # Lightning wallets reach LND over the picloud tunnel's private-network route
+  # for 11.125.37.0/24, so LND's TLS is end-to-end and nothing is published to
+  # the internet. Run `lndconnect --host=11.125.37.101` on this host to pair.
+  host.exposeLndToLan = true;
+  host.lndLanAddress = "11.125.37.101";
+
   # Kaspa full node. This is the daemon, not the GTK wallet in kaspa-ng.nix,
   # which could not run on a headless host.
   host.enableKaspad = true;

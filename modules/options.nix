@@ -46,7 +46,43 @@
 
     enableHardwareWallets = lib.mkEnableOption "Whether to enable hardware wallet support (Ledger, Trezor, OneKey).";
 
+    enableSparrow = lib.mkEnableOption "Whether to install the Sparrow Bitcoin wallet.";
+
     enableKaspad = lib.mkEnableOption "Whether to run a kaspad (rusty-kaspa) node.";
+
+    exposeBitcoinToLan = lib.mkEnableOption ''
+      Whether to let other hosts on the LAN reach bitcoind's JSON-RPC (and
+      electrs, when enabled) so wallets like Sparrow can use this node. Opens
+      the corresponding firewall ports -- see modules/crypto/lightning.nix
+    '';
+
+    exposeLndToLan = lib.mkEnableOption ''
+      Whether to let Lightning wallets (Zeus, Alby) reach LND's REST API from
+      the LAN -- and, via the Cloudflare tunnel's private-network route, from
+      WARP clients off-site. This is LND's *admin* interface: the macaroon it
+      hands out is unrestricted authority over channel funds, so it is
+      deliberately separate from exposeBitcoinToLan
+    '';
+
+    lndLanAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      example = "11.125.37.101";
+      description = ''
+        Address wallets will dial LND on. Added to the TLS certificate's
+        subjectAltName -- without it clients reject the connection, since LND
+        only auto-adds its rpcAddress. Required when exposeLndToLan is set.
+      '';
+    };
+
+    bitcoinLanCidrs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ "11.125.37.0/24" ];
+      description = ''
+        Sources permitted to make bitcoind JSON-RPC calls, on top of localhost.
+        Only consulted when exposeBitcoinToLan is set.
+      '';
+    };
 
     enableSnap = lib.mkEnableOption "Whether to enable snap.";
   };

@@ -1,39 +1,112 @@
 {
   config,
+  lib,
   inputs,
   ...
 }:
+let
+  cfg = config.host;
+in
 {
   imports = [
     inputs.nix-bitcoin.nixosModules.default
   ];
 
-  # Generate bitcoind/lnd/electrs/rtl credentials into /etc/nix-bitcoin-secrets.
-  # Without this (or a deployment method) nix-bitcoin fails an assertion.
-  # NOTE: back up that directory -- it holds the LND seed material.
-  nix-bitcoin.generateSecrets = true;
+  config = lib.mkMerge [
+    {
+      # Generate bitcoind/lnd/electrs/rtl credentials into /etc/nix-bitcoin-secrets.
+      # Without this (or a deployment method) nix-bitcoin fails an assertion.
+      # NOTE: back up that directory -- it holds the LND seed material.
+      nix-bitcoin.generateSecrets = true;
 
-  # Lets the main user run bitcoin-cli / lncli without sudo.
-  nix-bitcoin.operator = {
-    enable = true;
-    name = config.host.username;
-  };
+      # Lets the main user run bitcoin-cli / lncli without sudo.
+      nix-bitcoin.operator = {
+        enable = true;
+        name = config.host.username;
+      };
 
-  services.bitcoind = {
-    enable = true;
-    txindex = true; # Full transaction index enabled
+      services.bitcoind = {
+        enable = true;
+        txindex = true; # Full transaction index enabled
 
-    # Set to 24000 (24GB) for IBD; drop to 4000 (4GB) after sync completes
-    dbCache = 24000;
-  };
+        # 4 GB steady-state. The 24 GB used during initial block download is
+        # only worth it while syncing, and on this host it competes directly
+        # with the ~87 GiB LLM -- the two together do not fit in 128 GiB.
+        dbCache = 4000;
+      };
 
-  services.electrs.enable = true;
-  services.lnd.enable = true;
+      # electrs is an Electrum server: it builds an address -> transaction index
+      # so on-chain wallets can ask "what does this address own?". Off, because
+      # nothing here needs it -- LND talks to bitcoind directly, and Sparrow
+      # connects to Bitcoin Core's RPC, where txindex above already provides the
+      # transaction-input lookups that would otherwise require an Electrum
+      # server. Turning this on is all that is needed to get it (and its
+      # firewall port) back; the cost is a separate ~56 GB index.
+      services.electrs.enable = false;
 
-  # Ride The Lightning: the LND web UI supported by nix-bitcoin. Binds to
-  # 127.0.0.1:3000, so reach it over an SSH tunnel -- mothership is headless.
-  services.rtl = {
-    enable = true;
-    nodes.lnd.enable = true;
-  };
+      services.lnd = {
+        enable = true;
+        # Default 8080 collides with open-webui, which binds 0.0.0.0:8080 and so
+        # also claims 127.0.0.1:8080. This is the local REST API only -- nothing
+        # external connects to it, and RTL derives its endpoint from this option.
+        restPort = 8085;
+      };
+
+      # Ride The Lightning: the LND web UI supported by nix-bitcoin. Binds to
+      # 127.0.0.1:3000, so reach it over an SSH tunnel -- mothership is headless.
+      services.rtl = {
+        enable = true;
+        nodes.lnd.enable = true;
+      };
+    }
+
+    # LAN exposure, kept here rather than in the host config so the firewall
+    # holes live next to the services that need them and appear together with
+    # the option that opens them.
+    (lib.mkIf cfg.exposeBitcoinToLan {
+      services.bitcoind.rpc = {
+        address = "0.0.0.0";
+        allowip = [ "127.0.0.1" ] ++ cfg.bitcoinLanCidrs;
+      };
+
+      # electrs has no allowlist of its own, so the firewall is the only thing
+      # restricting it -- open it solely when electrs is actually enabled.
+      services.electrs.address = lib.mkIf config.services.electrs.enable "0.0.0.0";
+
+      networking.firewall.allowedTCPPorts = [
+        config.services.bitcoind.rpc.port # 8332 -- Sparrow via Bitcoin Core RPC
+      ]
+      ++ lib.optional config.services.electrs.enable config.services.electrs.port; # 50001
+    })
+
+    # Lightning wallets (Zeus). Separate from the bitcoind switch on purpose:
+    # this is LND's admin API, and its macaroon is bearer authority over the
+    # channel funds. Safe here only because the Cloudflare tunnel reaches this
+    # subnet as a *private network* route -- LND's own TLS stays end-to-end.
+    # Publishing it as a tunnel "application" instead would terminate TLS at
+    # Cloudflare's edge and expose the macaroon in plaintext.
+    (lib.mkIf cfg.exposeLndToLan {
+      assertions = [
+        {
+          assertion = cfg.lndLanAddress != "";
+          message = "host.exposeLndToLan requires host.lndLanAddress (goes into LND's TLS subjectAltName).";
+        }
+      ];
+
+      # Prints a QR/URI bundling host, cert and macaroon for the wallet to scan:
+      #   lndconnect --host=<lndLanAddress>        # QR
+      #   lndconnect --host=<lndLanAddress> --url  # URI
+      # Note this also sets services.lnd.restAddress to 0.0.0.0 on our behalf
+      # (nix-bitcoin modules/lndconnect.nix), which is what makes REST reachable.
+      services.lnd.lndconnect.enable = true;
+
+      # LND only auto-adds its rpcAddress to the certificate, so without this
+      # wallets dialling lndLanAddress fail certificate verification.
+      services.lnd.certificate.extraIPs = [ cfg.lndLanAddress ];
+
+      networking.firewall.allowedTCPPorts = [
+        config.services.lnd.restPort # 8085 -- Zeus et al. gRPC (10009) stays local.
+      ];
+    })
+  ];
 }

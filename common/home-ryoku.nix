@@ -37,6 +37,9 @@ in
     ghostty
     discord
     steam
+    # Bitcoin wallet; point it at the node on mothership rather than a public
+    # server. See modules/crypto/sparrow.nix for the connection options.
+    sparrow
   ];
 
   programs.firefox = {
