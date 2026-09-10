@@ -11,7 +11,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ./bluetooth.nix
     inputs.home-manager.nixosModules.default
     inputs.home-manager.nixosModules.home-manager
     ../../common/home-manager-config.nix
@@ -26,6 +25,7 @@ in
 
   # Headless AI machine: no desktop/GUI is ever built or installed.
   # Default to server/headless mode (what systemd-boot loads)
+  host.enableBluetooth = true;
   host.isHeadless = true;
   host.enableGreetd = false;
 
@@ -230,9 +230,6 @@ in
     };
   };
 
-  time.timeZone = "America/New_York";
-  i18n.defaultLocale = "en_US.UTF-8";
-
   services.xserver.xkb = {
     layout = "us";
     options = "caps:swapescape";
@@ -257,10 +254,6 @@ in
   };
 
   services.getty.autologinUser = "${user}";
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-  };
 
   environment.systemPackages = with pkgs; [
     git
@@ -308,14 +301,6 @@ in
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  networking.extraHosts = ''
-    11.125.37.101 mothership
-    11.125.37.175 oldboy
-    11.125.37.99  raspberrypi
-    11.125.37.98  filestore
-    11.125.37.135 homebase
-  '';
 
   networking.firewall.enable = false;
   system.stateVersion = "24.11";

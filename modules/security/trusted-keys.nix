@@ -10,7 +10,10 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZKrkpzxAf0u3+fn59xouUtVHtklRuGwCwfPpR0Y8nc sammy.alhashemi@mail.utoronto.ca"
   ];
 
-  users.users.salhashemi2 = {
+  # host.username, not a literal: this module is imported on every host, so
+  # hardcoding "salhashemi2" created a second, unintended account with wheel
+  # and passwordless sudo on homebasewsl, where host.username is "nixos".
+  users.users.${config.host.username} = {
     isNormalUser = true;
     extraGroups = [
       "wheel"

@@ -63,7 +63,6 @@ let
   '';
 in
 {
-  time.timeZone = "America/New_York";
   nix.gc.options = lib.mkForce "--delete-older-than 14d";
 
   # This deduplicates files that are identical across different packages

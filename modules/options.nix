@@ -86,6 +86,12 @@
       '';
     };
 
+    enableBluetooth = lib.mkEnableOption "Whether to enable Bluetooth (bluez + blueman).";
+
+    enableNvidia = lib.mkEnableOption "Whether to enable the proprietary NVIDIA driver.";
+
+    enableWebdav = lib.mkEnableOption "Whether to mount the Nextcloud WebDAV share via davfs2/autofs.";
+
     enableSnap = lib.mkEnableOption "Whether to enable snap.";
   };
 }
