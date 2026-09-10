@@ -52,6 +52,13 @@
 
     enableKaspad = lib.mkEnableOption "Whether to run a kaspad (rusty-kaspa) node.";
 
+    exposeKaspaToLan = lib.mkEnableOption ''
+      Whether to bind kaspad's RPC listeners to 0.0.0.0 and open them so Kaspa
+      NG on other hosts can use this node instead of syncing its own DAG.
+      kaspad's RPC is UNAUTHENTICATED -- trusted LAN only, never the internet.
+      Opens the corresponding firewall ports -- see modules/crypto/kaspad.nix
+    '';
+
     exposeBitcoinToLan = lib.mkEnableOption ''
       Whether to let other hosts on the LAN reach bitcoind's JSON-RPC (and
       electrs, when enabled) so wallets like Sparrow can use this node. Opens

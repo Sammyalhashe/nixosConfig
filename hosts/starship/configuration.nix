@@ -25,6 +25,7 @@ in
   };
 
   host.enableBluetooth = true;
+  host.enableKaspaNg = true;
   host.enableGreetd = false;
   host.homeManagerHostname = "starship";
   host.fallbackNameservers = [ "11.125.37.1" ];

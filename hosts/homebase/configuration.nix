@@ -16,6 +16,7 @@ in
   ];
 
   host.enableBluetooth = true;
+  host.enableKaspaNg = true;
   host.enableNvidia = true;
   host.enableGreetd = false;
   host.enableSnap = true;

@@ -43,6 +43,10 @@ in
   # which could not run on a headless host.
   host.enableKaspad = true;
 
+  # Serve the DAG to Kaspa NG on homebase/starship/ryoku so they do not each
+  # sync their own. Firewall holes live in modules/crypto/kaspad.nix.
+  host.exposeKaspaToLan = true;
+
   # Liana. This host is headless, so modules/crypto/liana.nix installs lianad
   # (the daemon) rather than the GUI -- see the comment there.
   host.enableLiana = true;

@@ -43,6 +43,9 @@ in
     # Timelock-based recovery wallet; same backend choices as Sparrow.
     # See modules/crypto/liana.nix.
     liana
+    # Kaspa wallet. Point it at mothership (Remote -> ws://mothership.salh.xyz:17110)
+    # rather than letting it sync its own DAG. See modules/crypto/kaspa-ng.nix.
+    (import ../pkgs/kaspa-ng.nix { inherit pkgs; })
   ];
 
   programs.firefox = {
