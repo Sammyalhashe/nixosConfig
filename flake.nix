@@ -1,5 +1,5 @@
 {
-  description = "Sammy Al Hashemi's multi-host NixOS & Darwin configuration flake";
+  description = "Sammy Al Hashemi's multi-host NixOS configuration flake";
 
   # --- INPUTS: External dependencies and specialized toolsets ---
   inputs = {
@@ -9,10 +9,6 @@
     # User-level environment management
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    # MacOS configuration management — tracking nix-darwin unstable to match nixpkgs-unstable
-    darwin.url = "github:LnL7/nix-darwin";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     hyprlock.url = "github:hyprwm/hyprlock";
 

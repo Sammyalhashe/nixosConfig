@@ -26,14 +26,6 @@ in
   # All host configs, as top-level build targets for `buildX` / `checkX`.
   buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hostList;
 
-  mkDarwinScript =
-    name: flakeAttr: action:
-    pkgs.writeScriptBin name ''
-      #!/bin/sh
-      echo "Running: darwin-rebuild ${action} --flake .#${flakeAttr}"
-      darwin-rebuild ${action} --flake .#${flakeAttr}
-    '';
-
   mkScript =
     name: script:
     pkgs.writeScriptBin name ''
