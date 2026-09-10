@@ -1,6 +1,6 @@
 { pkgs }:
 let
-  mapleMonoName = if pkgs.stdenv.isDarwin then "Maple Mono NF" else "MapleMono NF";
+  mapleMonoName = if pkgs.stdenv.hostPlatform.isDarwin then "Maple Mono NF" else "MapleMono NF";
 in
 {
   base16Scheme = "${pkgs.base16-schemes}/share/themes/everforest.yaml";

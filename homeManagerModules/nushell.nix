@@ -198,7 +198,7 @@ in
       }
 
 
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         def login-enterprise-wifi [ssid: string, username: string, password: string] {
           nmcli con add type wifi ifname wlo1 con-name $ssid ssid $ssid -- wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 802-1x.identity $username 802-1x.password $password
         }

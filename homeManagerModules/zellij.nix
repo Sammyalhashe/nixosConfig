@@ -49,7 +49,10 @@ let
 
   # zellij stores its cache (incl. permissions.kdl) under the platform cache dir.
   zellijCacheDir =
-    if pkgs.stdenv.isDarwin then "Library/Caches/org.Zellij-Contributors.Zellij" else ".cache/zellij";
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "Library/Caches/org.Zellij-Contributors.Zellij"
+    else
+      ".cache/zellij";
 
   swap_floating_layouts = /* kdl */ ''
     swap_floating_layout name="fullscreen" {

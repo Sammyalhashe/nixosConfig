@@ -22,7 +22,8 @@ in
       extraSpecialArgs = {
         inherit inputs;
         user = cfg.username;
-        homeDir = if pkgs.stdenv.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
+        homeDir =
+          if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
         hostname = cfg.homeManagerHostname;
       };
 
@@ -33,7 +34,7 @@ in
       users.${cfg.username} = {
         imports =
           stylixModule
-          ++ lib.optionals pkgs.stdenv.isLinux [
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
             inputs.plasma-manager.homeModules.plasma-manager
             inputs.vicinae.homeManagerModules.default
           ]

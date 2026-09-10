@@ -69,7 +69,7 @@
       (import ./scripts/tmux-cht.nix { inherit pkgs; })
     ];
 
-  systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.isLinux {
+  systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     Unit = {
       Description = "Neovim server to connect to for fast startup";
     };
