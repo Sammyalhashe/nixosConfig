@@ -14,9 +14,6 @@
     darwin.url = "github:LnL7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Determinate Nix system management
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
-
     hyprlock.url = "github:hyprwm/hyprlock";
 
     # Custom Window Managers and UI frameworks
