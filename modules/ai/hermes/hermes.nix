@@ -226,7 +226,9 @@ in
     # runtime (skills.disabled, streaming, …) survive. Copying the generated
     # file over it here would wipe those, so we only mirror the restart: the
     # unit has to change for systemd to pick up a settings edit.
-    restartTriggers = [ (builtins.hashString "sha256" (builtins.toJSON config.services.hermes-agent.settings)) ];
+    restartTriggers = [
+      (builtins.hashString "sha256" (builtins.toJSON config.services.hermes-agent.settings))
+    ];
 
     preStart = ''
       # Set up Coinbase CLI default environment from the hardware maker key

@@ -38,7 +38,6 @@ in
     discord
     steam
   ];
-  
 
   programs.firefox = {
     enable = true;
