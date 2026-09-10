@@ -46,6 +46,8 @@
 
     enableHardwareWallets = lib.mkEnableOption "Whether to enable hardware wallet support (Ledger, Trezor, OneKey).";
 
+    enableKaspad = lib.mkEnableOption "Whether to run a kaspad (rusty-kaspa) node.";
+
     enableSnap = lib.mkEnableOption "Whether to enable snap.";
   };
 }

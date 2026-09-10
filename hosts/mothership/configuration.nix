@@ -29,6 +29,10 @@ in
   host.isHeadless = true;
   host.enableGreetd = false;
 
+  # Kaspa full node. This is the daemon, not the GTK wallet in kaspa-ng.nix,
+  # which could not run on a headless host.
+  host.enableKaspad = true;
+
   host.homeManagerHostname = "mothership";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
