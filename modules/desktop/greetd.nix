@@ -20,7 +20,7 @@
       settings = {
         background = {
           # Using one of your existing wallpapers
-          path = lib.mkForce ../../common/assets/BLACK_VII_desktop.jpg;
+          path = lib.mkForce ../theming/assets/BLACK_VII_desktop.jpg;
           fit = lib.mkForce "Cover";
         };
         GTK = {
