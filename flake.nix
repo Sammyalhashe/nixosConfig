@@ -105,6 +105,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Avalanche liquidity rebalancing bot (oldboy). Private repo, so ssh rather
+    # than github:. Bump with `nix flake update phar-liquidity-bot`.
+    phar-liquidity-bot = {
+      url = "git+ssh://git@github.com/Sammyalhashe/phar-liquidity-bot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     llm-agents.url = "github:numtide/llm-agents.nix";
 

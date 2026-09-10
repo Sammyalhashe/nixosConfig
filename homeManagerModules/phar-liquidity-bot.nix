@@ -2,11 +2,17 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 let
-  user = "salhashemi2";
-  repoDir = "/home/${user}/Projects/phar-liquidity-bot";
+  botPkg = inputs.phar-liquidity-bot.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+  # Env file holding the RPC URL and the signing key. Deliberately NOT inside a
+  # source checkout -- it used to live at ~/Projects/phar-liquidity-bot/.env,
+  # which coupled the service to a working copy that home-manager cloned and
+  # rebased on every activation.
+  envFile = "${config.xdg.configHome}/phar-liquidity-bot/.env";
 
   # DEX to trade on. Must match a key in DEX_REGISTRY in config.ts:
   #   pharaoh   — Algebra Integral concentrated liquidity, PHAR rewards via gauge
@@ -20,26 +26,6 @@ let
   currentPool = "avax-usdc"; # ← change this to switch pools
 in
 {
-  home.packages = with pkgs; [
-    nix
-    git
-  ];
-
-  # Clone/update repo and install npm dependencies
-  home.activation.installPharBot = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    PATH=$PATH:${pkgs.openssh}/bin:${pkgs.iputils}/bin
-    if ${pkgs.iputils}/bin/ping -c 1 github.com &>/dev/null; then
-      if [ ! -d "${repoDir}" ]; then
-        ${pkgs.jujutsu}/bin/jj git clone git@github.com:Sammyalhashe/phar-liquidity-bot.git "${repoDir}"
-      else
-        cd "${repoDir}" && ${pkgs.jujutsu}/bin/jj git fetch && ${pkgs.jujutsu}/bin/jj rebase -o master@origin
-      fi
-      # npm deps are bundled by the flake — no npm install needed here
-    else
-      echo "Network unreachable, skipping phar-liquidity-bot update"
-    fi
-  '';
-
   # Systemd user service — continuous EOA mode
   systemd.user.services.phar-liquidity-bot = {
     Unit = {
@@ -51,15 +37,16 @@ in
       Type = "simple";
       Restart = "on-failure";
       RestartSec = "30s";
-      WorkingDirectory = repoDir;
+      StateDirectory = "phar-liquidity-bot";
+      WorkingDirectory = "%S/phar-liquidity-bot";
       Environment = [
         "DEX_NAME=${currentDex}"
         "POOL_NAME=${currentPool}"
       ];
-      EnvironmentFile = "${repoDir}/.env";
+      EnvironmentFile = envFile;
       # Wait for Avalanche RPC to be reachable before starting
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.avax.network &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes' -- --mode=eoa";
+      ExecStart = "${lib.getExe botPkg} --mode=eoa";
     };
     Install = {
       WantedBy = [ "default.target" ];
