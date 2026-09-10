@@ -54,9 +54,6 @@ in
       # unified-memory sizing are shared in backend/default.nix, while the
       # KFD-only workarounds (amdgpu.cwsr_enable=0, amdgpu.runpm=0) are in
       # backend/rocm.nix and drop automatically under Vulkan.
-      #
-      # iommu=pt was dropped: amd_iommu=off turns the AMD IOMMU off outright, so
-      # asking for passthrough mode alongside it was contradictory dead config.
       "amdgpu.gpu_recovery=1"
       "initcall_blacklist=simpledrm_platform_driver_init"
 
@@ -66,9 +63,7 @@ in
       "amdgpu.dcdebugmask=0x10" # Disable unstable DC features
       "amdgpu.abmlevel=0" # Prevents panel backlight interference
 
-      # Unified-memory sizing (amdgpu.gttsize / ttm.pages_limit) is owned by
-      # services.llm-services.backend.gttSizeMiB — see the backend module. Both
-      # backends need it, so it follows the backend rather than the host.
+      # Unified-memory sizing is owned by services.llm-services.backend.gttSizeMiB.
     ];
     kernel.sysctl = {
       "vm.swappiness" = 10;
@@ -79,16 +74,6 @@ in
     };
   };
 
-  # Dropped two stale GPU variables that used to live here:
-  #
-  #   RADV_PERFTEST = "aco"        — dead. "aco" is not in radv_perftest_options
-  #                                  in this mesa (ACO became the default backend
-  #                                  and the toggle was removed), so RADV parsed
-  #                                  it as an unknown option and ignored it.
-  #   HSA_OVERRIDE_GFX_VERSION     — redundant, and far too broad set globally.
-  #                                  llama-cpp-rocm builds gfx1151 natively, so
-  #                                  overriding gfx1151 to gfx1151 is a no-op;
-  #                                  backend/rocm.nix still sets it per-service.
   environment.variables = {
     PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
@@ -96,16 +81,11 @@ in
 
   # --- LOCAL AI STACK CONFIGURATION ---
   # These services provide local OpenAI-compatible endpoints for Open WebUI and OpenClaw
-  # Local GPU inference backend (Strix Halo / gfx1151). Flip these two to switch
-  # the whole llama.cpp stack between ROCm and Vulkan (see backend module).
-  # Vulkan (RADV) is upstream's recommended backend for gfx1151 on grounds of
-  # stability and compatibility — see https://strix-halo-toolboxes.com/.
-  #
-  # It is NOT the faster one. Upstream's own benchmark data has ROCm tied on
-  # token generation (1.00x) but well ahead on prefill, and the gap grows with
-  # context: 1.34x at depth 0, 1.41x at 32k, 2.37x at 64k. Hermes runs at
-  # 131072, so the penalty here is real. Flip these two and measure prefill at
-  # a realistic depth before settling.
+  # Local GPU inference backend (Strix Halo / gfx1151); these two switch the
+  # whole llama.cpp stack. Vulkan (RADV) is upstream's recommended backend for
+  # gfx1151 on stability grounds — see https://strix-halo-toolboxes.com/ — but
+  # not the faster one: ROCm ties on token generation (1.00x) and leads on
+  # prefill by 1.34x at depth 0, 1.41x at 32k, 2.37x at 64k.
   services.llm-services.backend.enableRocm = false;
   services.llm-services.backend.enableVulkan = true;
 

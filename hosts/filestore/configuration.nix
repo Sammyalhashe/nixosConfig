@@ -16,24 +16,6 @@ let
     ps: with ps; [
       pillow
       setuptools
-      # aiofiles
-      # aiohttp
-      # beautifulsoup4
-      # numpy
-      # opencv4
-      # pandas
-      # pdf2image
-      # pymupdf
-      # pystray
-      # pytz
-      # pyyaml
-      # requests
-      # svglib
-      # tqdm
-      # reportlab
-      # openai
-      # google-generativeai
-      # anthropic
     ]
   );
 
@@ -98,11 +80,6 @@ in
     ./adguard.nix
   ];
 
-  # OpenClaw Gateway Configuration (Added by OpenClaw Agent)
-  # services.openclaw.gateway.settings = {
-  #   web.braveApiKey = "REPLACED_BY_SOPS";
-  # };
-
   sops.secrets.filestore_user_password = { };
   sops.secrets.filestore_password_hash = { };
   sops.secrets.filestore_wifi_ssid = { };
@@ -124,27 +101,15 @@ in
   host.homeManagerHostname = "filestore";
 
   # Stylix Configuration (Headless/Minimal)
-  stylix =
-    # let
-    #   theme = import ../../common/stylix-values.nix { inherit pkgs; };
-    # in
-    {
-      enable = lib.mkForce false;
-      # base16Scheme = theme.base16Scheme;
-      # polarity = theme.polarity;
-      # fonts = theme.fonts;
+  stylix = {
+    enable = lib.mkForce false;
 
-      # Disable graphical targets to save space/dependencies
-      targets.gtk.enable = false;
-      targets.gnome.enable = false;
-      targets.lightdm.enable = false;
-    };
+    # Disable graphical targets to save space/dependencies
+    targets.gtk.enable = false;
+    targets.gnome.enable = false;
+    targets.lightdm.enable = false;
+  };
 
-  # Add a safety cushion (Swap File)
-  # swapDevices = [{
-  #   device = "/var/lib/swapfile";
-  #   size = 2048; # 2GB in MiB
-  # }];
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
     # Using linuxPackages_rpi4 instead of pkgs.linuxKernel.packages.linux_rpi4
@@ -608,28 +573,6 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO2hNthWiWeNoxH848/Vhdkc8jWNJw7690ZNAh8RVE9d sammy@salh.xyz"
     ];
   };
-
-  # services.restic.backups.logseq = {
-  #   paths = [ "/logseq-data" ];
-  #   repository = "/home/salhashemi2/logseq_backup";
-  #   timerConfig = {
-  #     OnCalendar = "daily";
-  #     Persistent = true;
-  #   };
-  #   passwordFile = "/etc/nixos/restic-password";
-  #   # Keep 7 daily, 4 weekly, and 6 monthly backups
-  #   pruneOpts = [
-  #     "--keep-daily 7"
-  #     "--keep-weekly 4"
-  #     "--keep-monthly 6"
-  #   ];
-  #
-  #   # This ensures the init script runs first
-  #   extraOptions = [ "--network=host" ]; # If you eventually move to cloud backups
-  # };
-  #
-  # systemd.services.restic-backups-logseq.after = [ "restic-repo-init.service" ];
-  # systemd.services.restic-backups-logseq.requires = [ "restic-repo-init.service" ];
 
   systemd.services.forgejo-secrets = {
     description = "Forgejo secret bootstrap helper";
