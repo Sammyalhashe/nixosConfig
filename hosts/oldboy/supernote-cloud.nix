@@ -168,7 +168,11 @@
     image = "docker.io/supernote/supernote-service:26.02.23";
     volumes = [
       "/etc/localtime:/etc/localtime:ro"
-      "${builtins.toString ./../../certs/fullchain1.pem}:/etc/nginx/cert/server.crt:ro"
+      # Plain interpolation, not builtins.toString: toString resolves to a path
+      # inside the flake's whole-tree store copy, so this unit's hash tracked
+      # every file in the repo and any unrelated edit invalidated oldboy's
+      # build cache. Interpolating copies just this file, keyed on its content.
+      "${../../certs/fullchain1.pem}:/etc/nginx/cert/server.crt:ro"
       "${config.sops.secrets.supernote_private_key.path}:/etc/nginx/cert/server.key:ro"
       "/supernote/sndata/convert:/home/supernote/convert:rw"
       "/supernote/sndata/logs/app:/home/supernote/logs:rw"
