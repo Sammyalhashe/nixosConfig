@@ -68,22 +68,38 @@ in
         address = "0.0.0.0";
         allowip = [ "127.0.0.1" ] ++ cfg.bitcoinLanCidrs;
 
-        # Sparrow calls listwallets while connecting, even though it keeps its
-        # own keys and only uses Core as a chain source. nix-bitcoin's public
-        # whitelist covers every chain query Sparrow needs but deliberately
-        # omits the wallet RPCs, so the connection fails with "RPC user public
-        # is not allowed to call method listwallets".
+        # Sparrow reaches Core through its bundled Cormorant bridge, which does
+        # not merely read the chain: it creates a watch-only wallet on the node
+        # and imports the wallet's descriptors into it. The full set of calls is
+        # the @JsonRpcMethod list in Sparrow's
+        # net/cormorant/bitcoind/BitcoindClientService.java -- 22 methods, of
+        # which nix-bitcoin's `public` user already permits 13.
         #
-        # This is a definition rather than a default, and rpcwhitelist is a
-        # listOf str, so the module system concatenates it with nix-bitcoin's
-        # own list instead of replacing it. Keep additions minimal and prefer
-        # this to switching Sparrow onto the privileged user, which has an
-        # empty whitelist and therefore unrestricted control of the node.
-        #
-        # listwallets is read-only: it returns the names of loaded wallets and
-        # exposes no balances, keys or descriptors. Note bitcoind is started
-        # with no wallet, so the reply is an empty list.
-        users.public.rpcwhitelist = [ "listwallets" ];
+        # The other nine are wallet RPCs, which `public` omits on purpose. So
+        # Sparrow gets its own user rather than eroding the read-only one, and
+        # rather than using `privileged`, whose whitelist is empty -- in
+        # bitcoind that means no restriction at all, including stop/addnode/
+        # setban. This mirrors how nix-bitcoin's own btcpayserver module adds a
+        # third RPC user (modules/btcpayserver.nix:115).
+        users.sparrow = {
+          passwordHMACFromFile = true;
+          rpcwhitelist = config.services.bitcoind.rpc.users.public.rpcwhitelist ++ [
+            # Cormorant creates and loads a watch-only wallet, then imports the
+            # descriptors Sparrow derives from your keys. Private keys stay in
+            # Sparrow; the node only ever sees public descriptors.
+            "createwallet"
+            "loadwallet"
+            "unloadwallet"
+            "importdescriptors"
+            "listdescriptors"
+            "listwallets"
+            "listwalletdir"
+            "getwalletinfo"
+            # Wallet-scoped history, polled to track confirmations.
+            "listsinceblock"
+            "gettransaction"
+          ];
+        };
       };
 
       # electrs has no allowlist of its own, so the firewall is the only thing
@@ -94,6 +110,19 @@ in
         config.services.bitcoind.rpc.port # 8332 -- Sparrow via Bitcoin Core RPC
       ]
       ++ lib.optional config.services.electrs.enable config.services.electrs.port; # 50001
+
+      # nix-bitcoin only generates passwords for its own two users, so the
+      # sparrow user needs its secret wired up explicitly. makeBitcoinRPCPassword
+      # takes any name and writes both bitcoin-rpcpassword-<name> (the plaintext
+      # Sparrow needs) and bitcoin-HMAC-<name> (what bitcoind stores), see
+      # modules/secrets/secrets.nix:93.
+      nix-bitcoin.secrets = {
+        bitcoin-rpcpassword-sparrow.user = config.services.bitcoind.user;
+        bitcoin-HMAC-sparrow.user = config.services.bitcoind.user;
+      };
+      nix-bitcoin.generateSecretsCmds.bitcoind-sparrow = ''
+        makeBitcoinRPCPassword sparrow
+      '';
     })
 
     # Lightning wallets (Zeus). Separate from the bitcoind switch on purpose:
