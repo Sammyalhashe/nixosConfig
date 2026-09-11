@@ -67,6 +67,23 @@ in
       services.bitcoind.rpc = {
         address = "0.0.0.0";
         allowip = [ "127.0.0.1" ] ++ cfg.bitcoinLanCidrs;
+
+        # Sparrow calls listwallets while connecting, even though it keeps its
+        # own keys and only uses Core as a chain source. nix-bitcoin's public
+        # whitelist covers every chain query Sparrow needs but deliberately
+        # omits the wallet RPCs, so the connection fails with "RPC user public
+        # is not allowed to call method listwallets".
+        #
+        # This is a definition rather than a default, and rpcwhitelist is a
+        # listOf str, so the module system concatenates it with nix-bitcoin's
+        # own list instead of replacing it. Keep additions minimal and prefer
+        # this to switching Sparrow onto the privileged user, which has an
+        # empty whitelist and therefore unrestricted control of the node.
+        #
+        # listwallets is read-only: it returns the names of loaded wallets and
+        # exposes no balances, keys or descriptors. Note bitcoind is started
+        # with no wallet, so the reply is an empty list.
+        users.public.rpcwhitelist = [ "listwallets" ];
       };
 
       # electrs has no allowlist of its own, so the firewall is the only thing
