@@ -1,15 +1,20 @@
 # Ryoku desktop (Hyprland + Quickshell), gated on host.useRyokuDesktop.
 #
-# BLOCKED as of this writing: Ryoku's module sets
-# `security.polkit.enablePkexecWrapper`, which does not exist in the nixpkgs
-# this flake pins. Setting an option that does not exist is a structural error
-# the module system raises regardless of `lib.mkIf` — the flag being false does
-# not help, because mkIf defers a value, not the option's existence. So merely
-# importing this file currently fails evaluation for the importing host.
+# BLOCKED, and not by something a lock bump fixes. Ryoku's module sets
+# `security.polkit.enablePkexecWrapper`, which does not exist on the nixos-26.05
+# release branch this flake tracks — it is an unstable-only option and was never
+# backported. Setting an option that does not exist is a structural error the
+# module system raises regardless of `lib.mkIf`: the flag being false does not
+# help, because mkIf defers a value, not the option's existence. So merely
+# importing this file fails evaluation for the importing host.
+#
+# Confirmed by updating nixpkgs to the newest nixos-26.05 revision
+# (21a67dc, 2026-09-11) and re-checking: still absent. Unblocking it means
+# moving this flake to nixos-unstable, which would take every host at once —
+# a deliberate decision, not a side effect of wiring up a desktop.
 #
 # That is why this is NOT in modules/desktop/default.nix: putting it there broke
-# every host in the flake at once. Bumping nixpkgs past the revision that added
-# that option should clear it; verify by importing this on one host first.
+# all seven hosts at once.
 #
 # TO OPT IN, once nixpkgs is new enough: add it to that host's mkHost modules,
 # the same way homebase takes mangowc.nixosModules.mango, and set the flag:
