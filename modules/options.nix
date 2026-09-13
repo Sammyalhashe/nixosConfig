@@ -32,6 +32,19 @@
     enableMango = lib.mkEnableOption "Whether to install Mango desktop.";
     enableHyprland = lib.mkEnableOption "Whether to install Hyprland.";
 
+    useRyokuDesktop = lib.mkEnableOption ''
+      the Ryoku desktop (Hyprland + Quickshell, github:aethctl/Ryoku-on-NixOS)
+      in place of the desktop this host would otherwise get.
+
+      Named useRyokuDesktop rather than useRyoku because `ryoku` already names a
+      host in this flake, and the two are unrelated.
+
+      x86_64-linux only: upstream hardcodes that system and its module resolves
+      `self.packages.''${system}`, so enabling it elsewhere fails with
+      `attribute '<system>' missing`. modules/desktop/ryoku.nix asserts this
+      rather than letting it surface as a confusing eval error
+    '';
+
     enableMonitoring = lib.mkEnableOption "Whether to enable the monitoring stack (Cockpit, Grafana, Loki, Alloy).";
 
     enableBreezy = lib.mkEnableOption "Whether to enable Breezy Desktop XR glasses support.";

@@ -11,6 +11,9 @@
     inputs.nix-snapd.nixosModules.default
     ./hyprland.nix
     ./kdestuff.nix
+    # NOT ./ryoku.nix — see that file. It cannot live in the shared set because
+    # Ryoku's module sets options absent from this flake's nixpkgs, which breaks
+    # every host that imports it, even with host.useRyokuDesktop off.
     ./greetd.nix
     ./vicinae.nix
     ./snap.nix
@@ -33,9 +36,14 @@
           assertion =
             !(
               config.host.isHeadless
-              && (config.host.enableKDE || config.host.enableMango || config.host.enableHyprland)
+              && (
+                config.host.enableKDE
+                || config.host.enableMango
+                || config.host.enableHyprland
+                || config.host.useRyokuDesktop
+              )
             );
-          message = "host.isHeadless is set but a desktop (enableKDE/enableMango/enableHyprland) is also enabled; headless hosts must not enable a desktop.";
+          message = "host.isHeadless is set but a desktop (enableKDE/enableMango/enableHyprland/useRyokuDesktop) is also enabled; headless hosts must not enable a desktop.";
         }
       ];
     }

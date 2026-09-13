@@ -99,6 +99,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Ryoku desktop (Hyprland + Quickshell). Consumed only when
+    # host.useRyokuDesktop is set — see modules/desktop/ryoku.nix.
+    #
+    # Deliberately NOT following nixpkgs: upstream hardcodes
+    # `system = "x86_64-linux"` and builds ~30 packages against its own pin, so
+    # forcing our nixpkgs on it risks breaking a build we cannot easily test.
+    ryoku.url = "github:aethctl/Ryoku-on-NixOS";
+
     # Self-hosted TRMNL server (terminus) as a podman OCI module
     terminus = {
       url = "github:Sammyalhashe/terminus-nix";
