@@ -51,6 +51,8 @@
 
       # nix stuff
       nil
+      nix-init
+      nurl
 
       # fonts
       iosevka

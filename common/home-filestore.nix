@@ -24,6 +24,10 @@ in
     python313Packages.pip
     python313Packages.virtualenvwrapper
 
+    # nix stuff
+    nix-init
+    nurl
+
     # system tools
     btop
     htop
