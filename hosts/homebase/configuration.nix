@@ -180,6 +180,15 @@ in
 
   programs.stylix.enable = true;
 
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+    oci-containers.backend = "podman";
+  };
+
   # certificates
   security.pki.certificateFiles = [
     (builtins.toFile "wildcard.picloud.crt" (builtins.readFile ../../certs/wildcard.picloud.crt))

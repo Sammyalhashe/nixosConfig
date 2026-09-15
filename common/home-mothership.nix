@@ -34,6 +34,8 @@ in
   home.packages = with pkgs; [
     extended-nixvim
     jujutsu
+    openssl
+    wget
     gcc
     cargo
     cachix

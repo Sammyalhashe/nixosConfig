@@ -23,7 +23,7 @@ let
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
       ENABLE_PROMPT_CACHING_1H = "1";
     };
-    model = "qwen3.6";
+    model = "qwen3.8";
     attribution = {
       commit = "";
       pr = "";
