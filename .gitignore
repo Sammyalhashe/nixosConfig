@@ -7,3 +7,7 @@ test_lanzaboote_setup
 .nvimlog
 result
 __pycache__/
+# An elevated tool can leave a root-owned .cache/ here, which makes every jj
+# command fail outright ("Failed to snapshot the working copy ... Permission
+# denied") rather than just skipping the directory.
+.cache/
