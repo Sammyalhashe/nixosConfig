@@ -83,6 +83,14 @@ in
       echo "All evaluations succeeded."
     '';
 
+  # No sudo, deliberately: nh builds unprivileged and elevates only for
+  # `nix-env --set` and switch-to-configuration, neither of which touches the
+  # network. That keeps fixed-output derivations on the daemon, which owns the
+  # fetch environment; a root-local build would instead inherit sudo's scrubbed
+  # one. nh refuses to run as root, so the broken invocation cannot be written.
+  #
+  # `action` is passed straight through — switch and test are both `nh os`
+  # subcommands, same names as nixos-rebuild's.
   mkHostScript =
     name: flakeAttr: hostname: action:
     pkgs.writeScriptBin name ''
@@ -104,7 +112,7 @@ in
         esac
       fi
 
-      echo "🚀 Running: sudo nixos-rebuild ${action} --flake .#${flakeAttr}"
-      sudo nixos-rebuild ${action} --flake .#${flakeAttr}
+      echo "🚀 Running: nh os ${action} . -H ${flakeAttr}"
+      ${pkgs.lib.getExe pkgs.nh} os ${action} . -H ${flakeAttr}
     '';
 }

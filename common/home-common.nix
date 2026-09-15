@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   lib,
+  config,
   ...
 }:
 {
@@ -70,6 +71,19 @@
       (import ./scripts/test.nix { inherit pkgs; })
       (import ./scripts/tmux-cht.nix { inherit pkgs; })
     ];
+
+  # nh replaces sudo nixos-rebuild in the devshell's switch-<host> / test-<host>
+  # scripts (common/utils/devshellFuncs.nix); the module installs the package and
+  # exports NH_FLAKE so a bare `nh os switch` also works from outside the checkout.
+  #
+  # clean stays off on purpose: it collides with nix.gc.automatic and the module
+  # warns when both are enabled.
+  #
+  # Not applied to common/home-filestore.nix, which does not import this file.
+  programs.nh = {
+    enable = true;
+    flake = "${config.home.homeDirectory}/nixosConfig";
+  };
 
   systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     Unit = {

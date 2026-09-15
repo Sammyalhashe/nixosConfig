@@ -81,6 +81,12 @@ in
       $env.GEMINI_API_KEY = (if ("/run/secrets/gemini_api_key" | path exists) { open /run/secrets/gemini_api_key | str trim } else { "" })
       $env.ANTHROPIC_BASE_URL = "http://11.125.37.101:4000"
       $env.ANTHROPIC_API_KEY = "sk-no-key-required"
+      ${lib.optionalString (config.home.sessionVariables ? NH_FLAKE) ''
+        # programs.nh sets NH_FLAKE through home.sessionVariables, which nushell
+        # never reads. Taken from the module's own value rather than repeating the
+        # path (see common/home-common.nix).
+        $env.NH_FLAKE = "${config.home.sessionVariables.NH_FLAKE}"
+      ''}
     '';
     shellAliases = {
       # common aliases
