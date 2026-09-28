@@ -58,6 +58,12 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.typesafe_hermes_api_key = {
+    # Automatically restarts the agent if you rotate the key in sops
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
+
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
@@ -84,6 +90,7 @@ in
     HA_MCP_URL="${config.sops.placeholder.ha_mcp_webhook_url}"
     GATEWAY_ALLOW_ALL_USERS=true
     FASTMAIL_API_KEY="${config.sops.placeholder.fastmail_hermes_api_key}"
+    TYPESAFE_API_KEY="${config.sops.placeholder.typesafe_hermes_api_key}"
   '';
 
   # 3. Configure the Hermes Agent Service
