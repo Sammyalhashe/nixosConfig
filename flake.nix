@@ -191,7 +191,18 @@
           "nix-command"
           "flakes"
         ];
-        # Binary cache for the vicinae launcher (avoids compiling it from source).
+        nix.gc = {
+          automatic = true;
+          dates = "weekly";
+          options = "--delete-older-than 7d";
+        };
+      };
+
+      # Extra binary caches (vicinae launcher, numtide's llm-agents). NixOS hosts
+      # only: on ryoku these would land in the user's nix.conf, which the Arch
+      # nix-daemon ignores for untrusted users -- set them in /etc/nix/nix.conf
+      # there instead.
+      binaryCaches = {
         nix.settings.extra-substituters = [
           "https://vicinae.cachix.org"
           "https://cache.numtide.com"
@@ -200,15 +211,11 @@
           "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
           "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
         ];
-        nix.gc = {
-          automatic = true;
-          dates = "weekly";
-          options = "--delete-older-than 7d";
-        };
       };
 
       # Modules shared by every host.
       commonModules = [
+        binaryCaches
         baseConfig
         ./modules
         sops-nix.nixosModules.sops
