@@ -3,7 +3,7 @@
 #   ip       - LAN IP for remote deploy-rs deployment; null = local-only
 #              (desktops / WSL) and gets no deploy node.
 #   hostname - the machine's real hostname, used by the switch/test guard
-#              in common/utils/devshellFuncs.nix.
+#              in nix/devshell.nix.
 #   system   - build architecture (defaults to x86_64-linux when omitted).
 {
   homebase = {

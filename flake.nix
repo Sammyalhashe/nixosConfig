@@ -470,7 +470,7 @@
         devShells.default =
           let
             inherit
-              (import ./common/utils/devshellFuncs.nix {
+              (import ./nix/devshell.nix {
                 inherit pkgs;
                 hosts = hostsData;
               })

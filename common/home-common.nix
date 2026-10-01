@@ -73,7 +73,7 @@
     ];
 
   # nh replaces sudo nixos-rebuild in the devshell's switch-<host> / test-<host>
-  # scripts (common/utils/devshellFuncs.nix); the module installs the package and
+  # scripts (nix/devshell.nix); the module installs the package and
   # exports NH_FLAKE so a bare `nh os switch` also works from outside the checkout.
   #
   # clean stays off on purpose: it collides with nix.gc.automatic and the module
