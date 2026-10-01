@@ -507,6 +507,9 @@
               (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
 
               # Remote deploys are handled by deploy-rs: `deploy .#<host>`
+
+              # ryoku is Arch + standalone home-manager, so it has no switch-<host>
+              (mkScript "switch-ryoku" "${pkgs.lib.getExe pkgs.nh} home switch . -c ryoku")
             ]
             ++ hostScripts
             ++ pushScripts
@@ -539,6 +542,7 @@
                                       echo "  deploy .#<host>  - Deploy (build locally, push + activate w/ rollback) via deploy-rs"
               echo "  switch-<host>    - Switch NixOS configuration locally via nh (no sudo)"
               echo "  test-<host>      - Test NixOS configuration locally via nh (no sudo)"
+              echo "  switch-ryoku     - Switch ryoku's home-manager configuration via nh"
               echo "  build-<host>     - Build a single host's top-level"
               echo "  eval-<host>      - Evaluate a single host's top-level (no build)"
               echo ""
