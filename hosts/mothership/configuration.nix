@@ -287,9 +287,9 @@ in
         email-validator
       ]
     ))
-    (import ../../common/scripts/aider-search.nix { inherit pkgs; })
-    (import ../../common/scripts/aider-pro.nix { inherit pkgs; })
-    (import ../../common/scripts/agent-chainer.nix { inherit pkgs; })
+    (import ../../pkgs/scripts/aider-search.nix { inherit pkgs; })
+    (import ../../pkgs/scripts/aider-pro.nix { inherit pkgs; })
+    (import ../../pkgs/scripts/agent-chainer.nix { inherit pkgs; })
     gnome-keyring
     libsecret
   ];

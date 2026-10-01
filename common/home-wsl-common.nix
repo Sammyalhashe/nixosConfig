@@ -37,8 +37,8 @@ in
     spotify-player
     stow
 
-    (import ./scripts/start_wireguard.nix { inherit pkgs; })
-    (import ./scripts/stop_wireguard.nix { inherit pkgs; })
+    (import ../pkgs/scripts/start_wireguard.nix { inherit pkgs; })
+    (import ../pkgs/scripts/stop_wireguard.nix { inherit pkgs; })
   ];
 
   home.file = {

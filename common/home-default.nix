@@ -119,8 +119,8 @@ in
       # (pkgs.writeShellScriptBin "my-hello" ''
       #   echo "Hello, ${config.home.username}!"
       # '')
-      (import ./scripts/start_wireguard.nix { inherit pkgs; })
-      (import ./scripts/stop_wireguard.nix { inherit pkgs; })
+      (import ../pkgs/scripts/start_wireguard.nix { inherit pkgs; })
+      (import ../pkgs/scripts/stop_wireguard.nix { inherit pkgs; })
     ]
     ++ llm-packages;
 

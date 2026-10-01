@@ -63,13 +63,13 @@
       inputs.todo.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ [
-      (import ./scripts/crypto.nix { inherit pkgs; })
-      (import ./scripts/fzf-man.nix { inherit pkgs; })
-      (import ./scripts/hgrep.nix { inherit pkgs; })
-      (import ./scripts/sn-install.nix { inherit pkgs; })
-      (import ./scripts/system-copy.nix { inherit pkgs; })
-      (import ./scripts/test.nix { inherit pkgs; })
-      (import ./scripts/tmux-cht.nix { inherit pkgs; })
+      (import ../pkgs/scripts/crypto.nix { inherit pkgs; })
+      (import ../pkgs/scripts/fzf-man.nix { inherit pkgs; })
+      (import ../pkgs/scripts/hgrep.nix { inherit pkgs; })
+      (import ../pkgs/scripts/sn-install.nix { inherit pkgs; })
+      (import ../pkgs/scripts/system-copy.nix { inherit pkgs; })
+      (import ../pkgs/scripts/test.nix { inherit pkgs; })
+      (import ../pkgs/scripts/tmux-cht.nix { inherit pkgs; })
     ];
 
   # nh replaces sudo nixos-rebuild in the devshell's switch-<host> / test-<host>
