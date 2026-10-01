@@ -48,25 +48,6 @@ in
     (import ../pkgs/kaspa-ng.nix { inherit pkgs; })
   ];
 
-  programs.firefox = {
-    enable = true;
-    nativeMessagingHosts = [
-      pkgs.kdePackages.plasma-browser-integration
-    ];
-    configPath = "${config.xdg.configHome}/mozilla/firefox";
-    profiles.default = {
-      name = "default";
-      isDefault = true;
-      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        bitwarden
-        sponsorblock
-        darkreader
-        metamask
-      ];
-    };
-  };
-
   home.sessionVariables = {
     EDITOR = "nvim";
   };
