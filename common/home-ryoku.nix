@@ -21,7 +21,7 @@ let
 in
 {
   imports = [
-    ./home-common.nix
+    ../homeManagerModules/base.nix
     ../homeManagerModules/firefox.nix
   ];
 

@@ -17,7 +17,7 @@ let
 in
 {
   imports = [
-    ./home-common.nix
+    ../homeManagerModules/base.nix
     ../homeManagerModules/claude-code.nix
     ../homeManagerModules/aider.nix
   ];

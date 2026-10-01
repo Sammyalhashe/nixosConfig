@@ -18,7 +18,7 @@ let
       nixvim-wsl;
 in
 {
-  imports = [ ./home-common.nix ];
+  imports = [ ../homeManagerModules/base.nix ];
 
   home.stateVersion = "24.05";
 

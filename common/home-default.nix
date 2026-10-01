@@ -23,7 +23,7 @@ let
 in
 {
   imports = [
-    ./home-common.nix
+    ../homeManagerModules/base.nix
     ./home-entertainment.nix
     ../homeManagerModules/aider.nix
     ../homeManagerModules/zeal.nix
@@ -90,7 +90,7 @@ in
       stow
       waypipe
 
-      # GUI utilities (moved from home-common.nix)
+      # GUI utilities (moved from homeManagerModules/base.nix)
       grim
       notejot
       slurp

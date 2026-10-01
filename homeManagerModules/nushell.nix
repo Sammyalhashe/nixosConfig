@@ -84,7 +84,7 @@ in
       ${lib.optionalString (config.home.sessionVariables ? NH_FLAKE) ''
         # programs.nh sets NH_FLAKE through home.sessionVariables, which nushell
         # never reads. Taken from the module's own value rather than repeating the
-        # path (see common/home-common.nix).
+        # path (see homeManagerModules/base.nix).
         $env.NH_FLAKE = "${config.home.sessionVariables.NH_FLAKE}"
       ''}
     '';

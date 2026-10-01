@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ./home-common.nix
+    ../homeManagerModules/base.nix
     # ../homeManagerModules/openclaw.nix
     ../homeManagerModules/aider.nix
     ../homeManagerModules/claude-code.nix
