@@ -439,7 +439,6 @@
       homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
       homeModules.filestore = ./homeManagerModules/filestore.nix;
       homeModules.mothership = ./homeManagerModules/mothership.nix;
-      homeModules.server = ./homeManagerModules/server.nix;
 
       # deploy-rs targets (build locally, copy over SSH, activate w/ rollback).
       # Node definitions live in ./deploy.nix; run `deploy .#<host>`.
