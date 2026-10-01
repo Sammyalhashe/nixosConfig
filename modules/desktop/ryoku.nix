@@ -7,8 +7,14 @@
 #
 # Kept out of modules/desktop/default.nix anyway: Ryoku's packages use
 # import-from-derivation (importCargoLock reads a Cargo.lock out of a fetched
-# x86_64-linux source), so an enabled host can only be evaluated on
-# x86_64-linux, not from the Mac.
+# x86_64-linux source). Evaluating an enabled host elsewhere (e.g. the Mac)
+# fails with "platform mismatch" on that source until it is in the local
+# store. It is a plain fixed-output fetch, so adding it by hand is enough:
+#
+#   nix-prefetch-url --unpack --name source \
+#     https://github.com/FrameworkComputer/qmk_hid/archive/<rev>.tar.gz
+#
+# (<rev> is in the error's .drv: `nix derivation show <drv>`.)
 #
 # TO OPT IN: add it to that host's mkHost modules,
 # the same way homebase takes mangoModule, and set the flag:
