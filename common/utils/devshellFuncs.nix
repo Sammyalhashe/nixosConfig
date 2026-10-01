@@ -26,13 +26,6 @@ in
   # All host configs, as top-level build targets for `buildX` / `checkX`.
   buildTargets = map (host: "nixosConfigurations.${host}.config.system.build.toplevel") hostList;
 
-  mkScript =
-    name: script:
-    pkgs.writeScriptBin name ''
-      #!/bin/sh
-      ${script}
-    '';
-
   # Attempt to build the top-level of every given flake target, continuing
   # through all targets even if some fail, then report a summary.
   mkBuildAllScript =

@@ -59,6 +59,11 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Devshell with a generated command menu (`menu`)
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nur.url = "github:nix-community/NUR";
 
     # Remote NixOS deployment (build locally, push + activate with rollback)
@@ -458,6 +463,8 @@
           inputs.deploy-rs.lib.${system}.deployChecks self.deploy
         );
 
+        # numtide/devshell prints a menu of `commands`, grouped by category, on
+        # entry; run `menu` to see it again.
         devShells.default =
           let
             inherit
@@ -465,7 +472,6 @@
                 inherit pkgs;
                 hosts = hostsData;
               })
-              mkScript
               mkHostScript
               mkBuildAllScript
               mkEvalAllScript
@@ -475,47 +481,50 @@
               pushHosts
               ;
 
+            nu = "${pkgs.nushell}/bin/nu";
+
             # switch-<host> / test-<host> for every host (with hostname guard).
-            hostScripts = builtins.concatMap (host: [
-              (mkHostScript "switch-${host}" host hostNames.${host} "switch")
-              (mkHostScript "test-${host}" host hostNames.${host} "test")
+            hostCommands = builtins.concatMap (host: [
+              {
+                category = "switch";
+                package = mkHostScript "switch-${host}" host hostNames.${host} "switch";
+                help = "Switch ${host} locally via nh (no sudo)";
+              }
+              {
+                category = "test";
+                package = mkHostScript "test-${host}" host hostNames.${host} "test";
+                help = "Test ${host} locally via nh (no sudo)";
+              }
             ]) hosts;
 
-            # Per-host build/eval convenience scripts (build-<host>, eval-<host>).
-            perHostScripts = builtins.concatMap (host: [
-              (mkScript "build-${host}" "nix build .#nixosConfigurations.${host}.config.system.build.toplevel --no-link")
-              (mkScript "eval-${host}" "nix eval .#nixosConfigurations.${host}.config.system.build.toplevel.drvPath --raw")
+            # Per-host build/eval convenience commands (build-<host>, eval-<host>).
+            perHostCommands = builtins.concatMap (host: [
+              {
+                category = "build";
+                name = "build-${host}";
+                command = "nix build .#nixosConfigurations.${host}.config.system.build.toplevel --no-link";
+                help = "Build ${host}'s top-level";
+              }
+              {
+                category = "eval";
+                name = "eval-${host}";
+                command = "nix eval .#nixosConfigurations.${host}.config.system.build.toplevel.drvPath --raw";
+                help = "Evaluate ${host}'s top-level (no build)";
+              }
             ]) hosts;
 
-            # push-<host> cachix scripts.
-            pushScripts = map (
-              host: mkScript "push-${host}" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu} ${host}"
-            ) pushHosts;
-
-            scripts = [
-              (mkScript "check" "nix flake check")
-              (mkScript "fmt" "nix fmt")
-
-              # Attempt to build the top-level of every host
-              (mkBuildAllScript "buildX" buildTargets)
-
-              # Attempt to evaluate (not build) the top-level of every host
-              (mkEvalAllScript "checkX" buildTargets)
-
-              # Push all hosts to cachix
-              (mkScript "push-all" "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}")
-
-              # Remote deploys are handled by deploy-rs: `deploy .#<host>`
-
-              # ryoku is Arch + standalone home-manager, so it has no switch-<host>
-              (mkScript "switch-ryoku" "${pkgs.lib.getExe pkgs.nh} home switch . -c ryoku")
-            ]
-            ++ hostScripts
-            ++ pushScripts
-            ++ perHostScripts;
+            # push-<host> cachix commands.
+            pushCommands = map (host: {
+              category = "push";
+              name = "push-${host}";
+              command = "${nu} ${./push-to-cachix.nu} ${host}";
+              help = "Build ${host}'s system config and push to cachix";
+            }) pushHosts;
           in
-          pkgs.mkShell {
-            nativeBuildInputs = [
+          inputs.devshell.legacyPackages.${system}.mkShell {
+            name = "nixosConfig";
+
+            packages = [
               pkgs.nixfmt
               pkgs.treefmt
               pkgs.sops
@@ -523,30 +532,54 @@
               pkgs.ssh-to-age
               pkgs.cachix
               pkgs.jq
-              inputs.deploy-rs.packages.${system}.default
-            ]
-            ++ scripts;
+            ];
 
-            shellHook = ''
-              echo "Welcome to the NixOS Config DevShell!"
-              echo "Available commands:"
-                          echo "  check         - Run nix flake check"
-                          echo "  fmt           - Run nix fmt"
-                          echo "  buildX        - Attempt to build the top-level of every host"
-                          echo "  checkX        - Attempt to evaluate the top-level of every host"
-                          echo "  push-homebase    - Build homebase system config and push to cachix"
-                                      echo "  push-starship    - Build starship system config and push to cachix"
-                                      echo "  push-starshipwsl - Build starshipwsl system config and push to cachix"
-                                      echo "  push-mothership - Build mothership system config and push to cachix"
-                                      echo "  deploy .#<host>  - Deploy (build locally, push + activate w/ rollback) via deploy-rs"
-              echo "  switch-<host>    - Switch NixOS configuration locally via nh (no sudo)"
-              echo "  test-<host>      - Test NixOS configuration locally via nh (no sudo)"
-              echo "  switch-ryoku     - Switch ryoku's home-manager configuration via nh"
-              echo "  build-<host>     - Build a single host's top-level"
-              echo "  eval-<host>      - Evaluate a single host's top-level (no build)"
-              echo ""
-              echo "Hosts: homebase, oldboy, starshipwsl, homebasewsl, starship, filestore, mothership"
-            '';
+            commands = [
+              {
+                category = "checks";
+                name = "check";
+                command = "nix flake check";
+                help = "Run nix flake check";
+              }
+              {
+                category = "checks";
+                name = "fmt";
+                command = "nix fmt";
+                help = "Run nix fmt";
+              }
+              {
+                category = "checks";
+                package = mkBuildAllScript "buildX" buildTargets;
+                help = "Attempt to build the top-level of every host";
+              }
+              {
+                category = "checks";
+                package = mkEvalAllScript "checkX" buildTargets;
+                help = "Attempt to evaluate the top-level of every host";
+              }
+              {
+                category = "push";
+                name = "push-all";
+                command = "${nu} ${./push-to-cachix.nu}";
+                help = "Build every host and push to cachix";
+              }
+              {
+                category = "deploy";
+                name = "deploy";
+                package = inputs.deploy-rs.packages.${system}.default;
+                help = "Deploy .#<host> (build locally, push + activate w/ rollback)";
+              }
+              # ryoku is Arch + standalone home-manager, so it has no switch-<host>
+              {
+                category = "switch";
+                name = "switch-ryoku";
+                command = "${pkgs.lib.getExe pkgs.nh} home switch . -c ryoku";
+                help = "Switch ryoku's home-manager configuration via nh";
+              }
+            ]
+            ++ hostCommands
+            ++ perHostCommands
+            ++ pushCommands;
           };
       }
     );
