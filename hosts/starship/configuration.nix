@@ -21,7 +21,8 @@ in
     host.enableGreetd = lib.mkForce true;
   };
 
-  # Ryoku (Hyprland + Quickshell) as its own boot entry; normal boot stays KDE.
+  # Ryoku (niri or Hyprland + Quickshell) as its own boot entry, defaulting to
+  # niri; both sessions are offered at login. Normal boot stays KDE.
   # Ryoku themes SDDM but leaves enabling it to the host, which on starship is
   # otherwise the KDE module's job, so turn it on here (Wayland, since nothing
   # starts X without KDE).
@@ -32,7 +33,7 @@ in
       enable = true;
       wayland.enable = true;
     };
-    services.displayManager.defaultSession = "hyprland";
+    services.displayManager.defaultSession = "niri";
   };
 
   host.enableBluetooth = true;
