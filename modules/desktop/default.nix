@@ -11,9 +11,7 @@
     inputs.nix-snapd.nixosModules.default
     ./hyprland.nix
     ./kdestuff.nix
-    # NOT ./ryoku.nix — see that file. It cannot live in the shared set because
-    # Ryoku's module sets options absent from this flake's nixpkgs, which breaks
-    # every host that imports it, even with host.useRyokuDesktop off.
+    # NOT ./ryoku.nix: it is opted into per host. See that file.
     ./greetd.nix
     ./vicinae.nix
     ./snap.nix

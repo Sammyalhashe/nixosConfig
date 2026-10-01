@@ -1,22 +1,16 @@
 # Ryoku desktop (Hyprland + Quickshell), gated on host.useRyokuDesktop.
 #
-# BLOCKED, and not by something a lock bump fixes. Ryoku's module sets
-# `security.polkit.enablePkexecWrapper`, which does not exist on the nixos-26.05
-# release branch this flake tracks — it is an unstable-only option and was never
-# backported. Setting an option that does not exist is a structural error the
-# module system raises regardless of `lib.mkIf`: the flag being false does not
-# help, because mkIf defers a value, not the option's existence. So merely
-# importing this file fails evaluation for the importing host.
+# Needs nixos-unstable: Ryoku's module sets `security.polkit.enablePkexecWrapper`,
+# which nixos-26.05 lacks, and setting an option that does not exist fails
+# evaluation even behind `lib.mkIf`. On unstable, importing this file with the
+# flag off is a no-op.
 #
-# Confirmed by updating nixpkgs to the newest nixos-26.05 revision
-# (21a67dc, 2026-09-11) and re-checking: still absent. Unblocking it means
-# moving this flake to nixos-unstable, which would take every host at once —
-# a deliberate decision, not a side effect of wiring up a desktop.
+# Kept out of modules/desktop/default.nix anyway: Ryoku's packages use
+# import-from-derivation (importCargoLock reads a Cargo.lock out of a fetched
+# x86_64-linux source), so an enabled host can only be evaluated on
+# x86_64-linux, not from the Mac.
 #
-# That is why this is NOT in modules/desktop/default.nix: putting it there broke
-# all seven hosts at once.
-#
-# TO OPT IN, once nixpkgs is new enough: add it to that host's mkHost modules,
+# TO OPT IN: add it to that host's mkHost modules,
 # the same way homebase takes mangoModule, and set the flag:
 #
 #   nixosConfigurations.starship = mkHost {
@@ -61,5 +55,10 @@ in
     # ryokuPkgs and dies with a raw `attribute '<system>' missing` *before* the
     # assertion above can report. Leaving it false lets the assertion do its job.
     programs.ryoku.enable = lib.mkIf supported true;
+
+    # Ryoku sets nixpkgs.config.allowUnfreePredicate (mkDefault), but mkHost
+    # passes in a pkgs instance and NixOS asserts nixpkgs.config stays empty in
+    # that case. The predicate is moot anyway: getPkgs already has allowUnfree.
+    nixpkgs.config = lib.mkForce { };
   };
 }
