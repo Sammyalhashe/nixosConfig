@@ -110,9 +110,8 @@ in
 
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
-    # Using linuxPackages_rpi4 instead of pkgs.linuxKernel.packages.linux_rpi4
-    # to silence the "linux-rpi series will be removed" evaluation warning.
-    kernelPackages = pkgs.linuxPackages_rpi4;
+    # kernelPackages comes from nixos-hardware's raspberry-pi-4 module; nixpkgs
+    # dropped the linux-rpi series.
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"

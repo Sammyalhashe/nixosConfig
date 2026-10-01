@@ -12,8 +12,27 @@ in
     inputs.nix-bitcoin.nixosModules.default
   ];
 
+  # nixpkgs-unstable rewrote services.i2pd around RFC42 `settings` and dropped
+  # `proto`, but nix-bitcoin's netns-isolation module still defines
+  # services.i2pd.proto.sam.*. That code sits behind netns-isolation.enable
+  # (off here), yet an undeclared option fails evaluation even inside a false
+  # mkIf. Declare it as an inert placeholder until nix-bitcoin catches up, and
+  # refuse netns-isolation, whose i2pd wiring would silently do nothing.
+  options.services.i2pd.proto = lib.mkOption {
+    type = lib.types.anything;
+    default = { };
+    internal = true;
+  };
+
   config = lib.mkMerge [
     {
+      assertions = [
+        {
+          assertion = !config.nix-bitcoin.netns-isolation.enable;
+          message = "nix-bitcoin netns-isolation relies on the removed services.i2pd.proto; see the shim in modules/crypto/lightning.nix.";
+        }
+      ];
+
       # Generate bitcoind/lnd/electrs/rtl credentials into /etc/nix-bitcoin-secrets.
       # Without this (or a deployment method) nix-bitcoin fails an assertion.
       # NOTE: back up that directory -- it holds the LND seed material.

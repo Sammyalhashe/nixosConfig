@@ -17,7 +17,7 @@
 # all seven hosts at once.
 #
 # TO OPT IN, once nixpkgs is new enough: add it to that host's mkHost modules,
-# the same way homebase takes mangowc.nixosModules.mango, and set the flag:
+# the same way homebase takes mangoModule, and set the flag:
 #
 #   nixosConfigurations.starship = mkHost {
 #     name = "starship";

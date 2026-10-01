@@ -4,10 +4,10 @@
   # --- INPUTS: External dependencies and specialized toolsets ---
   inputs = {
     # Main NixOS unstable branch for the latest software and ROCm 7.x support
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # User-level environment management
-    home-manager.url = "github:nix-community/home-manager/release-26.05";
+    home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     hyprlock.url = "github:hyprwm/hyprlock";
@@ -223,6 +223,15 @@
         ./nix/home-manager.nix
       ];
 
+      # nixpkgs ships programs.mango now, so the mangowc flake's own NixOS module
+      # would declare it twice. Use nixpkgs' module with the flake's package, the
+      # same build homeManagerModules/mangowc.nix installs.
+      mangoModule =
+        { pkgs, ... }:
+        {
+          programs.mango.package = mangowc.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        };
+
       # Stylix theming, opted into per-host (see `modules`).
       stylixModules = [
         stylix.nixosModules.stylix
@@ -265,7 +274,7 @@
       nixosConfigurations.homebase = mkHost {
         name = "homebase";
         modules = stylixModules ++ [
-          mangowc.nixosModules.mango
+          mangoModule
           inputs.nix-flatpak.nixosModules.nix-flatpak
           {
             host.enableMango = false;
@@ -287,7 +296,7 @@
       nixosConfigurations.mothership = mkHost {
         name = "mothership";
         modules = stylixModules ++ [
-          mangowc.nixosModules.mango
+          mangoModule
           inputs.nix-flatpak.nixosModules.nix-flatpak
           {
             programs.stylix.enable = true;
@@ -361,7 +370,7 @@
       nixosConfigurations.starshipwsl = mkHost {
         name = "starshipwsl";
         modules = stylixModules ++ [
-          mangowc.nixosModules.mango
+          mangoModule
           nixos-wsl.nixosModules.default
           ./modules/wsl
           {
@@ -376,7 +385,7 @@
       nixosConfigurations.homebasewsl = mkHost {
         name = "homebasewsl";
         modules = stylixModules ++ [
-          mangowc.nixosModules.mango
+          mangoModule
           {
             nixpkgs.overlays = [
               (final: prev: {
@@ -398,7 +407,7 @@
       nixosConfigurations.starship = mkHost {
         name = "starship";
         modules = stylixModules ++ [
-          mangowc.nixosModules.mango
+          mangoModule
           inputs.nix-flatpak.nixosModules.nix-flatpak
           {
             host.enableKDE = true;

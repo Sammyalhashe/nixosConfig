@@ -8,7 +8,7 @@
 {
   config = lib.mkIf (config.host.enableGreetd && !config.host.isHeadless) {
     # ReGreet is a modern GTK4-based greeter for greetd.
-    programs.regreet = {
+    services.displayManager.regreet = {
       enable = true;
 
       # Use a modern font and theme
