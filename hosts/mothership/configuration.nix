@@ -11,9 +11,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.home-manager.nixosModules.default
-    inputs.home-manager.nixosModules.home-manager
-    ../../common/home-manager-config.nix
     # --- TIERED LLM SERVICES ---
     # Import the modular service definitions (Gemma, Qwen, LiteLLM, etc.)
     ../../modules/ai/llm-services

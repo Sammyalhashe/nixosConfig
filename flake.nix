@@ -212,6 +212,8 @@
         baseConfig
         ./modules
         sops-nix.nixosModules.sops
+        home-manager.nixosModules.home-manager
+        ./common/home-manager-config.nix
       ];
 
       # Stylix theming, opted into per-host (see `modules`).

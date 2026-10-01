@@ -11,8 +11,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.home-manager.nixosModules.home-manager
-    ../../common/home-manager-config.nix
   ];
 
   host.enableBluetooth = true;

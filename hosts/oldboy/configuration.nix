@@ -11,8 +11,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.home-manager.nixosModules.default
-    ../../common/home-manager-config.nix
     ../../modules
     inputs.sops-nix.nixosModules.sops
     ./supernote-cloud.nix

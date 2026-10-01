@@ -13,8 +13,6 @@ let
 in
 {
   imports = [
-    inputs.home-manager.nixosModules.default
-    ../../common/home-manager-config.nix
   ];
 
   host.homeManagerHostname = "homebasewsl";

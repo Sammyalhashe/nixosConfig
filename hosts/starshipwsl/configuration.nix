@@ -9,11 +9,6 @@
   ...
 }:
 {
-  imports = [
-    inputs.home-manager.nixosModules.default
-    ../../common/home-manager-config.nix
-  ];
-
   host.homeManagerHostname = "starshipwsl";
   host.isWsl = true;
   host.setNameservers = false;

@@ -73,8 +73,6 @@ in
   ];
 
   imports = [
-    inputs.home-manager.nixosModules.default
-    ../../common/home-manager-config.nix
     inputs.sops-nix.nixosModules.sops
     ./adguard.nix
   ];

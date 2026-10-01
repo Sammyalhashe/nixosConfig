@@ -13,9 +13,6 @@ in
     ./hardware-configuration.nix
     ./asus.nix
     # ./graphics.nix
-    inputs.home-manager.nixosModules.default
-    inputs.home-manager.nixosModules.home-manager
-    ../../common/home-manager-config.nix
   ];
 
   specialisation.mango.configuration = {
