@@ -8,14 +8,7 @@
   ...
 }:
 let
-  nixvim-package = inputs.nixvim.packages.x86_64-linux.default;
-
-  nixvim-wsl = nixvim-package.extend { nixvim.wsl = true; };
-  extended-nixvim =
-    if config.stylix.enable then
-      nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
-    else
-      nixvim-wsl;
+  extended-nixvim = import ./lib/nixvim.nix { inherit pkgs inputs config; } { nixvim.wsl = true; };
 in
 {
   imports = [ ./base.nix ];

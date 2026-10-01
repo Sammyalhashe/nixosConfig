@@ -7,17 +7,11 @@
   ...
 }:
 let
-  nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
-  nixvim-wsl = nixvim-package.extend {
+  extended-nixvim = import ../../homeManagerModules/lib/nixvim.nix { inherit pkgs inputs config; } {
     nixvim.wsl = false;
     nixvim.dark = false;
     nixvim.themeWatcher = false;
   };
-  extended-nixvim =
-    if (config.stylix or { }).enable or false then
-      nixvim-wsl.extend config.stylix.targets.nixvim.exportedModule
-    else
-      nixvim-wsl;
 in
 {
   imports = [

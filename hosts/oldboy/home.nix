@@ -8,7 +8,9 @@
   ...
 }:
 let
-  nixvim-package = inputs.nixvim.packages."${pkgs.stdenv.hostPlatform.system}".default;
+  extended-nixvim = import ../../homeManagerModules/lib/nixvim.nix {
+    inherit pkgs inputs config;
+  } { };
 in
 {
   imports = [
@@ -29,7 +31,7 @@ in
   home.packages = with pkgs; [
     # minimal packages for a server
     direnv
-    nixvim-package
+    extended-nixvim
     fzf
     git
     podman
