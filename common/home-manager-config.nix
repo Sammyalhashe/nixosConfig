@@ -11,7 +11,16 @@ let
   cfg = config.host;
   # Conditionally import Stylix HM module if not already present in NixOS/Darwin options
   # to avoid "read-only option set multiple times" error.
-  stylixModule = if (options ? stylix) then [ ] else [ inputs.stylix.homeModules.stylix ];
+  # Its overlays are switched off because useGlobalPkgs forbids HM-level
+  # nixpkgs.overlays (stylix's own NixOS integration does the same).
+  stylixModule =
+    if (options ? stylix) then
+      [ ]
+    else
+      [
+        inputs.stylix.homeModules.stylix
+        { stylix.overlays.enable = false; }
+      ];
 in
 {
   config = {

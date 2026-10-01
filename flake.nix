@@ -179,10 +179,9 @@
         };
 
       # --- BASE CONFIG: Shared settings across all NixOS hosts ---
+      # Overlays come from getPkgs alone: nixpkgs.overlays here would be applied
+      # a second time on top of the passed-in pkgs.
       baseConfig = {
-        nixpkgs = {
-          inherit overlays;
-        };
         nix.settings.experimental-features = [
           "nix-command"
           "flakes"
