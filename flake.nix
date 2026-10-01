@@ -220,7 +220,7 @@
         ./modules
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
-        ./common/home-manager-config.nix
+        ./nix/home-manager.nix
       ];
 
       # Stylix theming, opted into per-host (see `modules`).
@@ -420,8 +420,7 @@
         modules = [
           baseConfig
           sops-nix.homeManagerModules.sops
-          ./homeManagerModules/ryoku.nix
-          ./common/home-ryoku.nix
+          ./hosts/ryoku/home.nix
           ./homeManagerModules/cloudflare-warp.nix
           {
             environments.wsl = {
@@ -435,10 +434,10 @@
       # Home-manager module mappings for different host types
       homeModules.default = ./homeManagerModules;
       homeModules.starship = ./homeManagerModules;
-      homeModules.starshipwsl = ./homeManagerModules/starshipwsl.nix;
-      homeModules.homebasewsl = ./homeManagerModules/homebasewsl.nix;
-      homeModules.filestore = ./homeManagerModules/filestore.nix;
-      homeModules.mothership = ./homeManagerModules/mothership.nix;
+      homeModules.starshipwsl = ./hosts/starshipwsl/home-modules.nix;
+      homeModules.homebasewsl = ./hosts/homebasewsl/home-modules.nix;
+      homeModules.filestore = ./hosts/filestore/home-modules.nix;
+      homeModules.mothership = ./hosts/mothership/home-modules.nix;
 
       # deploy-rs targets (build locally, copy over SSH, activate w/ rollback).
       # Node definitions live in ./deploy.nix; run `deploy .#<host>`.

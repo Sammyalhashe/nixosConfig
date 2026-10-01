@@ -17,9 +17,10 @@ let
 in
 {
   imports = [
-    ../homeManagerModules/base.nix
-    ../homeManagerModules/claude-code.nix
-    ../homeManagerModules/aider.nix
+    ../../homeManagerModules/base.nix
+    ../../homeManagerModules/claude-code.nix
+    ../../homeManagerModules/aider.nix
+    ./home-modules.nix
   ];
 
   programs.aider.enable = true;

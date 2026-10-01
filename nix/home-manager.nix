@@ -49,8 +49,6 @@ in
           ]
           ++ [
             inputs.todo.homeManagerModules.default
-            (./. + "/home-${cfg.homeManagerHostname}.nix")
-            inputs.self.outputs.homeModules.${cfg.homeManagerHostname} or { }
           ];
         services.todo.enable = false;
       };

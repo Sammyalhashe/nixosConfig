@@ -1,12 +1,11 @@
 { lib, inputs, ... }:
 let
   my_imports = [
-    ./home-common.nix
-    ./neovim.nix
-    ./stylix.nix
-    ./aider.nix
+    ../../homeManagerModules/home-common.nix
+    ../../homeManagerModules/neovim.nix
+    ../../homeManagerModules/stylix.nix
+    ../../homeManagerModules/aider.nix
     {
-      programs.coinbase-cli.enable = true;
       environments.wsl.enable = true;
       environments.wsl.windowsUsername = "sammy";
     }

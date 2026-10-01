@@ -23,11 +23,11 @@ let
 in
 {
   imports = [
-    ../homeManagerModules/base.nix
-    ./home-entertainment.nix
-    ../homeManagerModules/aider.nix
-    ../homeManagerModules/zeal.nix
-    ../homeManagerModules/firefox.nix
+    ./base.nix
+    ./entertainment.nix
+    ./aider.nix
+    ./zeal.nix
+    ./firefox.nix
   ];
 
   programs.aider.enable = true;

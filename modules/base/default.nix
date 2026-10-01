@@ -11,7 +11,7 @@
   # These values were previously repeated verbatim across five to seven host
   # files -- time.timeZone in five, the nine-key extraLocaleSettings block
   # byte-identical in two, and the home-manager pair in four (where it was
-  # already a no-op, since common/home-manager-config.nix sets both).
+  # already a no-op, since nix/home-manager.nix sets both).
 
   time.timeZone = lib.mkDefault "America/New_York";
 

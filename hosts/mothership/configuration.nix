@@ -49,6 +49,7 @@ in
   host.enableLiana = true;
 
   host.homeManagerHostname = "mothership";
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   boot = {

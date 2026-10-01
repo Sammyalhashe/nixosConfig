@@ -12,14 +12,14 @@ let
 in
 {
   imports = [
-    ../homeManagerModules/base.nix
-    # ../homeManagerModules/openclaw.nix
-    ../homeManagerModules/aider.nix
-    ../homeManagerModules/claude-code.nix
-    ../homeManagerModules/opencode.nix
-    ../homeManagerModules/coinbase-trader.nix
-    ../homeManagerModules/phar-liquidity-bot.nix
-    ../homeManagerModules/coinbase-cli.nix
+    ../../homeManagerModules/base.nix
+    # ../../homeManagerModules/openclaw.nix
+    ../../homeManagerModules/aider.nix
+    ../../homeManagerModules/claude-code.nix
+    ../../homeManagerModules/opencode.nix
+    ../../homeManagerModules/coinbase-trader.nix
+    ../../homeManagerModules/phar-liquidity-bot.nix
+    ../../homeManagerModules/coinbase-cli.nix
   ];
 
   home.username = "${user}";

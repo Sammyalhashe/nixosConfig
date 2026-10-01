@@ -7,7 +7,10 @@
   ...
 }:
 {
-  imports = [ ./home-wsl-common.nix ];
+  imports = [
+    ../../homeManagerModules/wsl-base.nix
+    ./home-modules.nix
+  ];
 
   home.username = "${user}";
 

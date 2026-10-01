@@ -37,4 +37,5 @@ Use the built-in helper scripts when possible:
 - **Host Configs**: `hosts/<host>/configuration.nix`
 - **LLM Services**: `nixosModules/llm-services/`
 - **Home Manager**: `homeManagerModules/`
-- **Shared Config**: `common/`
+- **Per-host Home Manager**: `hosts/<host>/home.nix`
+- **Shared Home Manager bases**: `homeManagerModules/{base,desktop-base,wsl-base}.nix`

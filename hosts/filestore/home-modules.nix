@@ -6,10 +6,10 @@
 }:
 {
   imports = [
-    ./zellij.nix
-    ./nushell.nix
-    ./tmux.nix
-    ./yazi.nix
+    ../../homeManagerModules/zellij.nix
+    ../../homeManagerModules/nushell.nix
+    ../../homeManagerModules/tmux.nix
+    ../../homeManagerModules/yazi.nix
   ];
 
   home.packages = with pkgs; [

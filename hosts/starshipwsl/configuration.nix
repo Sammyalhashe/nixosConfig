@@ -10,6 +10,7 @@
 }:
 {
   host.homeManagerHostname = "starshipwsl";
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
   host.isWsl = true;
   host.setNameservers = false;
 

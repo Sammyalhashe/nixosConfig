@@ -65,14 +65,15 @@ darwin-rebuild switch --flake .#KQ7DV474L1
 home-manager switch --flake .#work
 ```
 
-**DevShell scripts** (run via `nix develop` or from the flake's `bin/`):
+**DevShell commands** (numtide/devshell; `nix develop` prints the menu, `menu` shows it again):
 ```
 check          - Run nix flake check
 fmt            - Run nix fmt
-switch-<host>  - Switch NixOS config locally
-test-<host>    - Test NixOS config locally
+switch-<host>  - Switch NixOS config locally via nh
+test-<host>    - Test NixOS config locally via nh
+switch-ryoku   - Switch ryoku's standalone home-manager config via nh
 push-<host>    - Build and push to cachix
-deploy-<host>  - Build locally, push closure, activate on remote host
+deploy .#<host> - Build locally, push closure, activate on remote host (deploy-rs)
 ```
 
 ## Formatting
@@ -82,10 +83,11 @@ Run `nix fmt` before committing to ensure all files are formatted correctly.
 ## Key Components
 
 - **flake.nix** — Main flake definition with all host configurations and outputs
-- **hosts/** — Per-host NixOS/Darwin configuration
-- **common/** — Shared configuration across hosts
-- **modules/** — Reusable NixOS and home-manager modules
-- **homeManagerModules/** — Home manager configurations
+- **hosts/** — Per-host configuration: `configuration.nix` (NixOS), `home.nix` (the host's home-manager entrypoint), and `home-modules.nix` (the host's HM module bundle, also exported as `homeModules.<host>`). `hosts/ryoku/` is home-manager only
+- **modules/** — Reusable NixOS modules, toggled through `host.*` options in `modules/options.nix`
+- **homeManagerModules/** — Reusable home-manager modules; `base.nix`, `desktop-base.nix` and `wsl-base.nix` are the shared bases host `home.nix` files build on
+- **nix/** — Flake plumbing: `home-manager.nix` (NixOS↔HM glue) and `devshell.nix`
+- **pkgs/** — Local packages, including the shell scripts in `pkgs/scripts/`
 - **secrets.yaml** — Encrypted secrets via sops-nix (age-based)
 - **starship.conf** — Starship shell prompt configuration
 - **CLAUDE.md** — AI assistant principles (Karpathy coding principles)

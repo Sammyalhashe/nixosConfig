@@ -96,6 +96,7 @@ in
   documentation.nixos.enable = false;
 
   host.homeManagerHostname = "filestore";
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
 
   # Stylix Configuration (Headless/Minimal)
   stylix = {

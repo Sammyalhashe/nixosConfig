@@ -13,6 +13,8 @@ in
     ./hardware-configuration.nix
   ];
 
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
+
   host.enableBluetooth = true;
   host.enableKaspaNg = true;
   host.enableNvidia = true;
@@ -24,7 +26,6 @@ in
   specialisation.kde.configuration = {
     host.enableKDE = lib.mkForce true;
   };
-  host.homeManagerHostname = "default";
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade

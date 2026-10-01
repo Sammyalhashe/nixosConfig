@@ -79,7 +79,7 @@
   # clean stays off on purpose: it collides with nix.gc.automatic and the module
   # warns when both are enabled.
   #
-  # Not applied to common/home-filestore.nix, which does not import this file.
+  # Not applied to hosts/filestore/home.nix, which does not import this file.
   programs.nh = {
     enable = true;
     flake = "${config.home.homeDirectory}/nixosConfig";

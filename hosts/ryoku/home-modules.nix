@@ -3,7 +3,7 @@
 }:
 let
   my_imports = [
-    ./home-common.nix
+    ../../homeManagerModules/home-common.nix
   ];
 in
 {

@@ -16,6 +16,7 @@ in
   ];
 
   host.homeManagerHostname = "homebasewsl";
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
   host.username = user;
   host.isWsl = true;
   host.setNameservers = false;

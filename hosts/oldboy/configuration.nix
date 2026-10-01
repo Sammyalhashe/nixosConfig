@@ -18,6 +18,8 @@ in
     inputs.terminus.nixosModules.terminus
   ];
 
+  home-manager.users.${config.host.username}.imports = [ ./home.nix ];
+
   host.enableSnap = false;
 
   sops.secrets.filestore_container_env = { };

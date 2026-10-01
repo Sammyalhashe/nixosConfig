@@ -5,7 +5,8 @@
 }:
 {
   imports = [
-    ./home-default.nix
+    ../../homeManagerModules/desktop-base.nix
+    ../../homeManagerModules
   ];
 
   # See this module for an example on how

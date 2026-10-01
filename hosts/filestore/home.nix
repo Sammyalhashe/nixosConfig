@@ -13,6 +13,8 @@ let
       nixvim-package;
 in
 {
+  imports = [ ./home-modules.nix ];
+
   home.packages = with pkgs; [
     gh
     jujutsu

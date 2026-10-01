@@ -21,8 +21,9 @@ let
 in
 {
   imports = [
-    ../homeManagerModules/base.nix
-    ../homeManagerModules/firefox.nix
+    ../../homeManagerModules/base.nix
+    ../../homeManagerModules/firefox.nix
+    ./home-modules.nix
   ];
 
   home.username = "${user}";
@@ -45,7 +46,7 @@ in
     liana
     # Kaspa wallet. Point it at mothership (Remote -> ws://mothership.salh.xyz:17110)
     # rather than letting it sync its own DAG. See modules/crypto/kaspa-ng.nix.
-    (import ../pkgs/kaspa-ng.nix { inherit pkgs; })
+    (import ../../pkgs/kaspa-ng.nix { inherit pkgs; })
   ];
 
   home.sessionVariables = {
