@@ -8,9 +8,6 @@
   inputs,
   ...
 }:
-let
-  user = "salhashemi2";
-in
 {
   imports = [
     inputs.home-manager.nixosModules.default

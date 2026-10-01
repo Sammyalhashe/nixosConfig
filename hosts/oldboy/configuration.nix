@@ -6,7 +6,7 @@
   ...
 }:
 let
-  user = "salhashemi2";
+  user = config.host.username;
 in
 {
   imports = [

@@ -7,7 +7,7 @@
 }:
 
 let
-  user = "salhashemi2";
+  user = config.host.username;
   interface = "wlan0";
   hostname = "filestore";
 
