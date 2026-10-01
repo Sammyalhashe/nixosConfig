@@ -9,10 +9,10 @@ let
     ./mangowc.nix
     ./mods.nix
     ./opencode.nix
-    ./options.nix
     ./plasma.nix
     ./startup-fix.nix
     ./stylix.nix
+    ./vicinae.nix
     ./waybar.nix
     ./wofi.nix
     {
