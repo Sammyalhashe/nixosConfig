@@ -53,6 +53,12 @@
 
     enableCoinbaseSweep = lib.mkEnableOption "Whether to enable the automated weekly Coinbase self-custody sweep service.";
 
+    coinbaseSweepPercent = lib.mkOption {
+      type = lib.types.numbers.between 0 100;
+      default = 2;
+      description = "Percentage of each coin's available balance the weekly Coinbase sweep sends to self-custody.";
+    };
+
     enableKaspaNg = lib.mkEnableOption "Whether to install the Kaspa NG desktop node/wallet.";
 
     enableVicinae = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";

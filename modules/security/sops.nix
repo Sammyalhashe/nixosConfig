@@ -146,33 +146,49 @@
   };
 
   sops.templates."cb_hardware_maker-json" = {
-    content = ''
-      {
-        "name": "${config.sops.placeholder.cb_hardware_maker_org_name}",
-        "privateKey": "${config.sops.placeholder.cb_hardware_maker_key}",
-        "addresses": {
-          "AVAX": "${config.sops.placeholder.TANGEM_AVAX}",
-          "ETH": {
-            50: "${config.sops.placeholder.ROCKETSHIP_ETH}",
-            50: "${config.sops.placeholder.SAFE_DEFI_VAULT}",
+    # Built with toJSON so the file is valid JSON by construction. Each coin
+    # maps to one address, or to a list of { address, weight } splits that
+    # withdraw_to_hardware.py divides the withdrawal across.
+    content = builtins.toJSON {
+      name = config.sops.placeholder.cb_hardware_maker_org_name;
+      privateKey = config.sops.placeholder.cb_hardware_maker_key;
+      addresses = {
+        AVAX = config.sops.placeholder.TANGEM_AVAX;
+        ETH = [
+          {
+            address = config.sops.placeholder.ROCKETSHIP_ETH;
+            weight = 50;
           }
-          "BTC": "${config.sops.placeholder.KEYSTONE_BTC}",
-          "SOL": {
-            25:"${config.sops.placeholder.TANGEM_SOL}",
-            70:"${config.sops.placeholder.ROCKETSHIP_SOL}",
-            5:"${config.sops.placeholder.SQUADS_SOL_VAULT}",
+          {
+            address = config.sops.placeholder.SAFE_DEFI_VAULT;
+            weight = 50;
           }
-          "SUI": "${config.sops.placeholder.ROCKETSHIP_SUI}"
-        },
-        "networks": {
-          "BTC": "bitcoin",
-          "SOL": "solana",
-          "SUI": "sui",
-          "ETH": "ethereum",
-          "AVAX": "avalanche"
-        }
-      }
-    '';
+        ];
+        BTC = config.sops.placeholder.KEYSTONE_BTC;
+        SOL = [
+          {
+            address = config.sops.placeholder.TANGEM_SOL;
+            weight = 25;
+          }
+          {
+            address = config.sops.placeholder.ROCKETSHIP_SOL;
+            weight = 70;
+          }
+          {
+            address = config.sops.placeholder.SQUADS_SOL_VAULT;
+            weight = 5;
+          }
+        ];
+        SUI = config.sops.placeholder.ROCKETSHIP_SUI;
+      };
+      networks = {
+        BTC = "bitcoin";
+        SOL = "solana";
+        SUI = "sui";
+        ETH = "ethereum";
+        AVAX = "avalanche";
+      };
+    };
     owner = config.host.username;
     path = "/home/${config.host.username}/hardware_maker_api_key.json";
   };

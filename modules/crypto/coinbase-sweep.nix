@@ -16,13 +16,15 @@ in
 lib.mkIf config.host.enableCoinbaseSweep {
   # 1. Define the automation execution runner service
   systemd.services.coinbase-weekly-sweep = {
-    description = "Automated weekly 5% crypto reduction transfer to self-custody";
+    description = "Automated weekly ${toString config.host.coinbaseSweepPercent}% crypto reduction transfer to self-custody";
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
 
     serviceConfig = {
       Type = "oneshot";
       User = config.host.username;
+      # Read by withdraw_to_hardware.py; set via host.coinbaseSweepPercent
+      Environment = "SWEEP_PERCENT=${toString config.host.coinbaseSweepPercent}";
 
       # Directly call the custom Python interpreter and feed it the script file path
       ExecStart = "${pythonEnv}/bin/python ${./withdraw_to_hardware.py}";

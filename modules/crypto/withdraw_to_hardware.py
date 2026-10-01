@@ -15,6 +15,9 @@ logging.basicConfig(
 )
 
 API_KEY_FILE = f"{os.getenv('HOME')}/hardware_maker_api_key.json"
+# Percentage of each coin's available balance to sweep; the NixOS service sets
+# this from host.coinbaseSweepPercent.
+SWEEP_PERCENT = os.getenv("SWEEP_PERCENT")
 
 
 def load_bot_config(config_path: str) -> tuple:
@@ -22,6 +25,20 @@ def load_bot_config(config_path: str) -> tuple:
     with open(config_path, "r") as f:
         data = json.load(f)
     return data.get("addresses", {}), data.get("networks", {})
+
+
+def split_targets(entry, amount: float) -> list:
+    """Divides amount across a coin's destinations.
+
+    entry is a single address, or a list of {"address", "weight"} splits;
+    weights are relative, so each split gets amount * weight / total_weight.
+    """
+    if isinstance(entry, str):
+        return [(entry, amount)]
+    total_weight = sum(split["weight"] for split in entry)
+    return [
+        (split["address"], amount * split["weight"] / total_weight) for split in entry
+    ]
 
 
 def get_primary_portfolio_uuid(client: RESTClient) -> str:
@@ -38,6 +55,11 @@ def main():
     if not os.path.exists(API_KEY_FILE):
         logging.error(f"Missing configuration profile at {API_KEY_FILE}")
         sys.exit(1)
+
+    if SWEEP_PERCENT is None:
+        logging.error("SWEEP_PERCENT is not set")
+        sys.exit(1)
+    sweep_fraction = float(SWEEP_PERCENT) / 100
 
     # Load addresses and target networks from our single SOPS file
     addresses, networks = load_bot_config(API_KEY_FILE)
@@ -79,47 +101,54 @@ def main():
                     logging.info(f"Skipping {coin}: Balance is completely empty.")
                     continue
 
-                # 4. Calculate exact 5% allocation for this specific coin
-                target_withdrawal = available_balance * 0.02
-
-                # Check for dust limits (Coinbase blocks transfers that round down to zero)
-                if target_withdrawal < 0.00000001:
-                    logging.warning(
-                        f"Skipping {coin}: 5% calculation resulted in dust payload ({target_withdrawal})."
-                    )
-                    continue
-
-                # Format safely to string to drop excessive float decimals
-                withdrawal_amount_str = f"{target_withdrawal:.8f}".rstrip("0").rstrip(
-                    "."
-                )
+                # 4. Calculate the SWEEP_PERCENT allocation for this specific coin
+                target_withdrawal = available_balance * sweep_fraction
 
                 logging.info(
-                    f"Processing sweep: 5% of {available_balance} {coin} = {withdrawal_amount_str} {coin}"
+                    f"Processing sweep: {SWEEP_PERCENT}% of {available_balance} {coin} = {target_withdrawal} {coin}"
                 )
 
-                # 5. Execute Legacy v2 Send Request
-                endpoint = f"/v2/accounts/{account_id}/transactions"
-                payload = {
-                    "type": "send",
-                    "to": addresses[coin],
-                    "amount": withdrawal_amount_str,
-                    "currency": coin,
-                    # "network": networks[coin],
-                    "idem": str(
-                        uuid.uuid4()
-                    ),  # Prevent double-sends on network timeouts
-                }
+                # Each split is its own send, so one failure doesn't block the rest
+                for address, amount in split_targets(
+                    addresses[coin], target_withdrawal
+                ):
+                    try:
+                        # Check for dust limits (Coinbase blocks transfers that round down to zero)
+                        if amount < 0.00000001:
+                            logging.warning(
+                                f"Skipping {coin} -> '{address}': split resulted in dust payload ({amount})."
+                            )
+                            continue
 
-                logging.info(
-                    f"🚀 Pushing {withdrawal_amount_str} {coin} to external wallet '{addresses[coin]}' on network '{networks[coin]}'..."
-                )
-                response = client.post(endpoint, data=payload)
+                        # Format safely to string to drop excessive float decimals
+                        amount_str = f"{amount:.8f}".rstrip("0").rstrip(".")
 
-                tx_id = response.get("data", {}).get("id", "Pending/Queued")
-                logging.info(
-                    f"✅ Successfully completed {coin} transaction. ID: {tx_id}"
-                )
+                        # 5. Execute Legacy v2 Send Request
+                        endpoint = f"/v2/accounts/{account_id}/transactions"
+                        payload = {
+                            "type": "send",
+                            "to": address,
+                            "amount": amount_str,
+                            "currency": coin,
+                            # "network": networks[coin],
+                            "idem": str(
+                                uuid.uuid4()
+                            ),  # Prevent double-sends on network timeouts
+                        }
+
+                        logging.info(
+                            f"🚀 Pushing {amount_str} {coin} to external wallet '{address}' on network '{networks[coin]}'..."
+                        )
+                        response = client.post(endpoint, data=payload)
+
+                        tx_id = response.get("data", {}).get("id", "Pending/Queued")
+                        logging.info(
+                            f"✅ Successfully completed {coin} transaction. ID: {tx_id}"
+                        )
+                    except Exception as send_error:
+                        logging.error(
+                            f"Failed to send {coin} to '{address}': {send_error}"
+                        )
             except Exception as coin_error:
                 logging.error(
                     f"Failed to process sweep for coin {coin}: {coin_error}"
