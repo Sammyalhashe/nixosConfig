@@ -1,7 +1,6 @@
 { lib, inputs, ... }:
 let
   my_imports = [
-    ./aider.nix
     ./crush.nix
     ./gemini-cli.nix
     ./ghostty.nix

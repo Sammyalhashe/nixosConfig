@@ -4,7 +4,6 @@ let
     ../../homeManagerModules/home-common.nix
     ../../homeManagerModules/neovim.nix
     ../../homeManagerModules/stylix.nix
-    ../../homeManagerModules/aider.nix
     {
       programs.coinbase-cli.enable = true;
       environments.wsl.enable = true;

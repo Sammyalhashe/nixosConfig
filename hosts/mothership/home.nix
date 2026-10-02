@@ -16,11 +16,8 @@ in
   imports = [
     ../../homeManagerModules/base.nix
     ../../homeManagerModules/claude-code.nix
-    ../../homeManagerModules/aider.nix
     ./home-modules.nix
   ];
-
-  programs.aider.enable = true;
 
   home.username = "${user}";
 

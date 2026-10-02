@@ -17,12 +17,9 @@ in
   imports = [
     ./base.nix
     ./entertainment.nix
-    ./aider.nix
     ./zeal.nix
     ./firefox.nix
   ];
-
-  programs.aider.enable = true;
 
   home.username = "${user}";
 
