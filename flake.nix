@@ -23,12 +23,6 @@
     };
     nixvim.url = "github:Sammyalhashe/nixvim";
 
-    # Homebase Manager (Custom dashboard/management tool)
-    homebase-manager = {
-      url = "github:Sammyalhashe/homebase-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # WSL2 Integration for Windows
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
