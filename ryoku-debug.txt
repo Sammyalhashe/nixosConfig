@@ -1,0 +1,73 @@
+== units
+== failed
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+== procs
+1904 /nix/store/nkbikhz7hidhm4nkss2z5pshk26yf6pn-sddm-unwrapped-0.21.0/libexec/sddm-helper --socket /tmp/sddm-auth-02c17183-a01d-46ce-809c-5e88862c2c45 --id 1 --start niri-session --user salhashemi2
+2038 /nix/store/byi2zpy2bgcf3dr6y0l8m50rmjj8z7q1-bash-5.3p15/bin/sh /run/current-system/sw/bin/niri-session
+2084 systemctl --user --wait start niri.service
+2087 /nix/store/6ppik5vw4y28qn7nxaqr3xq1dxgk5w66-niri-26.04/bin/niri --session
+7569 /nix/store/1mv3qz005gkbalxfghk4y3s8ayv4d2dl-bash-interactive-5.3p15/bin/bash -c { echo '== units'; systemctl --user --no-pager status ryoku-session.target ryoku-materialize.service ryoku-shell.service hypridle.service &2>1 | head -120 echo '== failed'; systemctl --user --no-pager --failed echo '== procs'; pgrep -a -f 'Hyprland|niri|quickshell|qs | hypridle|qylock' echo '== journal'; journalctl --user -b --no-pager | grep -iE 'ryoku|quickshell|materializ|hypridle|qylock|lock' | tail -150 echo '== hyprland log'; tail -150 '$XDG_RUNTIME_DIR'/hypr/*/hyprland.log } > ryoku-debug.txt &2>1
+7570 systemctl --user --no-pager status ryoku-session.target ryoku-materialize.service ryoku-shell.service hypridle.service
+== journal
+Oct 04 11:31:13 starship systemd[1918]: Started Ryoku AI usage collector schedule.
+Oct 04 11:31:13 starship systemd[1918]: Started Ryoku Rashin local agent OS daemon and dashboard.
+Oct 04 11:31:13 starship systemd[1918]: Ryoku configuration bootstrap skipped, no trigger condition checks were met.
+Oct 04 11:31:19 starship .xwayland-satel[2322]: starship .xwayland-satellite-wrapped[2322]: > Warning:          Virtual modifier ScrollLock multiply defined
+Oct 04 11:31:19 starship ryoku-rashin[2021]: ryoku-rashin: dashboard on http://127.0.0.1:3600
+Oct 04 11:31:19 starship ryoku-rashin[2021]: ryoku-rashin: listen tcp 127.0.0.1:3600: bind: address already in use
+Oct 04 11:31:19 starship systemd[1918]: ryoku-rashin.service: Main process exited, code=exited, status=1/FAILURE
+Oct 04 11:31:19 starship systemd[1918]: ryoku-rashin.service: Failed with result 'exit-code'.
+Oct 04 11:31:19 starship systemd[1918]: ryoku-rashin.service: Consumed 1.124s CPU time over 2.885s wall clock time, 88.4M memory peak.
+Oct 04 11:31:22 starship systemd[1918]: ryoku-rashin.service: Scheduled restart job, restart counter is at 1.
+Oct 04 11:31:22 starship systemd[1918]: Started Ryoku Rashin local agent OS daemon and dashboard.
+Oct 04 11:31:22 starship ryoku-rashin[2436]: ryoku-rashin: dashboard on http://127.0.0.1:3600
+Oct 04 11:31:22 starship ryoku-rashin[2436]: ryoku-rashin: listen tcp 127.0.0.1:3600: bind: address already in use
+Oct 04 11:31:22 starship systemd[1918]: ryoku-rashin.service: Main process exited, code=exited, status=1/FAILURE
+Oct 04 11:31:23 starship systemd[1918]: ryoku-rashin.service: Failed with result 'exit-code'.
+Oct 04 11:31:25 starship systemd[1918]: ryoku-rashin.service: Scheduled restart job, restart counter is at 2.
+Oct 04 11:31:25 starship systemd[1918]: Started Ryoku Rashin local agent OS daemon and dashboard.
+Oct 04 11:31:25 starship ryoku-rashin[2489]: ryoku-rashin: dashboard on http://127.0.0.1:3600
+Oct 04 11:31:25 starship ryoku-rashin[2489]: ryoku-rashin: listen tcp 127.0.0.1:3600: bind: address already in use
+Oct 04 11:31:25 starship systemd[1918]: ryoku-rashin.service: Main process exited, code=exited, status=1/FAILURE
+Oct 04 11:31:25 starship systemd[1918]: ryoku-rashin.service: Failed with result 'exit-code'.
+Oct 04 11:31:28 starship systemd[1918]: ryoku-rashin.service: Scheduled restart job, restart counter is at 3.
+Oct 04 11:31:28 starship systemd[1918]: Started Ryoku Rashin local agent OS daemon and dashboard.
+Oct 04 11:31:28 starship ryoku-rashin[2553]: ryoku-rashin: dashboard on http://127.0.0.1:3600
+Oct 04 11:31:29 starship ryoku-rashin[2553]: ryoku-rashin: indexing the config mirror with prowl
+Oct 04 11:31:34 starship vicinae[2179]: [F] 2026-10-04T11:31:34 debug - Enqueuing incremental scan for /home/salhashemi2/var/lib/ryoku/rashin (pruned)
+Oct 04 11:31:34 starship vicinae[2179]: [F] 2026-10-04T11:31:34 debug - Done scanning /home/salhashemi2/var/lib/ryoku/rashin in 14ms (incremental, pruned)
+Oct 04 11:31:34 starship vicinae[2179]: [F] 2026-10-04T11:31:34 debug - Enqueuing incremental scan for /home/salhashemi2/var/lib/ryoku/rashin/source (pruned)
+Oct 04 11:31:34 starship vicinae[2179]: [F] 2026-10-04T11:31:34 debug - Done scanning /home/salhashemi2/var/lib/ryoku/rashin/source in 10ms (incremental, pruned)
+Oct 04 11:31:35 starship vicinae[2179]: [F] 2026-10-04T11:31:35 debug - Enqueuing incremental scan for /home/salhashemi2/var/lib/ryoku/rashin/source/.prowl (pruned)
+Oct 04 11:31:35 starship vicinae[2179]: [F] 2026-10-04T11:31:35 debug - Done scanning /home/salhashemi2/var/lib/ryoku/rashin/source/.prowl in 1ms (incremental, pruned)
+Oct 04 11:31:41 starship vicinae[2179]: [F] 2026-10-04T11:31:41 debug - Enqueuing incremental scan for /home/salhashemi2/var/lib/ryoku/rashin/source/.prowl (pruned)
+Oct 04 11:31:41 starship vicinae[2179]: [F] 2026-10-04T11:31:41 debug - Done scanning /home/salhashemi2/var/lib/ryoku/rashin/source/.prowl in 1ms (incremental, pruned)
+Oct 04 11:31:43 starship systemd[1918]: Starting Ryoku AI usage collectors...
+Oct 04 11:31:43 starship (claude-usage)[2923]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/claude-usage': No such file or directory
+Oct 04 11:31:43 starship (codex-usage)[2925]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/codex-usage': No such file or directory
+Oct 04 11:31:43 starship (opencode-usage)[2927]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/opencode-usage': No such file or directory
+Oct 04 11:31:43 starship systemd[1918]: Finished Ryoku AI usage collectors.
+Oct 04 11:36:43 starship systemd[1918]: Starting Ryoku AI usage collectors...
+Oct 04 11:36:43 starship (claude-usage)[6416]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/claude-usage': No such file or directory
+Oct 04 11:36:43 starship (codex-usage)[6425]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/codex-usage': No such file or directory
+Oct 04 11:36:43 starship (opencode-usage)[6427]: ryoku-ai-usage.service: Unable to locate executable '/usr/bin/opencode-usage': No such file or directory
+Oct 04 11:36:43 starship systemd[1918]: Finished Ryoku AI usage collectors.
+== hyprland log
+○ ryoku-session.target - Ryoku desktop session
+     Loaded: loaded (/home/salhashemi2/.config/systemd/user/ryoku-session.target; enabled; preset: ignored)
+     Active: inactive (dead)
+       Docs: man:systemd.special(7)
+
+○ ryoku-materialize.service - Materialize the current Ryoku desktop generation
+     Loaded: loaded (/etc/systemd/user/ryoku-materialize.service; enabled; preset: ignored)
+     Active: inactive (dead)
+
+○ ryoku-shell.service - Ryoku shell daemon
+     Loaded: loaded (/home/salhashemi2/.config/systemd/user/ryoku-shell.service; enabled; preset: ignored)
+     Active: inactive (dead)
+
+○ hypridle.service - Ryoku idle and session lock daemon
+     Loaded: loaded (/etc/systemd/user/hypridle.service; enabled; preset: ignored)
+     Active: inactive (dead)
