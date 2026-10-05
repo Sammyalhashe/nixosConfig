@@ -93,6 +93,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     keybr-tui.url = "github:y0sif/keybr-tui";
+    ttt = {
+      url = "github:eugenioenko/ttt";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
     nix-snapd = {
       url = "github:nix-community/nix-snapd";
       inputs.nixpkgs.follows = "nixpkgs";

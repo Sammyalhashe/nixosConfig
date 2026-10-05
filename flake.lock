@@ -2084,6 +2084,7 @@
         "terminus": "terminus",
         "todo": "todo",
         "treefmt-nix": "treefmt-nix_2",
+        "ttt": "ttt",
         "vicinae": "vicinae",
         "vicinae-extensions": "vicinae-extensions"
       }
@@ -2569,6 +2570,29 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "ttt": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790920029,
+        "narHash": "sha256-yKyBt2aMe9QId3Do22NQyup+ZNblKbcE1R5cz2Nb/wo=",
+        "owner": "eugenioenko",
+        "repo": "ttt",
+        "rev": "72392bac271e8f14e928a49476e50d99b6048485",
+        "type": "github"
+      },
+      "original": {
+        "owner": "eugenioenko",
+        "repo": "ttt",
         "type": "github"
       }
     },

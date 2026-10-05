@@ -36,6 +36,7 @@
       jjui
       jujutsu
       inputs.keybr-tui.packages.${pkgs.stdenv.hostPlatform.system}.default
+      inputs.ttt.packages.${pkgs.stdenv.hostPlatform.system}.default
       nmap
       pandoc
       presenterm
