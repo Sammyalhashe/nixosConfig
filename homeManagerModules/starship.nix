@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = [ pkgs.jj-starship ];
+
   programs.starship = {
     enable = true;
     enableNushellIntegration = true;
@@ -12,19 +14,15 @@
       package.disabled = true;
 
       format = ''
-        $directory $jj$git_commit$git_state$git_status$git_metrics $character
+        $directory ''${custom.jj}$git_state$git_metrics $character
       '';
 
+      # jj-starship renders both jj and git repos, replacing git_branch,
+      # git_commit and git_status (see flake input jj-starship)
       custom.jj = {
-        # Only run this if we are actually in a JJ repo
-        command = "jj log -r @ -T '\"🌀 \" ++ change_id.short() ++ if(bookmarks, \" (\" ++ bookmarks ++ \")\")' --no-graph";
-        when = "jj root"; # This is the fastest way to check if we're in a jj repo
-        shell = [
-          "sh"
-          "-c"
-        ];
-        style = "bold magenta";
-        format = "[$output]($style) ";
+        when = "jj-starship detect";
+        shell = [ "jj-starship" ];
+        format = "$output ";
       };
 
       git_metrics = {
@@ -44,14 +42,7 @@
         truncate_to_repo = false;
       };
 
-      git_status = {
-        format = " ([$all_status$ahead_behind](bold green))";
-        staged = "• ";
-        modified = "~ ";
-        untracked = "+ ";
-        deleted = "x ";
-      };
-
+      git_status.disabled = true;
       git_branch.disabled = true;
     };
   };

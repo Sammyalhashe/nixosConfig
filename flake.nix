@@ -122,6 +122,13 @@
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    # Unified git/jj starship prompt module (homeManagerModules/starship.nix)
+    jj-starship = {
+      url = "github:dmmulroy/jj-starship";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     kaspa-ng = {
       url = "github:aspectron/kaspa-ng";
       flake = false;
@@ -157,6 +164,7 @@
       nix-snapd,
       nix-cachyos-kernel,
       llm-agents,
+      jj-starship,
       kaspa-ng,
       nix-bitcoin,
       ...
@@ -166,6 +174,7 @@
       overlays = [
         nur.overlays.default
         llm-agents.overlays.shared-nixpkgs
+        jj-starship.overlays.default
       ];
 
       # Helper to initialize pkgs for a specific architecture with all overlays applied

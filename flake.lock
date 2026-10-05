@@ -1016,6 +1016,29 @@
         "url": "https://codeberg.org/zacoons/imgborders.git"
       }
     },
+    "jj-starship": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788534896,
+        "narHash": "sha256-z2nEavoTW+aXc0lbBQe0dTGIP0qKachCUSqa+EbWxfo=",
+        "owner": "dmmulroy",
+        "repo": "jj-starship",
+        "rev": "10e1e20a4e786349aa1eda6cf79c9b08d3a1fdae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dmmulroy",
+        "repo": "jj-starship",
+        "type": "github"
+      }
+    },
     "kaspa-ng": {
       "flake": false,
       "locked": {
@@ -2037,6 +2060,7 @@
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager_2",
         "hyprlock": "hyprlock",
+        "jj-starship": "jj-starship",
         "kaspa-ng": "kaspa-ng",
         "keybr-tui": "keybr-tui",
         "llama-cpp": "llama-cpp",
