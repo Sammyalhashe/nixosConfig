@@ -98,10 +98,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
-    nix-snapd = {
-      url = "github:nix-community/nix-snapd";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # Ryoku desktop (Hyprland + Quickshell). Consumed only when
     # host.useRyokuDesktop is set — see modules/desktop/ryoku.nix.
@@ -166,7 +162,6 @@
       hermes-agent,
       vicinae,
       vicinae-extensions,
-      nix-snapd,
       nix-cachyos-kernel,
       llm-agents,
       jj-starship,

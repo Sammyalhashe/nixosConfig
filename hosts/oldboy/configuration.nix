@@ -20,8 +20,6 @@ in
 
   home-manager.users.${config.host.username}.imports = [ ./home.nix ];
 
-  host.enableSnap = false;
-
   sops.secrets.filestore_container_env = { };
   # Terminus secrets live in the default sops file (secrets.yaml); the container
   # env file is assembled from them via the sops template below.

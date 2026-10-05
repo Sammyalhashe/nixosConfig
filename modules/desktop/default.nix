@@ -8,13 +8,11 @@
 
 {
   imports = [
-    inputs.nix-snapd.nixosModules.default
     ./hyprland.nix
     ./kdestuff.nix
     # NOT ./ryoku.nix: it is opted into per host. See that file.
     ./greetd.nix
     ./vicinae.nix
-    ./snap.nix
   ];
 
   config = lib.mkMerge [

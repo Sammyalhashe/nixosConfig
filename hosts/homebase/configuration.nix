@@ -19,7 +19,6 @@ in
   host.enableKaspaNg = true;
   host.enableNvidia = true;
   host.enableGreetd = false;
-  host.enableSnap = true;
   host.enableHardwareWallets = true;
   host.enableSparrow = true;
 
