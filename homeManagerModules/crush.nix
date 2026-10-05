@@ -36,18 +36,19 @@ let
           }
         ];
       };
-      openrouter = {
-        type = "openai";
-        base_url = "https://openrouter.ai/api/v1";
-        name = "OpenRouter";
-        api_key = "env:OPENROUTER_API_KEY";
-        models = [
-          {
-            name = "MiMo-V2-Omni (Free)";
-            id = "xiaomi/mimo-v2-omni:free";
-          }
-        ];
-      };
+      # OpenRouter disabled; uncomment to re-enable.
+      # openrouter = {
+      #   type = "openai";
+      #   base_url = "https://openrouter.ai/api/v1";
+      #   name = "OpenRouter";
+      #   api_key = "env:OPENROUTER_API_KEY";
+      #   models = [
+      #     {
+      #       name = "MiMo-V2-Omni (Free)";
+      #       id = "xiaomi/mimo-v2-omni:free";
+      #     }
+      #   ];
+      # };
     };
   };
 in

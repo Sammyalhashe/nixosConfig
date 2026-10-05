@@ -63,7 +63,6 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
-
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
@@ -153,14 +152,15 @@ in
       };
 
       fallback_providers = [
+        # OpenRouter disabled; uncomment to re-enable as the first fallback.
+        # {
+        #   provider = "openrouter";
+        #   model = "deepseek/deepseek-r1";
+        # }
         {
-          provider = "openrouter";
-          model = "deepseek/deepseek-r1";
-        }
-        {
-          # If OpenRouter is totally down, try to use the local Strix Halo
-          # machine. The -fast alias suppresses thinking: this is an agent
-          # loop, where the reasoning tax compounds over many short tool turns.
+          # If clinepass is down, use the local Strix Halo machine. The -fast
+          # alias suppresses thinking: this is an agent loop, where the
+          # reasoning tax compounds over many short tool turns.
           provider = "custom:mothership";
           model = "qwen3.8-fast";
         }

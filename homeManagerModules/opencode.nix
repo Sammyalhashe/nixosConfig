@@ -14,49 +14,50 @@ in
     enable = true;
     settings = {
       provider = {
-        openrouter = {
-          name = "openrouter/free";
-          npm = "@ai-sdk/openai-compatible";
-          options = {
-            baseURL = "https://openrouter.ai/api/v1";
-            apiKey = "{env:OPENROUTER_API_KEY}";
-          };
-          models = {
-            "deepseek/deepseek-v4-pro" = {
-              name = "deepseek-v4-pro";
-            };
-            "openrouter/free" = {
-              name = "Auto-Free Router";
-            };
-            # Vision + multimodal (10M ctx, MoE 17B/109B)
-            "meta-llama/llama-4-scout:free" = {
-              name = "Llama 4 Scout (Free)";
-            };
-            # Vision + multimodal, stronger reasoning (1M ctx, MoE 17B/400B)
-            "meta-llama/llama-4-maverick:free" = {
-              name = "Llama 4 Maverick (Free)";
-            };
-            # Best free code model (128k ctx)
-            "qwen/qwen-2.5-coder-32b-instruct:free" = {
-              name = "Qwen 2.5 Coder 32B (Free)";
-            };
-            # Best free reasoning model (163k ctx, chain-of-thought)
-            "deepseek/deepseek-r1:free" = {
-              name = "DeepSeek R1 (Free)";
-            };
-            # Fast multimodal (1M ctx)
-            "google/gemini-2.0-flash-exp:free" = {
-              name = "Gemini 2.0 Flash Exp (Free)";
-            };
-            # Reliable general-purpose vision (131k ctx)
-            "qwen/qwen2.5-vl-72b-instruct:free" = {
-              name = "Qwen 2.5 VL 72B (Free)";
-            };
-            "qwen/qwen-2.5-7b-instruct" = {
-              name = "Qwen 2.5 7B";
-            };
-          };
-        };
+        # OpenRouter disabled; uncomment to re-enable (and point the oh-my-opencode roles below back at it).
+        # openrouter = {
+        #   name = "openrouter/free";
+        #   npm = "@ai-sdk/openai-compatible";
+        #   options = {
+        #     baseURL = "https://openrouter.ai/api/v1";
+        #     apiKey = "{env:OPENROUTER_API_KEY}";
+        #   };
+        #   models = {
+        #     "deepseek/deepseek-v4-pro" = {
+        #       name = "deepseek-v4-pro";
+        #     };
+        #     "openrouter/free" = {
+        #       name = "Auto-Free Router";
+        #     };
+        #     # Vision + multimodal (10M ctx, MoE 17B/109B)
+        #     "meta-llama/llama-4-scout:free" = {
+        #       name = "Llama 4 Scout (Free)";
+        #     };
+        #     # Vision + multimodal, stronger reasoning (1M ctx, MoE 17B/400B)
+        #     "meta-llama/llama-4-maverick:free" = {
+        #       name = "Llama 4 Maverick (Free)";
+        #     };
+        #     # Best free code model (128k ctx)
+        #     "qwen/qwen-2.5-coder-32b-instruct:free" = {
+        #       name = "Qwen 2.5 Coder 32B (Free)";
+        #     };
+        #     # Best free reasoning model (163k ctx, chain-of-thought)
+        #     "deepseek/deepseek-r1:free" = {
+        #       name = "DeepSeek R1 (Free)";
+        #     };
+        #     # Fast multimodal (1M ctx)
+        #     "google/gemini-2.0-flash-exp:free" = {
+        #       name = "Gemini 2.0 Flash Exp (Free)";
+        #     };
+        #     # Reliable general-purpose vision (131k ctx)
+        #     "qwen/qwen2.5-vl-72b-instruct:free" = {
+        #       name = "Qwen 2.5 VL 72B (Free)";
+        #     };
+        #     "qwen/qwen-2.5-7b-instruct" = {
+        #       name = "Qwen 2.5 7B";
+        #     };
+        #   };
+        # };
         # Groq: fastest free inference (~30 RPM, LPU hardware, no credit card)
         groq = {
           name = "Groq (Free)";
@@ -143,13 +144,13 @@ in
           "model": "groq/llama-4-scout-17b-16e-instruct"
         },
         "visual-engineering": {
-          "model": "openrouter/meta-llama/llama-4-maverick:free"
+          "model": "mothership/qwen3.8"
         },
         "deep": {
-          "model": "openrouter/deepseek/deepseek-r1:free"
+          "model": "mothership/qwen3.8"
         },
         "ultrabrain": {
-          "model": "openrouter/deepseek/deepseek-r1:free"
+          "model": "mothership/qwen3.8"
         },
         "general": {
           "model": "groq/llama-3.3-70b-versatile"
@@ -166,13 +167,13 @@ in
           "model": "mothership/qwen3.8"
         },
         "Prometheus (Planner)": {
-          "model": "openrouter/deepseek/deepseek-v4-pro"
+          "model": "mothership/qwen3.8"
         },
         "Prometheus": {
-          "model": "openrouter/deepseek/deepseek-v4-pro"
+          "model": "mothership/qwen3.8"
         },
         "oracle": {
-          "model": "openrouter/meta-llama/llama-4-maverick:free"
+          "model": "mothership/qwen3.8"
         },
         "explore": {
           "model": "groq/llama-4-scout-17b-16e-instruct"
@@ -181,7 +182,7 @@ in
           "model": "groq/llama-3.3-70b-versatile"
         },
         "code-reviewer": {
-          "model": "openrouter/qwen/qwen-2.5-coder-32b-instruct:free"
+          "model": "mothership/qwen3.8"
         },
         "MiMo": {
           "model": "zen/mimo-v2-omni-free"
