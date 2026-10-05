@@ -87,12 +87,17 @@ in
             baseURL = "http://${inferenceHost}:4000/v1";
             apiKey = "any";
           };
+          # Must match the LiteLLM aliases mothership serves
+          # (services.llm-services.models.*.aliases).
           models = {
-            "qwen3.6" = {
-              name = "qwen3.6";
+            "qwen3.8" = {
+              name = "Qwen 3.8";
             };
-            "gemma-4" = {
-              name = "Gemma 4 26B";
+            "qwen3.8-fast" = {
+              name = "Qwen 3.8 (no thinking)";
+            };
+            "qwen-flash" = {
+              name = "Qwen Flash";
             };
           };
         };
@@ -125,7 +130,7 @@ in
           };
         };
       };
-      model = "mothership/qwen3.6";
+      model = "mothership/qwen3.8";
     };
   };
 
@@ -155,10 +160,10 @@ in
       },
       "agents": {
         "Sisyphus": {
-          "model": "mothership/qwen3.6"
+          "model": "mothership/qwen3.8"
         },
         "Sisyphus-Junior": {
-          "model": "mothership/qwen3.6"
+          "model": "mothership/qwen3.8"
         },
         "Prometheus (Planner)": {
           "model": "openrouter/deepseek/deepseek-v4-pro"
