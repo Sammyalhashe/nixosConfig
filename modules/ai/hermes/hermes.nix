@@ -107,8 +107,8 @@ in
     settings = {
       # Active provider + model. `provider`/`model` are plain strings, matching
       # the shape used in fallback_providers / auxiliary below.
-      provider = "custom:clinepass";
-      model = "cline-pass/qwen3.7-max";
+      provider = "custom:mothership";
+      model = "qwen3.8";
 
       mcp_servers = {
         composio = {
@@ -158,11 +158,9 @@ in
         #   model = "deepseek/deepseek-r1";
         # }
         {
-          # If clinepass is down, use the local Strix Halo machine. The -fast
-          # alias suppresses thinking: this is an agent loop, where the
-          # reasoning tax compounds over many short tool turns.
-          provider = "custom:mothership";
-          model = "qwen3.8-fast";
+          # If the local Strix Halo machine is down, fall back to clinepass.
+          provider = "custom:clinepass";
+          model = "cline-pass/qwen3.7-max";
         }
       ];
 
