@@ -6,6 +6,8 @@
   ...
 }:
 {
+  imports = [ ./hunk.nix ];
+
   home.packages =
     with pkgs;
     [
@@ -31,7 +33,6 @@
       fzf
       gemini-cli
       gh
-      hunk
       jjui
       jujutsu
       inputs.keybr-tui.packages.${pkgs.stdenv.hostPlatform.system}.default

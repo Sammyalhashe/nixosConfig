@@ -10,11 +10,13 @@ let
   } { };
 in
 {
-  imports = [ ./home-modules.nix ];
+  imports = [
+    ./home-modules.nix
+    ../../homeManagerModules/hunk.nix
+  ];
 
   home.packages = with pkgs; [
     gh
-    hunk
     jujutsu
     extended-nixvim
     fd
