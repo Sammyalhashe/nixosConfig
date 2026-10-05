@@ -8,7 +8,9 @@
   ...
 }:
 let
-  extended-nixvim = import ./lib/nixvim.nix { inherit pkgs inputs config; } { };
+  extended-nixvim = import ./lib/nixvim.nix { inherit pkgs inputs config; } {
+    nixvim.orgDirectory = "~/Nextcloud/org-agenda";
+  };
   llm-packages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
     cline
   ];
