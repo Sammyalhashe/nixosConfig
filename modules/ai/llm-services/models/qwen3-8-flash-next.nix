@@ -29,16 +29,25 @@
     batchSize = 4096;
     ubatchSize = 512;
 
-    # The ~51B n-gram embedding tables exceed llama.cpp's 4 GiB lazy-read
-    # threshold, so by default they stay in the mmap'd file and every token does
-    # scattered row reads from it -- fast only while the page cache holds them,
-    # disk-bound once it is reclaimed. Keep them resident instead; the memory
-    # budget above already counts the whole GGUF.
-    extraFlags = [ "--lazy-mode off" ];
-
     # Qwen's tool-call syntax is only parsed into OpenAI-shaped `tool_calls`
     # when the model's own chat template is used.
     jinja = true;
+
+    extraFlags = [
+      # The ~51B n-gram embedding tables exceed llama.cpp's 4 GiB lazy-read
+      # threshold, so by default they stay in the mmap'd file and every token
+      # does scattered row reads from it -- fast only while the page cache holds
+      # them, disk-bound once it is reclaimed. Keep them resident instead; the
+      # memory budget above already counts the whole GGUF.
+      "--lazy-mode off"
+
+      # Qwen's template (HF Qwen/Qwen3.8-Flash-Next @ de4b8e4) with one change:
+      # a system message after the first is rendered as its own turn instead of
+      # raising "System message must be at the beginning." Claude Code injects
+      # those mid-conversation, and neither LiteLLM (PR #38503, unmerged) nor
+      # llama.cpp (issue #27367, closed as template behaviour) normalizes them.
+      "--chat-template-file ${./qwen3-8-flash-next.jinja}"
+    ];
 
     # Keep thinking, but route it to message.reasoning_content so it never
     # lands in message.content and corrupts tool-call parsing in an agent
