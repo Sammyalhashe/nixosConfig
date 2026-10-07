@@ -29,6 +29,13 @@
     batchSize = 4096;
     ubatchSize = 512;
 
+    # The ~51B n-gram embedding tables exceed llama.cpp's 4 GiB lazy-read
+    # threshold, so by default they stay in the mmap'd file and every token does
+    # scattered row reads from it -- fast only while the page cache holds them,
+    # disk-bound once it is reclaimed. Keep them resident instead; the memory
+    # budget above already counts the whole GGUF.
+    extraFlags = [ "--lazy-mode off" ];
+
     # Qwen's tool-call syntax is only parsed into OpenAI-shaped `tool_calls`
     # when the model's own chat template is used.
     jinja = true;
