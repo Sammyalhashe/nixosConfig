@@ -10,6 +10,7 @@
     ./backend
     ./models.nix
     ./models/qwen-flash.nix
+    ./models/qwen3-6-35b-a3b.nix
     ./models/qwen3-8-flash-next.nix
     ./litellm.nix
   ];
