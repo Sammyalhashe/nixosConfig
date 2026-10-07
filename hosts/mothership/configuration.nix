@@ -91,9 +91,11 @@ in
   # whole llama.cpp stack. Vulkan (RADV) is upstream's recommended backend for
   # gfx1151 on stability grounds — see https://strix-halo-toolboxes.com/ — but
   # not the faster one: ROCm ties on token generation (1.00x) and leads on
-  # prefill by 1.34x at depth 0, 1.41x at 32k, 2.37x at 64k.
-  services.llm-services.backend.enableRocm = false;
-  services.llm-services.backend.enableVulkan = true;
+  # prefill by 1.34x at depth 0, 1.41x at 32k, 2.37x at 64k. ROCm is selected
+  # because agent harnesses send long prompts, where prefill dominates; flip
+  # these two back if ROCm proves unstable.
+  services.llm-services.backend.enableRocm = true;
+  services.llm-services.backend.enableVulkan = false;
 
   # Models are declared in ../../modules/ai/llm-services/models/; each entry
   # generates its llama-server unit and its LiteLLM routes together.
