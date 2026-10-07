@@ -98,12 +98,44 @@ in
         Group = "users";
         ExecStart =
           let
+            # nixpkgs pins litellm at 1.102.1; pin it forward to 1.104.0 (latest
+            # stable upstream as of 2026-10-07) until nixpkgs catches up. The
+            # Rust bridge (litellm-rust/) moves in lockstep with the Python
+            # source, so its vendored Cargo deps have to be rebuilt against the
+            # new src too. `optional-dependencies.proxy` is left as nixpkgs
+            # defines it for 1.102.1: the packages upstream added to that extra
+            # for 1.104.0 (granian, hiredis, starlette, litellm-proxy-extras,
+            # litellm-enterprise, pyroscope-io) are all behind CLI flags we don't
+            # pass, a DATABASE_URL/Prisma path we don't use, or a try/except
+            # ImportError — verified against the 1.104.0 source, not just
+            # assumed. Drop this whole override once nixpkgs ships >=1.104.0.
+            litellm =
+              ps:
+              ps.litellm.overridePythonAttrs (old: rec {
+                version = "1.104.0";
+                src = pkgs.fetchFromGitHub {
+                  owner = "BerriAI";
+                  repo = "litellm";
+                  tag = "v${version}";
+                  hash = "sha256-HhDp6ddfe/355/NZUmDHhcG75eLLXjwY61bQVWFk2Ks=";
+                };
+                cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+                  inherit (old) pname cargoRoot;
+                  inherit version src;
+                  # crates.io is unreachable from the host this pin was prepared
+                  # on (corporate proxy blocks it outright), so this could not be
+                  # prefetched. Replace with the real hash nix reports in the
+                  # "got:" line the first time this builds on a host with normal
+                  # network access.
+                  hash = pkgs.lib.fakeHash;
+                };
+              });
             # Use litellm's own `proxy` optional-dependencies from nixpkgs
             # (equivalent to the PyPI `litellm[proxy]` extra) rather than a
             # hand-maintained package list — reproducible and always in sync
             # with the packaged litellm version.
             pythonEnv = pkgs.python313.withPackages (
-              ps: [ ps.litellm ] ++ ps.litellm.optional-dependencies.proxy
+              ps: [ (litellm ps) ] ++ (litellm ps).optional-dependencies.proxy
             );
           in
           "${pythonEnv}/bin/litellm --config ${configFile} --port 4000 --host 0.0.0.0";
