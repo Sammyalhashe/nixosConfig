@@ -11,6 +11,7 @@
     ./direnv.nix
     ./mods.nix
     ./nushell.nix
+    ./pi.nix
     ./starship.nix
     ./tmux.nix
     ./wezterm.nix
