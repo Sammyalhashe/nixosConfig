@@ -177,6 +177,14 @@
         jj-starship.overlays.default
       ];
 
+      # flake-utils' default systems minus x86_64-darwin, which nixpkgs 26.11
+      # refuses to evaluate
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+
       # Helper to initialize pkgs for a specific architecture with all overlays applied
       getPkgs =
         system:
@@ -460,7 +468,7 @@
         hosts = hostsData;
       };
     }
-    // flake-utils.lib.eachDefaultSystem (
+    // flake-utils.lib.eachSystem systems (
       system:
       let
         pkgs = getPkgs system;
