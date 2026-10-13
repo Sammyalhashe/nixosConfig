@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  inputs,
   ...
 }:
 let
@@ -65,6 +66,7 @@ in
   programs.nushell = {
     enable = true;
     settings = {
+      show_banner = false;
       completions.external = {
         enable = true;
         max_results = 200;
@@ -139,6 +141,7 @@ in
       windows = "cd /mnt/c/Users/${wslCfg.windowsUsername}";
     });
     extraConfig = ''
+      print (open --raw "${inputs.nixvim.lib.banner}")
       # grep history for pattern
       def hgrep [pattern?: string] {
         match $pattern {
