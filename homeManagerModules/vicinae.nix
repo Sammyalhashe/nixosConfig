@@ -5,27 +5,7 @@
   pkgs,
   ...
 }:
-# let
-#   cfg = config.host.vicinae;
-# in
 {
-  # Ignore this stuff, not used
-  # options.host.vicinae = {
-  #   enable = lib.mkEnableOption "Whether to enable Raycast alt Vicinae.";
-  # };
-  #
-  # config = lib.mkMerge [
-  #   (lib.mkIf cfg.enable {
-  #     home.packages = [ pkgs.vicinae ];
-  #     programs.vicinae = {
-  #       enable = true;
-  #       extensions = [ ];
-  #     };
-  #   })
-  # ];
-
-  # end of stuff to ignore
-
   programs.vicinae = {
     enable = lib.mkDefault osConfig.host.enableVicinae;
 

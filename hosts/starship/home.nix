@@ -9,11 +9,6 @@
     ../../homeManagerModules
   ];
 
-  # See this module for an example on how
-  # to create a good home-manager option
-  # I don't use it because it turns out
-  # that vicinae comes with it's own flake.
-  # host.vicinae.enable = true;
   programs.coinbase-cli.enable = true;
 
   home.username = "${user}";
