@@ -2,9 +2,16 @@
   config,
   lib,
   pkgs,
+  osConfig ? { },
   ...
 }:
 let
+  sshTargets = lib.remove (osConfig.networking.hostName or "") [
+    "oldboy"
+    "mothership"
+    "homebase"
+    "filestore"
+  ];
   zjstatus-wasm = pkgs.fetchurl {
     url = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
     sha256 = "KCzqshnlbhkIyfrDOQckH+bD4e99hfqrPl9DjO+HuP4=";
@@ -372,7 +379,7 @@ in
                 SwitchToMode "normal"
             }
             bind "Alt r" {
-                Run "${pkgs.bash}/bin/bash" "-c" "SELECTED=$(printf 'momdv-ob-189\nsundev2\noldboy.salh.xyz\nmothership.salh.xyz\nfilestore.salh.xyz\npicloud.salh.xyz' | gum filter --placeholder 'Select SSH target...') && [ -n \"$SELECTED\" ] && case \"$SELECTED\" in *.salh.xyz) exec ssh salhashemi2@$SELECTED ;; *) exec ssh $SELECTED ;; esac" {
+                Run "${pkgs.bash}/bin/bash" "-c" "SELECTED=$(printf '${lib.concatStringsSep "\\n" sshTargets}' | gum filter --placeholder 'Select SSH target...') && [ -n \"$SELECTED\" ] && exec ssh $SELECTED" {
                     floating true
                     name "SSH"
                 }
