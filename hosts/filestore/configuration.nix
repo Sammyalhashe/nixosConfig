@@ -209,7 +209,6 @@ in
       };
       containers.vaultwarden = {
         image = "vaultwarden/server:latest";
-        pull = "always"; # always pull in the latest image.
         ports = [ "8090:80" ]; # Vaultwarden internal 80 → host 8090
         volumes = [ "vw-data:/data" ];
         environment = {
