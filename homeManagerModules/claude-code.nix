@@ -22,6 +22,8 @@ let
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
       ENABLE_PROMPT_CACHING_1H = "1";
+      # qwen3.8's real window (models/qwen3-8-flash-next.nix); Claude Code assumes 200K.
+      CLAUDE_CODE_MAX_CONTEXT_TOKENS = "65536";
     };
     model = "qwen3.8";
     attribution = {
