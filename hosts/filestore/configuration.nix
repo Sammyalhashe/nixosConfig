@@ -287,6 +287,8 @@ in
         "/nextcloud/html:/var/www/html"
         "/nextcloud/data:/var/www/html/data"
         "/nextcloud/config:/var/www/html/config"
+        # PHP's JIT segfaults Apache workers on arm64 after app installs, until restart.
+        "${pkgs.writeText "nextcloud-no-jit.ini" "opcache.jit=disable\n"}:/usr/local/etc/php/conf.d/zz-no-jit.ini:ro"
       ];
       environment = {
         POSTGRES_HOST = "nextcloud-db";
