@@ -17,6 +17,7 @@ in
     ../../homeManagerModules/base.nix
     # ../../homeManagerModules/openclaw.nix
     ../../homeManagerModules/claude-code.nix
+    ../../homeManagerModules/codex.nix
     ../../homeManagerModules/opencode.nix
     ../../homeManagerModules/coinbase-trader.nix
     ../../homeManagerModules/phar-liquidity-bot.nix

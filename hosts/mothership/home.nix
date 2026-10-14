@@ -16,6 +16,7 @@ in
   imports = [
     ../../homeManagerModules/base.nix
     ../../homeManagerModules/claude-code.nix
+    ../../homeManagerModules/codex.nix
     ./home-modules.nix
   ];
 

@@ -7,6 +7,7 @@
     ./ai-skills.nix
     ./alacritty.nix
     ./claude-code.nix
+    ./codex.nix
     ./coinbase-cli.nix
     ./direnv.nix
     ./mods.nix
