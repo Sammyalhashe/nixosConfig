@@ -45,9 +45,9 @@ in
           stylixModule
           ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
             inputs.plasma-manager.homeModules.plasma-manager
-            inputs.vicinae.homeManagerModules.default
           ]
           ++ [
+            inputs.home-modules.homeManagerModules.default
             inputs.todo.homeManagerModules.default
           ];
         services.todo.enable = false;

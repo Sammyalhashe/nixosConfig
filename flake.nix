@@ -87,10 +87,11 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent/v2026.6.5";
 
-    vicinae.url = "github:vicinaehq/vicinae";
-    vicinae-extensions = {
-      url = "github:vicinaehq/extensions";
+    # Shared home-manager modules; also owns the vicinae and vicinae-extensions inputs
+    home-modules = {
+      url = "github:Sammyalhashe/home-modules";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     keybr-tui.url = "github:y0sif/keybr-tui";
     ttt = {
@@ -160,8 +161,6 @@
       ai-skills,
       todo,
       hermes-agent,
-      vicinae,
-      vicinae-extensions,
       nix-cachyos-kernel,
       llm-agents,
       jj-starship,

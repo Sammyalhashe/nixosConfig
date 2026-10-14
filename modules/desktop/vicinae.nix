@@ -7,7 +7,7 @@
 
 {
   imports = [
-    inputs.vicinae.nixosModules.default
+    inputs.home-modules.inputs.vicinae.nixosModules.default
   ];
 
   host.enableVicinae = lib.mkDefault (!config.host.isWsl && !config.host.isHeadless);

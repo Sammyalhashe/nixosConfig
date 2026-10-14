@@ -10,9 +10,18 @@ let
     ./plasma.nix
     ./startup-fix.nix
     ./stylix.nix
-    ./vicinae.nix
     ./waybar.nix
     ./wofi.nix
+    (
+      { config, osConfig, ... }:
+      {
+        programs.vicinae.enable = lib.mkDefault osConfig.host.enableVicinae;
+        programs.quickNotes = {
+          enable = osConfig.host.enableVicinae;
+          notesDir = "${config.home.homeDirectory}/Nextcloud/Notes/Inbox";
+        };
+      }
+    )
     {
       programs.coinbase-cli.enable = true;
       stylix.targets.gtk.enable = false;
