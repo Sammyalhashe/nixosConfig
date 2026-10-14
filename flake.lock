@@ -850,14 +850,17 @@
           "nixpkgs"
         ],
         "vicinae": "vicinae",
-        "vicinae-extensions": "vicinae-extensions"
+        "vicinae-extensions": "vicinae-extensions",
+        "vicinae-quick-notes": [
+          "vicinae-quick-notes"
+        ]
       },
       "locked": {
-        "lastModified": 1791994883,
-        "narHash": "sha256-hZxCNTbySgzVwIf5oY8GfGYvwjOdip0kpAkMmXT1l+o=",
+        "lastModified": 1792005523,
+        "narHash": "sha256-L2d5qK/f9L2ciUAuKI8H+M0KYA4Enr9NIMcPOlIYnNo=",
         "owner": "Sammyalhashe",
         "repo": "home-modules",
-        "rev": "8f3fe4f6aeeb33af2ca87f70a0b8ae1f9346a0c1",
+        "rev": "eb0532209855b4f9b80ab78623787bf6863767f5",
         "type": "github"
       },
       "original": {
@@ -2069,7 +2072,8 @@
         "terminus": "terminus",
         "todo": "todo",
         "treefmt-nix": "treefmt-nix_2",
-        "ttt": "ttt"
+        "ttt": "ttt",
+        "vicinae-quick-notes": "vicinae-quick-notes"
       }
     },
     "rust-overlay": {
@@ -2693,6 +2697,30 @@
       "original": {
         "owner": "vicinaehq",
         "repo": "extensions",
+        "type": "github"
+      }
+    },
+    "vicinae-quick-notes": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "vicinae": [
+          "home-modules",
+          "vicinae"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792005036,
+        "narHash": "sha256-I7b9/P3pfaj9v4zafTAACTez8clP3kmeMVl3s76+opk=",
+        "owner": "Sammyalhashe",
+        "repo": "vicinae-quick-notes",
+        "rev": "c07ab05ff9e4cdb17f1cc450ec6228237893b1bc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sammyalhashe",
+        "repo": "vicinae-quick-notes",
         "type": "github"
       }
     }

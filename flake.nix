@@ -92,6 +92,12 @@
       url = "github:Sammyalhashe/home-modules";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+      inputs.vicinae-quick-notes.follows = "vicinae-quick-notes";
+    };
+    vicinae-quick-notes = {
+      url = "github:Sammyalhashe/vicinae-quick-notes";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.vicinae.follows = "home-modules/vicinae";
     };
     keybr-tui.url = "github:y0sif/keybr-tui";
     ttt = {
