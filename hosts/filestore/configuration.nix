@@ -75,6 +75,7 @@ in
   imports = [
     inputs.sops-nix.nixosModules.sops
     ./adguard.nix
+    ./mediarium.nix
   ];
 
   sops.secrets.filestore_user_password = { };
