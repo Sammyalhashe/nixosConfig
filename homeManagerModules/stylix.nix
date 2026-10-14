@@ -43,6 +43,11 @@ in
       stylix.fonts = lib.mkOverride 1100 theme.fonts;
       stylix.cursor = lib.mkOverride 1100 theme.cursor;
     })
+    (lib.mkIf (osConfig != null && osConfig.host.isHeadless or false) {
+      stylix.targets.qt.enable = false;
+      stylix.targets.gtk.enable = false;
+      stylix.targets.kde.enable = false;
+    })
     (lib.mkIf (osConfig != null && osConfig.host.enableKDE or false) {
       stylix.icons = {
         enable = true;
