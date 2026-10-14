@@ -459,7 +459,6 @@ in
     logseq-supernote-sync
     nodejs
     btop
-    gemini-cli
     python3
   ];
 

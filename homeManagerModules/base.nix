@@ -31,7 +31,6 @@
       fd
       fortune
       fzf
-      gemini-cli
       gh
       jjui
       jujutsu

@@ -2,7 +2,6 @@
 let
   my_imports = [
     ./crush.nix
-    ./gemini-cli.nix
     ./ghostty.nix
     ./home-common.nix
     ./mangowc.nix
