@@ -97,9 +97,6 @@ in
             "qwen3.8-fast" = {
               name = "Qwen 3.8 (no thinking)";
             };
-            "qwen-flash" = {
-              name = "Qwen Flash";
-            };
           };
         };
         zen = {

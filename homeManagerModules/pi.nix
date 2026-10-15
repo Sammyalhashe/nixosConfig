@@ -36,12 +36,6 @@ let
           reasoning = false;
           contextWindow = 65536;
         }
-        {
-          id = "qwen-flash";
-          name = "Qwen Flash 7B (mothership)";
-          reasoning = false;
-          contextWindow = 32768;
-        }
       ];
     };
   };

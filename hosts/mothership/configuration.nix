@@ -99,7 +99,7 @@ in
 
   # Models are declared in ../../modules/ai/llm-services/models/; each entry
   # generates its llama-server unit and its LiteLLM routes together.
-  services.llm-services.models.qwen-flash.enable = true; # utility     - Port 8011
+  services.llm-services.models.qwen-flash.enable = false; # utility     - Port 8011
   services.llm-services.models.qwen3-8-flash-next.enable = true; # coding-agent - Port 8014
   services.llm-services.models.qwen3-6-35b-a3b.enable = false; # coding-agent - Port 8015 (candidate replacement)
 
