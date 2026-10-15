@@ -32,8 +32,8 @@ let
       mode = "bytes";
       limit = 10000;
     };
-    context_window = 65536;
-    max_context_window = 65536;
+    context_window = 131072;
+    max_context_window = 131072;
     experimental_supported_tools = [ ];
     input_modalities = [ "text" ];
     # Codex rejects a catalog entry without instructions; this is its own fallback

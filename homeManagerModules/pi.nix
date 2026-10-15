@@ -28,13 +28,13 @@ let
           id = "qwen3.8";
           name = "Qwen3.8 (mothership)";
           reasoning = true;
-          contextWindow = 65536;
+          contextWindow = 131072;
         }
         {
           id = "qwen3.8-fast";
           name = "Qwen3.8, no thinking (mothership)";
           reasoning = false;
-          contextWindow = 65536;
+          contextWindow = 131072;
         }
       ];
     };
