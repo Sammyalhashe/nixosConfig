@@ -37,12 +37,9 @@
     jinja = true;
 
     extraFlags = [
-      # The ~51B n-gram embedding tables exceed llama.cpp's 4 GiB lazy-read
-      # threshold, so by default they stay in the mmap'd file and every token
-      # does scattered row reads from it -- fast only while the page cache holds
-      # them, disk-bound once it is reclaimed. Keep them resident instead; the
-      # memory budget above already counts the whole GGUF.
-      "--lazy-mode off"
+      # Read the ~28 GB n-gram embedding rows on demand via the page cache: frees
+      # ~26 GB of RAM for <2% generation cost (llama-bench, 2026-10-14).
+      "--lazy-mode on"
 
       # Qwen's template (HF Qwen/Qwen3.8-Flash-Next @ de4b8e4) with one change:
       # a system message after the first is rendered as its own turn instead of
