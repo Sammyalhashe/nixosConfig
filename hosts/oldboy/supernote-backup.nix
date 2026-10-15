@@ -118,6 +118,8 @@ let
       gnused
       curl
     ];
+    # The table-name patterns match literal SQL backticks inside single quotes.
+    excludeShellChecks = [ "SC2016" ];
     text = ''
       state_dir="''${STATE_DIRECTORY:-/var/lib/${schemaStateDir}}"
       cached="$state_dir/supernotedb.sql"
