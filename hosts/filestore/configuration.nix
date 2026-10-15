@@ -27,7 +27,9 @@ let
     mkdir -p "$BACKUP_DIR"
     TIMESTAMP=$(date +"%Y-%m-%dT%H-%M-%S")
     BACKUP_FILE="$BACKUP_DIR/vaultwarden-$TIMESTAMP.sqlite3"
-    ${pkgs.podman}/bin/podman exec vaultwarden sqlite3 /data/db.sqlite3 ".backup \"$BACKUP_FILE\""
+    # The vaultwarden image no longer ships sqlite3, so back up its volume from the host.
+    DB="$(${pkgs.podman}/bin/podman volume inspect vw-data --format '{{.Mountpoint}}')/db.sqlite3"
+    ${pkgs.sqlite}/bin/sqlite3 "$DB" ".backup '$BACKUP_FILE'"
   '';
 
   # HACS download wrapper script
