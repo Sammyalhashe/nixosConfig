@@ -46,7 +46,7 @@ in
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 1;
+  boot.loader.systemd-boot.configurationLimit = 5;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "oldboy"; # Define your hostname.
@@ -86,6 +86,7 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZKrkpzxAf0u3+fn59xouUtVHtklRuGwCwfPpR0Y8nc sammy.alhashemi@mail.utoronto.ca"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFvPyYg46ZjVElUNOR6KQOsS56Oytpn4ahgZ1Er7/lke sammy@salh.xyz"
     ];
+    linger = true;
   };
 
   # prevent the laptop from hibernating when lid is closed
@@ -171,6 +172,31 @@ in
     "d /supernote/sndata/cert 0755 salhashemi2 users - -"
     "d /supernote/supernote_data 0755 salhashemi2 users - -"
   ];
+
+  # oldboy degrades over uptime; reboot weekly rather than relying on manual
+  # intervention. Non-persistent: a missed Sunday should not trigger a
+  # catch-up reboot at an arbitrary later time.
+  systemd.services.scheduled-reboot = {
+    description = "Weekly scheduled reboot";
+    startAt = "Sun 05:00";
+    path = [
+      pkgs.procps
+      pkgs.coreutils
+    ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      uptime_seconds=$(cut -d. -f1 /proc/uptime)
+      if [ "$uptime_seconds" -lt 86400 ]; then
+        echo "Uptime under 24h, skipping reboot"
+        exit 0
+      fi
+      if pgrep -f switch-to-configuration >/dev/null; then
+        echo "A switch is in progress, skipping reboot"
+        exit 0
+      fi
+      systemctl reboot
+    '';
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
