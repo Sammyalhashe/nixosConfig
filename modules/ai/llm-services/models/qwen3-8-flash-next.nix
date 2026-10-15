@@ -10,7 +10,7 @@
   # MEMORY: the GGUF stores ~177B weights (125B + ~51B n-gram embeddings), so it
   # is much larger than the parameter count suggests. UD-Q4_K_XL is 111 GB and
   # does not leave room for the OS; UD-IQ4_XS is 93.7 GB (~87 GiB), which clears
-  # roughly 25 GiB once qwen-flash and the OS are accounted for. ctxSize is held
+  # roughly 25 GiB once the OS is accounted for. ctxSize is held
   # at 64k rather than the native 256k for the same reason -- the KV cache is
   # real memory. Raise it only after observing headroom with `free -g`.
   services.llm-services.models.qwen3-8-flash-next = {
@@ -25,7 +25,9 @@
 
     ctxSize = 65536;
     threads = 8;
-    kvCacheType = "q8_0";
+    # f16 over q8_0: +8% generation at 16k depth, +15% at 32k (llama-bench), paid
+    # for with the memory freed by no longer running qwen-flash alongside.
+    kvCacheType = "f16";
     batchSize = 4096;
     # llama-bench on mothership: 2048 prefills 11-15% faster than 512 at 0-32k depth.
     ubatchSize = 2048;
