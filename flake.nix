@@ -323,52 +323,6 @@
               nixpkgs.overlays = [ llama-cpp.overlays.default ];
             }
           )
-          (
-            { pkgs, ... }:
-            {
-              environment.systemPackages = [
-                (pkgs.stdenv.mkDerivation {
-                  name = "push-to-cachix";
-                  dontUnpack = true;
-                  buildInputs = [
-                    pkgs.nushell
-                    pkgs.sops
-                    pkgs.cachix
-                  ];
-                  installPhase = ''
-                    install -Dm755 ${./push-to-cachix.nu} $out/bin/push-to-cachix
-                  '';
-                })
-              ];
-              systemd.services.push-to-cachix = {
-                description = "Push NixOS configurations to Cachix";
-                serviceConfig = {
-                  Type = "oneshot";
-                  ExecStart = "${pkgs.nushell}/bin/nu ${./push-to-cachix.nu}";
-                  User = "root"; # Or a specific user if needed, but root is usually safer for nix build
-                  # push-to-cachix.nu uses relative paths (`nix build .#...`,
-                  # `sops -d secrets.yaml`), so run it from the flake checkout.
-                  WorkingDirectory = "/home/salhashemi2/nixosConfig";
-                  # Let sops decrypt secrets.yaml with mothership's host key.
-                  Environment = "SOPS_AGE_SSH_PRIVATE_KEY_FILE=/etc/ssh/ssh_host_ed25519_key";
-                };
-                path = [
-                  pkgs.nix
-                  pkgs.sops
-                  pkgs.cachix
-                  pkgs.git
-                  pkgs.nushell
-                ];
-              };
-              systemd.timers.push-to-cachix = {
-                wantedBy = [ "timers.target" ];
-                timerConfig = {
-                  OnCalendar = "weekly";
-                  Persistent = true;
-                };
-              };
-            }
-          )
         ];
       };
 

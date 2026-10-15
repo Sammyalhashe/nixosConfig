@@ -18,6 +18,7 @@ in
     # Host-scoped: nix-bitcoin's secrets module asserts unconditionally, so
     # importing it from ../../modules would break every other host.
     ../../modules/crypto/lightning.nix
+    ./cachix-push.nix
   ];
 
   # Headless AI machine: no desktop/GUI is ever built or installed.
