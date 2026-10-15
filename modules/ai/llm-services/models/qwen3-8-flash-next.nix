@@ -27,7 +27,8 @@
     threads = 8;
     kvCacheType = "q8_0";
     batchSize = 4096;
-    ubatchSize = 512;
+    # llama-bench on mothership: 2048 prefills 11-15% faster than 512 at 0-32k depth.
+    ubatchSize = 2048;
 
     # Qwen's tool-call syntax is only parsed into OpenAI-shaped `tool_calls`
     # when the model's own chat template is used.
@@ -47,6 +48,9 @@
       # those mid-conversation, and neither LiteLLM (PR #38503, unmerged) nor
       # llama.cpp (issue #27367, closed as template behaviour) normalizes them.
       "--chat-template-file ${./qwen3-8-flash-next.jinja}"
+
+      # --hf-repo auto-loads the vision projector; this model only serves text agents.
+      "--no-mmproj"
     ];
 
     # Keep thinking, but route it to message.reasoning_content so it never
