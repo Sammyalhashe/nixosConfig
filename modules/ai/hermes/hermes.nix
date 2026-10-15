@@ -107,8 +107,10 @@ in
     settings = {
       # Active provider + model. `provider`/`model` are plain strings, matching
       # the shape used in fallback_providers / auxiliary below.
-      provider = "custom:mothership";
-      model = "qwen3.8";
+      # OpenRouter with ZDR enforced in the account's privacy settings, so prompts are
+      # neither retained nor trained on; mothership's qwen3.8 is kept for coding.
+      provider = "openrouter";
+      model = "anthropic/claude-haiku-5.5";
 
       mcp_servers = {
         composio = {
@@ -152,13 +154,12 @@ in
       };
 
       fallback_providers = [
-        # OpenRouter disabled; uncomment to re-enable as the first fallback.
-        # {
-        #   provider = "openrouter";
-        #   model = "deepseek/deepseek-r1";
-        # }
         {
-          # If the local Strix Halo machine is down, fall back to clinepass.
+          provider = "openrouter";
+          model = "deepseek/deepseek-v4-flash";
+        }
+        {
+          # If OpenRouter is unavailable, fall back to clinepass.
           provider = "custom:clinepass";
           model = "cline-pass/qwen3.7-max";
         }
@@ -182,23 +183,22 @@ in
           models = [
             "qwen3.8"
             "qwen3.8-fast"
-            "qwen-flash"
           ];
         }
       ];
 
       auxiliary = {
         compression = {
-          provider = "custom:mothership";
-          model = "qwen-flash";
+          provider = "openrouter";
+          model = "openai/gpt-oss-20b";
         };
         web_extract = {
-          provider = "custom:mothership";
-          model = "qwen-flash";
+          provider = "openrouter";
+          model = "openai/gpt-oss-20b";
         };
         title_generation = {
-          provider = "custom:mothership";
-          model = "qwen-flash";
+          provider = "openrouter";
+          model = "openai/gpt-oss-20b";
         };
       };
 
