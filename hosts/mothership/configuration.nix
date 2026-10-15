@@ -152,49 +152,6 @@ in
     config.sops.templates."open-webui-env".path
   ];
 
-  # --- DECLARATIVE MODEL MANAGEMENT ---
-  # Main models are fetched by llama-server itself via --hf-repo/--hf-file into
-  # LLAMA_CACHE (see modules/ai/llm-services), which handles split GGUFs, resume
-  # and etag verification. This job only covers the speculative-decoding draft
-  # model, which llama-server's --hf-* flags do not reach.
-  systemd.services.model-downloader = {
-    description = "Download the speculative-decoding draft model";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    path = [
-      pkgs.aria2
-      pkgs.coreutils
-      pkgs.systemd
-    ];
-    script = ''
-      MODEL_DIR="/var/lib/llama-cpp-models"
-      mkdir -p "$MODEL_DIR"
-      download_model() {
-        local name=$1
-        local url=$2
-        local target="$MODEL_DIR/$name"
-        # aria2 leaves a .aria2 control file next to any partial download. A
-        # bare -f check treats a half-fetched 40GB shard as done, which is how
-        # the Hermes shards ended up unusable; resume unless the control file
-        # is gone.
-        if [ -f "$target" ] && [ ! -f "$target.aria2" ]; then
-          return 0
-        fi
-        aria2c -x16 -s16 -j5 -c --dir="$MODEL_DIR" -o "$name" "$url"
-      }
-      download_model "mtp-Qwen3.8-Flash-Next-Q8_0.gguf" "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/main/MTP/mtp-Qwen3.8-Flash-Next-Q8_0.gguf"
-    '';
-    serviceConfig = {
-      Type = "simple";
-      User = "salhashemi2";
-      Nice = 10;
-      Restart = "on-failure";
-      RestartSec = "30s";
-      StateDirectory = "llama-cpp-models";
-      StateDirectoryMode = "0755";
-    };
-  };
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

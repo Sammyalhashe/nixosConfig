@@ -52,9 +52,8 @@
       "--no-mmproj"
 
       # Multi-token prediction: 2.0x generation on code, 1.5x on prose, same output.
-      # The self-contained head; this build can't borrow tensors for the "shared" one.
+      # With --hf-repo, llama-server fetches the repo's MTP head into its own cache.
       "--spec-type draft-mtp"
-      "--spec-draft-model /var/lib/llama-cpp-models/mtp-Qwen3.8-Flash-Next-Q8_0.gguf"
     ];
 
     # Keep thinking, but route it to message.reasoning_content so it never
