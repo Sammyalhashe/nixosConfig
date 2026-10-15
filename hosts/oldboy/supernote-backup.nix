@@ -1,16 +1,12 @@
 { config, pkgs, ... }:
 let
-  # root, not salhashemi2: /backup on filestore is root-owned (created
-  # implicitly by vaultwarden-backup.service, which also runs as root), so a
-  # non-root user can't --mkpath a new directory under it. root is already
-  # trusted via trusted-keys.nix, same as salhashemi2.
-  backupUser = "root";
+  # Dedicated user on filestore, confined by rrsync to its backup directory.
+  backupUser = "supernote-backup";
   # Raw IP, not the bare "filestore" hostname: oldboy has no hosts entry or
   # confirmed search domain for it (only starshipwsl does, via an explicit
   # extraHosts line). Matches the deploy-rs convention of addressing hosts by
   # LAN IP. Filestore's IP is the single source of truth in hosts.nix.
   destHost = "11.125.37.98";
-  destDir = "/backup/oldboy-supernote";
   dumpDir = "/supernote/db-dump";
 in
 {
@@ -72,7 +68,7 @@ in
         --exclude=/sndata/db_data \
         --exclude=/sndata/redis_data \
         -e "ssh -i /etc/ssh/ssh_host_ed25519_key -o StrictHostKeyChecking=accept-new" \
-        /supernote/ ${backupUser}@${destHost}:${destDir}/
+        /supernote/ ${backupUser}@${destHost}:./
     '';
   };
 

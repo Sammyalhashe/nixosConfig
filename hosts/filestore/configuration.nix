@@ -452,6 +452,7 @@ in
     "z /nextcloud/db 0700 70 70 - -"
 
     "d /homeassistant 0755 salhashemi2 users - -"
+    "d /backup/oldboy-supernote 0750 supernote-backup supernote-backup - -"
 
     # Purge files in /tmp older than 1 day
     "q /tmp 1777 root root 1d -"
@@ -574,6 +575,18 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFvPyYg46ZjVElUNOR6KQOsS56Oytpn4ahgZ1Er7/lke sammy@salh.xyz"
     ];
   };
+
+  # Receives oldboy's Supernote backup; the key only runs rrsync, only from oldboy.
+  users.users.supernote-backup = {
+    isSystemUser = true;
+    group = "supernote-backup";
+    home = "/backup/oldboy-supernote";
+    useDefaultShell = true;
+    openssh.authorizedKeys.keys = [
+      ''from="11.125.37.175",command="${pkgs.rrsync}/bin/rrsync /backup/oldboy-supernote",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA6f6MDzexYi7sP4Ja1mYr9fcPnylB2w5wVkJEGiTfYI root@oldboy''
+    ];
+  };
+  users.groups.supernote-backup = { };
 
   systemd.services.forgejo-secrets = {
     description = "Forgejo secret bootstrap helper";
