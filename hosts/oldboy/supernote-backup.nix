@@ -68,7 +68,7 @@ in
         --exclude=/sndata/db_data \
         --exclude=/sndata/redis_data \
         -e "ssh -i /etc/ssh/ssh_host_ed25519_key -o StrictHostKeyChecking=accept-new" \
-        /supernote/ ${backupUser}@${destHost}:./
+        /supernote/ ${backupUser}@${destHost}:
     '';
   };
 
