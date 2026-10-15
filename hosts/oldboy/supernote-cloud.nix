@@ -165,7 +165,7 @@
     ];
   };
   virtualisation.oci-containers.containers."supernote-service" = {
-    image = "docker.io/supernote/supernote-service:26.02.23";
+    image = "docker.io/supernote/supernote-service:26.10.09";
     volumes = [
       "/etc/localtime:/etc/localtime:ro"
       # Plain interpolation, not builtins.toString: toString resolves to a path
