@@ -94,6 +94,8 @@ in
     owner = "salhashemi2";
   };
 
+  host.enableCloudflaredTunnel = true;
+
   documentation.enable = false;
   documentation.man.enable = false;
   documentation.nixos.enable = false;

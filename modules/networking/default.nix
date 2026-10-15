@@ -2,6 +2,7 @@
 {
   imports = [
     ./cloudflare-warp.nix
+    ./cloudflared-tunnel.nix
     ./syncthing.nix
     ./wireguard.nix
   ];

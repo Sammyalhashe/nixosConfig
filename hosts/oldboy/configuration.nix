@@ -40,9 +40,8 @@ in
   sops.secrets.supernote_email = { };
   sops.secrets.supernote_password = { };
   sops.secrets.supernote_private_key = { };
-  sops.secrets.picloud_cloudflare_tunnel_token = {
-    owner = "cloudflared";
-  };
+
+  host.enableCloudflaredTunnel = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -125,38 +124,6 @@ in
     apiUri = "http://11.125.37.175:2300";
     environmentFile = config.sops.templates."terminus-env".path;
   };
-
-  systemd.services.cloudflared-tunnel-picloud = {
-    description = "Cloudflare Tunnel (Remote Managed)";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      User = "cloudflared";
-      Group = "cloudflared";
-
-      ExecStart = pkgs.writeShellScript "start-cloudflared" ''
-        TOKEN=$(cat ${config.sops.secrets.picloud_cloudflare_tunnel_token.path})
-        exec ${pkgs.cloudflared}/bin/cloudflared tunnel --no-autoupdate run --token "$TOKEN"
-      '';
-
-      Restart = "always";
-      RestartSec = "5s";
-
-      CapabilityBoundingSet = "";
-      NoNewPrivileges = true;
-      PrivateTmp = true;
-      ProtectHome = true;
-      ProtectSystem = "strict";
-    };
-  };
-
-  users.users.cloudflared = {
-    group = "cloudflared";
-    isSystemUser = true;
-  };
-  users.groups.cloudflared = { };
 
   systemd.tmpfiles.rules = [
     "d /supernote 0755 salhashemi2 users - -"

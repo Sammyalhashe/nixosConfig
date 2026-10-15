@@ -117,5 +117,7 @@
     enableNvidia = lib.mkEnableOption "Whether to enable the proprietary NVIDIA driver.";
 
     enableWebdav = lib.mkEnableOption "Whether to mount the Nextcloud WebDAV share via davfs2/autofs.";
+
+    enableCloudflaredTunnel = lib.mkEnableOption "Whether to run a cloudflared tunnel connector (picloud).";
   };
 }
