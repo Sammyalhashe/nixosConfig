@@ -182,7 +182,7 @@ in
         fi
         aria2c -x16 -s16 -j5 -c --dir="$MODEL_DIR" -o "$name" "$url"
       }
-      download_model "qwen2.5-1.5b-instruct-q8_0.gguf" "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q8_0.gguf"
+      download_model "mtp-Qwen3.8-Flash-Next-Q8_0.gguf" "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/main/MTP/mtp-Qwen3.8-Flash-Next-Q8_0.gguf"
     '';
     serviceConfig = {
       Type = "simple";
