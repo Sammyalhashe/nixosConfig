@@ -11,6 +11,9 @@ let
   extended-nixvim = import ../../homeManagerModules/lib/nixvim.nix {
     inherit pkgs inputs config;
   } { };
+  llm-packages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+    cline
+  ];
 in
 {
   imports = [
@@ -24,21 +27,24 @@ in
 
   home.stateVersion = "24.05";
 
-  home.packages = with pkgs; [
-    extended-nixvim
-    jujutsu
-    openssl
-    wget
-    gcc
-    cargo
-    cachix
-    devenv
+  home.packages =
+    with pkgs;
+    [
+      extended-nixvim
+      jujutsu
+      openssl
+      wget
+      gcc
+      cargo
+      cachix
+      devenv
 
-    # terminal utilities
-    blesh
-    spotify-player
-    stow
-  ];
+      # terminal utilities
+      blesh
+      spotify-player
+      stow
+    ]
+    ++ llm-packages;
 
   home.sessionVariables = {
     EDITOR = "nvim";
