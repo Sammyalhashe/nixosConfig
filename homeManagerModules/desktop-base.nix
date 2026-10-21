@@ -154,17 +154,19 @@ in
   programs.zeal = {
     enable = true;
     docsets = {
-      Python_3 = {
-        url = "https://sanfrancisco.kapeli.com/feeds/Python_3.tgz";
-        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+      # Kapeli only serves the latest build, so these hashes go stale on upstream
+      # updates; the pinned builds are kept in cachix and substituted by hash.
+      Python = {
+        url = "https://sanfrancisco.kapeli.com/feeds/Python.tgz";
+        hash = "sha256-SeI9YCd9+LdjpGDA82HOsqodd0yLGXQFqVbNe9Waxmc=";
       };
       JavaScript = {
         url = "https://sanfrancisco.kapeli.com/feeds/JavaScript.tgz";
-        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+        hash = "sha256-QyFvhzE/QparxvSnlX1c1uv4ve+COkZw5OJokKT6J0Y=";
       };
       Cpp = {
-        url = "https://sanfrancisco.kapeli.com/feeds/C++.tgz](https://sanfrancisco.kapeli.com/feeds/C++.tgz";
-        hash = "sha256-SGP9kY9j5K9aMVtd+sVrLixtvYftU9iRRFfqGwBRdGY=";
+        url = "https://sanfrancisco.kapeli.com/feeds/C++.tgz";
+        hash = "sha256-slxdbVpqD5J6X+k9AKsJbAYF7K0fmlSm/PepDr7qm/A=";
       };
     };
   };
