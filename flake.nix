@@ -67,6 +67,11 @@
       inputs.utils.follows = "flake-utils";
     };
 
+    comin = {
+      url = "github:nlewo/comin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # llm
     llama-cpp.url = "github:ggml-org/llama.cpp";
 
@@ -265,12 +270,20 @@
         nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs sops-nix; };
           pkgs = getPkgs system;
-          modules = commonModules ++ [ ./hosts/${name}/configuration.nix ] ++ modules;
+          modules =
+            commonModules
+            ++ nixpkgs.lib.optionals (builtins.elem name cominHostNames) [
+              inputs.comin.nixosModules.comin
+              ./modules/services/comin.nix
+            ]
+            ++ [ ./hosts/${name}/configuration.nix ]
+            ++ modules;
         };
 
       # Shared host table (hostname -> { ip, hostname, system }): single source
       # of truth for deploy-rs nodes and the devshell per-host scripts.
       hostsData = import ./hosts.nix;
+      cominHostNames = builtins.attrNames (nixpkgs.lib.filterAttrs (_: host: host.ip != null) hostsData);
 
     in
     {

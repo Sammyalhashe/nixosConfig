@@ -1,30 +1,22 @@
 { config, pkgs, ... }:
-{
-  sops.secrets.cachix_token = { };
-  sops.templates."cachix-env" = {
-    content = "CACHIX_AUTH_TOKEN=${config.sops.placeholder.cachix_token}";
-    owner = config.host.username;
+let
+  pushToCachix = pkgs.writeShellApplication {
+    name = "push-to-cachix";
+    runtimeInputs = [
+      pkgs.nix
+      pkgs.git
+      pkgs.openssh
+      pkgs.cachix
+      pkgs.nushell
+      pkgs.sops
+    ];
+    text = ''
+      exec ${pkgs.nushell}/bin/nu ${../../push-to-cachix.nu} "$@"
+    '';
   };
 
-  # Manual-invocation wrapper (`push-to-cachix [host] [--remote]`); the
-  # systemd service below is the automated path.
-  environment.systemPackages = [
-    (pkgs.stdenv.mkDerivation {
-      name = "push-to-cachix";
-      dontUnpack = true;
-      buildInputs = [
-        pkgs.nushell
-        pkgs.sops
-        pkgs.cachix
-      ];
-      installPhase = ''
-        install -Dm755 ${../../push-to-cachix.nu} $out/bin/push-to-cachix
-      '';
-    })
-  ];
-
-  systemd.services.push-to-cachix = {
-    description = "Push NixOS configurations to Cachix";
+  mkService = retry: {
+    description = "Build NixOS configurations, push them to Cachix, and advance deployed";
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     serviceConfig = {
@@ -32,7 +24,9 @@
       User = config.host.username;
       EnvironmentFile = config.sops.templates."cachix-env".path;
       StateDirectory = "push-to-cachix";
-      ExecStart = "${pkgs.nushell}/bin/nu ${../../push-to-cachix.nu} --remote";
+      ExecStart = "${pkgs.util-linux}/bin/flock %S/push-to-cachix/run.lock ${pushToCachix}/bin/push-to-cachix --remote${
+        if retry then " --retry" else ""
+      }";
     };
     path = [
       pkgs.nix
@@ -40,14 +34,38 @@
       pkgs.openssh
       pkgs.cachix
       pkgs.nushell
+      pkgs.util-linux
     ];
   };
+in
+{
+  sops.secrets.cachix_token = { };
+  sops.templates."cachix-env" = {
+    content = "CACHIX_AUTH_TOKEN=${config.sops.placeholder.cachix_token}";
+    owner = config.host.username;
+  };
 
-  systemd.timers.push-to-cachix = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "*-*-* 03:00";
-      Persistent = true;
+  environment.systemPackages = [ pushToCachix ];
+
+  systemd.services = {
+    push-to-cachix = mkService false;
+    push-to-cachix-retry = mkService true;
+  };
+
+  systemd.timers = {
+    push-to-cachix = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "*:0/15";
+        Persistent = true;
+      };
+    };
+    push-to-cachix-retry = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "03:00";
+        Persistent = true;
+      };
     };
   };
 }
