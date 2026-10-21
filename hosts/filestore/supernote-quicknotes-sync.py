@@ -114,10 +114,10 @@ def read_notes(notes_dir):
 
 
 def read_user_id(cursor):
-    cursor.execute("SELECT user_id FROM u_user WHERE is_normal = 'Y' ORDER BY user_id")
+    cursor.execute("SELECT user_id FROM u_user ORDER BY user_id")
     rows = cursor.fetchall()
     if len(rows) != 1:
-        raise RuntimeError(f"Expected exactly one active Supernote user, found {len(rows)}")
+        raise RuntimeError(f"Expected exactly one Supernote user, found {len(rows)}")
     return rows[0]["user_id"]
 
 
