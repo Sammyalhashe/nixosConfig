@@ -78,6 +78,7 @@ in
     inputs.sops-nix.nixosModules.sops
     ./adguard.nix
     ./mediarium.nix
+    ./supernote-quicknotes-sync.nix
   ];
 
   sops.secrets.filestore_user_password = { };

@@ -88,6 +88,16 @@ in
     linger = true;
   };
 
+  users.users.supernote-sync = {
+    isSystemUser = true;
+    group = "supernote-sync";
+    shell = "${pkgs.shadow}/bin/nologin";
+    openssh.authorizedKeys.keys = [
+      ''from="11.125.37.98",restrict,port-forwarding,permitopen="127.0.0.1:3306" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOAOdSp9mv8EN7R3EPWPzplz8s37Gs7iY7lznimNR1Vl root@filestore''
+    ];
+  };
+  users.groups.supernote-sync = { };
+
   # prevent the laptop from hibernating when lid is closed
   services.getty.autologinUser = "${user}";
 
