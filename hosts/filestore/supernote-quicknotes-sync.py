@@ -158,6 +158,55 @@ def read_tasks(cursor, user_id, task_list_id):
     }
 
 
+def read_task_order(cursor, user_id, task_list_id):
+    cursor.execute(
+        """
+        SELECT task_id, sort, status, is_deleted
+        FROM supernotedb.t_schedule_task
+        WHERE user_id = %s AND task_list_id = %s
+        """,
+        (user_id, task_list_id),
+    )
+    return cursor.fetchall()
+
+
+def ordering_candidates(tasks, notes, state):
+    filenames = {
+        mapping.get("taskId"): filename
+        for filename, mapping in state.items()
+        if mapping.get("taskId") is not None
+    }
+    return [
+        {
+            "task_id": task["task_id"],
+            "sort": int(task["sort"]) if task["sort"] is not None else 2**31,
+            "priority": notes[filenames[task["task_id"]]].get("priority"),
+        }
+        for task in tasks
+        if task["task_id"] in filenames
+        and filenames[task["task_id"]] in notes
+        and task["status"] == "needsAction"
+        and task["is_deleted"] == "N"
+    ]
+
+
+def plan_task_order(tasks):
+    priority_order = {"A": 0, "B": 1, "C": 2, None: 3}
+    ordered = sorted(
+        tasks,
+        key=lambda task: (
+            priority_order[task.get("priority")],
+            task["sort"],
+            task["task_id"],
+        ),
+    )
+    return [
+        (task["task_id"], new_sort)
+        for new_sort, task in enumerate(ordered)
+        if task["sort"] != new_sort
+    ]
+
+
 def deadline_to_ms(deadline):
     if not deadline:
         return 0
@@ -355,6 +404,32 @@ def apply_sync(
     return next_state, nextcloud_changed
 
 
+def apply_task_order(cursor, notes, state, user_id, task_list_id, dry_run):
+    tasks = read_task_order(cursor, user_id, task_list_id)
+    candidates = ordering_candidates(tasks, notes, state)
+    current_sorts = {task["task_id"]: task["sort"] for task in candidates}
+    filenames = {mapping["taskId"]: filename for filename, mapping in state.items()}
+    changes = plan_task_order(candidates)
+
+    for task_id, new_sort in changes:
+        old_sort = current_sorts[task_id]
+        prefix = "DRY-RUN " if dry_run else ""
+        print(f"{prefix}REORDER task={task_id} sort {old_sort} -> {new_sort}", flush=True)
+        if dry_run:
+            continue
+
+        filename = filenames[task_id]
+        modified = next_modified(state[filename]["taskLastModified"])
+        cursor.execute(
+            "UPDATE supernotedb.t_schedule_task "
+            "SET sort=%s, sort_time=%s, last_modified=%s WHERE task_id=%s",
+            (new_sort, modified, modified, task_id),
+        )
+        state[filename]["taskLastModified"] = modified
+
+    return bool(changes)
+
+
 def update_nextcloud():
     subprocess.run(
         [
@@ -452,6 +527,16 @@ def main():
                     task_list_id,
                     args.dry_run,
                 )
+                order_changed = apply_task_order(
+                    cursor,
+                    notes,
+                    next_state,
+                    user_id,
+                    task_list_id,
+                    args.dry_run,
+                )
+                if order_changed and not args.dry_run:
+                    connection.commit()
                 if not args.dry_run:
                     save_state(state_path, next_state)
                 if nextcloud_changed:

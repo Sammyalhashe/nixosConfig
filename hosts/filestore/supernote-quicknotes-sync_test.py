@@ -158,5 +158,67 @@ class ReadTasksTest(unittest.TestCase):
         self.assertNotIn("is_deleted =", sql)
 
 
+class PlanTaskOrderTest(unittest.TestCase):
+    def test_orders_priorities_before_current_sort(self):
+        tasks = [
+            {"task_id": "none", "sort": 0, "priority": None},
+            {"task_id": "c", "sort": 1, "priority": "C"},
+            {"task_id": "a", "sort": 2, "priority": "A"},
+            {"task_id": "b", "sort": 3, "priority": "B"},
+        ]
+        self.assertEqual(
+            sync.plan_task_order(tasks),
+            [("a", 0), ("b", 1), ("c", 2), ("none", 3)],
+        )
+
+    def test_equal_priorities_keep_current_sort_order(self):
+        tasks = [
+            {"task_id": "later", "sort": 8, "priority": "A"},
+            {"task_id": "first", "sort": 2, "priority": "A"},
+            {"task_id": "b", "sort": 0, "priority": "B"},
+        ]
+        self.assertEqual(
+            sync.plan_task_order(tasks),
+            [("first", 0), ("later", 1), ("b", 2)],
+        )
+
+    def test_task_id_breaks_current_sort_ties(self):
+        tasks = [
+            {"task_id": "b", "sort": 0, "priority": "A"},
+            {"task_id": "a", "sort": 0, "priority": "A"},
+        ]
+        self.assertEqual(sync.plan_task_order(tasks), [("b", 1)])
+
+    def test_already_ordered_is_no_op(self):
+        tasks = [
+            {"task_id": "a", "sort": 0, "priority": "A"},
+            {"task_id": "b", "sort": 1, "priority": "B"},
+            {"task_id": "none", "sort": 2, "priority": None},
+        ]
+        self.assertEqual(sync.plan_task_order(tasks), [])
+
+    def test_candidates_exclude_unmapped_completed_and_deleted_tasks(self):
+        tasks = [
+            {"task_id": "open", "sort": 4, "status": "needsAction", "is_deleted": "N"},
+            {"task_id": "unmapped", "sort": 0, "status": "needsAction", "is_deleted": "N"},
+            {"task_id": "completed", "sort": 1, "status": "completed", "is_deleted": "N"},
+            {"task_id": "deleted", "sort": 2, "status": "needsAction", "is_deleted": "Y"},
+        ]
+        notes = {
+            "open.md": {"priority": "B"},
+            "completed.md": {"priority": "A"},
+            "deleted.md": {"priority": "A"},
+        }
+        state = {
+            "open.md": {"taskId": "open"},
+            "completed.md": {"taskId": "completed"},
+            "deleted.md": {"taskId": "deleted"},
+        }
+        self.assertEqual(
+            sync.ordering_candidates(tasks, notes, state),
+            [{"task_id": "open", "sort": 4, "priority": "B"}],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
