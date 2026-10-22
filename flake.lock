@@ -106,6 +106,32 @@
         "type": "github"
       }
     },
+    "bloomberg-theme": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "stylix": [
+          "stylix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792041241,
+        "narHash": "sha256-t3ikIHM8VskGNDCjZ5VoGoEYXmO0w/KMhErd5wOBOd0=",
+        "owner": "Sammyalhashe",
+        "repo": "bloomberg-theme",
+        "rev": "9e3bfef733b4c2f8e1c6a47e0715d54897541099",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sammyalhashe",
+        "repo": "bloomberg-theme",
+        "type": "github"
+      }
+    },
     "bun2nix": {
       "inputs": {
         "flake-parts": [
@@ -2095,6 +2121,7 @@
     "root": {
       "inputs": {
         "ai-skills": "ai-skills",
+        "bloomberg-theme": "bloomberg-theme",
         "comin": "comin",
         "deploy-rs": "deploy-rs",
         "devshell": "devshell",

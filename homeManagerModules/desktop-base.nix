@@ -10,7 +10,7 @@
 let
   extended-nixvim = import ./lib/nixvim.nix { inherit pkgs inputs config; } {
     nixvim.orgDirectory = "~/Nextcloud/org-agenda";
-    # Follow /etc/current-theme, which `switch-theme` flips between specialisations
+    # Follow the system theme recorded in /etc/current-theme.
     nixvim.themeWatcher = true;
   };
   llm-packages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [

@@ -10,7 +10,7 @@ let
   # Enable Stylix if omarchy or my custom stylix option is enabled in the system config.
   # If osConfig is null (standalone HM), default to false (can be overridden).
   shouldEnable = if osConfig != null then (osConfig.programs.stylix.enable or false) else false;
-  theme = import ../modules/theming/stylix-values.nix { inherit pkgs; };
+  theme = import ../modules/theming/stylix-values.nix { inherit pkgs inputs; };
 in
 {
   config = lib.mkMerge [
@@ -27,12 +27,6 @@ in
 
       # enable the ones I want
       stylix.targets.zellij.enable = true;
-
-      wayland.windowManager.hyprland.settings.bind =
-        lib.mkIf config.wayland.windowManager.hyprland.enable
-          [
-            "SUPER SHIFT, T, exec, switch-theme"
-          ];
     }
     # Provide fallback configuration if Stylix is enabled but not configured.
     # Use priority 1100 (weaker than mkDefault) so other modules (like omarchy-nix or Stylix NixOS propagation) take precedence.

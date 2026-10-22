@@ -1,11 +1,12 @@
-{ pkgs }:
+{ pkgs, inputs }:
 let
   mapleMonoName = if pkgs.stdenv.hostPlatform.isDarwin then "Maple Mono NF" else "MapleMono NF";
+  bloombergVariant = "light";
 in
 {
-  base16Scheme = "${pkgs.base16-schemes}/share/themes/everforest.yaml";
+  base16Scheme = inputs.bloomberg-theme.schemes.${bloombergVariant};
   image = ./assets/BLACK_VII_desktop.jpg;
-  polarity = "dark";
+  polarity = inputs.bloomberg-theme.palettes.${bloombergVariant}.polarity;
   fonts = {
     serif = {
       package = "${pkgs.maple-mono.NF}";
