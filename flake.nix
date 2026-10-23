@@ -310,6 +310,8 @@
         name = "homebase";
         modules = stylixModules ++ [
           mangoModule
+          # Off by default; enabled in the `ryoku` specialisation.
+          ./modules/desktop/ryoku.nix
           inputs.nix-flatpak.nixosModules.nix-flatpak
           {
             host.enableMango = false;
