@@ -2492,11 +2492,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786311365,
-        "narHash": "sha256-Rz9ulTCaPK+L5zNAnEOj7KaDnLA/y1j+9HzLbYNxiF0=",
+        "lastModified": 1792780286,
+        "narHash": "sha256-7tbiH2gGuRtAiADlVUCIQxU5qFEMb0d6jefTLMaZmfM=",
         "owner": "Sammyalhashe",
         "repo": "terminus-nix",
-        "rev": "35f7f739271e321c12e5a64622aa847646bee8a2",
+        "rev": "87283806b6338962a5966611014b50e23267fd3d",
         "type": "github"
       },
       "original": {
