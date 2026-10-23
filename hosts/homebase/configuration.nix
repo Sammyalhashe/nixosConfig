@@ -26,6 +26,20 @@ in
     host.enableKDE = lib.mkForce true;
   };
 
+  # Ryoku (niri + Quickshell) as its own boot entry; normal boot stays KDE.
+  specialisation.ryoku.configuration = {
+    host.useRyokuDesktop = true;
+    host.enableKDE = lib.mkForce false;
+    # Ryoku enables virtualisation.docker, which can't coexist with podman's
+    # docker alias.
+    virtualisation.podman.dockerCompat = lib.mkForce false;
+    services.displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
+    services.displayManager.defaultSession = "niri";
+  };
+
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade

@@ -62,6 +62,11 @@ in
     # assertion above can report. Leaving it false lets the assertion do its job.
     programs.ryoku.enable = lib.mkIf supported true;
 
+    # nixpkgs' programs.hyprland adds a cap_sys_nice security wrapper around
+    # lib.getExe cfg.package, but Ryoku's Hyprland is makeWrapper'd, so that
+    # target is a bash script and ensure-wrapper-integrity fails the build.
+    security.wrappers.Hyprland.enable = lib.mkForce false;
+
     # Ryoku sets nixpkgs.config.allowUnfreePredicate (mkDefault), but mkHost
     # passes in a pkgs instance and NixOS asserts nixpkgs.config stays empty in
     # that case. The predicate is moot anyway: getPkgs already has allowUnfree.

@@ -21,15 +21,20 @@ in
     host.enableGreetd = lib.mkForce true;
   };
 
-  # Ryoku (niri or Hyprland + Quickshell) specialisation temporarily disabled:
-  # nixpkgs 02c087f changed hyprland's packaging so bin/Hyprland is a wrapper
-  # script rather than a raw ELF, which NixOS's wrapper-integrity check
-  # correctly refuses to let Ryoku's security-wrapper target (security
-  # wrappers must never wrap another wrapper). Broke this build and
-  # homebase's identical specialisation, blocking the whole fleet's
-  # push-to-cachix/deployed gate. Needs a real fix in Ryoku's module or an
-  # override pointing the security wrapper at Hyprland's real ELF before
-  # re-enabling.
+  # Ryoku (niri or Hyprland + Quickshell) as its own boot entry, defaulting to
+  # niri; both sessions are offered at login. Normal boot stays KDE.
+  # Ryoku themes SDDM but leaves enabling it to the host, which on starship is
+  # otherwise the KDE module's job, so turn it on here (Wayland, since nothing
+  # starts X without KDE).
+  specialisation.ryoku.configuration = {
+    host.useRyokuDesktop = true;
+    host.enableKDE = lib.mkForce false;
+    services.displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
+    services.displayManager.defaultSession = "niri";
+  };
 
   host.enableBluetooth = true;
   host.enableKaspaNg = true;
