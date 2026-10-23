@@ -319,8 +319,16 @@
           (
             { pkgs, ... }:
             {
+              # `overlays.default` builds CachyOS's kernel against our own
+              # nixpkgs instead of nix-cachyos-kernel's internally-pinned one.
+              # `overlays.pinned` broke here: its pinned nixpkgs and ours
+              # disagree on the module-signing-certificate convention after
+              # https://github.com/NixOS/nixpkgs/commit/4c2edecc43 landed on
+              # our side, so `aggregateModules` can't find `modules.cer` in
+              # the kernel's modules output.
+              # https://github.com/xddxdd/nix-cachyos-kernel/issues/111
               nixpkgs.overlays = [
-                nix-cachyos-kernel.overlays.pinned
+                nix-cachyos-kernel.overlays.default
               ];
               boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
             }
