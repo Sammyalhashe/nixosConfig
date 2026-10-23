@@ -26,24 +26,6 @@ in
     host.enableKDE = lib.mkForce true;
   };
 
-  # Ryoku (niri + Quickshell) as its own boot entry, same pattern as starship.
-  # Normal boot stays KDE. Untested with host.enableNvidia here; if niri's
-  # Wayland session misbehaves on the Nvidia driver, this specialisation is
-  # the only thing affected.
-  specialisation.ryoku.configuration = {
-    host.useRyokuDesktop = true;
-    host.enableKDE = lib.mkForce false;
-    # Ryoku's module enables real virtualisation.docker, which conflicts
-    # with homebase's base virtualisation.podman.dockerCompat (both can't
-    # claim the `docker` CLI). Only this specialisation needs to give way.
-    virtualisation.podman.dockerCompat = lib.mkForce false;
-    services.displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-    };
-    services.displayManager.defaultSession = "niri";
-  };
-
   host.fallbackNameservers = [ "11.125.37.1" ];
 
   # auto upgrade
