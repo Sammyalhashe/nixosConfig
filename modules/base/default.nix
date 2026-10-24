@@ -28,8 +28,13 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Needed on every host if only to evaluate this flake.
-  environment.systemPackages = [ pkgs.git ];
+  # git: needed on every host if only to evaluate this flake.
+  # ghostty.terminfo: SSH sessions from Ghostty set TERM=xterm-ghostty, which
+  # pagers like less reject as "not fully functional" without this entry.
+  environment.systemPackages = [
+    pkgs.git
+    pkgs.ghostty.terminfo
+  ];
 
   # LAN name resolution. Kept as a literal rather than derived from hosts.nix
   # because raspberrypi (11.125.37.99) is not a NixOS host and so has no entry
