@@ -55,13 +55,10 @@ in
       };
 
       # electrs is an Electrum server: it builds an address -> transaction index
-      # so on-chain wallets can ask "what does this address own?". Off, because
-      # nothing here needs it -- LND talks to bitcoind directly, and Sparrow
-      # connects to Bitcoin Core's RPC, where txindex above already provides the
-      # transaction-input lookups that would otherwise require an Electrum
-      # server. Turning this on is all that is needed to get it (and its
-      # firewall port) back; the cost is a separate ~56 GB index.
-      services.electrs.enable = false;
+      # so Electrum-protocol wallets can ask "what does this address own?". LND
+      # and Sparrow don't need it (they use bitcoind directly); it's for other
+      # wallets. Costs a separate ~56 GB index; opens port 50001 to the LAN.
+      services.electrs.enable = true;
 
       services.lnd = {
         enable = true;
