@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   user,
   ...
@@ -9,6 +10,10 @@
     ../../homeManagerModules/desktop-base.nix
     ../../homeManagerModules
   ];
+
+  # The waybar unit starts in any Hyprland session, including Ryoku's, which
+  # brings its own bar. Mango launches its own waybar, so it's unaffected.
+  programs.waybar.systemd.enable = lib.mkForce false;
 
   programs.coinbase-cli.enable = true;
 

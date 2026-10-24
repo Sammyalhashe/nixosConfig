@@ -13,7 +13,9 @@ in
     wlogout
   ];
 
-  systemd.user.services.waybar.Unit.ConditionEnvironment = lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";
+  systemd.user.services.waybar = lib.mkIf config.programs.waybar.systemd.enable {
+    Unit.ConditionEnvironment = lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";
+  };
 
   programs.waybar = {
     enable = lib.mkDefault true;
