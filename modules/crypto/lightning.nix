@@ -60,6 +60,12 @@ in
       # wallets. Costs a separate ~56 GB index; opens port 50001 to the LAN.
       services.electrs.enable = true;
 
+      # electrs 0.12 reads blocks through bitcoind's REST interface, which is off
+      # by default. REST is read-only public chain data and obeys rpcallowip.
+      services.bitcoind.extraConfig = lib.mkIf config.services.electrs.enable ''
+        rest=1
+      '';
+
       # nix-bitcoin's module still passes --daemon-p2p-addr, which electrs 0.12
       # removed (it fetches blocks over RPC now), so electrs refuses to start.
       # Same command as the module's, minus that flag.
