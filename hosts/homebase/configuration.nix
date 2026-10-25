@@ -42,6 +42,13 @@ in
 
   host.fallbackNameservers = [ "11.125.37.1" ];
 
+  # NordVPN: the daemon plus the `nordvpn` CLI, which talks to it only for
+  # members of the nordvpn group (added to the user below).
+  services.nordvpn.enable = true;
+  # NordLynx (WireGuard) replies arrive on the tunnel interface; strict
+  # reverse-path filtering drops them.
+  networking.firewall.checkReversePath = "loose";
+
   # auto upgrade
   system.autoUpgrade = {
     enable = true;
@@ -98,6 +105,7 @@ in
       "networkmanager"
       "docker"
       "wheel"
+      "nordvpn"
     ];
     packages = with pkgs; [ ];
     openssh.authorizedKeys.keys = [
