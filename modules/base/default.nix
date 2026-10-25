@@ -28,6 +28,13 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # Keys only. oldboy's sshd is reachable from the internet via the
+  # ssh.salh.xyz tunnel, and every other host is one ProxyJump behind it.
+  services.openssh.settings = {
+    PasswordAuthentication = false;
+    KbdInteractiveAuthentication = false;
+  };
+
   # git: needed on every host if only to evaluate this flake.
   # ghostty.terminfo: SSH sessions from Ghostty set TERM=xterm-ghostty, which
   # pagers like less reject as "not fully functional" without this entry.

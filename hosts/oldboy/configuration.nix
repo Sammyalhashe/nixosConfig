@@ -116,6 +116,13 @@ in
   ];
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  # cloudflared runs on this host, so ssh.salh.xyz connections arrive from
+  # localhost. No root over the tunnel; LAN deploy-rs (root@11.125.37.175)
+  # is unaffected.
+  services.openssh.extraConfig = ''
+    Match Address 127.0.0.1,::1
+      PermitRootLogin no
+  '';
 
   virtualisation = {
     podman = {
