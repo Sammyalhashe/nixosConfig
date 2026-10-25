@@ -289,7 +289,9 @@
       # Shared host table (hostname -> { ip, hostname, system }): single source
       # of truth for deploy-rs nodes and the devshell per-host scripts.
       hostsData = import ./hosts.nix;
-      cominHostNames = builtins.attrNames (nixpkgs.lib.filterAttrs (_: host: host.ip != null) hostsData);
+      cominHostNames = builtins.attrNames (
+        nixpkgs.lib.filterAttrs (_: host: host.ip != null && (host.comin or true)) hostsData
+      );
 
     in
     {
