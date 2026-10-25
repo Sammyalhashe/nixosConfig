@@ -66,6 +66,10 @@ in
         rest=1
       '';
 
+      # The index is ~2900 RocksDB files; the default soft limit of 1024 made
+      # electrs crash with "Too many open files" during compaction.
+      systemd.services.electrs.serviceConfig.LimitNOFILE = 65536;
+
       # nix-bitcoin's module still passes --daemon-p2p-addr, which electrs 0.12
       # removed (it fetches blocks over RPC now), so electrs refuses to start.
       # Same command as the module's, minus that flag.
