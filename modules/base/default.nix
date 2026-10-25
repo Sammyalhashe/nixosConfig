@@ -28,6 +28,14 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # Weekly hard-linking of duplicate store files, alongside the weekly GC set
+  # in flake.nix's baseConfig (which can't hold this: ryoku's home-manager
+  # config shares it and has no nix.optimise).
+  nix.optimise = {
+    automatic = true;
+    dates = [ "weekly" ];
+  };
+
   # Keys only. oldboy's sshd is reachable from the internet via the
   # ssh.salh.xyz tunnel, and every other host is one ProxyJump behind it.
   services.openssh.settings = {
