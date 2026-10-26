@@ -9,7 +9,7 @@
 }:
 let
   extended-nixvim = import ./lib/nixvim.nix { inherit pkgs inputs config; } {
-    nixvim.orgDirectory = "~/Nextcloud/org-agenda";
+    nixvim.orgDirectory = config.programs.quickNotes.notesDir;
     # Follow the system theme recorded in /etc/current-theme.
     nixvim.themeWatcher = true;
   };
