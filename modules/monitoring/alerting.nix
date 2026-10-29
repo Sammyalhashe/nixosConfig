@@ -79,6 +79,8 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       expr = ''100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)'';
+                      instant = true;
+                      range = false;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
@@ -127,6 +129,8 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       expr = "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100";
+                      instant = true;
+                      range = false;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
@@ -175,6 +179,8 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       expr = ''100 - (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"} * 100)'';
+                      instant = true;
+                      range = false;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
@@ -223,6 +229,8 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       expr = ''up{job="node"}'';
+                      instant = true;
+                      range = false;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
@@ -266,7 +274,8 @@ lib.mkIf config.host.enableMonitoring {
                 title = "Trading bot critical errors";
                 condition = "B";
                 for = "1m";
-                noDataState = "NoData";
+                # No matching log lines yields no series; that's the healthy case.
+                noDataState = "OK";
                 execErrState = "Alerting";
                 data = [
                   {
@@ -315,7 +324,7 @@ lib.mkIf config.host.enableMonitoring {
                 title = "Trading bot service failed";
                 condition = "B";
                 for = "1m";
-                noDataState = "NoData";
+                noDataState = "OK";
                 execErrState = "Alerting";
                 data = [
                   {
