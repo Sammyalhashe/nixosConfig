@@ -145,16 +145,6 @@ in
   systemd.tmpfiles.rules = [
     "d /supernote 0755 salhashemi2 users - -"
     "d /supernote/sndata 0755 salhashemi2 users - -"
-    "d /supernote/sndata/db_data 0700 70 70 - -"
-    "d /supernote/sndata/redis_data 0755 999 999 - -"
-    "d /supernote/sndata/logs 0755 33 33 - -"
-    "d /supernote/sndata/logs/app 0755 33 33 - -"
-    "d /supernote/sndata/logs/cloud 0755 33 33 - -"
-    "d /supernote/sndata/logs/web 0755 33 33 - -"
-    "d /supernote/sndata/convert 0755 salhashemi2 users - -"
-    "d /supernote/sndata/recycle 0755 salhashemi2 users - -"
-    "d /supernote/sndata/cert 0755 salhashemi2 users - -"
-    "d /supernote/supernote_data 0755 salhashemi2 users - -"
   ];
 
   # oldboy degrades over uptime; reboot weekly rather than relying on manual

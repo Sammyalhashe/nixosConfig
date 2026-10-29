@@ -9,7 +9,9 @@
   virtualisation.oci-containers.backend = "podman";
 
   systemd.tmpfiles.rules = [
-    "d /supernote/sndata/db_data 0700 70 70 -"
+    # 999 is mysql in the official mariadb image. tmpfiles re-applies this on
+    # every switch, so a wrong owner locks the running server out of its datadir.
+    "d /supernote/sndata/db_data 0700 999 999 -"
     "d /supernote/sndata/redis_data 0755 999 999 -"
     "d /supernote/sndata/logs 0755 1000 1000 -"
     "d /supernote/sndata/logs/app 0755 1000 1000 -"
