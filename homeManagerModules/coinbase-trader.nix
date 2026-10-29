@@ -42,8 +42,6 @@ in
       Environment = [
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=true"
-        # Public, rate-limited endpoint; move to a keyed Base RPC before scaling up.
-        "BASE_RPC_URL=https://mainnet.base.org"
         "ONCHAIN_MAX_SWAP_USD=25"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
         "STRATEGY=trend_following"
@@ -52,7 +50,11 @@ in
         # All risk/strategy params use Python defaults from config/trading_config.py
         # To override any default, add the env var here (see config/trading_config.py)
       ];
-      EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+      EnvironmentFile = [
+        "/run/secrets/rendered/openclaw-env"
+        # BASE_RPC_URL: the Chainstack Base node (its URL embeds an access key).
+        "/run/secrets/rendered/coinbase-trader-env"
+      ];
       # Wait for network to be truly available (timeout after 60s)
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
       # Use nix run directly on the flake
@@ -82,15 +84,17 @@ in
       Environment = [
         "TRADING_MODE=live"
         "ENABLE_ETHEREUM=true"
-        # Public, rate-limited endpoint; move to a keyed Base RPC before scaling up.
-        "BASE_RPC_URL=https://mainnet.base.org"
         "ONCHAIN_MAX_SWAP_USD=25"
         "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
         "STRATEGY=trend_following"
         "SHORT_WINDOW=21"
         "LONG_WINDOW=55"
       ];
-      EnvironmentFile = "/run/secrets/rendered/openclaw-env";
+      EnvironmentFile = [
+        "/run/secrets/rendered/openclaw-env"
+        # BASE_RPC_URL: the Chainstack Base node (its URL embeds an access key).
+        "/run/secrets/rendered/coinbase-trader-env"
+      ];
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
       ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes' -- --ws";
     };

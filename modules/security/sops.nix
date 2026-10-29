@@ -52,6 +52,9 @@
   sops.secrets.eth_private_key = {
     owner = config.host.username;
   };
+  sops.secrets.base_rpc_url = {
+    owner = config.host.username;
+  };
   sops.secrets.coinbase_api_key_clawdbot = { };
   sops.secrets.coinbase_api_id_clawdbot = { };
   sops.secrets.coinbase_api_secret_clawdbot = { };
@@ -132,6 +135,13 @@
     '';
     owner = config.host.username;
     path = "/home/${config.host.username}/cdb_api_key.json";
+  };
+
+  sops.templates."coinbase-trader-env" = {
+    content = ''
+      BASE_RPC_URL=${config.sops.placeholder.base_rpc_url}
+    '';
+    owner = config.host.username;
   };
 
   sops.templates."coinbase-trader-api-json" = {
