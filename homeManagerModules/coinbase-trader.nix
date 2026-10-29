@@ -41,7 +41,10 @@ in
       WorkingDirectory = repoDir;
       Environment = [
         "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=false"
+        "ENABLE_ETHEREUM=true"
+        # Public, rate-limited endpoint; move to a keyed Base RPC before scaling up.
+        "BASE_RPC_URL=https://mainnet.base.org"
+        "ONCHAIN_MAX_SWAP_USD=25"
         "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
         "STRATEGY=trend_following"
         "SHORT_WINDOW=21"
@@ -78,7 +81,10 @@ in
       WorkingDirectory = repoDir;
       Environment = [
         "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=false"
+        "ENABLE_ETHEREUM=true"
+        # Public, rate-limited endpoint; move to a keyed Base RPC before scaling up.
+        "BASE_RPC_URL=https://mainnet.base.org"
+        "ONCHAIN_MAX_SWAP_USD=25"
         "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
         "STRATEGY=trend_following"
         "SHORT_WINDOW=21"
