@@ -1,9 +1,15 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 {
   imports = [
     ../../homeManagerModules/desktop-base.nix
     ../../homeManagerModules
   ];
+
+  home.packages =
+    with pkgs;
+    [
+        bambu-studio
+    ];
 
   # The waybar unit starts in any Hyprland session, including Ryoku's, which
   # brings its own bar.

@@ -27,6 +27,7 @@
 
   home.packages = with pkgs; [
     onlyoffice-desktopeditors
+    bambu-studio
     cloudflare-warp
   ];
 }
