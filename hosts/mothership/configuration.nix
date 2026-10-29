@@ -27,6 +27,13 @@ in
   host.isHeadless = true;
   host.enableGreetd = false;
 
+  # The resident llama-server holds ~70G of RAM as GPU memory (GTT), so the
+  # default 32 jobs x all cores OOM'd push-to-cachix building homebase.
+  nix.settings = {
+    max-jobs = 2;
+    cores = 8;
+  };
+
   # Let Sparrow on homebase/starship/ryoku use this node instead of a public
   # server. Firewall holes live in modules/crypto/lightning.nix.
   host.exposeBitcoinToLan = true;
