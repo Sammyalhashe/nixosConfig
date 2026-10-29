@@ -11,7 +11,6 @@ in
     enableCompletion = false;
     shellAliases = {
       # common aliases
-      nv = "nvim --remote-ui --server 127.0.0.1:8888";
       tm = "tmux";
       tm0 = "tmux a -t 0";
       tk0 = "tmux kill-session -t 0";

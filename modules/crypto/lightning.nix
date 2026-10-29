@@ -100,8 +100,6 @@ in
 
       # Ride The Lightning: the LND web UI supported by nix-bitcoin. Binds to
       # 127.0.0.1:3010, so reach it over an SSH tunnel -- mothership is headless.
-      # Not the default 3000: mcp-hub (started by the neovim_server user
-      # service) also binds 3000, and whichever starts second fails.
       services.rtl = {
         enable = true;
         port = 3010;

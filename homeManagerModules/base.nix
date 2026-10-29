@@ -86,17 +86,4 @@
     enable = true;
     flake = "${config.home.homeDirectory}/nixosConfig";
   };
-
-  systemd.user.services.neovim_server = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-    Unit = {
-      Description = "Neovim server to connect to for fast startup";
-    };
-    Service = {
-      ExecStart = "${pkgs.bash}/bin/bash -c 'exec $(which nvim) --listen 127.0.0.1:8888 --headless'";
-      Restart = "always";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
 }
