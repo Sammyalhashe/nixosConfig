@@ -115,51 +115,6 @@ in
 
   powerManagement.cpuFreqGovernor = "performance";
 
-  # Open WebUI: browser UI for the local and remote LLMs. Disabled -- unused in
-  # practice, and it was the thing holding 0.0.0.0:8080. Config kept so it is a
-  # one-line flip to bring back; note LND's REST API now sits on 8085, so
-  # re-enabling this no longer collides.
-  services.open-webui = {
-    enable = false;
-    port = 8080;
-    host = "0.0.0.0";
-    environment = {
-      # Points to local llama-server instances and the LiteLLM gateway
-      OPENAI_API_BASE_URLS = "http://127.0.0.1:8011/v1;http://127.0.0.1:8014/v1;http://127.0.0.1:4000/v1";
-      OPENAI_API_KEYS = "none;none;none";
-      ENABLE_OLLAMA_API = "False";
-      ENABLE_WEB_SEARCH = "True";
-      WEB_SEARCH_ENGINE = "duckduckgo";
-      WEB_SEARCH_CONCURRENT_REQUESTS = "1";
-      USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-      PYTHONPATH =
-        let
-          pyPkgs = pkgs.python313Packages;
-        in
-        lib.makeSearchPath "lib/python3.13/site-packages" [
-          pyPkgs.requests
-          pyPkgs.beautifulsoup4
-          pyPkgs.markdownify
-          pyPkgs.lxml
-          pyPkgs.tiktoken
-          pyPkgs.aiohttp
-          pyPkgs.loguru
-          pyPkgs.orjson
-          pyPkgs.rank-bm25
-          pyPkgs.scikit-learn
-          pyPkgs.scipy
-          pyPkgs.torch
-          pyPkgs.sentence-transformers
-          pyPkgs.transformers
-          pyPkgs.regex
-        ];
-    };
-  };
-
-  systemd.services.open-webui.serviceConfig.EnvironmentFile = [
-    config.sops.templates."open-webui-env".path
-  ];
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

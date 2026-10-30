@@ -92,9 +92,8 @@ in
 
       services.lnd = {
         enable = true;
-        # Default 8080 collides with open-webui, which binds 0.0.0.0:8080 and so
-        # also claims 127.0.0.1:8080. This is the local REST API only -- nothing
-        # external connects to it, and RTL derives its endpoint from this option.
+        # Off the default 8080, which is a common port for web UIs. This is the
+        # local REST API only -- RTL derives its endpoint from this option.
         restPort = 8085;
       };
 

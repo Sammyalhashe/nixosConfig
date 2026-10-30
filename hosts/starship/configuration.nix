@@ -124,10 +124,6 @@ in
     ];
   };
 
-  services.open-webui = {
-    enable = true;
-  };
-
   programs.mango.enable = true;
 
   environment.systemPackages = with pkgs; [
