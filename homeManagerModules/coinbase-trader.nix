@@ -1,193 +1,49 @@
 {
   config,
-  pkgs,
-  lib,
+  inputs,
   ...
 }:
 let
-  user = "salhashemi2";
-  repoDir = "/home/${user}/trading-bot-flake";
+  home = config.home.homeDirectory;
 in
 {
-  # Ensure necessary packages are available
-  home.packages = with pkgs; [
-    nix
-    git
-  ];
+  imports = [ inputs.trading-bot-flake.homeManagerModules.default ];
 
-  # 1. Activation script to clone/update the trading bot repository
-  home.activation.installTradingBot = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    PATH=$PATH:${pkgs.openssh}/bin:${pkgs.iputils}/bin
-    if ${pkgs.iputils}/bin/ping -c 1 github.com &>/dev/null; then
-      if [ ! -d "${repoDir}" ]; then
-        ${pkgs.git}/bin/git clone https://github.com/Sammyalhashe/trading-bot-flake "${repoDir}"
-      else
-        cd "${repoDir}" && ${pkgs.git}/bin/git pull
-      fi
-    else
-      echo "Network unreachable, skipping trading-bot-flake update"
-    fi
-  '';
+  services.trading-bot = {
+    enable = true;
+    mode = "live";
+    ethereum.enable = true;
 
-  # 2. Systemd user service to run the trading bot (Disabled by default, replaced by WS)
-  systemd.user.services.coinbase-trader = {
-    Unit = {
-      Description = "Run Coinbase Trading Bot";
-      After = [ "network-online.target" ];
-      Wants = [ "network-online.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      WorkingDirectory = repoDir;
-      Environment = [
-        "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=true"
-        "ONCHAIN_MAX_SWAP_USD=25"
-        "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-        "STRATEGY=trend_following"
-        "SHORT_WINDOW=21"
-        "LONG_WINDOW=55"
-        # All risk/strategy params use Python defaults from config/trading_config.py
-        # To override any default, add the env var here (see config/trading_config.py)
-      ];
-      EnvironmentFile = [
-        "/run/secrets/rendered/openclaw-env"
-        # BASE_RPC_URL: the Chainstack Base node (its URL embeds an access key).
-        "/run/secrets/rendered/coinbase-trader-env"
-      ];
-      # Wait for network to be truly available (timeout after 60s)
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
-      # Use nix run directly on the flake
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes'";
-    };
-  };
+    # Two Coinbase keys: the trader key for the live bot and PnL, the older
+    # key for the report/notifier and the timer fallback.
+    coinbaseApiJson = "${home}/cdb_api_key.json";
+    ws.coinbaseApiJson = "${home}/cdb_trader_api_key.json";
+    pnlReport.coinbaseApiJson = "${home}/cdb_trader_api_key.json";
 
-  # 2b. Systemd user service for WebSocket mode (long-lived, real-time exits)
-  #     This is the default — auto-starts via WantedBy.
-  #     To fall back to timer mode: systemctl --user stop coinbase-trader-ws
-  #     then: systemctl --user start coinbase-trader.timer
-  systemd.user.services.coinbase-trader-ws = {
-    Unit = {
-      Description = "Coinbase Trading Bot (WebSocket mode)";
-      After = [ "network-online.target" ];
-      Wants = [ "network-online.target" ];
-      Conflicts = [
-        "coinbase-trader.service"
-        "coinbase-trader.timer"
-      ];
-    };
-    Service = {
-      Type = "simple";
-      Restart = "on-failure";
-      RestartSec = "10s";
-      WorkingDirectory = repoDir;
-      Environment = [
-        "TRADING_MODE=live"
-        "ENABLE_ETHEREUM=true"
-        "ONCHAIN_MAX_SWAP_USD=25"
-        "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
-        "STRATEGY=trend_following"
-        "SHORT_WINDOW=21"
-        "LONG_WINDOW=55"
-      ];
-      EnvironmentFile = [
-        "/run/secrets/rendered/openclaw-env"
-        # BASE_RPC_URL: the Chainstack Base node (its URL embeds an access key).
-        "/run/secrets/rendered/coinbase-trader-env"
-      ];
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in {1..12}; do if ${pkgs.iputils}/bin/ping -c 1 api.coinbase.com &>/dev/null; then exit 0; fi; sleep 5; done; exit 1'";
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir} --extra-experimental-features 'nix-command flakes' -- --ws";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
+    environmentFiles = [
+      "/run/secrets/rendered/openclaw-env"
+      # BASE_RPC_URL: the Chainstack Base node (its URL embeds an access key).
+      "/run/secrets/rendered/coinbase-trader-env"
+    ];
 
-  # 3. Systemd user timer to run the bot every 3 minutes (fallback, not auto-started)
-  systemd.user.timers.coinbase-trader = {
-    Unit = {
-      Description = "Run Coinbase Trading Bot every 3 minutes";
+    # Everything else uses the defaults in the bot's config/trading_config.py.
+    settings = {
+      STRATEGY = "trend_following";
+      SHORT_WINDOW = 21;
+      LONG_WINDOW = 55;
+      MAX_CONCURRENT_POSITIONS = 5;
+      ONCHAIN_MAX_SWAP_USD = 25;
+      ATR_STOP_MULTIPLIER = 2.5;
+      ATR_STOP_MIN_PCT = 0.06;
+      STOPOUT_COOLDOWN_HOURS = 12;
     };
-    Timer = {
-      OnCalendar = "*:0/3";
-      Persistent = true;
-    };
-  };
 
-  # 4. Systemd user service + daily timer for OKX derivatives data collection
-  systemd.user.services.derivatives-collector = {
-    Unit = {
-      Description = "Collect OKX derivatives data for backtesting";
-      After = [ "network-online.target" ];
-      Wants = [ "network-online.target" ];
+    notifier.enable = true;
+    pnlReport = {
+      enable = true;
+      # Read on demand by the hermes agent, which has ACL access to this dir.
+      snapshotFile = "${home}/projects/trading-pnl/snapshot.json";
     };
-    Service = {
-      Type = "oneshot";
-      WorkingDirectory = repoDir;
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#collect-derivatives --extra-experimental-features 'nix-command flakes'";
-    };
-  };
-
-  systemd.user.timers.derivatives-collector = {
-    Unit = {
-      Description = "Daily OKX derivatives data collection";
-    };
-    Timer = {
-      OnCalendar = "daily";
-      Persistent = true;
-    };
-    Install = {
-      WantedBy = [ "timers.target" ];
-    };
-  };
-
-  # 5. Systemd user service for the trading report (optional but good to have)
-  systemd.user.services.coinbase-report = {
-    Unit = {
-      Description = "Run Coinbase Trading Report";
-    };
-    Service = {
-      Type = "oneshot";
-      WorkingDirectory = repoDir;
-      Environment = [
-        "COINBASE_API_JSON=/home/${user}/cdb_api_key.json"
-      ];
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#report --extra-experimental-features 'nix-command flakes'";
-    };
-  };
-
-  # 6. Since-inception PnL report: realized (StateManager) + unrealized (open
-  #    positions vs. live prices) + current portfolio value. Sends to
-  #    Telegram daily and writes a JSON snapshot to ~/projects/trading-pnl
-  #    for on-demand reads (e.g. by the hermes agent, which already has
-  #    read+write ACL access there).
-  systemd.user.services.coinbase-pnl-report = {
-    Unit = {
-      Description = "Run Coinbase Trading Bot PnL Report";
-      After = [ "network-online.target" ];
-      Wants = [ "network-online.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      WorkingDirectory = repoDir;
-      Environment = [
-        "COINBASE_API_JSON=/home/${user}/cdb_trader_api_key.json"
-        "PNL_SNAPSHOT_FILE=/home/${user}/projects/trading-pnl/snapshot.json"
-      ];
-      ExecStart = "${pkgs.nix}/bin/nix run ${repoDir}#pnl --extra-experimental-features 'nix-command flakes'";
-    };
-  };
-
-  systemd.user.timers.coinbase-pnl-report = {
-    Unit = {
-      Description = "Run Coinbase Trading Bot PnL Report daily";
-    };
-    Timer = {
-      OnCalendar = "daily";
-      Persistent = true;
-    };
-    Install = {
-      WantedBy = [ "timers.target" ];
-    };
+    derivativesCollector.enable = true;
   };
 }

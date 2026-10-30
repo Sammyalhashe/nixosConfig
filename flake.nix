@@ -138,6 +138,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Coinbase/Base trading bot (oldboy); provides the services.trading-bot HM
+    # module. Bump with `nix flake update trading-bot-flake` to ship a bot change.
+    trading-bot-flake = {
+      url = "github:Sammyalhashe/trading-bot-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.sops-nix.follows = "sops-nix";
+    };
+
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     llm-agents.url = "github:numtide/llm-agents.nix";
 

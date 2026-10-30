@@ -288,7 +288,7 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       queryType = "instant";
-                      expr = ''count_over_time({unit="coinbase-trader-ws.service"} |~ "CRITICAL|FATAL|Exception|Traceback" [5m])'';
+                      expr = ''count_over_time({user_unit="coinbase-trader-ws.service"} |~ "CRITICAL|FATAL|Exception|Traceback" [5m])'';
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
@@ -337,7 +337,7 @@ lib.mkIf config.host.enableMonitoring {
                     model = {
                       refId = "A";
                       queryType = "instant";
-                      expr = ''count_over_time({unit="coinbase-trader-ws.service"} |= "Failed" [5m])'';
+                      expr = ''count_over_time({user_unit="coinbase-trader-ws.service"} |= "Failed" [5m])'';
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                     };
