@@ -93,6 +93,9 @@
   sops.secrets.cloudflare_token = {
     owner = config.host.username;
   };
+  sops.secrets.garmin_api_key = {
+    owner = config.host.username;
+  };
 
   sops.templates."openclaw-env" = {
     content = ''
