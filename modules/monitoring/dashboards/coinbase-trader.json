@@ -138,12 +138,12 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "avg by (user_unit) (\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    | regexp `PnL: \\$(?P<pnl_str>[-+]?[0-9,.]+)`\n    | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n    | regexp `(?P<pnl>[-+]?[0-9.]+)`\n    | unwrap pnl [1h]\n  )\n)",
+          "expr": "avg by (user_unit) (\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    |= \"[Performance]\"\n    | regexp `\\| PnL: \\$(?P<pnl_str>[-+]?[0-9,.]+)`\n    | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n    | regexp `(?P<pnl>[-+]?[0-9.]+)`\n    | unwrap pnl [1h]\n  )\n)",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "PnL",
+      "title": "Cumulative Realized PnL",
       "type": "timeseries"
     },
     {
@@ -236,9 +236,21 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "last_over_time(\n  {user_unit=\"coinbase-trader-ws.service\"} \n  | regexp `Portfolio Value: \\$(?P<balance_str>[0-9,.]+)`\n  | line_format `{{ .balance_str | replace \",\" \"\" }}`\n  | regexp `(?P<balance>[0-9.]+)`\n  | unwrap balance [5m]\n)",
+          "expr": "sum by (executor) (\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    | regexp `\\[(?P<executor>[^\\]]+)\\] Sub-Portfolio Value: \\$(?P<balance_str>[0-9,.]+)`\n    | line_format `{{ .balance_str | replace \",\" \"\" }}`\n    | regexp `(?P<balance>[0-9.]+)`\n    | drop balance_str\n    | unwrap balance [5m]\n  )\n)",
           "queryType": "range",
-          "refId": "A"
+          "refId": "A",
+          "legendFormat": "{{executor}}"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(\n  last_over_time(\n    {user_unit=\"coinbase-trader-ws.service\"} \n    | regexp `INFO - Portfolio Value: \\$(?P<balance_str>[0-9,.]+)`\n    | line_format `{{ .balance_str | replace \",\" \"\" }}`\n    | regexp `(?P<balance>[0-9.]+)`\n    | drop balance_str\n    | unwrap balance [5m]\n  )\n)",
+          "queryType": "range",
+          "refId": "B",
+          "legendFormat": "Total"
         }
       ],
       "title": "Portfolio Balance",
@@ -518,7 +530,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"PnL\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |~ \"PnL: \\\\$[-+]?[0-9.,]+ \\\\(entry=\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -620,7 +632,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Ss]top\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |~ \"[Ss]top-loss triggered\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -710,7 +722,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Tt]ake.profit|TP[12]\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |~ \"Take-profit level [12]|MTF TP[12]\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -800,7 +812,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"\\ud83d\\udea8\" |~ \"[Tt]railing\" [15m]))",
+          "expr": "sum(count_over_time({user_unit=\"coinbase-trader-ws.service\"} |= \"Trailing stop-loss triggered\" [15m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -1599,7 +1611,9 @@
       "id": 107,
       "options": {
         "legend": {
-          "calcs": ["sum"],
+          "calcs": [
+            "sum"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1623,6 +1637,236 @@
       ],
       "title": "Trading Fees Per Trade",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 57
+      },
+      "id": 108,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum_over_time(\n  {user_unit=\"coinbase-trader-ws.service\"} \n  | regexp `fees=\\$(?P<fee_str>[0-9,.]+)`\n  | line_format `{{ .fee_str | replace \",\" \"\" }}`\n  | regexp `(?P<fee>[-+]?[0-9.]+)`\n  | unwrap fee [$__range]\n))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Fees Paid (selected range)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 57
+      },
+      "id": 109,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum_over_time(\n  {user_unit=\"coinbase-trader-ws.service\"} \n  | regexp `PnL: \\$(?P<pnl_str>[-+]?[0-9,.]+) \\(entry=`\n  | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n  | regexp `(?P<pnl>[-+]?[0-9.]+)`\n  | unwrap pnl [$__range]\n))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Realized PnL (selected range)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "unit": "currencyUSD",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 57
+      },
+      "id": 110,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum_over_time(\n  {user_unit=\"coinbase-trader-ws.service\"} \n  | regexp `fees=\\$(?P<fee_str>[0-9,.]+)`\n  | line_format `{{ .fee_str | replace \",\" \"\" }}`\n  | regexp `(?P<fee>[-+]?[0-9.]+)`\n  | unwrap fee [1d]\n))",
+          "queryType": "range",
+          "refId": "A",
+          "legendFormat": "Fees"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum_over_time(\n  {user_unit=\"coinbase-trader-ws.service\"} \n  | regexp `PnL: \\$(?P<pnl_str>[-+]?[0-9,.]+) \\(entry=`\n  | line_format `{{ .pnl_str | replace \",\" \"\" }}`\n  | regexp `(?P<pnl>[-+]?[0-9.]+)`\n  | unwrap pnl [1d]\n))",
+          "queryType": "range",
+          "refId": "B",
+          "legendFormat": "Realized PnL"
+        }
+      ],
+      "title": "Daily Fees vs Realized PnL",
+      "type": "timeseries",
+      "interval": "1d"
     },
     {
       "datasource": {
@@ -1720,7 +1964,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 64
       },
       "id": 106,
       "title": "Coinbase Trader — Infrastructure",
@@ -1790,7 +2034,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 58
+        "y": 65
       },
       "id": 1,
       "options": {
@@ -1881,7 +2125,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 58
+        "y": 65
       },
       "id": 27,
       "options": {
@@ -1971,7 +2215,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 58
+        "y": 65
       },
       "id": 28,
       "options": {
@@ -2010,7 +2254,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 66
+        "y": 73
       },
       "id": 29,
       "options": {
@@ -2047,44 +2291,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 66
-      },
-      "id": 30,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "editorMode": "code",
-          "expr": "{user_unit=\"coinbase-trader-ws.service\"} |= \"Rotating RPC\"",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "RPC Failovers",
-      "type": "logs"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 66
+        "y": 73
       },
       "id": 31,
       "options": {
