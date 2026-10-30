@@ -46,7 +46,6 @@ in
 
       services.bitcoind = {
         enable = true;
-        txindex = true; # Full transaction index enabled
 
         # 4 GB steady-state. The 24 GB used during initial block download is
         # only worth it while syncing, and on this host it competes directly
