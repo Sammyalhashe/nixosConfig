@@ -17,6 +17,23 @@ let
   # home-manager module. `<pkg>/claude` holds one directory per skill, each with
   # a SKILL.md; hermes walks the tree for SKILL.md files.
   aiSkills = inputs.ai-skills.packages.${pkgs.stdenv.hostPlatform.system}.ai-skills;
+
+  # Hermes only needs `garmin <path>` (see skills/garmin-connect), never the API
+  # key or the short-lived token, and requests can only reach Garmin's API host.
+  garmin = pkgs.writeShellApplication {
+    name = "garmin";
+    runtimeInputs = [ pkgs.curl ];
+    text = ''
+      if [ $# -ne 1 ] || [[ $1 != /* ]]; then
+        echo "usage: garmin '/service/path?query'" >&2
+        exit 2
+      fi
+      base=https://personal.connectapi.garmin.com
+      token=$(curl -sSf -X POST "$base/personalapitoken-service/personal-api/personal-api-key/token" \
+        -H "Authorization: ApiKey $GARMIN_API_KEY")
+      curl -sSf "$base$1" -H "Authorization: Bearer $token"
+    '';
+  };
 in
 {
 
@@ -63,6 +80,10 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.garmin_api_key = {
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
@@ -90,6 +111,7 @@ in
     GATEWAY_ALLOW_ALL_USERS=true
     FASTMAIL_API_KEY="${config.sops.placeholder.fastmail_hermes_api_key}"
     TYPESAFE_API_KEY="${config.sops.placeholder.typesafe_hermes_api_key}"
+    GARMIN_API_KEY="${config.sops.placeholder.garmin_api_key}"
   '';
 
   # 3. Configure the Hermes Agent Service
@@ -146,7 +168,10 @@ in
       # addition to /var/lib/hermes/.hermes/skills, so skills it installs at
       # runtime still land in the state dir and win on name collisions.
       skills = {
-        external_dirs = [ "${aiSkills}/claude" ];
+        external_dirs = [
+          "${aiSkills}/claude"
+          "${./skills}"
+        ];
       };
 
       web = {
@@ -223,6 +248,7 @@ in
       python3Packages.pip
       nodejs
       jq
+      garmin
     ];
   };
 
