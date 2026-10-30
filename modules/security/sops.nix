@@ -55,6 +55,9 @@
   sops.secrets.base_rpc_url = {
     owner = config.host.username;
   };
+  sops.secrets.zerox_api_key = {
+    owner = config.host.username;
+  };
   sops.secrets.coinbase_api_key_clawdbot = { };
   sops.secrets.coinbase_api_id_clawdbot = { };
   sops.secrets.coinbase_api_secret_clawdbot = { };
@@ -143,6 +146,7 @@
   sops.templates."coinbase-trader-env" = {
     content = ''
       BASE_RPC_URL=${config.sops.placeholder.base_rpc_url}
+      ZEROX_API_KEY=${config.sops.placeholder.zerox_api_key}
     '';
     owner = config.host.username;
   };
