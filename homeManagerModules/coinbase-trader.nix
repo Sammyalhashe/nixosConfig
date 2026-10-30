@@ -33,7 +33,9 @@ in
       LONG_WINDOW = 55;
       MAX_CONCURRENT_POSITIONS = 5;
       ONCHAIN_MAX_SWAP_USD = 25;
-      ONCHAIN_ROUTER = "aerodrome";
+      ONCHAIN_ROUTER = "zerox";
+      # Measured $25 round trips via 0x ran 0.3-0.94% (incl. 0x's 0.15%/leg).
+      ONCHAIN_ROUND_TRIP_FEE_PCT = 0.008;
       ATR_STOP_MULTIPLIER = 2.5;
       ATR_STOP_MIN_PCT = 0.06;
       STOPOUT_COOLDOWN_HOURS = 12;
