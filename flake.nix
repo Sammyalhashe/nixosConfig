@@ -98,6 +98,12 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent/v2026.6.5";
 
+    # The Bloomberg proxy blocks this host, so lock or update it from a home machine.
+    rex = {
+      url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Shared home-manager modules; also owns the vicinae and vicinae-extensions inputs
     home-modules = {
       url = "github:Sammyalhashe/home-modules";

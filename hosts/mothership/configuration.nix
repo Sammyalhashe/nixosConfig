@@ -163,6 +163,8 @@ in
   users.users.${user} = {
     isNormalUser = true;
     description = "Sammy Al Hashemi";
+    # Keeps the user's Rex server (home.nix) running while logged out.
+    linger = true;
     extraGroups = [
       "networkmanager"
       "docker"

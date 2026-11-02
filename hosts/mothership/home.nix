@@ -21,7 +21,14 @@ in
     ../../homeManagerModules/claude-code.nix
     ../../homeManagerModules/codex.nix
     ./home-modules.nix
+    inputs.rex.homeManagerModules.default
   ];
+
+  # Personal Rex server on $XDG_RUNTIME_DIR/rex/server.sock. Macs reach it over an
+  # SSH-forwarded socket, so it needs no network listener.
+  services.rex.enable = true;
+  # The guard lives in ~/.ssh/config, which home-manager doesn't manage here.
+  programs.rex.sshGuard = false;
 
   home.username = "${user}";
 
