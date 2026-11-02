@@ -80,6 +80,23 @@
       revset-aliases = {
         # Shows your current work and recent changes clearly
         "l" = "ancestors(remote_bookmarks().. @, 3) | remote_bookmarks().. @";
+        # Aliases below adapted from https://www.lysator.liu.se/~axl/jj-aliases/
+        # Nearest bookmark at or before `to`
+        "closest_bookmark(to)" = "heads(::to & bookmarks())";
+        # Nearest described, non-empty commit at or before `to`
+        "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
+        # Mutable commits reachable from x, plus n levels of ancestors for context
+        "stack()" = "stack(@)";
+        "stack(x)" = "stack(x, 2)";
+        "stack(x, n)" = "ancestors(reachable(x, mutable()), n)";
+        # All open work stacks: from @ or authored by me
+        "open()" = "stack(mine() | @, 1) ~ hidden()";
+        # Explain why r is immutable
+        "why_immutable(r)" = "(r & immutable()) | roots(r:: & immutable_heads())";
+        "recent()" = "recent(all())";
+        "recent(r)" = "r & committer_date(after:\"1 month ago\")";
+        # First commit of the current branch (child of trunk)
+        "branch_start(to)" = "heads(::to & trunk())+ & ::to";
       };
 
       aliases = {
@@ -98,6 +115,60 @@
           "rebase"
           "-d"
           "main@origin"
+        ];
+        # Move the closest bookmark up to the latest pushable commit
+        tug = [
+          "bookmark"
+          "advance"
+          "--to"
+          "closest_pushable(@)"
+        ];
+        # Rebase every active branch reachable from @ onto trunk
+        restack = [
+          "rebase"
+          "-o"
+          "trunk()"
+          "-s"
+          "roots(trunk()..) & stack()"
+        ];
+        # Squash the whole current branch into its first commit
+        collapse = [
+          "squash"
+          "-f"
+          "branch_start(@)+::@"
+          "-t"
+          "branch_start(@)"
+        ];
+        # Queue an empty described commit at the branch tip: jj plan "msg"
+        plan = [
+          "new"
+          "--no-edit"
+          "heads(@::)"
+          "-m"
+        ];
+        open = [
+          "log"
+          "-r"
+          "open()"
+        ];
+        sync = [
+          "git"
+          "fetch"
+          "--all-remotes"
+        ];
+        long = [
+          "log"
+          "-T"
+          "builtin_log_detailed"
+        ];
+        short = [
+          "log"
+          "-T"
+          "builtin_log_oneline"
+        ];
+        blame = [
+          "file"
+          "annotate"
         ];
       };
     };
