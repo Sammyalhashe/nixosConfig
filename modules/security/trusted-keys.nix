@@ -19,7 +19,11 @@ in
       "wheel"
       "sudo"
     ];
-    openssh.authorizedKeys.keys = hostKeys;
+    # Snapshot of sshid.io/starllama; refresh with
+    # `curl https://sshid.io/starllama` and commit when adding a passkey.
+    openssh.authorizedKeys.keys = hostKeys ++ [
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGp3kyRRtgykTMcQPnGHc42vQGrPMhohDt8f0PkDhERlKHzyNv4ZlyGKXTQ20d2rAQRVT/Xox/rn9sXGdHCVmr4= #SSH ID - @starllama"
+    ];
   };
 
   security.sudo.extraRules = [
