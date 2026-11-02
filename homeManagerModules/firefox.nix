@@ -21,6 +21,8 @@ in
 {
   programs.firefox = {
     enable = true;
+    # Pin the pre-26.05 default; the XDG path would need the profiles moved.
+    configPath = ".mozilla/firefox";
     nativeMessagingHosts = [
       pkgs.kdePackages.plasma-browser-integration
     ];
