@@ -42,6 +42,15 @@ in
 
   host.fallbackNameservers = [ "11.125.37.1" ];
 
+  # Client of the public mesh: peers' models on localhost:9337, nothing served here.
+  services.mesh-llm = {
+    enable = true;
+    mode = "client";
+    extraArgs = [ "--auto" ];
+    # The LAN uses public addresses, so the private-range block misses it.
+    extraBlockedNetworks = [ "11.125.37.0/24" ];
+  };
+
   # NordVPN: the daemon plus the `nordvpn` CLI, which talks to it only for
   # members of the nordvpn group (added to the user below).
   services.nordvpn.enable = true;

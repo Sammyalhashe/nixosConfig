@@ -625,6 +625,20 @@
         "url": "https://flakehub.com/f/DeterminateSystems/flake-schemas/%2A"
       }
     },
+    "flake-schemas_2": {
+      "locked": {
+        "lastModified": 1780327564,
+        "narHash": "sha256-HiRPtA0spK+Dkgbhz/1zW9glXxNVB+L4Rj2VYmdawb8=",
+        "rev": "6cc9bd98891b1fc6bb2b8cb3277df8bc72799ca6",
+        "revCount": 149,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/DeterminateSystems/flake-schemas/0.5.0/019e83cf-9af3-78b1-ac5b-70e68ad1efe1/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/DeterminateSystems/flake-schemas/%2A"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -1268,6 +1282,27 @@
       "original": {
         "owner": "ravitemer",
         "repo": "mcp-hub",
+        "type": "github"
+      }
+    },
+    "mesh-llm": {
+      "inputs": {
+        "flake-schemas": "flake-schemas",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793911675,
+        "narHash": "sha256-hVhv5IsC+9ocgm9rNqvnD9MaHds4ZGHnJrlHBy1JiSQ=",
+        "owner": "Sammyalhashe",
+        "repo": "mesh-llm-flake",
+        "rev": "cc12a171afe737235bedd1aa4f82a218d75aba76",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sammyalhashe",
+        "repo": "mesh-llm-flake",
         "type": "github"
       }
     },
@@ -2187,6 +2222,7 @@
         "llm-agents": "llm-agents",
         "mangowc": "mangowc",
         "mcp-hub": "mcp-hub",
+        "mesh-llm": "mesh-llm",
         "nix-bitcoin": "nix-bitcoin",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nix-flatpak": "nix-flatpak",
@@ -2554,7 +2590,7 @@
     },
     "terminal-browser": {
       "inputs": {
-        "flake-schemas": "flake-schemas",
+        "flake-schemas": "flake-schemas_2",
         "nixpkgs": [
           "nixpkgs"
         ]

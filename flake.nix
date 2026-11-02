@@ -126,6 +126,10 @@
       url = "github:Sammyalhashe/terminal-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mesh-llm = {
+      url = "github:Sammyalhashe/mesh-llm-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Ryoku desktop (Hyprland + Quickshell). Consumed only when
     # host.useRyokuDesktop is set — see modules/desktop/ryoku.nix.
@@ -333,6 +337,7 @@
           # Off by default; enabled in the `ryoku` specialisation.
           ./modules/desktop/ryoku.nix
           inputs.nix-flatpak.nixosModules.nix-flatpak
+          inputs.mesh-llm.nixosModules.default
           {
             host.enableMango = false;
             host.enableHyprland = false;
