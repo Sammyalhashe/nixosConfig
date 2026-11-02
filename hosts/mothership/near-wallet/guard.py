@@ -4,6 +4,7 @@ account only, and every swap posted to ntfy before it is forwarded."""
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -47,7 +48,9 @@ def notify(title, body):
 def main():
     key = json.loads(open(os.environ["NEAR_KEYFILE"]).read())
     account = key["account_id"]
-    keystore = tempfile.mkdtemp(prefix="near-keystore-")
+    # RAM-backed, and SIGTERM (how clients stop servers) still reaches the cleanup.
+    keystore = tempfile.mkdtemp(prefix="near-keystore-", dir=os.environ.get("XDG_RUNTIME_DIR"))
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
     try:
         os.makedirs(f"{keystore}/mainnet")
         path = f"{keystore}/mainnet/{account}.json"
@@ -55,7 +58,7 @@ def main():
             json.dump(key, f)
 
         child = subprocess.Popen(
-            [os.environ["NPX"], "--yes", "@nearai/near-mcp@0.0.35", "run", "--keystore", keystore],
+            [os.environ["NPX"], "--yes", "@nearai/near-mcp@0.0.35", "run", "--key-dir", keystore],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
 
         def from_server():
@@ -68,6 +71,9 @@ def main():
                 if tools is not None:
                     msg["result"]["tools"] = [t for t in tools if t["name"] in ALLOWED]
                 emit(msg)
+            # The server is gone; don't leave the client waiting on a dead pipe.
+            shutil.rmtree(keystore, ignore_errors=True)
+            os._exit(child.wait() or 1)
 
         threading.Thread(target=from_server, daemon=True).start()
 
