@@ -55,7 +55,7 @@
 
     coinbaseSweepPercent = lib.mkOption {
       type = lib.types.numbers.between 0 100;
-      default = 2;
+      default = 30;
       description = "Percentage of each coin's available balance the weekly Coinbase sweep sends to self-custody.";
     };
 

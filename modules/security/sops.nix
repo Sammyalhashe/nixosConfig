@@ -77,6 +77,7 @@
   sops.secrets.ROCKETSHIP_BTC = { };
   sops.secrets.SAFE_DEFI_VAULT = { };
   sops.secrets.SQUADS_SOL_VAULT = { };
+  sops.secrets.SAMMYS_MULTISIG_BTC = { };
   sops.secrets.CLINE_HERMES_API_KEY = {
     owner = config.host.username;
   };
@@ -181,7 +182,16 @@
             weight = 50;
           }
         ];
-        BTC = config.sops.placeholder.KEYSTONE_BTC;
+        BTC = [
+          {
+            address = config.sops.placeholder.KEYSTONE_BTC;
+            weight = 25;
+          } 
+          {
+            address = config.sops.placeholder.SAMMYS_MULTISIG_BTC;
+            weight = 75;
+          } 
+        ];
         SOL = [
           {
             address = config.sops.placeholder.TANGEM_SOL;
