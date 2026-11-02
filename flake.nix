@@ -122,6 +122,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+    terminal-browser = {
+      url = "github:Sammyalhashe/terminal-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Ryoku desktop (Hyprland + Quickshell). Consumed only when
     # host.useRyokuDesktop is set — see modules/desktop/ryoku.nix.
