@@ -37,6 +37,7 @@ in
     zip
     jq
     yq-go
+    inputs.terminal-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     # networking
     dig
