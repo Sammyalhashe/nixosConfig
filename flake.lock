@@ -2959,11 +2959,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792698381,
-        "narHash": "sha256-8omz6yH423UdrzkQDxvUJQ4G9/DnAOg4kAu/kQntRCM=",
+        "lastModified": 1793894325,
+        "narHash": "sha256-RgiwmcC+nBxPBR5pI3dRlEX0AT7VCg9HIgqBcjiiW2k=",
         "owner": "Sammyalhashe",
         "repo": "vicinae-quick-notes",
-        "rev": "ca7e7ec3c9a4387e67e057a01a0381a38790f2b3",
+        "rev": "e17e0991ae237ef8e4d5041176f7ca9bbb917490",
         "type": "github"
       },
       "original": {
