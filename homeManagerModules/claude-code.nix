@@ -46,15 +46,16 @@ let
         callback_port = 12345; # Fallback for CLI version variations
       };
     };
+    # Remote MCPs sign in with OAuth on first use: `/mcp` > server > Authenticate.
     robinhood-trading = {
+      type = "http";
       url = "https://agent.robinhood.com/mcp/trading";
-      auth = "oauth"; # Automatically coordinates PKCE dynamic registration & background token refreshes
     };
     coinbase = {
-      # Hosted CDP "Coinbase for Agents" MCP. OAuth (Coinbase sign-in),
-      # same pattern as robinhood above — no local CLI or key file needed.
+      # Hosted "Coinbase for Agents" MCP (coinbase.com/skill.md); unlike
+      # coinbase-cli.nix it needs no API key file.
+      type = "http";
       url = "https://agents.coinbase.com/mcp";
-      auth = "oauth";
     };
   };
 
