@@ -292,6 +292,17 @@ in
           Got: ${lib.concatStringsSep ", " (lib.mapAttrsToList (n: m: "${n}=${toString m.port}") enabled)}
         '';
       }
+      {
+        assertion =
+          let
+            meshLlm = lib.attrByPath [ "services" "mesh-llm" ] { enable = false; } config;
+          in
+          !(meshLlm.enable && meshLlm.mode == "serve");
+        message = ''
+          services.mesh-llm in serve mode and services.llm-services.models compete
+          for the same GPU memory; disable the llama-cpp models or use mode = "client".
+        '';
+      }
     ];
 
     systemd.services = lib.mapAttrs' mkService enabled;

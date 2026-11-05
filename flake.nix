@@ -380,6 +380,7 @@
         modules = stylixModules ++ [
           mangoModule
           inputs.nix-flatpak.nixosModules.nix-flatpak
+          inputs.mesh-llm.nixosModules.default
           {
             programs.stylix.enable = true;
           }
