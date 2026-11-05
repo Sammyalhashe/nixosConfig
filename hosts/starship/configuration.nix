@@ -80,9 +80,6 @@ in
     ];
 
     consoleLogLevel = 0;
-    initrd = {
-      verbose = false;
-    };
   };
 
   fileSystems."/home" = {
