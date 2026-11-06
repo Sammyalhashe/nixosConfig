@@ -1,6 +1,10 @@
 {
+  config,
   ...
 }:
+let
+  snapshot = "${config.services.llm-services.modelCacheDir}/models--unsloth--Qwen3.8-Flash-Next-GGUF/snapshots/766911a6b7369840a91dbcd95f9f997acaab6cd6";
+in
 {
   # Coding tier: 125B total but only 6B active per token (512 experts, 10 routed
   # + 1 shared). Strix Halo is memory-bandwidth-bound, not capacity-bound, so an
@@ -18,10 +22,10 @@
     role = "coding-agent";
     port = 8014;
 
-    # First shard of a 3-way split; llama-server reads split.count and fetches
-    # the rest itself.
-    hfRepo = "unsloth/Qwen3.8-Flash-Next-GGUF";
-    hfFile = "UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf";
+    # unsloth re-split UD-IQ4_XS 3 -> 4 shards (2026-11), so --hf-repo now
+    # fails at startup; load the benchmarked 3-shard snapshot from the cache.
+    hfRepo = null;
+    modelPath = "${snapshot}/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf";
 
     ctxSize = 131072;
     threads = 8;
@@ -52,8 +56,8 @@
       "--no-mmproj"
 
       # Multi-token prediction: 2.0x generation on code, 1.5x on prose, same output.
-      # With --hf-repo, llama-server fetches the repo's MTP head into its own cache.
       "--spec-type draft-mtp"
+      "--model-draft ${snapshot}/mtp-Qwen3.8-Flash-Next-Q8_0.gguf"
     ];
 
     # Keep thinking, but route it to message.reasoning_content so it never
