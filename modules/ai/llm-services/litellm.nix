@@ -92,6 +92,9 @@ in
       environment = {
         PORT = "4000";
         HOST = "0.0.0.0";
+        # Newer LiteLLM refuses to start without a master key. The proxy has
+        # always been open to the LAN; adding a key means updating every client.
+        LITELLM_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY = "true";
       };
       serviceConfig = {
         User = config.host.username;
