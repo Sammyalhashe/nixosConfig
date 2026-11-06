@@ -16,6 +16,7 @@ in
     ./supernote-cloud.nix
     ./supernote-backup.nix
     ./todo-http.nix
+    ./ntfy.nix
     inputs.terminus.nixosModules.terminus
   ];
 
