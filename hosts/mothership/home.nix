@@ -20,6 +20,7 @@ in
     ../../homeManagerModules/base.nix
     ../../homeManagerModules/claude-code.nix
     ../../homeManagerModules/codex.nix
+    ../../homeManagerModules/goose.nix
     ./home-modules.nix
     inputs.rex.homeManagerModules.default
   ];

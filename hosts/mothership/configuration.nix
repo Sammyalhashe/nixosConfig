@@ -114,7 +114,7 @@ in
   services.llm-services.litellm.enable = true; # Proxy/Gateway - Port 4000
 
   # Client of the public mesh; nothing is served from this host. Peers see the
-  # prompts sent to mesh-* routes, so use them only for non-sensitive work.
+  # prompts sent to the mesh route, so use it only for non-sensitive work.
   services.mesh-llm = {
     enable = true;
     mode = "client";
@@ -124,9 +124,10 @@ in
   };
   services.llm-services.litellm.extraModels = [
     {
-      model_name = "mesh-qwen3.8-27b";
+      # "mesh" lets the public mesh pick the model.
+      model_name = "mesh";
       litellm_params = {
-        model = "openai/unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_M";
+        model = "openai/mesh";
         api_base = "http://127.0.0.1:${toString config.services.mesh-llm.apiPort}/v1";
         api_key = "none";
       };

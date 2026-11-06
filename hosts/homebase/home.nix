@@ -3,25 +3,14 @@
   imports = [
     ../../homeManagerModules/desktop-base.nix
     ../../homeManagerModules
+    ../../homeManagerModules/goose.nix
   ];
 
   home.packages =
     with pkgs;
     [
         bambu-studio
-        goose-cli
         goose-desktop
-        # Goose against the public mesh client on localhost:9337. Peers see the
-        # prompts, and tool calls need approval because their models are untrusted.
-        (writeShellScriptBin "goose-mesh" ''
-          export GOOSE_PROVIDER=openai
-          export OPENAI_HOST=http://localhost:9337
-          export OPENAI_BASE_PATH=v1/chat/completions
-          export OPENAI_API_KEY=mesh
-          export GOOSE_MODEL="''${GOOSE_MODEL:-unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_M}"
-          export GOOSE_MODE=approve
-          exec ${goose-cli}/bin/goose "$@"
-        '')
     ];
 
   # The waybar unit starts in any Hyprland session, including Ryoku's, which
