@@ -1,4 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, lib, config, ... }:
+let
+  # Goose rewrites config.yaml itself, so these are merged in, not owned.
+  extensions = {
+    seats-aero = {
+      type = "streamable_http";
+      name = "seats-aero";
+      description = "Award flight availability from seats.aero (anonymous access)";
+      enabled = true;
+      uri = "https://seats.aero/mcp";
+      headers = { };
+      env_keys = [ ];
+      envs = { };
+      timeout = 300;
+    };
+  };
+  extensionsYaml = (pkgs.formats.yaml { }).generate "goose-extensions.yaml" extensions;
+in
 {
   home.packages = [
     pkgs.goose-cli
@@ -15,4 +32,14 @@
       exec ${pkgs.goose-cli}/bin/goose "$@"
     '')
   ];
+
+  # Adds each extension only if missing, so changes made in Goose survive.
+  home.activation.gooseExtensions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    config="${config.xdg.configHome}/goose/config.yaml"
+    run mkdir -p "$(dirname "$config")"
+    [ -e "$config" ] || run touch "$config"
+    run ${pkgs.yq-go}/bin/yq -i \
+      '.extensions = (load("${extensionsYaml}") * (.extensions // {})) | (.extensions | ..) style=""' \
+      "$config"
+  '';
 }

@@ -155,6 +155,12 @@ in
           connect_timeout = 30;
           timeout = 180;
         };
+        seats-aero = {
+          # Anonymous access: cached award searches up to 60 days out.
+          url = "https://seats.aero/mcp";
+          connect_timeout = 30;
+          timeout = 120;
+        };
         fastmail = {
           url = "https://api.fastmail.com/mcp";
           headers = {
