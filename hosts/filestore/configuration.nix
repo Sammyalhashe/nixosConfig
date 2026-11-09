@@ -42,7 +42,7 @@ let
       exit 0
     fi
     echo "Downloading HACS..."
-    ${pkgs.podman}/bin/podman exec homeassistant wget -O - https://get.hacs.xyz | bash -
+    ${pkgs.podman}/bin/podman exec homeassistant bash -c "wget -O - https://get.hacs.xyz | bash -"
   '';
 
   # Define the sync script
