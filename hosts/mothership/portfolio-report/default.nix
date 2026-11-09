@@ -9,55 +9,69 @@ let
   reportDir = "/home/${user}/portfolio-reports";
   yaml = pkgs.formats.yaml { };
 
-  # Report-only: Coinbase's registered client may only hold read scopes, while
-  # Robinhood has a single "internal" scope, so its allowlist keeps trades out.
-  # "none" matches no tool; replaced by read-only names once they are known.
+  # Report-only rests on these allowlists: the Coinbase API key's own
+  # permissions are unverified, and Robinhood has a single "internal" scope.
+  # Robinhood's "none" matches no tool until its read-only names are known.
   readOnlyTools = {
-    coinbase = [ "none" ];
+    coinbase = [
+      "coinbase_api_key_permissions"
+      "coinbase_portfolios_list"
+      "coinbase_portfolios_get"
+      "coinbase_balance"
+      "coinbase_orders_list"
+      "coinbase_orders_get"
+      "coinbase_orders_fills"
+      "coinbase_convert_get"
+      "coinbase_products_list"
+      "coinbase_products_get"
+      "coinbase_products_ticker"
+      "coinbase_products_best_bid_ask"
+      "coinbase_products_candles"
+      "coinbase_fees"
+      "coinbase_settlements"
+    ];
     robinhood = [ "none" ];
   };
 
-  brokerExtensions = tools: [
-    {
-      type = "streamable_http";
-      name = "coinbase";
-      uri = "https://agents.coinbase.com/mcp";
-      timeout = 300;
-      # Registered via Coinbase's dynamic client registration for exactly
-      # http://127.0.0.1:8765/oauth_callback; Goose's shared client omits the port.
-      client_id = "4f1e6371-608a-43e4-b6e7-3f4a7af2fbaf";
-      scopes = [
-        "mcp:portfolios:read"
-        "mcp:accounts:read"
-        "mcp:orders:read"
-        "mcp:trades:read"
-        "mcp:products:read"
-      ];
-      available_tools = tools.coinbase;
-    }
-    {
-      type = "streamable_http";
-      name = "robinhood";
-      uri = "https://agent.robinhood.com/mcp/trading";
-      timeout = 300;
-      available_tools = tools.robinhood;
-    }
-  ];
+  coinbaseExtension = {
+    # The local CDP CLI with the existing API key, so no browser sign-in. It
+    # ignores --key-file, so the runner passes the key through COINBASE_KEY_*.
+    type = "stdio";
+    name = "coinbase";
+    cmd = "${pkgs.nodejs_22}/bin/npx";
+    args = [
+      "--yes"
+      "@coinbase/coinbase-cli@0.0.11"
+      "mcp"
+    ];
+    env_keys = [
+      "COINBASE_KEY_ID"
+      "COINBASE_KEY_SECRET"
+      "COINBASE_ENV"
+      "COINBASE_CONFIG_DIR"
+      "COINBASE_NO_UPDATE_CHECK"
+      "COINBASE_NO_HISTORY"
+    ];
+    timeout = 300;
+    available_tools = readOnlyTools.coinbase;
+  };
 
-  # One recipe per broker: both OAuth flows would otherwise compete for the
-  # callback port. Allowing only "none" connects (and signs in) yet exposes nothing.
-  signinRecipe =
-    broker:
-    yaml.generate "portfolio-signin-${broker}.yaml" {
-      version = "1.0.0";
-      title = "Portfolio broker sign-in (${broker})";
-      description = "Connects ${broker} so its OAuth token gets stored";
-      prompt = "Reply with the single word: connected";
-      extensions = builtins.filter (e: e.name == broker) (brokerExtensions {
-        coinbase = [ "none" ];
-        robinhood = [ "none" ];
-      });
-    };
+  robinhoodExtension = tools: {
+    type = "streamable_http";
+    name = "robinhood";
+    uri = "https://agent.robinhood.com/mcp/trading";
+    timeout = 300;
+    available_tools = tools;
+  };
+
+  # Allowing only "none" connects (and signs in) yet exposes nothing.
+  signinRecipe = yaml.generate "portfolio-signin-robinhood.yaml" {
+    version = "1.0.0";
+    title = "Portfolio broker sign-in (robinhood)";
+    description = "Connects Robinhood so its OAuth token gets stored";
+    prompt = "Reply with the single word: connected";
+    extensions = [ (robinhoodExtension [ "none" ]) ];
+  };
 
   reportRecipe = yaml.generate "portfolio-report.yaml" {
     version = "1.0.0";
@@ -106,7 +120,10 @@ let
 
       {{ market_data }}
     '';
-    extensions = brokerExtensions readOnlyTools;
+    extensions = [
+      coinbaseExtension
+      (robinhoodExtension readOnlyTools.robinhood)
+    ];
   };
 
   # Shared by the timer and manual runs: the job uses mothership's local model,
@@ -127,17 +144,9 @@ let
     runtimeInputs = [ pkgs.goose-cli ];
     text = ''
       ${gooseEnv}
-      case "''${1:-}" in
-        coinbase) recipe=${signinRecipe "coinbase"} ;;
-        robinhood) recipe=${signinRecipe "robinhood"} ;;
-        *)
-          echo "usage: portfolio-report-signin coinbase|robinhood" >&2
-          exit 2
-          ;;
-      esac
-      echo "Open the sign-in link Goose prints in a browser that can reach"
+      echo "Open the Robinhood sign-in link Goose prints in a browser that can reach"
       echo "127.0.0.1:8765 on mothership (e.g. ssh -L 8765:127.0.0.1:8765)."
-      goose run --recipe "$recipe" --no-session
+      goose run --recipe ${signinRecipe} --no-session
     '';
   };
 
@@ -154,6 +163,12 @@ let
       ${gooseEnv}
       export FRED_API_KEY_FILE=${config.sops.secrets.FRED_API_KEY.path}
       export FINNHUB_API_KEY_FILE=${config.sops.secrets.FINNHUB_API_KEY.path}
+      COINBASE_KEY_ID=$(cat ${config.sops.secrets.cb_hardware_maker_org_name.path})
+      COINBASE_KEY_SECRET=$(cat ${config.sops.secrets.cb_hardware_maker_key.path})
+      COINBASE_CONFIG_DIR=$(mktemp -d)
+      trap 'rm -rf "$COINBASE_CONFIG_DIR"' EXIT
+      export COINBASE_KEY_ID COINBASE_KEY_SECRET COINBASE_CONFIG_DIR
+      export COINBASE_ENV=live COINBASE_NO_UPDATE_CHECK=1 COINBASE_NO_HISTORY=1
       day=$(date +%F)
       out=${reportDir}/$day
       mkdir -p "$out"
@@ -186,7 +201,13 @@ let
   };
 in
 {
-  sops.secrets = lib.genAttrs [ "FRED_API_KEY" "FINNHUB_API_KEY" "NTFY_JOB_TOKEN" ] (_: {
+  sops.secrets = lib.genAttrs [
+    "FRED_API_KEY"
+    "FINNHUB_API_KEY"
+    "NTFY_JOB_TOKEN"
+    "cb_hardware_maker_org_name"
+    "cb_hardware_maker_key"
+  ] (_: {
     owner = user;
   });
 
