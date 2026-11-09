@@ -9,8 +9,8 @@ let
   reportDir = "/home/${user}/portfolio-reports";
   yaml = pkgs.formats.yaml { };
 
-  # Report-only: Coinbase gets read scopes; Robinhood offers a single
-  # "internal" scope, so its allowlist is the only thing keeping trades out.
+  # Report-only rests on these allowlists: Goose only sends custom OAuth scopes
+  # with a registered client_id, and Robinhood has a single "internal" scope.
   # "none" matches no tool; replaced by read-only names once they are known.
   readOnlyTools = {
     coinbase = [ "none" ];
@@ -23,13 +23,6 @@ let
       name = "coinbase";
       uri = "https://agents.coinbase.com/mcp";
       timeout = 300;
-      scopes = [
-        "mcp:portfolios:read"
-        "mcp:accounts:read"
-        "mcp:orders:read"
-        "mcp:trades:read"
-        "mcp:products:read"
-      ];
       available_tools = tools.coinbase;
     }
     {
@@ -41,18 +34,20 @@ let
     }
   ];
 
-  # An allowlist naming no real tool connects the servers (and runs OAuth)
-  # while exposing nothing to the model.
-  signinRecipe = yaml.generate "portfolio-signin.yaml" {
-    version = "1.0.0";
-    title = "Portfolio broker sign-in";
-    description = "Connects Coinbase and Robinhood so their OAuth tokens get stored";
-    prompt = "Reply with the single word: connected";
-    extensions = brokerExtensions {
-      coinbase = [ "none" ];
-      robinhood = [ "none" ];
+  # One recipe per broker: both OAuth flows would otherwise compete for the
+  # callback port. Allowing only "none" connects (and signs in) yet exposes nothing.
+  signinRecipe =
+    broker:
+    yaml.generate "portfolio-signin-${broker}.yaml" {
+      version = "1.0.0";
+      title = "Portfolio broker sign-in (${broker})";
+      description = "Connects ${broker} so its OAuth token gets stored";
+      prompt = "Reply with the single word: connected";
+      extensions = builtins.filter (e: e.name == broker) (brokerExtensions {
+        coinbase = [ "none" ];
+        robinhood = [ "none" ];
+      });
     };
-  };
 
   reportRecipe = yaml.generate "portfolio-report.yaml" {
     version = "1.0.0";
@@ -122,9 +117,17 @@ let
     runtimeInputs = [ pkgs.goose-cli ];
     text = ''
       ${gooseEnv}
-      echo "Open each sign-in link Goose prints in a browser that can reach"
+      case "''${1:-}" in
+        coinbase) recipe=${signinRecipe "coinbase"} ;;
+        robinhood) recipe=${signinRecipe "robinhood"} ;;
+        *)
+          echo "usage: portfolio-report-signin coinbase|robinhood" >&2
+          exit 2
+          ;;
+      esac
+      echo "Open the sign-in link Goose prints in a browser that can reach"
       echo "127.0.0.1:8765 on mothership (e.g. ssh -L 8765:127.0.0.1:8765)."
-      goose run --recipe ${signinRecipe} --no-session
+      goose run --recipe "$recipe" --no-session
     '';
   };
 
