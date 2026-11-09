@@ -14,6 +14,7 @@ in
     # --- TIERED LLM SERVICES ---
     # Import the modular service definitions (Gemma, Qwen, LiteLLM, etc.)
     ../../modules/ai/llm-services
+    ./portfolio-report
     # --- BITCOIN / LIGHTNING ---
     # Host-scoped: nix-bitcoin's secrets module asserts unconditionally, so
     # importing it from ../../modules would break every other host.
