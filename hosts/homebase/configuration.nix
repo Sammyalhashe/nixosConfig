@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/ai/goose.nix
   ];
 
   home-manager.users.${config.host.username}.imports = [ ./home.nix ];

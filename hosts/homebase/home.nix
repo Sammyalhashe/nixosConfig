@@ -3,7 +3,6 @@
   imports = [
     ../../homeManagerModules/desktop-base.nix
     ../../homeManagerModules
-    ../../homeManagerModules/goose.nix
   ];
 
   home.packages =
