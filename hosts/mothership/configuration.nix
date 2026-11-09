@@ -36,6 +36,10 @@ in
     cores = 8;
   };
 
+  # The pipeline builds every host here, and those outputs are already on
+  # Cachix, so collect daily rather than weekly (still keeping 7 days of rollback).
+  nix.gc.dates = lib.mkForce "daily";
+
   # Let Sparrow on homebase/starship/ryoku use this node instead of a public
   # server. Firewall holes live in modules/crypto/lightning.nix.
   host.exposeBitcoinToLan = true;
