@@ -32,19 +32,6 @@ let
     ${pkgs.sqlite}/bin/sqlite3 "$DB" ".backup '$BACKUP_FILE'"
   '';
 
-  # HACS download wrapper script
-  hacsDownloadScript = pkgs.writeShellScriptBin "hacs-download-wrapper" ''
-    #!/usr/bin/env bash
-    set -euo pipefail
-    HACS_DIR="/config/custom_components/hacs"
-    if ${pkgs.podman}/bin/podman exec homeassistant test -d "$HACS_DIR"; then
-      echo "HACS already installed – skipping download"
-      exit 0
-    fi
-    echo "Downloading HACS..."
-    ${pkgs.podman}/bin/podman exec homeassistant bash -c "wget -O - https://get.hacs.xyz | bash -"
-  '';
-
   # Define the sync script
   logseq-supernote-sync = pkgs.writeShellScriptBin "logseq-sync" ''
     # Paths (Using environment variables or hardcoded Nix paths)
@@ -336,17 +323,6 @@ in
       ${pkgs.podman}/bin/podman network exists hass-net || \
       ${pkgs.podman}/bin/podman network create hass-net
     '';
-  };
-
-  systemd.services.hacs-download = {
-    description = "Download and install HACS into Home Assistant";
-    after = [ "podman-homeassistant.service" ];
-    wants = [ "podman-homeassistant.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${hacsDownloadScript}/bin/hacs-download-wrapper";
-    };
   };
 
   systemd.services.init-nextcloud-network = {
