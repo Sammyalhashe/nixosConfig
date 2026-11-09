@@ -34,7 +34,7 @@ in
     restartUnits = [ "ntfy-sh.service" ];
     content = ''
       NTFY_AUTH_USERS=sammy:${secret.NTFY_USER_HASH}:admin,reporter:${secret.NTFY_REPORTER_USER_HASH}:user,alerts:${secret.NTFY_ALERTS_USER_HASH}:user
-      NTFY_AUTH_ACCESS=reporter:portfolio:wo,alerts:alerts:wo,alerts:deploys:wo,alerts:hermes:wo
+      NTFY_AUTH_ACCESS=reporter:portfolio:wo,alerts:alerts:wo,alerts:deploys:wo,alerts:hermes:wo,alerts:wallets:wo
       NTFY_AUTH_TOKENS=reporter:${secret.NTFY_JOB_TOKEN}:portfolio-report,alerts:${secret.NTFY_ALERTS_TOKEN}:hosts,alerts:${secret.NTFY_HERMES_TOKEN}:hermes
     '';
   };

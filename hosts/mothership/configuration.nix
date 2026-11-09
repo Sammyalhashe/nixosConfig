@@ -15,6 +15,7 @@ in
     # Import the modular service definitions (Gemma, Qwen, LiteLLM, etc.)
     ../../modules/ai/llm-services
     ./portfolio-report
+    ./near-wallet
     ../../modules/ai/goose.nix
     # --- BITCOIN / LIGHTNING ---
     # Host-scoped: nix-bitcoin's secrets module asserts unconditionally, so
