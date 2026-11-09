@@ -99,6 +99,7 @@ let
       Only state facts that come from your tools or the market data provided,
       and tag each with its source in brackets, e.g. [FRED], [Coinbase].
       If data is missing or a tool fails, say so instead of guessing.
+      Use only the broker tools and the market data; never call load_skill.
     '';
     prompt = ''
       Write the portfolio report for {{ report_date }}.
@@ -158,6 +159,8 @@ let
       pkgs.curl
       pkgs.coreutils
       pkgs.gnused
+      # coinbase-cli's entry point runs `node` from PATH.
+      pkgs.nodejs_22
     ];
     text = ''
       ${gooseEnv}
@@ -186,12 +189,15 @@ let
 
       if ! goose run --recipe ${reportRecipe} --no-session --quiet --max-turns 40 \
           --params report_date="$day" --params market_data="$data" \
-          > "$out/report.md" 2> "$out/goose.log"; then
+          > "$out/transcript.md" 2> "$out/goose.log"; then
         notify "" -H "Title: Portfolio report failed ($day)" -H "Tags: warning" \
           -d "Goose exited with an error; see $out/goose.log on mothership."
         exit 1
       fi
 
+      # The report starts at its SUMMARY line; tool output before it stays in the transcript.
+      sed -n '/^SUMMARY:/,$p' "$out/transcript.md" > "$out/report.md"
+      [ -s "$out/report.md" ] || cp "$out/transcript.md" "$out/report.md"
       summary=$(sed -n 's/^SUMMARY: *//p' "$out/report.md" | head -n 1 | cut -c1-400)
       message=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' \
         "''${summary:-Report ready; no summary line found.}")
