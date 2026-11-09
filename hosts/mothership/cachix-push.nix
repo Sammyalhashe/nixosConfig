@@ -17,6 +17,7 @@ let
 
   mkService = retry: {
     description = "Build NixOS configurations, push them to Cachix, and advance deployed";
+    onFailure = [ "ntfy-deploy-failed@%n.service" ];
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     serviceConfig = {
@@ -50,6 +51,18 @@ in
   systemd.services = {
     push-to-cachix = mkService false;
     push-to-cachix-retry = mkService true;
+
+    "ntfy-deploy-failed@" = {
+      description = "Report a failed %i run to ntfy";
+      serviceConfig.Type = "oneshot";
+      scriptArgs = "%i";
+      path = [ config.host.ntfy.publish ];
+      script = ''
+        journalctl -u "$1" --since -3h --no-pager -o cat \
+          | grep -E "failed|Not advancing" | tail -n 25 | tail -c 3500 \
+          | ntfy-publish deploys "Deploy pipeline failed ($1)" rotating_light high
+      '';
+    };
   };
 
   systemd.timers = {

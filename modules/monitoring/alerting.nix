@@ -1,8 +1,8 @@
 { config, lib, ... }:
 
 lib.mkIf config.host.enableMonitoring {
-  sops.secrets.grafana_telegram_bot_token = {
-    key = "telegram_bot_token";
+  sops.secrets.grafana_ntfy_token = {
+    key = "NTFY_ALERTS_TOKEN";
     owner = "grafana";
   };
 
@@ -13,14 +13,16 @@ lib.mkIf config.host.enableMonitoring {
         contactPoints = [
           {
             orgId = 1;
-            name = "Telegram";
+            name = "ntfy";
             receivers = [
               {
-                uid = "telegram";
-                type = "telegram";
+                uid = "ntfy";
+                type = "webhook";
                 settings = {
-                  bottoken = "$__file{/run/secrets/grafana_telegram_bot_token}";
-                  chatid = "8555669756";
+                  # ntfy's built-in grafana template turns the payload into a readable push.
+                  url = "https://ntfy.salh.xyz/alerts?template=grafana";
+                  authorization_scheme = "Bearer";
+                  authorization_credentials = "$__file{${config.sops.secrets.grafana_ntfy_token.path}}";
                 };
               }
             ];
@@ -33,7 +35,7 @@ lib.mkIf config.host.enableMonitoring {
         policies = [
           {
             orgId = 1;
-            receiver = "Telegram";
+            receiver = "ntfy";
             group_by = [ "alertname" ];
             group_wait = "30s";
             group_interval = "5m";
