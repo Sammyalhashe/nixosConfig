@@ -59,17 +59,6 @@ in
   # reverse-path filtering drops them.
   networking.firewall.checkReversePath = "loose";
 
-  # auto upgrade
-  system.autoUpgrade = {
-    enable = true;
-    allowReboot = true;
-    flake = "~/nixosConfig";
-    flags = [
-      "--print-build-logs"
-      "--commit-lock-file" # If you want to automatically commit the updated flake.lock
-    ];
-  };
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 1;
