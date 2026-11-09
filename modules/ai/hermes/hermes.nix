@@ -34,6 +34,23 @@ let
       curl -sSf "$base$1" -H "Authorization: Bearer $token"
     '';
   };
+
+  # Recurring jobs report through `notify` (see skills/ntfy-notify) instead of
+  # Telegram; it can only publish to the hermes topic, and never shows the token.
+  notify = pkgs.writeShellApplication {
+    name = "notify";
+    runtimeInputs = [ pkgs.curl ];
+    text = ''
+      if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+        echo "usage: notify TITLE MESSAGE [TAGS]" >&2
+        exit 2
+      fi
+      curl -fsS --max-time 20 -H "Authorization: Bearer $NTFY_HERMES_TOKEN" -H "Markdown: yes" \
+        --url-query "title=$1" --url-query "tags=''${3:-robot}" \
+        --data-binary "$2" https://ntfy.salh.xyz/hermes > /dev/null
+      echo "sent"
+    '';
+  };
 in
 {
 
@@ -84,6 +101,10 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  sops.secrets.NTFY_HERMES_TOKEN = {
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
   # Coinbase CDP credentials for hermes
   sops.templates."hermes-coinbase-key" = {
     content = ''
@@ -112,6 +133,7 @@ in
     FASTMAIL_API_KEY="${config.sops.placeholder.fastmail_hermes_api_key}"
     TYPESAFE_API_KEY="${config.sops.placeholder.typesafe_hermes_api_key}"
     GARMIN_API_KEY="${config.sops.placeholder.garmin_api_key}"
+    NTFY_HERMES_TOKEN="${config.sops.placeholder.NTFY_HERMES_TOKEN}"
   '';
 
   # 3. Configure the Hermes Agent Service
@@ -255,6 +277,7 @@ in
       nodejs
       jq
       garmin
+      notify
     ];
   };
 
