@@ -9,8 +9,8 @@ let
   reportDir = "/home/${user}/portfolio-reports";
   yaml = pkgs.formats.yaml { };
 
-  # Report-only rests on these allowlists: Goose only sends custom OAuth scopes
-  # with a registered client_id, and Robinhood has a single "internal" scope.
+  # Report-only: Coinbase's registered client may only hold read scopes, while
+  # Robinhood has a single "internal" scope, so its allowlist keeps trades out.
   # "none" matches no tool; replaced by read-only names once they are known.
   readOnlyTools = {
     coinbase = [ "none" ];
@@ -23,6 +23,16 @@ let
       name = "coinbase";
       uri = "https://agents.coinbase.com/mcp";
       timeout = 300;
+      # Registered via Coinbase's dynamic client registration for exactly
+      # http://127.0.0.1:8765/oauth_callback; Goose's shared client omits the port.
+      client_id = "4f1e6371-608a-43e4-b6e7-3f4a7af2fbaf";
+      scopes = [
+        "mcp:portfolios:read"
+        "mcp:accounts:read"
+        "mcp:orders:read"
+        "mcp:trades:read"
+        "mcp:products:read"
+      ];
       available_tools = tools.coinbase;
     }
     {
