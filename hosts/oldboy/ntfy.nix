@@ -30,6 +30,8 @@ in
   # client (hosts, Hermes) so either can be revoked alone.
   # systemd reads this as root before starting ntfy's DynamicUser.
   sops.templates."ntfy-env" = {
+    # ntfy reads users and tokens only at startup.
+    restartUnits = [ "ntfy-sh.service" ];
     content = ''
       NTFY_AUTH_USERS=sammy:${secret.NTFY_USER_HASH}:admin,reporter:${secret.NTFY_REPORTER_USER_HASH}:user,alerts:${secret.NTFY_ALERTS_USER_HASH}:user
       NTFY_AUTH_ACCESS=reporter:portfolio:wo,alerts:alerts:wo,alerts:deploys:wo,alerts:hermes:wo
