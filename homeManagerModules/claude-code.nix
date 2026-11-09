@@ -57,6 +57,11 @@ let
       type = "http";
       url = "https://agents.coinbase.com/mcp";
     };
+    seats-aero = {
+      # Anonymous access: cached award searches up to 60 days out.
+      type = "http";
+      url = "https://seats.aero/mcp";
+    };
   };
 
   claudeJson = {
