@@ -53,41 +53,43 @@ in
         dbCache = 4000;
       };
 
-      # electrs is an Electrum server: it builds an address -> transaction index
-      # so Electrum-protocol wallets can ask "what does this address own?". LND
-      # and Sparrow don't need it (they use bitcoind directly); it's for other
-      # wallets. Costs a separate ~56 GB index; opens port 50001 to the LAN.
-      services.electrs.enable = true;
+      # electrs disabled: unused, and Sparrow/Liana talk to bitcoind directly.
+      # Uncomment the block below to restore it.
+      # # electrs is an Electrum server: it builds an address -> transaction index
+      # # so Electrum-protocol wallets can ask "what does this address own?". LND
+      # # and Sparrow don't need it (they use bitcoind directly); it's for other
+      # # wallets. Costs a separate ~56 GB index; opens port 50001 to the LAN.
+      # services.electrs.enable = true;
 
-      # electrs 0.12 reads blocks through bitcoind's REST interface, which is off
-      # by default. REST is read-only public chain data and obeys rpcallowip.
-      services.bitcoind.extraConfig = lib.mkIf config.services.electrs.enable ''
-        rest=1
-      '';
+      # # electrs 0.12 reads blocks through bitcoind's REST interface, which is off
+      # # by default. REST is read-only public chain data and obeys rpcallowip.
+      # services.bitcoind.extraConfig = lib.mkIf config.services.electrs.enable ''
+      #   rest=1
+      # '';
 
-      # The index is ~2900 RocksDB files; the default soft limit of 1024 made
-      # electrs crash with "Too many open files" during compaction.
-      systemd.services.electrs.serviceConfig.LimitNOFILE = 65536;
+      # # The index is ~2900 RocksDB files; the default soft limit of 1024 made
+      # # electrs crash with "Too many open files" during compaction.
+      # systemd.services.electrs.serviceConfig.LimitNOFILE = 65536;
 
-      # nix-bitcoin's module still passes --daemon-p2p-addr, which electrs 0.12
-      # removed (it fetches blocks over RPC now), so electrs refuses to start.
-      # Same command as the module's, minus that flag.
-      systemd.services.electrs.serviceConfig.ExecStart =
-        let
-          cfg = config.services.electrs;
-          btc = config.services.bitcoind;
-        in
-        lib.mkForce ''
-          ${config.nix-bitcoin.pkgs.electrs}/bin/electrs \
-          --log-filters=INFO \
-          --network=${btc.makeNetworkName "bitcoin" "regtest"} \
-          --db-dir='${cfg.dataDir}' \
-          --daemon-dir='${btc.dataDir}' \
-          --electrum-rpc-addr=${cfg.address}:${toString cfg.port} \
-          --monitoring-addr=${cfg.address}:${toString cfg.monitoringPort} \
-          --daemon-rpc-addr=${btc.rpc.address}:${toString btc.rpc.port} \
-          ${cfg.extraArgs}
-        '';
+      # # nix-bitcoin's module still passes --daemon-p2p-addr, which electrs 0.12
+      # # removed (it fetches blocks over RPC now), so electrs refuses to start.
+      # # Same command as the module's, minus that flag.
+      # systemd.services.electrs.serviceConfig.ExecStart =
+      #   let
+      #     cfg = config.services.electrs;
+      #     btc = config.services.bitcoind;
+      #   in
+      #   lib.mkForce ''
+      #     ${config.nix-bitcoin.pkgs.electrs}/bin/electrs \
+      #     --log-filters=INFO \
+      #     --network=${btc.makeNetworkName "bitcoin" "regtest"} \
+      #     --db-dir='${cfg.dataDir}' \
+      #     --daemon-dir='${btc.dataDir}' \
+      #     --electrum-rpc-addr=${cfg.address}:${toString cfg.port} \
+      #     --monitoring-addr=${cfg.address}:${toString cfg.monitoringPort} \
+      #     --daemon-rpc-addr=${btc.rpc.address}:${toString btc.rpc.port} \
+      #     ${cfg.extraArgs}
+      #   '';
 
       services.lnd = {
         enable = true;
