@@ -101,8 +101,9 @@ in
 
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
-    # kernelPackages comes from nixos-hardware's raspberry-pi-4 module; nixpkgs
-    # dropped the linux-rpi series.
+    # Mainline LTS is prebuilt on cache.nixos.org; nixos-hardware's RPi kernel
+    # has to be compiled here and lags behind on security fixes.
+    kernelPackages = lib.mkForce pkgs.linuxPackages;
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"

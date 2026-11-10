@@ -59,6 +59,9 @@ in
   # reverse-path filtering drops them.
   networking.firewall.checkReversePath = "loose";
 
+  # Stock kernels are prebuilt on cache.nixos.org, so security fixes need no compile.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 1;

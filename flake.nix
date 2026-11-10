@@ -160,7 +160,6 @@
       inputs.sops-nix.follows = "sops-nix";
     };
 
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     # Unified git/jj starship prompt module (homeManagerModules/starship.nix)
@@ -200,7 +199,6 @@
       ai-skills,
       todo,
       hermes-agent,
-      nix-cachyos-kernel,
       llm-agents,
       jj-starship,
       kaspa-ng,
@@ -355,23 +353,6 @@
             host.enableHyprland = false;
             host.setNameservers = true;
           }
-          (
-            { pkgs, ... }:
-            {
-              # `overlays.default` builds CachyOS's kernel against our own
-              # nixpkgs instead of nix-cachyos-kernel's internally-pinned one.
-              # `overlays.pinned` broke here: its pinned nixpkgs and ours
-              # disagree on the module-signing-certificate convention after
-              # https://github.com/NixOS/nixpkgs/commit/4c2edecc43 landed on
-              # our side, so `aggregateModules` can't find `modules.cer` in
-              # the kernel's modules output.
-              # https://github.com/xddxdd/nix-cachyos-kernel/issues/111
-              nixpkgs.overlays = [
-                nix-cachyos-kernel.overlays.default
-              ];
-              boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
-            }
-          )
         ];
       };
 
