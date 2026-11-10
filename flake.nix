@@ -211,6 +211,19 @@
         nur.overlays.default
         llm-agents.overlays.shared-nixpkgs
         jj-starship.overlays.default
+        (final: prev: {
+          # cargo-setup-hook now makes these -sys crates link system libraries, but
+          # nixpkgs' codex doesn't depend on them, so its build panics.
+          codex = prev.codex.overrideAttrs (old: {
+            buildInputs = (old.buildInputs or [ ]) ++ [
+              final.aws-lc
+              final.oniguruma
+              final.sqlite
+              final.zlib
+              final.zstd
+            ];
+          });
+        })
         # Drop once nixos-unstable includes NixOS/nixpkgs#582675.
         (final: prev: {
           opencode = prev.opencode.overrideAttrs (old: {
