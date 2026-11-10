@@ -48,7 +48,7 @@ let
       CMD=$(echo "$SELECTED" | ${pkgs.gnused}/bin/sed 's/.*| //')
       # Only execute spawn commands (skip window management actions)
       case "$CMD" in
-        spawn*|/*|${pkgs.wofi}/bin/*|${pkgs.brave}/bin/*|${pkgs.alacritty}/bin/*)
+        spawn*|/*|${pkgs.wofi}/bin/*|${config.programs.firefox.finalPackage}/bin/*|${pkgs.alacritty}/bin/*)
           eval "$CMD" &
           ;;
       esac
@@ -299,8 +299,8 @@ in
 
       # App Launchers
       bind=SUPER,Space,spawn,${pkgs.wofi}/bin/wofi --show drun --sort-order=alphabetical
-      bind=SUPER,B,spawn,${pkgs.brave}/bin/brave --new-window --ozone-platform=wayland
-      bind=SUPER,A,spawn,${pkgs.brave}/bin/brave --new-window --ozone-platform=wayland --app=https://perplexity.ai
+      bind=SUPER,B,spawn,${config.programs.firefox.finalPackage}/bin/firefox --new-window
+      bind=SUPER,A,spawn,${config.programs.firefox.finalPackage}/bin/firefox --new-window https://perplexity.ai
       bind=SUPER+CTRL,K,spawn,${hotkeysScript}/bin/show-hotkeys
       bind=SUPER,T,spawn,${pkgs.alacritty}/bin/alacritty
       bind=SUPER,Return,spawn,${pkgs.alacritty}/bin/alacritty
