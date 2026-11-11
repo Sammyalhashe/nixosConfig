@@ -211,49 +211,8 @@
         nur.overlays.default
         llm-agents.overlays.shared-nixpkgs
         jj-starship.overlays.default
-        (
-          final: prev:
-          let
-            # cargo-setup-hook now makes -sys crates link system libraries, but
-            # these packages don't depend on them, so their builds panic.
-            withSystemLibs =
-              pkg:
-              pkg.overrideAttrs (old: {
-                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.pkg-config ];
-                buildInputs =
-                  (old.buildInputs or [ ])
-                  ++ (with final; [
-                    aws-lc
-                    oniguruma
-                    sqlite
-                    zlib
-                    zstd
-                  ]);
-              });
-          in
-          prev.lib.genAttrs [
-            "codex"
-            "electrs"
-            "goose-cli"
-            "liana"
-            "lianad"
-            "presenterm"
-            "russ"
-          ] (name: withSystemLibs prev.${name})
-        )
-        # Drop once nixos-unstable includes NixOS/nixpkgs#582675.
-        (final: prev: {
-          opencode = prev.opencode.overrideAttrs (old: {
-            node_modules = old.node_modules.overrideAttrs {
-              outputHash =
-                if final.stdenv.hostPlatform.isDarwin then
-                  "sha256-dIveiaiPFGSItwLyeMuPDxTE9gpvvnlTCB/+nG24qCc="
-                else
-                  "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
-            };
-          });
-        })
-      ];
+      ]
+      ++ import ./overlays;
 
       # flake-utils' default systems minus x86_64-darwin, which nixpkgs 26.11
       # refuses to evaluate
