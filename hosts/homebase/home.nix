@@ -11,6 +11,7 @@
         bambu-studio
         openscad
         goose-desktop
+        bisq2
     ];
 
   # The waybar unit starts in any Hyprland session, including Ryoku's, which
