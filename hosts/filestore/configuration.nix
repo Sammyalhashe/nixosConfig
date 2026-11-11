@@ -101,8 +101,35 @@ in
 
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
-    # kernelPackages comes from nixos-hardware's raspberry-pi-4 module. Mainline
-    # LTS left filestore unreachable after a reboot; retry it with Ethernet attached.
+    # nixos-hardware's RPi kernel, on a newer vendor tag than it pins. Mainline LTS
+    # left filestore unreachable after a reboot; retry it with Ethernet attached.
+    # argsOverride is the only hook: the module ignores boot.kernelPatches.
+    kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.callPackage "${inputs.nixos-hardware}/raspberry-pi/common/kernel.nix" {
+        rpiVersion = 4;
+        argsOverride = {
+          version = "6.18.60-stable_20261103";
+          modDirVersion = "6.18.60";
+          src = pkgs.fetchFromGitHub {
+            owner = "raspberrypi";
+            repo = "linux";
+            tag = "stable_20261103";
+            hash = "sha256-Qx3D2+K7lkH5P1NI4NKqcHXVGoPqAeEiu+bZqBfSdDs=";
+          };
+          kernelPatches = with pkgs.kernelPatches; [
+            bridge_stp_helper
+            request_key_helper
+            {
+              # resolve_btfids fails to build against glibc 2.44's __u128 headers;
+              # BTF is only for eBPF tooling, which filestore doesn't use.
+              name = "no-btf";
+              patch = null;
+              structuredExtraConfig.DEBUG_INFO_BTF = lib.mkForce lib.kernel.no;
+            }
+          ];
+        };
+      }
+    );
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"
