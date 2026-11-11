@@ -67,6 +67,10 @@ in
     # target is a bash script and ensure-wrapper-integrity fails the build.
     security.wrappers.Hyprland.enable = lib.mkForce false;
 
+    # Ryoku turns off mango's Inhibit portal, nixpkgs' mango module sets it to gtk;
+    # on hosts that also enable mango (starship) Ryoku's choice wins inside Ryoku.
+    xdg.portal.config.mango."org.freedesktop.impl.portal.Inhibit" = lib.mkForce "none";
+
     # Ryoku sets nixpkgs.config.allowUnfreePredicate (mkDefault), but mkHost
     # passes in a pkgs instance and NixOS asserts nixpkgs.config stays empty in
     # that case. The predicate is moot anyway: getPkgs already has allowUnfree.

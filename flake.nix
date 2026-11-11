@@ -137,7 +137,7 @@
     # Deliberately NOT following nixpkgs: upstream hardcodes
     # `system = "x86_64-linux"` and builds ~30 packages against its own pin, so
     # forcing our nixpkgs on it risks breaking a build we cannot easily test.
-    ryoku.url = "github:aethctl/Ryoku-on-NixOS";
+    ryoku.url = "github:Ryoku-dev/Ryoku-on-NixOS";
 
     # Self-hosted TRMNL server (terminus) as a podman OCI module
     terminus = {
