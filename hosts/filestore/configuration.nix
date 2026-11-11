@@ -101,9 +101,8 @@ in
 
   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
   boot = {
-    # Mainline LTS is prebuilt on cache.nixos.org; nixos-hardware's RPi kernel
-    # has to be compiled here and lags behind on security fixes.
-    kernelPackages = lib.mkForce pkgs.linuxPackages;
+    # kernelPackages comes from nixos-hardware's raspberry-pi-4 module. Mainline
+    # LTS left filestore unreachable after a reboot; retry it with Ethernet attached.
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"
