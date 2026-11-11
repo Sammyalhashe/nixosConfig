@@ -28,6 +28,7 @@
   home.packages = with pkgs; [
     onlyoffice-desktopeditors
     bambu-studio
+    openscad
     cloudflare-warp
   ];
 }

@@ -9,6 +9,7 @@
     with pkgs;
     [
         bambu-studio
+        openscad
         goose-desktop
     ];
 
