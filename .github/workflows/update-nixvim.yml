@@ -1,0 +1,57 @@
+name: Update nixvim
+
+on:
+  repository_dispatch:
+    types: [nixvim-updated]
+  workflow_dispatch:
+
+permissions: read-all
+
+concurrency:
+  group: update-nixvim
+  cancel-in-progress: true
+
+jobs:
+  # Bump only the nixvim input and open (or refresh) a PR if it moved.
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      pr: ${{ steps.update.outputs.pull-request-number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.PHAR_DEPLOY_KEY }}
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - id: update
+        uses: DeterminateSystems/update-flake-lock@v29
+        with:
+          inputs: nixvim
+          branch: update-nixvim
+          pr-title: "deps: update nixvim"
+          commit-msg: "[flake] update nixvim input"
+
+  # PRs opened with GITHUB_TOKEN don't trigger check.yml, so call it here.
+  check:
+    needs: update
+    if: needs.update.outputs.pr != ''
+    uses: ./.github/workflows/check.yml
+    with:
+      ref: update-nixvim
+    secrets: inherit
+
+  # Only reached when the check passed; a failure leaves the PR open for a look.
+  merge:
+    needs: [update, check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - run: gh pr merge "${{ needs.update.outputs.pr }}" --squash --delete-branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}

@@ -481,17 +481,11 @@
       {
         formatter = treefmtEval.config.build.wrapper;
 
+        # No deploy-rs deployChecks: even its schema check embeds every node's
+        # system path, so building it builds every host (aarch64 included).
         checks = {
           formatting = treefmtEval.config.build.check self;
-        }
-        # deploy-rs' activation checks build each node's full system closure,
-        # which can't cross-compile from this machine (Linux nodes on Darwin,
-        # or the other arch from one Linux host). Keep only the arch-neutral
-        # schema check so `nix flake check` works everywhere; activation is
-        # verified by deploy-rs at deploy time.
-        // pkgs.lib.filterAttrs (name: _: pkgs.lib.hasInfix "schema" name) (
-          inputs.deploy-rs.lib.${system}.deployChecks self.deploy
-        );
+        };
 
         # numtide/devshell prints a menu of `commands`, grouped by category, on
         # entry; run `menu` to see it again.
