@@ -59,8 +59,9 @@
       # Conditionally enable SDDM based on greetd flag
       services.displayManager.sddm.enable = !config.host.enableGreetd;
       services.desktopManager.plasma6.enable = true;
-
-      # Enable Steam
+    })
+    # Not tied to KDE alone: the Ryoku specialisations turn KDE off and lost Steam.
+    (lib.mkIf ((config.host.enableKDE || config.host.useRyokuDesktop) && !config.host.isHeadless) {
       programs.steam = {
         enable = true;
         remotePlay.openFirewall = true;
