@@ -71,6 +71,10 @@ in
     # on hosts that also enable mango (starship) Ryoku's choice wins inside Ryoku.
     xdg.portal.config.mango."org.freedesktop.impl.portal.Inhibit" = lib.mkForce "none";
 
+    # `ryoku-rashin setup` runs Hermes' official installer, which ships a
+    # generic-Linux uv (then a uv-managed Python); without a loader it exits 1.
+    programs.nix-ld.enable = true;
+
     # Ryoku sets nixpkgs.config.allowUnfreePredicate (mkDefault), but mkHost
     # passes in a pkgs instance and NixOS asserts nixpkgs.config stays empty in
     # that case. The predicate is moot anyway: getPkgs already has allowUnfree.
