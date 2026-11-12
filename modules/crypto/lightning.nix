@@ -59,6 +59,10 @@ in
       # wallets. Costs a separate ~56 GB index; opens port 50001 to the LAN.
       services.electrs.enable = true;
 
+      # Reachable from anywhere over Tor without opening a port; the address is in
+      # /var/lib/onion-addresses/<operator>/electrs.
+      nix-bitcoin.onionServices.electrs.enable = true;
+
       # electrs 0.12 reads blocks through bitcoind's REST interface, which is off
       # by default. REST is read-only public chain data and obeys rpcallowip.
       services.bitcoind.extraConfig = lib.mkIf config.services.electrs.enable ''
@@ -190,6 +194,11 @@ in
       # Note this also sets services.lnd.restAddress to 0.0.0.0 on our behalf
       # (nix-bitcoin modules/lndconnect.nix), which is what makes REST reachable.
       services.lnd.lndconnect.enable = true;
+
+      # Also publish REST as an onion service; plain `lndconnect` now prints the onion
+      # QR. That mode stops binding REST to the LAN, so keep the LAN binding.
+      services.lnd.lndconnect.onion = true;
+      services.lnd.restAddress = "0.0.0.0";
 
       # LND only auto-adds its rpcAddress to the certificate, so without this
       # wallets dialling lndLanAddress fail certificate verification.
