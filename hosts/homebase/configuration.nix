@@ -23,6 +23,7 @@ in
   host.enableHardwareWallets = true;
   host.enableSparrow = true;
   host.enableLiana = true;
+  host.enableMonero = true;
 
   specialisation.kde.configuration = {
     host.enableKDE = lib.mkForce true;
