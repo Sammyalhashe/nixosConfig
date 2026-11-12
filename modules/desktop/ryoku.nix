@@ -39,6 +39,11 @@
 let
   cfg = config.host;
   supported = pkgs.stdenv.hostPlatform.system == "x86_64-linux";
+  prowlGateway =
+    verb:
+    pkgs.writeShellScript "ryoku-prowl-${verb}" ''
+      exec /run/current-system/sw/bin/prowl gateway ${verb} --port "''${RYOKU_PROWL_PORT:-8788}"
+    '';
 in
 {
   imports = [ inputs.ryoku.nixosModules.default ];
@@ -74,6 +79,23 @@ in
     # `ryoku-rashin setup` runs Hermes' official installer, which ships a
     # generic-Linux uv (then a uv-managed Python); without a loader it exits 1.
     programs.nix-ld.enable = true;
+
+    # The NixOS port ships prowl but not upstream's ryoku-prowl.service, which Rashin
+    # starts for its Prowl gateway; this mirrors ryoku/rashin/systemd/ryoku-prowl.service.
+    systemd.user.services.ryoku-prowl = {
+      description = "Ryoku Prowl: model gateway and code intelligence for Rashin";
+      bindsTo = [ "ryoku-rashin.service" ];
+      after = [ "ryoku-rashin.service" ];
+      startLimitIntervalSec = 0;
+      serviceConfig = {
+        ExecStartPre = "-${prowlGateway "down"}";
+        ExecStart = prowlGateway "serve";
+        Restart = "on-failure";
+        RestartSec = 2;
+        NoNewPrivileges = true;
+      };
+    };
+    systemd.user.services.ryoku-rashin.wants = [ "ryoku-prowl.service" ];
 
     # Ryoku sets nixpkgs.config.allowUnfreePredicate (mkDefault), but mkHost
     # passes in a pkgs instance and NixOS asserts nixpkgs.config stays empty in
