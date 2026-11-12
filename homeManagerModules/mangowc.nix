@@ -1,5 +1,6 @@
 {
   config,
+  osConfig,
   lib,
   pkgs,
   inputs,
@@ -203,7 +204,10 @@ in
 
   config = lib.mkIf cfg.enable {
     services.fnott = {
-      enable = !config.environments.wsl.enable;
+      # KDE and Ryoku bring their own notification servers, and fnott's D-Bus
+      # activation steals org.freedesktop.Notifications from them.
+      enable =
+        !config.environments.wsl.enable && !osConfig.host.enableKDE && !osConfig.host.useRyokuDesktop;
       settings = lib.mkForce {
         main = {
           anchor = "top-right";
