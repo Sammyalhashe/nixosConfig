@@ -207,15 +207,18 @@ let
   };
 in
 {
-  sops.secrets = lib.genAttrs [
-    "FRED_API_KEY"
-    "FINNHUB_API_KEY"
-    "NTFY_JOB_TOKEN"
-    "cb_hardware_maker_org_name"
-    "cb_hardware_maker_key"
-  ] (_: {
-    owner = user;
-  });
+  sops.secrets =
+    lib.genAttrs
+      [
+        "FRED_API_KEY"
+        "FINNHUB_API_KEY"
+        "NTFY_JOB_TOKEN"
+        "cb_hardware_maker_org_name"
+        "cb_hardware_maker_key"
+      ]
+      (_: {
+        owner = user;
+      });
 
   environment.systemPackages = [
     report

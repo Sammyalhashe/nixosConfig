@@ -47,7 +47,10 @@
       spotify-player
       starship
       # pandoc's lualatex template (--pdf-engine=lualatex) needs these
-      (texliveSmall.withPackages (ps: [ ps.lualatex-math ps.selnolig ]))
+      (texliveSmall.withPackages (ps: [
+        ps.lualatex-math
+        ps.selnolig
+      ]))
       tmux
       ttyper
       yazi

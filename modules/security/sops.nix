@@ -186,11 +186,11 @@
           {
             address = config.sops.placeholder.KEYSTONE_BTC;
             weight = 25;
-          } 
+          }
           {
             address = config.sops.placeholder.SAMMYS_MULTISIG_BTC;
             weight = 75;
-          } 
+          }
         ];
         SOL = [
           {
