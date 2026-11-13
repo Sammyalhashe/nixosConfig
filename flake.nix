@@ -139,6 +139,11 @@
     # forcing our nixpkgs on it risks breaking a build we cannot easily test.
     ryoku.url = "github:Ryoku-dev/Ryoku-on-NixOS";
 
+    lig = {
+      url = "github:KevenGoncalves/lig";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Self-hosted TRMNL server (terminus) as a podman OCI module
     terminus = {
       url = "github:Sammyalhashe/terminus-nix";

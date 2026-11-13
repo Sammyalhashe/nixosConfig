@@ -4,12 +4,14 @@
     # ./desktop.nix
     ./git.nix
     ./jj.nix
+    ./lig.nix
     ./ai-skills.nix
     ./alacritty.nix
     ./claude-code.nix
     ./codex.nix
     ./coinbase-cli.nix
     ./direnv.nix
+    ./fish.nix
     ./mods.nix
     ./nushell.nix
     ./pi.nix

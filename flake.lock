@@ -1220,6 +1220,26 @@
         "type": "github"
       }
     },
+    "lig": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794492936,
+        "narHash": "sha256-i6CCPMq/Bt13PovO4xzZ/SYiTTY18pcIzrIzX6QiPVQ=",
+        "owner": "KevenGoncalves",
+        "repo": "lig",
+        "rev": "92f405a4a4d7e458bebf5d93b0c4ac80ea65aa1a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "KevenGoncalves",
+        "repo": "lig",
+        "type": "github"
+      }
+    },
     "llama-cpp": {
       "inputs": {
         "flake-parts": "flake-parts_3",
@@ -2231,6 +2251,7 @@
         "jj-starship": "jj-starship",
         "kaspa-ng": "kaspa-ng",
         "keybr-tui": "keybr-tui",
+        "lig": "lig",
         "llama-cpp": "llama-cpp",
         "llm-agents": "llm-agents",
         "mangowc": "mangowc",
