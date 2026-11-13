@@ -15,6 +15,7 @@
     ./mods.nix
     ./nushell.nix
     ./pi.nix
+    ./rbw.nix
     ./starship.nix
     ./tmux.nix
     ./wezterm.nix
