@@ -1,4 +1,10 @@
-{ pkgs, lib, config, osConfig, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  osConfig,
+  ...
+}:
 let
   # Goose rewrites config.yaml itself, so these are merged in, not owned.
   extensions = {
