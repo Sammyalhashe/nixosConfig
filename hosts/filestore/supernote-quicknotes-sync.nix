@@ -7,13 +7,19 @@
 }:
 let
   nextcloudFiles = "salhashemi2/files";
-  # Personal keeps the pre-split state directory so its existing note-to-task mappings carry over.
+  # The pre-split Inbox/"Quick Notes" pair keeps the original state directory so its mappings carry over.
   profiles = {
+    inbox = {
+      folder = "Notes/Inbox";
+      taskList = "Quick Notes";
+      tunnelPort = 13308;
+      stateDirectory = "supernote-quicknotes-sync";
+    };
     personal = {
       folder = "Notes/Personal";
       taskList = "Personal";
       tunnelPort = 13306;
-      stateDirectory = "supernote-quicknotes-sync";
+      stateDirectory = "supernote-quicknotes-sync-personal";
     };
     work = {
       folder = "Notes/Work";
