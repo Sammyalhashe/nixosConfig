@@ -42,7 +42,8 @@ def plan_sync(notes, tasks, state):
             claimed_tasks.add(task_id)
 
         if task is None or task["is_deleted"] == "Y":
-            actions.append({"kind": "drop_mapping", "filename": filename, "taskId": task_id})
+            kind = "drop_mapping" if note is None else "delete_note"
+            actions.append({"kind": kind, "filename": filename, "taskId": task_id})
             continue
         if note is None:
             actions.append({"kind": "soft_delete_task", "filename": filename, "taskId": task_id})
@@ -314,6 +315,15 @@ def update_note(note, task):
     refresh_note(note)
 
 
+# Moved aside rather than unlinked: a recreated to-do list would make every task look deleted.
+def delete_note(notes_dir, note):
+    deleted_dir = notes_dir / ".deleted"
+    deleted_dir.mkdir(exist_ok=True)
+    os.chown(deleted_dir, 33, 33)
+    path = Path(note["path"])
+    os.replace(path, deleted_dir / path.name)
+
+
 def create_note(notes_dir, task):
     args = [
         "add",
@@ -368,6 +378,10 @@ def apply_sync(
 
         if kind == "drop_mapping":
             next_state.pop(filename, None)
+        elif kind == "delete_note":
+            delete_note(notes_dir, notes.pop(filename))
+            next_state.pop(filename, None)
+            nextcloud_changed = True
         elif kind == "soft_delete_task":
             cursor.execute(
                 "UPDATE supernotedb.t_schedule_task SET is_deleted='Y', "
@@ -398,7 +412,7 @@ def apply_sync(
         else:
             raise ValueError(f"Unknown sync action: {kind}")
 
-        if kind not in {"drop_mapping", "soft_delete_task"}:
+        if kind not in {"drop_mapping", "soft_delete_task", "delete_note"}:
             next_state[filename] = state_entry(note, task)
 
     if not dry_run:

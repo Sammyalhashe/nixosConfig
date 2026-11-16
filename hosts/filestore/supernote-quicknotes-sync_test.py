@@ -1,4 +1,5 @@
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -33,7 +34,7 @@ def mapping(note_state="TODO", note_modified=100, task_modified=100):
 
 
 class PlanSyncTest(unittest.TestCase):
-    def test_task_deleted_on_device_drops_mapping_only(self):
+    def test_task_soft_deleted_deletes_note(self):
         deleted_task = task()
         deleted_task["is_deleted"] = "Y"
         actions = sync.plan_sync(
@@ -43,10 +44,10 @@ class PlanSyncTest(unittest.TestCase):
         )
         self.assertEqual(
             actions,
-            [{"kind": "drop_mapping", "filename": "note.md", "taskId": "task-1"}],
+            [{"kind": "delete_note", "filename": "note.md", "taskId": "task-1"}],
         )
 
-    def test_task_missing_drops_mapping_without_recreating_it(self):
+    def test_task_removed_on_device_deletes_note_instead_of_recreating_task(self):
         actions = sync.plan_sync(
             {"note.md": note()},
             {},
@@ -54,7 +55,7 @@ class PlanSyncTest(unittest.TestCase):
         )
         self.assertEqual(
             actions,
-            [{"kind": "drop_mapping", "filename": "note.md", "taskId": "task-1"}],
+            [{"kind": "delete_note", "filename": "note.md", "taskId": "task-1"}],
         )
 
     def test_note_deleted_or_none_soft_deletes_task(self):
@@ -170,6 +171,18 @@ class ReadTaskListIdTest(unittest.TestCase):
     def test_missing_list_names_it_in_the_error(self):
         with self.assertRaisesRegex(RuntimeError, '"Personal"'):
             sync.read_task_list_id(RecordingCursor([]), "user-1", "Personal")
+
+
+class DeleteNoteTest(unittest.TestCase):
+    def test_moves_note_into_hidden_deleted_folder(self):
+        with tempfile.TemporaryDirectory() as directory:
+            notes_dir = Path(directory)
+            note_path = notes_dir / "note.md"
+            note_path.write_text("* TODO Note\n")
+            with mock.patch.object(sync.os, "chown"):
+                sync.delete_note(notes_dir, {"path": str(note_path)})
+            self.assertFalse(note_path.exists())
+            self.assertEqual((notes_dir / ".deleted" / "note.md").read_text(), "* TODO Note\n")
 
 
 class ReadNotesTest(unittest.TestCase):
