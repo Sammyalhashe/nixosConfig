@@ -1,6 +1,7 @@
 import importlib.util
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT = Path(__file__).with_name("supernote-quicknotes-sync.py")
@@ -156,6 +157,26 @@ class ReadTasksTest(unittest.TestCase):
         self.assertEqual(params, ("user-1", "list-1"))
         self.assertIn("task_list_id = %s", sql)
         self.assertNotIn("is_deleted =", sql)
+
+
+class ReadTaskListIdTest(unittest.TestCase):
+    def test_looks_up_the_configured_list_title(self):
+        cursor = RecordingCursor([{"task_list_id": "list-1"}])
+        self.assertEqual(sync.read_task_list_id(cursor, "user-1", "Work"), "list-1")
+        sql, params = cursor.calls[0]
+        self.assertEqual(params, ("user-1", "Work"))
+        self.assertIn("title = %s", sql)
+
+    def test_missing_list_names_it_in_the_error(self):
+        with self.assertRaisesRegex(RuntimeError, '"Personal"'):
+            sync.read_task_list_id(RecordingCursor([]), "user-1", "Personal")
+
+
+class ReadNotesTest(unittest.TestCase):
+    def test_missing_notes_dir_raises_instead_of_reading_as_empty(self):
+        with mock.patch.object(sync, "run_quick_notes", return_value="[]"):
+            with self.assertRaises(FileNotFoundError):
+                sync.read_notes(Path("/nonexistent/quick-notes"))
 
 
 class PlanTaskOrderTest(unittest.TestCase):

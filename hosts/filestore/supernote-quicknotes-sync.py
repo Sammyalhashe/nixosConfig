@@ -14,7 +14,6 @@ import pymysql
 
 
 DB_HOST = "127.0.0.1"
-DB_PORT = 13306
 DB_NAME = "supernotedb"
 DB_USER = "root"
 REMOTE_HOST = "11.125.37.175"
@@ -98,6 +97,9 @@ def run_quick_notes(*args):
 
 
 def read_notes(notes_dir):
+    # quick-notes reads a missing dir as empty, which would soft-delete every mapped task.
+    if not notes_dir.is_dir():
+        raise FileNotFoundError(f"Notes directory {notes_dir} does not exist")
     raw_notes = json.loads(run_quick_notes("todos", str(notes_dir)))
     notes = {}
     for note in raw_notes:
@@ -121,20 +123,20 @@ def read_user_id(cursor):
     return rows[0]["user_id"]
 
 
-def read_task_list_id(cursor, user_id):
+def read_task_list_id(cursor, user_id, title):
     cursor.execute(
         "SELECT task_list_id FROM t_schedule_task_group "
-        "WHERE user_id = %s AND title = 'Quick Notes' AND is_deleted = 'N'",
-        (user_id,),
+        "WHERE user_id = %s AND title = %s AND is_deleted = 'N'",
+        (user_id, title),
     )
     rows = cursor.fetchall()
     if not rows:
         raise RuntimeError(
-            'No active "Quick Notes" to-do list found. Create a "Quick Notes" '
+            f'No active "{title}" to-do list found. Create a "{title}" '
             "to-do list on the Supernote and sync it."
         )
     if len(rows) > 1:
-        raise RuntimeError(f'Expected one active "Quick Notes" to-do list, found {len(rows)}')
+        raise RuntimeError(f'Expected one active "{title}" to-do list, found {len(rows)}')
     return rows[0]["task_list_id"]
 
 
@@ -430,7 +432,7 @@ def apply_task_order(cursor, notes, state, user_id, task_list_id, dry_run):
     return bool(changes)
 
 
-def update_nextcloud():
+def update_nextcloud(scan_path):
     subprocess.run(
         [
             "podman",
@@ -442,13 +444,13 @@ def update_nextcloud():
             "occ",
             "files:scan",
             "--path",
-            "salhashemi2/files/Notes/Inbox",
+            scan_path,
         ],
         check=True,
     )
 
 
-def open_tunnel():
+def open_tunnel(port):
     command = [
         "ssh",
         "-N",
@@ -461,7 +463,7 @@ def open_tunnel():
         "-i",
         "/etc/ssh/ssh_host_ed25519_key",
         "-L",
-        "127.0.0.1:13306:127.0.0.1:3306",
+        f"127.0.0.1:{port}:127.0.0.1:3306",
         f"supernote-sync@{REMOTE_HOST}",
     ]
     process = subprocess.Popen(command)
@@ -470,7 +472,7 @@ def open_tunnel():
         if process.poll() is not None:
             raise RuntimeError(f"SSH tunnel exited with status {process.returncode}")
         try:
-            with socket.create_connection((DB_HOST, DB_PORT), timeout=0.25):
+            with socket.create_connection((DB_HOST, port), timeout=0.25):
                 return process
         except OSError:
             time.sleep(0.1)
@@ -489,17 +491,20 @@ def main():
     args = parser.parse_args()
 
     notes_dir = Path(os.environ["QUICK_NOTES_DIR"])
+    task_list_title = os.environ["SUPERNOTE_TASK_LIST"]
+    scan_path = os.environ["NEXTCLOUD_SCAN_PATH"]
+    tunnel_port = int(os.environ["TUNNEL_PORT"])
     state_dir = Path(os.environ["STATE_DIRECTORY"])
     state_path = state_dir / STATE_FILENAME
     password = os.environ.get("MYSQL_ROOT_PASSWORD")
     if not password:
         raise RuntimeError("MYSQL_ROOT_PASSWORD is missing from the service environment file")
 
-    tunnel = open_tunnel()
+    tunnel = open_tunnel(tunnel_port)
     try:
         connection = pymysql.connect(
             host=DB_HOST,
-            port=DB_PORT,
+            port=tunnel_port,
             user=DB_USER,
             password=password,
             database=DB_NAME,
@@ -510,7 +515,7 @@ def main():
         try:
             with connection.cursor() as cursor:
                 user_id = read_user_id(cursor)
-                task_list_id = read_task_list_id(cursor, user_id)
+                task_list_id = read_task_list_id(cursor, user_id, task_list_title)
                 tasks = read_tasks(cursor, user_id, task_list_id)
                 notes = read_notes(notes_dir)
                 state = load_state(state_path)
@@ -540,7 +545,7 @@ def main():
                 if not args.dry_run:
                     save_state(state_path, next_state)
                 if nextcloud_changed:
-                    update_nextcloud()
+                    update_nextcloud(scan_path)
         except Exception:
             connection.rollback()
             raise

@@ -18,7 +18,7 @@ let
         programs.vicinae.enable = lib.mkDefault osConfig.host.enableVicinae;
         programs.quickNotes = {
           enable = osConfig.host.enableVicinae;
-          notesDir = "${config.home.homeDirectory}/Nextcloud/Notes/Inbox";
+          notesDir = "${config.home.homeDirectory}/Nextcloud/Notes/Personal";
         };
       }
     )
