@@ -54,6 +54,8 @@ in
       };
 
       backupFileExtension = "backup";
+      # Tools like Claude and Codex rewrite their managed files, so a stale .backup must not block activation.
+      overwriteBackup = true;
     };
   };
 }
