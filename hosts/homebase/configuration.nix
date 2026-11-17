@@ -24,6 +24,7 @@ in
   host.enableSparrow = true;
   host.enableLiana = true;
   host.enableMonero = true;
+  host.enableMoneroMining = true;
 
   specialisation.kde.configuration = {
     host.enableKDE = lib.mkForce true;

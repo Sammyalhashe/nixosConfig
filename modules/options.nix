@@ -73,11 +73,7 @@
 
     enableMonero = lib.mkEnableOption "Whether to run a pruned Monero node (monerod).";
 
-    moneroMiningAddress = lib.mkOption {
-      type = lib.types.str;
-      default = "";
-      description = "Monero primary address for P2Pool payouts; non-empty also enables P2Pool and xmrig.";
-    };
+    enableMoneroMining = lib.mkEnableOption "P2Pool and xmrig mining to the XMR_ADDRESS sops secret (needs enableMonero).";
 
     exposeKaspaToLan = lib.mkEnableOption ''
       Whether to bind kaspad's RPC listeners to 0.0.0.0 and open them so Kaspa

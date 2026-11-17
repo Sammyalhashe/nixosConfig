@@ -6,7 +6,7 @@
 
 let
   cfg = config.host;
-  mining = cfg.moneroMiningAddress != "";
+  mining = cfg.enableMoneroMining;
 in
 {
   config = lib.mkIf cfg.enableMonero (
@@ -24,10 +24,14 @@ in
 
       (lib.mkIf mining {
         # mini suits a single CPU's hashrate: shares land often enough to get paid.
+        sops.secrets.XMR_ADDRESS = { };
+        sops.templates."p2pool-env".content = "WALLET_ADDRESS=${config.sops.placeholder.XMR_ADDRESS}";
+
         services.p2pool = {
           enable = true;
           sidechain = "mini";
-          walletAddress = cfg.moneroMiningAddress;
+          walletAddress = "$WALLET_ADDRESS";
+          environmentFile = config.sops.templates."p2pool-env".path;
         };
 
         services.xmrig = {
