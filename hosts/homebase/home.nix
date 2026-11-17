@@ -15,6 +15,7 @@
     openscad
     goose-desktop
     bisq2
+    status-im
   ];
 
   # The waybar unit starts in any Hyprland session, including Ryoku's, which

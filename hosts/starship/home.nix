@@ -30,5 +30,6 @@
     bambu-studio
     openscad
     cloudflare-warp
+    status-im
   ];
 }
