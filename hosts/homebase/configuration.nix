@@ -25,6 +25,11 @@ in
   host.enableLiana = true;
   host.enableMonero = true;
   host.enableMoneroMining = true;
+  # Restricted RPC serves only wallet-safe calls, for LAN wallets such as Cake Wallet.
+  services.monero.extraConfig = ''
+    rpc-restricted-bind-ip=0.0.0.0
+    rpc-restricted-bind-port=18089
+  '';
 
   specialisation.kde.configuration = {
     host.enableKDE = lib.mkForce true;
@@ -194,6 +199,7 @@ in
     enable = true;
     allowedTCPPorts = [
       11434
+      18089 # monerod restricted RPC
       24800
     ];
     allowedUDPPorts = [ 24800 ];
