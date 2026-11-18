@@ -67,5 +67,8 @@ in
       snapshotFile = "${home}/projects/trading-pnl/snapshot.json";
     };
     derivativesCollector.enable = true;
+    # Hourly quote-only comparison of Base DEX vs Coinbase round-trip cost;
+    # `onchain-cost-report` summarises it. 0x is included only if ZEROX_API_KEY is set.
+    costProbe.enable = true;
   };
 }
