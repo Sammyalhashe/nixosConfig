@@ -41,6 +41,8 @@ in
       ATR_STOP_MULTIPLIER = 2.5;
       ATR_STOP_MIN_PCT = 0.06;
       STOPOUT_COOLDOWN_HOURS = 12;
+      # /status /pause /resume /flatten from the owner's Telegram chat; trading-botctl works regardless.
+      CONTROL_TELEGRAM = true;
     };
 
     notifier.enable = true;

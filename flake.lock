@@ -21,6 +21,27 @@
         "type": "github"
       }
     },
+    "backtesting-data": {
+      "inputs": {
+        "nixpkgs": [
+          "trading-bot-flake",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795017531,
+        "narHash": "sha256-vHF7VnBC2ZGJQo+aePSN+c6fQCHe/Ax2SApRnB1rW9I=",
+        "owner": "Sammyalhashe",
+        "repo": "backtesting-data-flake",
+        "rev": "ff5461ed8673fa6d13c3a775b4a6f9030b2d7e5b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sammyalhashe",
+        "repo": "backtesting-data-flake",
+        "type": "github"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -2891,6 +2912,7 @@
     },
     "trading-bot-flake": {
       "inputs": {
+        "backtesting-data": "backtesting-data",
         "flake-utils": "flake-utils_7",
         "nixpkgs": [
           "nixpkgs"
@@ -2900,11 +2922,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795015836,
-        "narHash": "sha256-Hxp4BRNd1GR+RBfUsfLcgiFwpz58sf/AyTMgW97OwPs=",
+        "lastModified": 1795026541,
+        "narHash": "sha256-KqmNOyOCIAj8yUrSX73wGCb2dwS+7G8LuxjObGkzbvY=",
         "owner": "Sammyalhashe",
         "repo": "trading-bot-flake",
-        "rev": "6b37391087db4f49485c450ec0d46b6096940c15",
+        "rev": "aa9a500f773b7a4d7f202ff0b6e43136dd48fee0",
         "type": "github"
       },
       "original": {
