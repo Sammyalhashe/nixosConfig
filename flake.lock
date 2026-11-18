@@ -2922,11 +2922,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795026541,
-        "narHash": "sha256-KqmNOyOCIAj8yUrSX73wGCb2dwS+7G8LuxjObGkzbvY=",
+        "lastModified": 1795028814,
+        "narHash": "sha256-djhLP8bkYQ0mQsHWCbSik/7n7J/Mnz0UoIdTsksZiA0=",
         "owner": "Sammyalhashe",
         "repo": "trading-bot-flake",
-        "rev": "aa9a500f773b7a4d7f202ff0b6e43136dd48fee0",
+        "rev": "dddeb1e9751a520d7b7aebd0dbea3cbba362043d",
         "type": "github"
       },
       "original": {
