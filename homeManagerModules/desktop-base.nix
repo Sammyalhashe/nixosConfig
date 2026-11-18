@@ -161,7 +161,7 @@ in
       };
       JavaScript = {
         url = "https://sanfrancisco.kapeli.com/feeds/JavaScript.tgz";
-        hash = "sha256-QyFvhzE/QparxvSnlX1c1uv4ve+COkZw5OJokKT6J0Y=";
+        hash = "sha256-15nQdMvtP7Y/1HfSGV6wAyQWgf1YDb8fHpY+qGnbccM=";
       };
       Cpp = {
         url = "https://sanfrancisco.kapeli.com/feeds/C++.tgz";
