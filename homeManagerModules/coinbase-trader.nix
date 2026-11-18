@@ -36,8 +36,8 @@ in
       ONCHAIN_ROUTER = "zerox";
       # Measured $25 round trips via 0x ran 0.3-0.94% (incl. 0x's 0.15%/leg).
       ONCHAIN_ROUND_TRIP_FEE_PCT = 0.008;
-      # Coinbase fills since Oct 2026 averaged 0.19%/side; default 0.15% round trip undercounts.
-      ROUND_TRIP_FEE_PCT = 0.004;
+      # Measured Coinbase fills (Nov 2026): ~0.11% per side, maker and aggressive-limit alike.
+      ROUND_TRIP_FEE_PCT = 0.0022;
       ATR_STOP_MULTIPLIER = 2.5;
       ATR_STOP_MIN_PCT = 0.06;
       STOPOUT_COOLDOWN_HOURS = 12;
