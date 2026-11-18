@@ -45,6 +45,21 @@ in
       CONTROL_TELEGRAM = true;
     };
 
+    # Forward test of the daily BTC trend strategy (selected in trading-bot-flake's
+    # backtesting/daily_trend_grid.py) on a simulated $10k ledger; places no real orders.
+    paper = {
+      enable = true;
+      startingCash = 10000;
+      settings = {
+        STRATEGY = "daily_trend";
+        DAILY_TREND_ASSETS = "BTC";
+        DAILY_TREND_FILTER = "sma:50";
+        MAX_CONCURRENT_POSITIONS = 1;
+        ROUND_TRIP_FEE_PCT = 0.0022;
+        PAPER_FEE_PER_SIDE = 0.0011;
+      };
+    };
+
     notifier.enable = true;
     pnlReport = {
       enable = true;
