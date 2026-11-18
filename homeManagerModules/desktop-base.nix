@@ -157,7 +157,7 @@ in
       # updates; the pinned builds are kept in cachix and substituted by hash.
       Python = {
         url = "https://sanfrancisco.kapeli.com/feeds/Python.tgz";
-        hash = "sha256-SeI9YCd9+LdjpGDA82HOsqodd0yLGXQFqVbNe9Waxmc=";
+        hash = "sha256-9GJVcStfBEb5elkQ4A/qcFsYDuyOi9s0uBgTGDCIIEI=";
       };
       JavaScript = {
         url = "https://sanfrancisco.kapeli.com/feeds/JavaScript.tgz";
