@@ -29,11 +29,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795017531,
-        "narHash": "sha256-vHF7VnBC2ZGJQo+aePSN+c6fQCHe/Ax2SApRnB1rW9I=",
+        "lastModified": 1795029778,
+        "narHash": "sha256-tLQoXkrq41Vxs3/2IiLYIy88K4UUM2qloIIs+T51KGg=",
         "owner": "Sammyalhashe",
         "repo": "backtesting-data-flake",
-        "rev": "ff5461ed8673fa6d13c3a775b4a6f9030b2d7e5b",
+        "rev": "15fc1623438c82cdb553e86108b00abcd74bb06b",
         "type": "github"
       },
       "original": {
@@ -2922,11 +2922,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795028814,
-        "narHash": "sha256-djhLP8bkYQ0mQsHWCbSik/7n7J/Mnz0UoIdTsksZiA0=",
+        "lastModified": 1795031082,
+        "narHash": "sha256-Vbo48QBBVIiz2j7yN9MN4YFCQIIrBHzTPBGwn6qss0o=",
         "owner": "Sammyalhashe",
         "repo": "trading-bot-flake",
-        "rev": "dddeb1e9751a520d7b7aebd0dbea3cbba362043d",
+        "rev": "edbaba64789f701308b7c7363303502efa33b783",
         "type": "github"
       },
       "original": {
