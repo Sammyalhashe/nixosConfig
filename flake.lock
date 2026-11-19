@@ -3180,11 +3180,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795114349,
-        "narHash": "sha256-ocxjI+7FpxQdhbJRID4Z/Gmiv+IA9vZS5nSeSCBQZCM=",
+        "lastModified": 1795118687,
+        "narHash": "sha256-nObYo9zoWKpYJNEcpTXdHKSvXIzRUjAr/cPy4PO0igM=",
         "owner": "Sammyalhashe",
         "repo": "wallet-watcher",
-        "rev": "80b946e43ae58aee502fec7393423324bf27fd42",
+        "rev": "818e9169448455c95eef7a423f862fac99414679",
         "type": "github"
       },
       "original": {

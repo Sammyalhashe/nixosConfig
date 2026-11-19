@@ -9,5 +9,6 @@
     ./liana.nix
     ./monero.nix
     ./sparrow.nix
+    ./wallet-watcher.nix
   ];
 }

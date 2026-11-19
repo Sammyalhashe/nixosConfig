@@ -75,6 +75,8 @@
 
     enableMoneroMining = lib.mkEnableOption "P2Pool and xmrig mining to the XMR_ADDRESS sops secret (needs enableMonero).";
 
+    enableWalletWatcherConfig = lib.mkEnableOption "rendering ~/.config/wallet-watcher/config.json from the wallet address sops secrets";
+
     exposeKaspaToLan = lib.mkEnableOption ''
       Whether to bind kaspad's RPC listeners to 0.0.0.0 and open them so Kaspa
       NG on other hosts can use this node instead of syncing its own DAG.

@@ -38,6 +38,7 @@ in
 
   host.enableBluetooth = true;
   host.enableKaspaNg = true;
+  host.enableWalletWatcherConfig = true;
   host.enableGreetd = false;
   host.homeManagerHostname = "starship";
   home-manager.users.${config.host.username}.imports = [ ./home.nix ];
