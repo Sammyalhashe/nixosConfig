@@ -61,6 +61,16 @@ in
     "salhashemi2"
   ];
 
+  # mothership hands aarch64 builds here instead of emulating them; the key can
+  # only run nix-daemon (forced command), not a shell.
+  nix.sshServe = {
+    enable = true;
+    protocol = "ssh-ng";
+    write = true;
+    trusted = true;
+    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKCHYVjBsFyiUWB4gzvq9W5Ns2Cpr/Pz8W598RJ+5HWg mothership-host" ];
+  };
+
   imports = [
     inputs.sops-nix.nixosModules.sops
     ./adguard.nix

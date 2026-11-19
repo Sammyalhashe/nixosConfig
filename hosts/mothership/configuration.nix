@@ -35,7 +35,24 @@ in
   nix.settings = {
     max-jobs = 2;
     cores = 8;
+    builders-use-substitutes = true;
   };
+
+  # Build aarch64 (filestore) natively on the Pi; binfmt emulation is the fallback.
+  nix.distributedBuilds = true;
+  nix.buildMachines = [
+    {
+      hostName = "filestore";
+      sshUser = "nix-ssh";
+      protocol = "ssh-ng";
+      system = "aarch64-linux";
+      sshKey = "/etc/ssh/ssh_host_ed25519_key";
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSU9BT2RTcDltdjhFTjdSM0VQV1B6cGx6OHMzN0dzN2lZN2x6bmltTlIxVmw=";
+      maxJobs = 1;
+      speedFactor = 2;
+      supportedFeatures = [ "big-parallel" ];
+    }
+  ];
 
   # The pipeline builds every host here, and those outputs are already on
   # Cachix, so collect daily rather than weekly (still keeping 7 days of rollback).
