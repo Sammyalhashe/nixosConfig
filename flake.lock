@@ -2297,7 +2297,8 @@
         "trading-bot-flake": "trading-bot-flake",
         "treefmt-nix": "treefmt-nix_3",
         "ttt": "ttt",
-        "vicinae-quick-notes": "vicinae-quick-notes"
+        "vicinae-quick-notes": "vicinae-quick-notes",
+        "wallet-watcher": "wallet-watcher"
       }
     },
     "rust-overlay": {
@@ -3167,6 +3168,29 @@
         "owner": "Sammyalhashe",
         "repo": "vicinae-quick-notes",
         "type": "github"
+      }
+    },
+    "wallet-watcher": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795114349,
+        "narHash": "sha256-ocxjI+7FpxQdhbJRID4Z/Gmiv+IA9vZS5nSeSCBQZCM=",
+        "ref": "refs/heads/main",
+        "rev": "80b946e43ae58aee502fec7393423324bf27fd42",
+        "revCount": 3,
+        "type": "git",
+        "url": "ssh://git@github.com/Sammyalhashe/wallet-watcher"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/Sammyalhashe/wallet-watcher"
       }
     }
   },

@@ -37,6 +37,7 @@
       inputs.keybr-tui.packages.${pkgs.stdenv.hostPlatform.system}.default
       inputs.ttt.packages.${pkgs.stdenv.hostPlatform.system}.default
       inputs.terminal-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+      inputs.wallet-watcher.packages.${pkgs.stdenv.hostPlatform.system}.default
       nmap
       pandoc
       presenterm
