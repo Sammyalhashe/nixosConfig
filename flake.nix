@@ -165,9 +165,9 @@
       inputs.sops-nix.follows = "sops-nix";
     };
 
-    # Multi-chain wallet distribution TUI (`wallet-watcher`). Private repo, so ssh.
+    # Multi-chain wallet distribution TUI (`wallet-watcher`).
     wallet-watcher = {
-      url = "git+ssh://git@github.com/Sammyalhashe/wallet-watcher";
+      url = "github:Sammyalhashe/wallet-watcher";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };

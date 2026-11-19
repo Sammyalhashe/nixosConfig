@@ -3182,15 +3182,15 @@
       "locked": {
         "lastModified": 1795114349,
         "narHash": "sha256-ocxjI+7FpxQdhbJRID4Z/Gmiv+IA9vZS5nSeSCBQZCM=",
-        "ref": "refs/heads/main",
+        "owner": "Sammyalhashe",
+        "repo": "wallet-watcher",
         "rev": "80b946e43ae58aee502fec7393423324bf27fd42",
-        "revCount": 3,
-        "type": "git",
-        "url": "ssh://git@github.com/Sammyalhashe/wallet-watcher"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/Sammyalhashe/wallet-watcher"
+        "owner": "Sammyalhashe",
+        "repo": "wallet-watcher",
+        "type": "github"
       }
     }
   },
