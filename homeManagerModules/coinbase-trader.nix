@@ -58,6 +58,11 @@ in
         ROUND_TRIP_FEE_PCT = 0.0022;
         PAPER_FEE_PER_SIDE = 0.0011;
       };
+      # Same strategy at CoW-on-Base costs (live tests: ~0–5 bps round trip vs ~22 on Coinbase).
+      variants.cow = {
+        ROUND_TRIP_FEE_PCT = 0.0005;
+        PAPER_FEE_PER_SIDE = 0.00025;
+      };
     };
 
     notifier.enable = true;
