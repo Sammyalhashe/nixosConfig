@@ -60,7 +60,12 @@ in
     restartUnits = [ "hermes-agent.service" ];
   };
 
+  # Kept for reference; clinepass is defined but no longer referenced (cost).
   sops.secrets.CLINE_HERMES_API_KEY = {
+    restartUnits = [ "hermes-agent.service" ];
+  };
+
+  sops.secrets.VENICE_API_KEY = {
     restartUnits = [ "hermes-agent.service" ];
   };
 
@@ -127,6 +132,7 @@ in
     HERMES_MAX_TOKENS=8192
     BRAVE_SEARCH_API_KEY="${config.sops.placeholder.brave_api_key}"
     CLINEPASS_API_KEY="${config.sops.placeholder.CLINE_HERMES_API_KEY}"
+    VENICE_API_KEY="${config.sops.placeholder.VENICE_API_KEY}"
     COMPOSIO_API_KEY="${config.sops.placeholder.composio_api_key}"
     HA_MCP_URL="${config.sops.placeholder.ha_mcp_webhook_url}"
     GATEWAY_ALLOW_ALL_USERS=true
@@ -151,10 +157,12 @@ in
     settings = {
       # Active provider + model. `provider`/`model` are plain strings, matching
       # the shape used in fallback_providers / auxiliary below.
-      # OpenRouter with ZDR enforced in the account's privacy settings, so prompts are
-      # neither retained nor trained on; mothership's qwen3.8 is kept for coding.
-      provider = "openrouter";
-      model = "anthropic/claude-haiku-5.5";
+      # Venice (Pro subscription) is the active provider; OpenRouter and clinepass
+      # are kept below as reference but unreferenced, since they bill per call.
+      provider = "custom:venice";
+      model = "claude-haiku-5-5";
+      # provider = "openrouter";
+      # model = "anthropic/claude-haiku-5.5";
 
       mcp_servers = {
         composio = {
@@ -208,17 +216,39 @@ in
 
       fallback_providers = [
         {
-          provider = "openrouter";
-          model = "deepseek/deepseek-v4-flash";
+          provider = "custom:venice";
+          model = "deepseek-v4-pro";
         }
         {
-          # If OpenRouter is unavailable, fall back to clinepass.
-          provider = "custom:clinepass";
-          model = "cline-pass/qwen3.7-max";
+          # Free local model on mothership's LiteLLM, last-resort fallback.
+          provider = "custom:mothership";
+          model = "qwen3.8";
         }
+        # Kept for reference (billed per call, disabled):
+        # {
+        #   provider = "openrouter";
+        #   model = "deepseek/deepseek-v4-flash";
+        # }
+        # {
+        #   provider = "custom:clinepass";
+        #   model = "cline-pass/qwen3.7-max";
+        # }
       ];
 
       custom_providers = [
+        {
+          name = "venice";
+          base_url = "https://api.venice.ai/api/v1";
+          key_env = "VENICE_API_KEY";
+          models = [
+            "claude-haiku-5-5"
+            "deepseek-v4-pro"
+            "qwen3-coder-480b-a35b-instruct-turbo"
+            "kimi-k3-1-pro"
+            "qwen-3-8-flash"
+          ];
+        }
+        # Kept for reference; unreferenced above, so it is never called (cost).
         {
           name = "clinepass";
           base_url = "https://api.cline.bot/api/v1";
@@ -240,18 +270,19 @@ in
         }
       ];
 
+      # High-volume helper calls run on the free local model, not a paid API.
       auxiliary = {
         compression = {
-          provider = "openrouter";
-          model = "openai/gpt-oss-20b";
+          provider = "custom:mothership";
+          model = "qwen3.8-fast";
         };
         web_extract = {
-          provider = "openrouter";
-          model = "openai/gpt-oss-20b";
+          provider = "custom:mothership";
+          model = "qwen3.8-fast";
         };
         title_generation = {
-          provider = "openrouter";
-          model = "openai/gpt-oss-20b";
+          provider = "custom:mothership";
+          model = "qwen3.8-fast";
         };
       };
 

@@ -146,6 +146,17 @@ in
     # The LAN uses public addresses, so the private-range block misses it.
     extraBlockedNetworks = [ "11.125.37.0/24" ];
   };
+  # Venice (Pro) key for the LiteLLM-routed venice models below. The service
+  # reads it from the environment via os.environ/VENICE_API_KEY.
+  sops.secrets.VENICE_API_KEY.restartUnits = [ "litellm.service" ];
+  sops.templates."litellm-secrets.env" = {
+    content = "VENICE_API_KEY=${config.sops.placeholder.VENICE_API_KEY}";
+    restartUnits = [ "litellm.service" ];
+  };
+  systemd.services.litellm.serviceConfig.EnvironmentFile = [
+    config.sops.templates."litellm-secrets.env".path
+  ];
+
   services.llm-services.litellm.extraModels = [
     {
       # "mesh" lets the public mesh pick the model.
@@ -156,7 +167,23 @@ in
         api_key = "none";
       };
     }
-  ];
+  ]
+  ++ map
+    (id: {
+      model_name = id;
+      litellm_params = {
+        model = "openai/${id}";
+        api_base = "https://api.venice.ai/api/v1";
+        api_key = "os.environ/VENICE_API_KEY";
+      };
+    })
+    [
+      "deepseek-v4-pro"
+      "qwen3-coder-480b-a35b-instruct-turbo"
+      "kimi-k3-1-pro"
+      "claude-haiku-5-5"
+      "venice-uncensored-1-2"
+    ];
 
   powerManagement.cpuFreqGovernor = "performance";
 
