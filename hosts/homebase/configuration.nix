@@ -202,6 +202,7 @@ in
       11434
       18089 # monerod restricted RPC
       24800
+      3389 # KRdp (Plasma Remote Desktop), reached via the cloudflared tunnel
     ];
     allowedUDPPorts = [ 24800 ];
     allowedTCPPortRanges = [
