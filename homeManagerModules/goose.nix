@@ -56,6 +56,17 @@ let
   };
   fastmailKey = osConfig.sops.secrets.fastmail_hermes_api_key.path;
   extensionsYaml = (pkgs.formats.yaml { }).generate "goose-extensions.yaml" extensions;
+
+  # Default provider: mothership's LiteLLM, which holds the Venice key, so goose
+  # needs none of its own. Any LiteLLM route name works as GOOSE_MODEL.
+  litellmHost =
+    if (osConfig.networking.hostName or "") == "mothership" then "127.0.0.1" else "11.125.37.101";
+  providerYaml = (pkgs.formats.yaml { }).generate "goose-provider.yaml" {
+    GOOSE_PROVIDER = "openai";
+    GOOSE_MODEL = "deepseek-v4-pro";
+    OPENAI_HOST = "http://${litellmHost}:4000";
+    OPENAI_BASE_PATH = "v1/chat/completions";
+  };
 in
 {
   home.packages = [
@@ -64,6 +75,8 @@ in
         FASTMAIL_API_KEY=$(< ${fastmailKey})
         export FASTMAIL_API_KEY
       fi
+      # LiteLLM ignores the key, but goose's openai provider requires one.
+      export OPENAI_API_KEY="''${OPENAI_API_KEY:-none}"
       exec ${pkgs.goose-cli}/bin/goose "$@"
     '')
     # Goose against the public mesh client on localhost:9337; "mesh" lets the
@@ -90,5 +103,7 @@ in
     run ${pkgs.yq-go}/bin/yq -i \
       '.extensions = (load("${extensionsYaml}") * (.extensions // {})) | (.extensions | ..) style=""' \
       "$config"
+    # Same rule for the provider: set only when missing, so `goose configure` wins.
+    run ${pkgs.yq-go}/bin/yq -i '. = (load("${providerYaml}") * .)' "$config"
   '';
 }

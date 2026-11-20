@@ -175,6 +175,8 @@ in
         model = "openai/${id}";
         api_base = "https://api.venice.ai/api/v1";
         api_key = "os.environ/VENICE_API_KEY";
+        # Venice prepends its own ~1.6k-token system prompt by default.
+        extra_body.venice_parameters.include_venice_system_prompt = false;
       };
     })
     [
