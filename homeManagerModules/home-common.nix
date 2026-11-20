@@ -36,5 +36,5 @@
   ai-skills.enable = true;
 
   # Fish is the login shell for now; turn off to fall back to nushell.
-  shells.fish.enable = true;
+  shells.fish.enable = false;
 }
