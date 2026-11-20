@@ -18,7 +18,12 @@ let
       ANTHROPIC_AUTH_TOKEN = "sk-no-key-required";
       ANTHROPIC_API_KEY = "";
       CLAUDE_CODE_ATTRIBUTION_HEADER = "0";
-      CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1";
+      # Betas on (was "1"): MCP tool search is gated behind them. Without tool
+      # search every MCP schema loads up front (~138k tokens here), overflowing
+      # qwen3.8's window so even "hi" fails. Tool search loads only tool names,
+      # fetching schemas on demand.
+      CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "0";
+      ENABLE_TOOL_SEARCH = "true";
       CLAUDE_CODE_ENABLE_TELEMETRY = "0";
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
       ENABLE_PROMPT_CACHING_1H = "1";
@@ -35,6 +40,8 @@ let
   locallyDefinedMcps = {
     HA = {
       type = "http";
+      # Defer: HA's exposed-entity tool list is large; load schemas on demand.
+      alwaysLoad = false;
       url = "https://homeassistant.salh.xyz/api/mcp";
       oauth = {
         # Note: Do not change this clientId to your Home Assistant URL.
@@ -49,6 +56,7 @@ let
     # Remote MCPs sign in with OAuth on first use: `/mcp` > server > Authenticate.
     robinhood-trading = {
       type = "http";
+      alwaysLoad = false;
       url = "https://agent.robinhood.com/mcp/trading";
     };
     coinbase = {
