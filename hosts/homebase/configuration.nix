@@ -18,6 +18,7 @@ in
 
   host.enableBluetooth = true;
   host.enableKaspaNg = true;
+  host.enablePearld = true;
   host.enableWalletWatcherConfig = true;
   host.enableNvidia = true;
   host.enableGreetd = false;

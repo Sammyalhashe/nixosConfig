@@ -71,6 +71,20 @@
 
     enableKaspad = lib.mkEnableOption "Whether to run a kaspad (rusty-kaspa) node.";
 
+    enablePearld = lib.mkEnableOption "Whether to run a Pearl full node (pearld) and install its wallet tools.";
+
+    pearlNetwork = lib.mkOption {
+      type = lib.types.enum [
+        "mainnet"
+        "testnet"
+        "testnet2"
+        "simnet"
+        "regtest"
+      ];
+      default = "mainnet";
+      description = "Pearl network pearld joins; selects its default ports and data.";
+    };
+
     enableMonero = lib.mkEnableOption "Whether to run a pruned Monero node (monerod).";
 
     enableMoneroMining = lib.mkEnableOption "P2Pool and xmrig mining to the XMR_ADDRESS sops secret (needs enableMonero).";
