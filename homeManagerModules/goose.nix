@@ -30,6 +30,29 @@ let
       envs = { };
       timeout = 300;
     };
+    # Hosted OAuth MCPs: authenticate once in goose (goose mcp login / first use).
+    robinhood-trading = {
+      type = "streamable_http";
+      name = "robinhood-trading";
+      description = "Robinhood trading (OAuth on first use)";
+      enabled = true;
+      uri = "https://agent.robinhood.com/mcp/trading";
+      headers = { };
+      env_keys = [ ];
+      envs = { };
+      timeout = 300;
+    };
+    coinbase = {
+      type = "streamable_http";
+      name = "coinbase";
+      description = "Coinbase for Agents hosted MCP";
+      enabled = true;
+      uri = "https://agents.coinbase.com/mcp";
+      headers = { };
+      env_keys = [ ];
+      envs = { };
+      timeout = 300;
+    };
   };
   fastmailKey = osConfig.sops.secrets.fastmail_hermes_api_key.path;
   extensionsYaml = (pkgs.formats.yaml { }).generate "goose-extensions.yaml" extensions;
