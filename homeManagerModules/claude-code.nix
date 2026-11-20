@@ -31,6 +31,12 @@ let
       CLAUDE_CODE_MAX_CONTEXT_TOKENS = "131072";
     };
     model = "qwen3.8";
+    # Declared because activation rewrites settings.json, which would drop any
+    # plugin enabled at runtime and bring the LSP install prompt back.
+    enabledPlugins = {
+      "pyright-lsp@claude-plugins-official" = true;
+      "clangd-lsp@claude-plugins-official" = true;
+    };
     attribution = {
       commit = "";
       pr = "";
@@ -113,6 +119,12 @@ in
   };
 
   config = {
+    # Language servers the pyright-lsp and clangd-lsp plugins execute.
+    home.packages = [
+      pkgs.pyright
+      pkgs.clang-tools
+    ];
+
     home.file."CLAUDE.md".text = karpathySkills;
 
     home.activation.setupClaudeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
