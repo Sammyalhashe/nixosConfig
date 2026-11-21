@@ -45,6 +45,7 @@ in
 
       # applications
       beeper
+      brave
       cachix
       deskflow
       devenv
