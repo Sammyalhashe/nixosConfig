@@ -149,6 +149,16 @@ in
             "gettransaction"
           ];
         };
+
+        # wallet-watcher on homebase/starship sums multisig and HD wallets by
+        # descriptor. Narrower than `public`, which can also broadcast.
+        users.walletwatcher = {
+          passwordHMACFromFile = true;
+          rpcwhitelist = [
+            "scantxoutset"
+            "getblockchaininfo"
+          ];
+        };
       };
 
       # electrs has no allowlist of its own, so the firewall is the only thing
@@ -168,9 +178,14 @@ in
       nix-bitcoin.secrets = {
         bitcoin-rpcpassword-sparrow.user = config.services.bitcoind.user;
         bitcoin-HMAC-sparrow.user = config.services.bitcoind.user;
+        bitcoin-rpcpassword-walletwatcher.user = config.services.bitcoind.user;
+        bitcoin-HMAC-walletwatcher.user = config.services.bitcoind.user;
       };
       nix-bitcoin.generateSecretsCmds.bitcoind-sparrow = ''
         makeBitcoinRPCPassword sparrow
+      '';
+      nix-bitcoin.generateSecretsCmds.bitcoind-walletwatcher = ''
+        makeBitcoinRPCPassword walletwatcher
       '';
     })
 
