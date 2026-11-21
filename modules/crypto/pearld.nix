@@ -111,6 +111,12 @@ in
         Restart = "on-failure";
         RestartSec = "10s";
 
+        # The initial sync validates signatures on every core; keep that behind
+        # the desktop, as xmrig already is.
+        Nice = 19;
+        CPUSchedulingPolicy = "idle";
+        IOSchedulingClass = "idle";
+
         ProtectSystem = "strict";
         ProtectHome = true;
         PrivateTmp = true;
