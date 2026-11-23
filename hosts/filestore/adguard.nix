@@ -11,30 +11,6 @@ let
   };
 in
 {
-  # Holds only the bcrypt hash (htpasswd -nB). The repo is public, so it
-  # is merged into AdGuardHome.yaml at start instead of living in settings.
-  sops.secrets.adguard_admin_password_hash = { };
-  sops.templates."adguard-users.yaml".content = builtins.toJSON {
-    users = [
-      {
-        name = config.host.username;
-        password = config.sops.placeholder.adguard_admin_password_hash;
-      }
-    ];
-  };
-
-  systemd.services.adguardhome = {
-    serviceConfig.LoadCredential = [
-      "users.yaml:${config.sops.templates."adguard-users.yaml".path}"
-    ];
-    preStart = lib.mkAfter ''
-      ${lib.getExe pkgs.yaml-merge} "$STATE_DIRECTORY/AdGuardHome.yaml" "$CREDENTIALS_DIRECTORY/users.yaml" \
-        > "$STATE_DIRECTORY/AdGuardHome.yaml.tmp"
-      mv "$STATE_DIRECTORY/AdGuardHome.yaml.tmp" "$STATE_DIRECTORY/AdGuardHome.yaml"
-      chmod 600 "$STATE_DIRECTORY/AdGuardHome.yaml"
-    '';
-  };
-
   services.adguardhome = {
     enable = true;
     settings = {
