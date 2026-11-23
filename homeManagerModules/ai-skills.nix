@@ -59,6 +59,16 @@ in
       recursive = true;
     };
 
+    home.file.".codex/skills" = {
+      source = "${cfg.package}/codex/skills";
+      recursive = true;
+    };
+
+    home.file.".codex/agents" = {
+      source = "${cfg.package}/codex/agents";
+      recursive = true;
+    };
+
     home.file.".claude/hooks" = {
       source = "${cfg.package}/claude/hooks";
       recursive = true;

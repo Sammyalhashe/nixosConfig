@@ -212,7 +212,7 @@ in
     hostName = "mothership";
     networkmanager.enable = true;
     nameservers = [
-      "11.125.37.99"
+      "11.125.37.98"
       "1.1.1.1"
     ];
   };
@@ -221,7 +221,7 @@ in
     enable = true;
     settings = {
       Resolve = {
-        DNS = "11.125.37.99";
+        DNS = "11.125.37.98";
         Domains = "~salh.xyz";
       };
     };
