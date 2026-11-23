@@ -185,7 +185,6 @@ in
     defaultGateway = "11.125.37.1"; # Your router IP
     nameservers = [
       "11.125.37.99"
-      "11.125.37.1"
       "1.1.1.1"
     ];
   };

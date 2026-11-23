@@ -42,7 +42,6 @@ in
   host.enableGreetd = false;
   host.homeManagerHostname = "starship";
   home-manager.users.${config.host.username}.imports = [ ./home.nix ];
-  host.fallbackNameservers = [ "11.125.37.1" ];
   host.enableHardwareWallets = true;
   host.enableSparrow = true;
   host.enableLiana = true;

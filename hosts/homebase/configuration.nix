@@ -51,7 +51,6 @@ in
     services.displayManager.defaultSession = "niri";
   };
 
-  host.fallbackNameservers = [ "11.125.37.1" ];
 
   # Client of the public mesh: peers' models on localhost:9337, nothing served here.
   services.mesh-llm = {

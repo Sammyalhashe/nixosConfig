@@ -82,7 +82,6 @@ in
 
   host.homeManagerHostname = "mothership";
   home-manager.users.${config.host.username}.imports = [ ./home.nix ];
-  host.fallbackNameservers = [ "11.125.37.1" ];
 
   boot = {
     initrd.kernelModules = [ "amdgpu" ];
@@ -214,7 +213,6 @@ in
     networkmanager.enable = true;
     nameservers = [
       "11.125.37.99"
-      "11.125.37.1"
       "1.1.1.1"
     ];
   };
