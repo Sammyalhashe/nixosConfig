@@ -14,13 +14,16 @@ in
   # Holds only the bcrypt hash (htpasswd -nB). The repo is public, so it
   # is merged into AdGuardHome.yaml at start instead of living in settings.
   sops.secrets.adguard_admin_password_hash = { };
-  sops.templates."adguard-users.yaml".content = builtins.toJSON {
-    users = [
-      {
-        name = config.host.username;
-        password = config.sops.placeholder.adguard_admin_password_hash;
-      }
-    ];
+  sops.templates."adguard-users.yaml" = {
+    restartUnits = [ "adguardhome.service" ];
+    content = builtins.toJSON {
+      users = [
+        {
+          name = config.host.username;
+          password = config.sops.placeholder.adguard_admin_password_hash;
+        }
+      ];
+    };
   };
 
   systemd.services.adguardhome = {
