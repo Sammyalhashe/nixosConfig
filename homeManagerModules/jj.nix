@@ -65,6 +65,8 @@
         color = "always";
 
         default-command = "log";
+
+        movement.edit = true;
       };
 
       templates = {
